@@ -1,0 +1,129 @@
+---
+title: "Subset tensors with <code>[</code>"
+type: docs
+repo: https://github.com/rstudio/tensorflow
+menu:
+  main:
+    name: "Subset tensors with &lt;code&gt;[&lt;/code&gt; - tensorflow"
+    parent: tensorflow-reference
+---
+    
+    
+    <p>Subset tensors with <code>[</code></p>
+    
+
+    <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"># S3 method for tensorflow.tensor
+[(x, ..., drop = TRUE,
+  style = getOption("tensorflow.extract.style"),
+  options = tf_extract_opts(style))</code></pre></div>
+    
+    <h2 id="arguments">Arguments</h2>
+    <table class="ref-arguments">
+    
+    <colgroup>
+      <col class="name" />
+      <col class="desc" />
+    </colgroup>  
+      
+    <tr>
+      <td>x</td>
+      <td><p>Tensorflow tensor</p></td>
+    </tr>
+    <tr>
+      <td>...</td>
+      <td><p>slicing specs. See examples and details.</p></td>
+    </tr>
+    <tr>
+      <td>drop</td>
+      <td><p>whether to drop scalar dimensions</p></td>
+    </tr>
+    <tr>
+      <td>style</td>
+      <td><p>One of <code>"python"</code> or <code>"R"</code>.</p></td>
+    </tr>
+    <tr>
+      <td>options</td>
+      <td><p>An object returned by <code><a href='tf_extract_opts.html'>tf_extract_opts()</a></code></p></td>
+    </tr>
+    </table>
+    
+
+    <h2 id="examples">Examples</h2>
+    <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class='co'># NOT RUN {</span>
+<span class='no'>sess</span> <span class='kw'>&lt;-</span> <span class='no'>tf</span>$<span class='fu'>Session</span>()
+
+<span class='no'>x</span> <span class='kw'>&lt;-</span> <span class='no'>tf</span>$<span class='fu'>constant</span>(<span class='fl'>1</span>:<span class='fl'>15</span>, <span class='kw'>shape</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='fl'>3</span>, <span class='fl'>5</span>))
+<span class='no'>sess</span>$<span class='fu'>run</span>(<span class='no'>x</span>)
+<span class='co'># by default, numerics supplied to `...` are interpreted R style</span>
+<span class='no'>sess</span>$<span class='fu'>run</span>( <span class='no'>x</span>[,<span class='fl'>1</span>] )<span class='co'># first column</span>
+<span class='no'>sess</span>$<span class='fu'>run</span>( <span class='no'>x</span>[<span class='fl'>1</span>:<span class='fl'>2</span>,] ) <span class='co'># first two rows</span>
+<span class='no'>sess</span>$<span class='fu'>run</span>( <span class='no'>x</span>[,<span class='fl'>1</span>, <span class='kw'>drop</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>] )
+
+<span class='co'># strided steps can be specified in R syntax or python syntax</span>
+<span class='no'>sess</span>$<span class='fu'>run</span>( <span class='no'>x</span>[, <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/seq'>seq</a></span>(<span class='fl'>1</span>, <span class='fl'>5</span>, <span class='kw'>by</span> <span class='kw'>=</span> <span class='fl'>2</span>)] )
+<span class='no'>sess</span>$<span class='fu'>run</span>( <span class='no'>x</span>[, <span class='fl'>1</span>:<span class='fl'>5</span>:<span class='fl'>2</span>] )
+<span class='co'># if you are unfamiliar with python-style strided steps, see:</span>
+<span class='co'># https://docs.scipy.org/doc/numpy-1.13.0/reference/arrays.indexing.html#basic-slicing-and-indexing</span>
+
+<span class='co'># missing arguments for python syntax are valid, but they must by backticked</span>
+<span class='co'># or supplied as NULL</span>
+<span class='no'>sess</span>$<span class='fu'>run</span>( <span class='no'>x</span>[, <span class='no'>`::2`</span>] )
+<span class='no'>sess</span>$<span class='fu'>run</span>( <span class='no'>x</span>[, <span class='kw'>NULL</span>:<span class='kw'>NULL</span>:<span class='fl'>2</span>] )
+<span class='no'>sess</span>$<span class='fu'>run</span>( <span class='no'>x</span>[, <span class='no'>`2:`</span>] )
+
+<span class='co'># Another python feature that is available is a python style ellipsis `...`</span>
+<span class='co'># (not to be confused with R dots `...`)</span>
+<span class='co'># a all_dims() expands to the shape of the tensor</span>
+<span class='no'>y</span> <span class='kw'>&lt;-</span> <span class='no'>tf</span>$<span class='fu'>constant</span>(<span class='fl'>1</span>:(<span class='fl'>3</span>^<span class='fl'>5</span>), <span class='kw'>shape</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='fl'>3</span>,<span class='fl'>3</span>,<span class='fl'>3</span>,<span class='fl'>3</span>,<span class='fl'>3</span>))
+<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/identical'>identical</a></span>(
+  <span class='no'>sess</span>$<span class='fu'>run</span>( <span class='no'>y</span>[<span class='fu'><a href='all_dims.html'>all_dims</a></span>(), <span class='fl'>1</span>] ),
+  <span class='no'>sess</span>$<span class='fu'>run</span>( <span class='no'>y</span>[,,,,<span class='fl'>1</span>] )
+  )
+
+<span class='co'># tf$newaxis are valid</span>
+<span class='no'>sess</span>$<span class='fu'>run</span>( <span class='no'>x</span>[,, <span class='no'>tf</span>$<span class='no'>newaxis</span>] )
+
+<span class='co'># negative numbers are always interpreted python style</span>
+<span class='co'># The first time a negative number is supplied to `[`, a warning is issued</span>
+<span class='co'># about the non-standard behavior.</span>
+<span class='no'>sess</span>$<span class='fu'>run</span>( <span class='no'>x</span>[-<span class='fl'>1</span>,] ) <span class='co'># last row, with a warning</span>
+<span class='no'>sess</span>$<span class='fu'>run</span>( <span class='no'>x</span>[-<span class='fl'>1</span>,] )<span class='co'># the warning is only issued once</span>
+
+<span class='co'># specifying `style = 'python'` changes the following:</span>
+<span class='co'># +  zero-based indexing is used</span>
+<span class='co'># +  slice sequences in the form of `start:stop` do not include `stop`</span>
+<span class='co'>#    in the returned value</span>
+<span class='co'># +  out-of-bounds indices in a slice are valid</span>
+
+<span class='co'># The style argument can be supplied to individual calls of `[` or set</span>
+<span class='co'># as a global option</span>
+
+<span class='co'># example of zero based  indexing</span>
+<span class='no'>sess</span>$<span class='fu'>run</span>( <span class='no'>x</span>[<span class='fl'>0</span>, , <span class='kw'>style</span> <span class='kw'>=</span> <span class='st'>'python'</span>] ) <span class='co'># first row</span>
+<span class='no'>sess</span>$<span class='fu'>run</span>( <span class='no'>x</span>[<span class='fl'>1</span>, , <span class='kw'>style</span> <span class='kw'>=</span> <span class='st'>'python'</span>] ) <span class='co'># second row</span>
+
+<span class='co'># example of slices with exclusive stop</span>
+<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/options'>options</a></span>(<span class='kw'>tensorflow.extract.style</span> <span class='kw'>=</span> <span class='st'>'python'</span>)
+<span class='no'>sess</span>$<span class='fu'>run</span>( <span class='no'>x</span>[, <span class='fl'>0</span>:<span class='fl'>1</span>] ) <span class='co'># just the first column</span>
+<span class='no'>sess</span>$<span class='fu'>run</span>( <span class='no'>x</span>[, <span class='fl'>0</span>:<span class='fl'>2</span>] ) <span class='co'># first and second column</span>
+
+<span class='co'># example of out-of-bounds index</span>
+<span class='no'>sess</span>$<span class='fu'>run</span>( <span class='no'>x</span>[, <span class='fl'>0</span>:<span class='fl'>10</span>] )
+<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/options'>options</a></span>(<span class='kw'>tensorflow.extract.style</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)
+
+<span class='co'># slicing with tensors is valid too, but note, tensors are never</span>
+<span class='co'># translated and are always interpreted python-style.</span>
+<span class='co'># A warning is issued the first time a tensor is passed to `[`</span>
+<span class='no'>sess</span>$<span class='fu'>run</span>( <span class='no'>x</span>[, <span class='no'>tf</span>$<span class='fu'>constant</span>(<span class='fl'>0L</span>):<span class='no'>tf</span>$<span class='fu'>constant</span>(<span class='fl'>2L</span>)] )
+<span class='co'># just as in python, only scalar tensors are valid</span>
+<span class='co'># https://www.tensorflow.org/api_docs/python/tf/Tensor#__getitem__</span>
+
+<span class='co'># To silence the warnings about tensors being passed as-is and negative numbers</span>
+<span class='co'># being interpreted python-style, set</span>
+<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/options'>options</a></span>(<span class='kw'>tensorflow.extract.style</span> <span class='kw'>=</span> <span class='st'>'R'</span>)
+
+<span class='co'># clean up from examples</span>
+<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/options'>options</a></span>(<span class='kw'>tensorflow.extract.style</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)
+<span class='co'># }</span></code></pre></div>
+
+

@@ -1,0 +1,496 @@
+---
+title: "Frequently Asked Questions"
+output: 
+  rmarkdown::html_vignette: default
+vignette: >
+  %\VignetteIndexEntry{Frequently Asked Questions} 
+  %\VignetteEngine{knitr::rmarkdown} 
+  %\VignetteEncoding{UTF-8}
+type: docs
+repo: https://github.com/rstudio/keras
+menu:
+  main:
+    name: "Frequently Asked Questions"
+    identifier: "keras-faq"
+    parent: "keras-using-keras"
+    weight: 60
+---
+
+
+
+<div id="how-should-i-cite-keras" class="section level2">
+<h2>How should I cite Keras?</h2>
+<p>Please cite Keras in your publications if it helps your research. Here is an example BibTeX entry:</p>
+<pre><code>@misc{chollet2017kerasR,
+  title={R Interface to Keras},
+  author={Chollet, Fran\c{c}ois and Allaire, JJ and others},
+  year={2017},
+  publisher={GitHub},
+  howpublished={\url{https://github.com/rstudio/keras}},
+}</code></pre>
+</div>
+<div id="how-can-i-run-keras-on-a-gpu" class="section level2">
+<h2>How can I run Keras on a GPU?</h2>
+<p>Note that installation and configuration of the GPU-based backends can take considerably more time and effort. So if you are just getting started with Keras you may want to stick with the CPU version initially, then install the appropriate GPU version once your training becomes more computationally demanding.</p>
+<p>Below are instructions for installing and enabling GPU support for the various supported backends.</p>
+<div id="tensorflow" class="section level3">
+<h3>TensorFlow</h3>
+<p>If your system has an NVIDIA® GPU and you have the GPU version of TensorFlow installed then your Keras code will automatically run on the GPU.</p>
+<p>Additional details on GPU installation can be found here: <a href="https://tensorflow.rstudio.com/installation_gpu.html" class="uri">https://tensorflow.rstudio.com/installation_gpu.html</a>.</p>
+</div>
+<div id="theano" class="section level3">
+<h3>Theano</h3>
+<p>If you are running on the Theano backend, you can set the <code>THEANO_FLAGS</code> environment variable to indicate you’d like to execute tensor operations on the GPU. For example:</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/Sys.setenv">Sys.setenv</a></span>(<span class="dt">KERAS_BACKEND =</span> <span class="st">"keras"</span>)
+<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/Sys.setenv">Sys.setenv</a></span>(<span class="dt">THEANO_FLAGS =</span> <span class="st">"device=gpu,floatX=float32"</span>)
+<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(keras)</code></pre>
+<p>The name ‘gpu’ might have to be changed depending on your device’s identifier (e.g. <code>gpu0</code>, <code>gpu1</code>, etc).</p>
+</div>
+<div id="cntk" class="section level3">
+<h3>CNTK</h3>
+<p>If you have the GPU version of CNTK installed then your Keras code will automatically run on the GPU.</p>
+<p>Additional information on installing the GPU version of CNTK can be found here: <a href="https://docs.microsoft.com/en-us/cognitive-toolkit/setup-linux-python" class="uri">https://docs.microsoft.com/en-us/cognitive-toolkit/setup-linux-python</a></p>
+</div>
+</div>
+<div id="how-can-i-run-a-keras-model-on-multiple-gpus" class="section level2">
+<h2>How can I run a Keras model on multiple GPUs?</h2>
+<p>We recommend doing so using the <strong>TensorFlow</strong> backend. There are two ways to run a single model on multiple GPUs: <strong>data parallelism</strong> and <strong>device parallelism</strong>.</p>
+<p>In most cases, what you need is most likely data parallelism.</p>
+<div id="data-parallelism" class="section level3">
+<h3>Data parallelism</h3>
+<p>Data parallelism consists in replicating the target model once on each device, and using each replica to process a different fraction of the input data.
+Keras has a built-in utility, <code><a href="../reference/multi_gpu_model.html">multi_gpu_model()</a></code>, which can produce a data-parallel version of any model, and achieves quasi-linear speedup on up to 8 GPUs.</p>
+<p>For more information, see the documentation for <a href="https://keras.rstudio.com/reference/multi_gpu_model.html">multi_gpu_model</a>. Here is a quick example:</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Replicates `model` on 8 GPUs.</span>
+<span class="co"># This assumes that your machine has 8 available GPUs.</span>
+parallel_model &lt;-<span class="st"> </span><span class="kw"><a href="../reference/multi_gpu_model.html">multi_gpu_model</a></span>(model, <span class="dt">gpus=</span><span class="dv">8</span>)
+parallel_model <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../reference/reexports.html">compile</a></span>(
+  <span class="dt">loss =</span> <span class="st">"categorical_crossentropy"</span>,
+  <span class="dt">optimizer =</span> <span class="st">"rmsprop"</span>
+)
+
+<span class="co"># This `fit` call will be distributed on 8 GPUs.</span>
+<span class="co"># Since the batch size is 256, each GPU will process 32 samples.</span>
+parallel_model <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../reference/reexports.html">fit</a></span>(x, y, <span class="dt">epochs =</span> <span class="dv">20</span>, <span class="dt">batch_size =</span> <span class="dv">256</span>)</code></pre>
+</div>
+<div id="device-parallelism" class="section level3">
+<h3>Device parallelism</h3>
+<p>Device parallelism consists in running different parts of a same model on different devices. It works best for models that have a parallel architecture, e.g. a model with two branches.</p>
+<p>This can be achieved by using TensorFlow device scopes. Here is a quick example:</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Model where a shared LSTM is used to encode two different sequences in parallel</span>
+input_a &lt;-<span class="st"> </span><span class="kw"><a href="../reference/layer_input.html">layer_input</a></span>(<span class="dt">shape =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="dv">140</span>, <span class="dv">256</span>))
+input_b &lt;-<span class="st"> </span><span class="kw"><a href="../reference/layer_input.html">layer_input</a></span>(<span class="dt">shape =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="dv">140</span>, <span class="dv">256</span>))
+
+shared_lstm &lt;-<span class="st"> </span><span class="kw"><a href="../reference/layer_lstm.html">layer_lstm</a></span>(<span class="dt">units =</span> <span class="dv">64</span>)
+
+<span class="co"># Process the first sequence on one GPU</span>
+<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(tensorflow)
+<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/with">with</a></span>(tf<span class="op">$</span><span class="kw">device_scope</span>(<span class="st">"/gpu:0"</span>, {
+  encoded_a &lt;-<span class="st"> </span><span class="kw">shared_lstm</span>(tweet_a)
+})<span class="op">:</span>
+<span class="st">    </span>
+<span class="co"># Process the next sequence on another GPU</span>
+<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/with">with</a></span>(tf<span class="op">$</span><span class="kw">device_scope</span>(<span class="st">"/gpu:1"</span>, {
+  encoded_b &lt;-<span class="st"> </span><span class="kw">shared_lstm</span>(tweet_b)
+})<span class="op">:</span>
+
+<span class="co"># Concatenate results on CPU</span>
+<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/with">with</a></span>(tf<span class="op">$</span><span class="kw">device_scope</span>(<span class="st">"/cpu:0"</span>, {
+  merged_vector &lt;-<span class="st"> </span><span class="kw"><a href="../reference/layer_concatenate.html">layer_concatenate</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/list">list</a></span>(encoded_a, encoded_b))
+})<span class="op">:</span></code></pre>
+</div>
+</div>
+<div id="what-does-sample-batch-epoch-mean" class="section level2">
+<h2>What does “sample”, “batch”, “epoch” mean?</h2>
+<p>Below are some common definitions that are necessary to know and understand to correctly utilize Keras:</p>
+<ul>
+<li>
+<strong>Sample</strong>: one element of a dataset.
+<ul>
+<li>
+<em>Example:</em> one image is a <strong>sample</strong> in a convolutional network</li>
+<li>
+<em>Example:</em> one audio file is a <strong>sample</strong> for a speech recognition model</li>
+</ul>
+</li>
+<li>
+<strong>Batch</strong>: a set of <em>N</em> samples. The samples in a <strong>batch</strong> are processed independently, in parallel. If training, a batch results in only one update to the model.
+<ul>
+<li>A <strong>batch</strong> generally approximates the distribution of the input data better than a single input. The larger the batch, the better the approximation; however, it is also true that the batch will take longer to process and will still result in only one update. For inference (evaluate/predict), it is recommended to pick a batch size that is as large as you can afford without going out of memory (since larger batches will usually result in faster evaluating/prediction).</li>
+</ul>
+</li>
+<li>
+<strong>Epoch</strong>: an arbitrary cutoff, generally defined as “one pass over the entire dataset”, used to separate training into distinct phases, which is useful for logging and periodic evaluation.
+<ul>
+<li>When using <code>evaluation_data</code> or <code>evaluation_split</code> with the <code>fit</code> method of Keras models, evaluation will be run at the end of every <strong>epoch</strong>.</li>
+<li>Within Keras, there is the ability to add <a href="training_callbacks.html">callbacks</a> specifically designed to be run at the end of an <strong>epoch</strong>. Examples of these are learning rate changes and model checkpointing (saving).</li>
+</ul>
+</li>
+</ul>
+</div>
+<div id="why-are-keras-objects-modified-in-place" class="section level2">
+<h2>Why are Keras objects modified in place?</h2>
+<p>Unlike most R objects, Keras objects are “mutable”. That means that when you modify an object you’re modifying it “in place”, and you don’t need to assign the updated object back to the original name. For example, to add layers to a Keras model you might use this code:</p>
+<pre class="sourceCode r"><code class="sourceCode r">model <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw"><a href="../reference/layer_dense.html">layer_dense</a></span>(<span class="dt">units =</span> <span class="dv">32</span>, <span class="dt">activation =</span> <span class="st">'relu'</span>, <span class="dt">input_shape =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="dv">784</span>)) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw"><a href="../reference/layer_dense.html">layer_dense</a></span>(<span class="dt">units =</span> <span class="dv">10</span>, <span class="dt">activation =</span> <span class="st">'softmax'</span>)</code></pre>
+<p>Rather than this code:</p>
+<pre class="sourceCode r"><code class="sourceCode r">model &lt;-<span class="st"> </span>model <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw"><a href="../reference/layer_dense.html">layer_dense</a></span>(<span class="dt">units =</span> <span class="dv">32</span>, <span class="dt">activation =</span> <span class="st">'relu'</span>, <span class="dt">input_shape =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="dv">784</span>)) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw"><a href="../reference/layer_dense.html">layer_dense</a></span>(<span class="dt">units =</span> <span class="dv">10</span>, <span class="dt">activation =</span> <span class="st">'softmax'</span>)</code></pre>
+<p>You need to be aware of this because it makes the Keras API a little different than most other pipelines you may have used, but it’s necessary to match the data structures and behavior of the underlying Keras library.</p>
+</div>
+<div id="how-can-i-save-a-keras-model" class="section level2">
+<h2>How can I save a Keras model?</h2>
+<div id="savingloading-whole-models-architecture-weights-optimizer-state" class="section level3">
+<h3>Saving/loading whole models (architecture + weights + optimizer state)</h3>
+<p>You can use <code><a href="../reference/save_model_hdf5.html">save_model_hdf5()</a></code> to save a Keras model into a single HDF5 file which will contain:</p>
+<ul>
+<li>the architecture of the model, allowing to re-create the model</li>
+<li>the weights of the model</li>
+<li>the training configuration (loss, optimizer)</li>
+<li>the state of the optimizer, allowing to resume training exactly where you left off.</li>
+</ul>
+<p>You can then use <code><a href="../reference/save_model_hdf5.html">load_model_hdf5()</a></code> to reinstantiate your model.
+<code><a href="../reference/save_model_hdf5.html">load_model_hdf5()</a></code> will also take care of compiling the model using the saved training configuration
+(unless the model was never compiled in the first place).</p>
+<p>Example:</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="../reference/save_model_hdf5.html">save_model_hdf5</a></span>(model, <span class="st">'my_model.h5'</span>)
+model &lt;-<span class="st"> </span><span class="kw"><a href="../reference/save_model_hdf5.html">load_model_hdf5</a></span>(<span class="st">'my_model.h5'</span>)</code></pre>
+</div>
+<div id="savingloading-only-a-models-architecture" class="section level3">
+<h3>Saving/loading only a model’s architecture</h3>
+<p>If you only need to save the <strong>architecture of a model</strong>, and not its weights or its training configuration, you can do:</p>
+<pre class="sourceCode r"><code class="sourceCode r">json_string &lt;-<span class="st"> </span><span class="kw"><a href="../reference/model_to_json.html">model_to_json</a></span>(model)
+yaml_string &lt;-<span class="st"> </span><span class="kw"><a href="../reference/model_to_yaml.html">model_to_yaml</a></span>(model)</code></pre>
+<p>The generated JSON / YAML files are human-readable and can be manually edited if needed.</p>
+<p>You can then build a fresh model from this data:</p>
+<pre class="sourceCode r"><code class="sourceCode r">model &lt;-<span class="st"> </span><span class="kw"><a href="../reference/model_to_json.html">model_from_json</a></span>(json_string)
+model &lt;-<span class="st"> </span><span class="kw"><a href="../reference/model_to_yaml.html">model_from_yaml</a></span>(yaml_string)</code></pre>
+</div>
+<div id="savingloading-only-a-models-weights" class="section level3">
+<h3>Saving/loading only a model’s weights</h3>
+<p>If you need to save the <strong>weights of a model</strong>, you can do so in HDF5 with the code below.</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="../reference/save_model_weights_hdf5.html">save_model_weights_hdf5</a></span>(<span class="st">'my_model_weights.h5'</span>)</code></pre>
+<p>Assuming you have code for instantiating your model, you can then load the weights you saved into a model with the <em>same</em> architecture:</p>
+<pre class="sourceCode r"><code class="sourceCode r">model <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../reference/save_model_weights_hdf5.html">load_model_weights_hdf5</a></span>(<span class="st">'my_model_weights.h5'</span>)</code></pre>
+<p>If you need to load weights into a <em>different</em> architecture (with some layers in common), for instance for fine-tuning or transfer-learning, you can load weights by <em>layer name</em>:</p>
+<pre class="sourceCode r"><code class="sourceCode r">model <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../reference/save_model_weights_hdf5.html">load_model_weights_hdf5</a></span>(<span class="st">'my_model_weights.h5'</span>, <span class="dt">by_name =</span> <span class="ot">TRUE</span>)</code></pre>
+<p>For example:</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># assuming the original model looks like this:</span>
+<span class="co">#   model &lt;- keras_model_sequential()</span>
+<span class="co">#   model %&gt;% </span>
+<span class="co">#     layer_dense(units = 2, input_dim = 3, name = "dense 1") %&gt;% </span>
+<span class="co">#     layer_dense(units = 3, name = "dense_3") %&gt;% </span>
+<span class="co">#     ...</span>
+<span class="co">#   save_model_weights(model, fname)</span>
+
+<span class="co"># new model</span>
+model &lt;-<span class="st"> </span><span class="kw"><a href="../reference/keras_model_sequential.html">keras_model_sequential</a></span>()
+model <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw"><a href="../reference/layer_dense.html">layer_dense</a></span>(<span class="dt">units =</span> <span class="dv">2</span>, <span class="dt">input_dim =</span> <span class="dv">3</span>, <span class="dt">name =</span> <span class="st">"dense 1"</span>) <span class="op">%&gt;%</span><span class="st">  </span><span class="co"># will be loaded</span>
+<span class="st">  </span><span class="kw"><a href="../reference/layer_dense.html">layer_dense</a></span>(<span class="dt">units =</span> <span class="dv">3</span>, <span class="dt">name =</span> <span class="st">"dense_3"</span>)                     <span class="co"># will not be loaded</span>
+
+<span class="co"># load weights from first model; will only affect the first layer, dense_1.</span>
+<span class="kw">load_model_weights</span>(fname, <span class="dt">by_name =</span> <span class="ot">TRUE</span>)</code></pre>
+</div>
+</div>
+<div id="why-is-the-training-loss-much-higher-than-the-testing-loss" class="section level2">
+<h2>Why is the training loss much higher than the testing loss?</h2>
+<p>A Keras model has two modes: training and testing. Regularization mechanisms, such as Dropout and L1/L2 weight regularization, are turned off at testing time.</p>
+<p>Besides, the training loss is the average of the losses over each batch of training data. Because your model is changing over time, the loss over the first batches of an epoch is generally higher than over the last batches. On the other hand, the testing loss for an epoch is computed using the model as it is at the end of the epoch, resulting in a lower loss.</p>
+</div>
+<div id="how-can-i-obtain-the-output-of-an-intermediate-layer" class="section level2">
+<h2>How can I obtain the output of an intermediate layer?</h2>
+<p>One simple way is to create a new <code>Model</code> that will output the layers that you are interested in:</p>
+<pre class="sourceCode r"><code class="sourceCode r">model &lt;-<span class="st"> </span>...  <span class="co"># create the original model</span>
+
+layer_name &lt;-<span class="st"> 'my_layer'</span>
+intermediate_layer_model &lt;-<span class="st"> </span><span class="kw"><a href="../reference/keras_model.html">keras_model</a></span>(<span class="dt">inputs =</span> model<span class="op">$</span>input,
+                                        <span class="dt">outputs =</span> <span class="kw"><a href="../reference/get_layer.html">get_layer</a></span>(model, layer_name)<span class="op">$</span>output)
+intermediate_output &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/stats/topics/predict">predict</a></span>(intermediate_layer_model, data)</code></pre>
+</div>
+<div id="how-can-i-use-keras-with-datasets-that-dont-fit-in-memory" class="section level2">
+<h2>How can I use Keras with datasets that don’t fit in memory?</h2>
+<div id="generator-functions" class="section level3">
+<h3>Generator Functions</h3>
+<p>To provide training or evaluation data incrementally you can write an R generator function that yields batches of training data then pass the function to the <code><a href="../reference/fit_generator.html">fit_generator()</a></code> function (or related functions <code><a href="../reference/evaluate_generator.html">evaluate_generator()</a></code> and <code><a href="../reference/predict_generator.html">predict_generator()</a></code>.</p>
+<p>The output of generator functions must be a list of one of these forms:</p>
+<ul>
+<li>(inputs, targets)</li>
+<li>(inputs, targets, sample_weights)</li>
+</ul>
+<p>All arrays should contain the same number of samples. The generator is expected to loop over its data indefinitely. For example, here’s simple generator function that yields randomly sampled batches of data:</p>
+<pre class="sourceCode r"><code class="sourceCode r">sampling_generator &lt;-<span class="st"> </span><span class="cf">function</span>(X_data, Y_data, batch_size) {
+  <span class="cf">function</span>() {
+    rows &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/sample">sample</a></span>(<span class="dv">1</span><span class="op">:</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/nrow">nrow</a></span>(X_data), batch_size, <span class="dt">replace =</span> <span class="ot">TRUE</span>)
+    <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/list">list</a></span>(X_data[rows,], Y_data[rows,])
+  }
+}
+
+model <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw"><a href="../reference/fit_generator.html">fit_generator</a></span>(<span class="kw">sampling_generator</span>(X_train, Y_train, <span class="dt">batch_size =</span> <span class="dv">128</span>), 
+                <span class="dt">steps_per_epoch =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/nrow">nrow</a></span>(X_train) <span class="op">/</span><span class="st"> </span><span class="dv">128</span>, <span class="dt">epochs =</span> <span class="dv">10</span>)</code></pre>
+<p>The <code>steps_per_epoch</code> parameter indicates the number of steps (batches of samples) to yield from generator before declaring one epoch finished and starting the next epoch. It should typically be equal to the number of unique samples if your dataset divided by the batch size.</p>
+</div>
+<div id="external-data-generators" class="section level3">
+<h3>External Data Generators</h3>
+<p>The above example doesn’t however address the use case of datasets that don’t fit in memory. Typically to do that you’ll write a generator that reads from another source (e.g. a sparse matrix or file(s) on disk) and maintains an offset into that data as it’s called repeatedly. For example, imagine you have a set of text files in a directory you want to read from:</p>
+<pre class="sourceCode r"><code class="sourceCode r">data_files_generator &lt;-<span class="st"> </span><span class="cf">function</span>(dir) {
+  
+  files <span class="op">&lt;</span><span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/list.files">list.files</a></span>(dir)
+  next_file &lt;-<span class="st"> </span><span class="dv">0</span>
+  
+  <span class="cf">function</span>() {
+    
+    <span class="co"># move to the next file (note the &lt;&lt;- assignment operator)</span>
+    next_file &lt;&lt;-<span class="st"> </span>next_file <span class="op">+</span><span class="st"> </span><span class="dv">1</span>
+    
+    <span class="co"># if we've exhausted all of the files then start again at the</span>
+    <span class="co"># beginning of the list (keras generators need to yield</span>
+    <span class="co"># data infinitely -- termination is controlled by the epochs</span>
+    <span class="co"># and steps_per_epoch arguments to fit_generator())</span>
+    <span class="cf">if</span> (next_file <span class="op">&gt;</span><span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/length">length</a></span>(files))
+      next_file &lt;&lt;-<span class="st"> </span><span class="dv">1</span>
+    
+    <span class="co"># determine the file name</span>
+    file &lt;-<span class="st"> </span>files[[next_file]]
+    
+    <span class="co"># process and return the data in the file. note that in a </span>
+    <span class="co"># real example you'd further subdivide the data within the</span>
+    <span class="co"># file into appropriately sized training batches. this </span>
+    <span class="co"># would make this function much more complicated so we</span>
+    <span class="co"># don't demonstrated it here</span>
+    <span class="kw">file_to_training_data</span>(file)
+  }
+}</code></pre>
+<p>The above function is an example of a stateful generator—the function maintains information across calls to keep track of which data to provide next. This is accomplished by defining shared state outside the generator function body and using the <code>&lt;&lt;-</code> operator to assign to it from within the generator.</p>
+</div>
+<div id="image-generators" class="section level3">
+<h3>Image Generators</h3>
+<p>You can also use the <code><a href="../reference/flow_images_from_directory.html">flow_images_from_directory()</a></code> and <code><a href="../reference/flow_images_from_data.html">flow_images_from_data()</a></code> functions along with <code><a href="../reference/fit_generator.html">fit_generator()</a></code> for training on sets of images stored on disk (with optional image augmentation/normalization via <code><a href="../reference/image_data_generator.html">image_data_generator()</a></code>).</p>
+<p>You can see batch image training in action in our <a href="https://keras.rstudio.com/articles/examples/cifar10_cnn.html">CIFAR10 example</a>.</p>
+</div>
+<div id="batch-functions" class="section level3">
+<h3>Batch Functions</h3>
+<p>You can also do batch training using the <code><a href="../reference/train_on_batch.html">train_on_batch()</a></code> and <code><a href="../reference/train_on_batch.html">test_on_batch()</a></code> functions. These functions enable you to write a training loop that reads into memory only the data required for each batch.</p>
+</div>
+</div>
+<div id="how-can-i-interrupt-training-when-the-validation-loss-isnt-decreasing-anymore" class="section level2">
+<h2>How can I interrupt training when the validation loss isn’t decreasing anymore?</h2>
+<p>You can use an early stopping callback:</p>
+<pre class="sourceCode r"><code class="sourceCode r">early_stopping &lt;-<span class="st"> </span><span class="kw"><a href="../reference/callback_early_stopping.html">callback_early_stopping</a></span>(<span class="dt">monitor =</span> <span class="st">'val_loss'</span>, <span class="dt">patience =</span> <span class="dv">2</span>)
+model <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../reference/reexports.html">fit</a></span>(X, y, <span class="dt">validation_split =</span> <span class="fl">0.2</span>, <span class="dt">callbacks =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(early_stopping))</code></pre>
+<p>Find out more in the <a href="training_callbacks.html">callbacks documentation</a>.</p>
+</div>
+<div id="how-is-the-validation-split-computed" class="section level2">
+<h2>How is the validation split computed?</h2>
+<p>If you set the <code>validation_split</code> argument in <code>fit</code> to e.g. 0.1, then the validation data used will be the <em>last 10%</em> of the data. If you set it to 0.25, it will be the last 25% of the data, etc. Note that the data isn’t shuffled before extracting the validation split, so the validation is literally just the <em>last</em> x% of samples in the input you passed.</p>
+<p>The same validation set is used for all epochs (within a same call to <code>fit</code>).</p>
+</div>
+<div id="is-the-data-shuffled-during-training" class="section level2">
+<h2>Is the data shuffled during training?</h2>
+<p>Yes, if the <code>shuffle</code> argument in <code>fit</code> is set to <code>TRUE</code> (which is the default), the training data will be randomly shuffled at each epoch.</p>
+<p>Validation data is never shuffled.</p>
+</div>
+<div id="how-can-i-record-the-training-validation-loss-accuracy-at-each-epoch" class="section level2">
+<h2>How can I record the training / validation loss / accuracy at each epoch?</h2>
+<p>The <code>model.fit</code> method returns an <code>History</code> callback, which has a <code>history</code> attribute containing the lists of successive losses and other metrics.</p>
+<pre class="sourceCode r"><code class="sourceCode r">hist &lt;-<span class="st"> </span>model <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../reference/reexports.html">fit</a></span>(X, y, <span class="dt">validation_split=</span><span class="fl">0.2</span>)
+hist<span class="op">$</span>history</code></pre>
+</div>
+<div id="how-can-i-freeze-keras-layers" class="section level2">
+<h2>How can I “freeze” Keras layers?</h2>
+<p>To “freeze” a layer means to exclude it from training, i.e. its weights will never be updated. This is useful in the context of fine-tuning a model, or using fixed embeddings for a text input.</p>
+<p>You can pass a <code>trainable</code> argument (boolean) to a layer constructor to set a layer to be non-trainable:</p>
+<pre class="sourceCode r"><code class="sourceCode r">frozen_layer &lt;-<span class="st"> </span><span class="kw"><a href="../reference/layer_dense.html">layer_dense</a></span>(<span class="dt">units =</span> <span class="dv">32</span>, <span class="dt">trainable =</span> <span class="ot">FALSE</span>)</code></pre>
+<p>Additionally, you can set the <code>trainable</code> property of a layer to <code>TRUE</code> or <code>FALSE</code> after instantiation. For this to take effect, you will need to call <code><a href="../reference/reexports.html">compile()</a></code> on your model after modifying the <code>trainable</code> property. Here’s an example:</p>
+<pre class="sourceCode r"><code class="sourceCode r">x &lt;-<span class="st"> </span><span class="kw"><a href="../reference/layer_input.html">layer_input</a></span>(<span class="dt">shape =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="dv">32</span>))
+layer &lt;-<span class="st"> </span><span class="kw"><a href="../reference/layer_dense.html">layer_dense</a></span>(<span class="dt">units =</span> <span class="dv">32</span>)
+layer<span class="op">$</span>trainable &lt;-<span class="st"> </span><span class="ot">FALSE</span>
+y &lt;-<span class="st"> </span>x <span class="op">%&gt;%</span><span class="st"> </span>layer
+
+frozen_model &lt;-<span class="st"> </span><span class="kw"><a href="../reference/keras_model.html">keras_model</a></span>(x, y)
+<span class="co"># in the model below, the weights of `layer` will not be updated during training</span>
+frozen_model <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../reference/reexports.html">compile</a></span>(<span class="dt">optimizer =</span> <span class="st">'rmsprop'</span>, <span class="dt">loss =</span> <span class="st">'mse'</span>)
+
+layer<span class="op">$</span>trainable &lt;-<span class="st"> </span><span class="ot">TRUE</span>
+trainable_model &lt;-<span class="st"> </span><span class="kw"><a href="../reference/keras_model.html">keras_model</a></span>(x, y)
+<span class="co"># with this model the weights of the layer will be updated during training</span>
+<span class="co"># (which will also affect the above model since it uses the same layer instance)</span>
+trainable_model <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../reference/reexports.html">compile</a></span>(<span class="dt">optimizer =</span> <span class="st">'rmsprop'</span>, <span class="dt">loss =</span> <span class="st">'mse'</span>)
+
+frozen_model <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../reference/reexports.html">fit</a></span>(data, labels)  <span class="co"># this does NOT update the weights of `layer`</span>
+trainable_model <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../reference/reexports.html">fit</a></span>(data, labels)  <span class="co"># this updates the weights of `layer`</span></code></pre>
+<p>Finally, you can freeze or unfreeze the weights for an entire model (or a range of layers within the model) using the <code><a href="../reference/freeze_weights.html">freeze_weights()</a></code> and <code><a href="../reference/freeze_weights.html">unfreeze_weights()</a></code> functions. For example:</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># instantiate a VGG16 model</span>
+conv_base &lt;-<span class="st"> </span><span class="kw"><a href="../reference/application_vgg.html">application_vgg16</a></span>(
+  <span class="dt">weights =</span> <span class="st">"imagenet"</span>,
+  <span class="dt">include_top =</span> <span class="ot">FALSE</span>,
+  <span class="dt">input_shape =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="dv">150</span>, <span class="dv">150</span>, <span class="dv">3</span>)
+)
+
+<span class="co"># freeze it's weights</span>
+<span class="kw"><a href="../reference/freeze_weights.html">freeze_weights</a></span>(conv_base)
+
+<span class="co"># create a composite model that includes the base + more layers</span>
+model &lt;-<span class="st"> </span><span class="kw"><a href="../reference/keras_model_sequential.html">keras_model_sequential</a></span>() <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span>conv_base <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw"><a href="../reference/layer_flatten.html">layer_flatten</a></span>() <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw"><a href="../reference/layer_dense.html">layer_dense</a></span>(<span class="dt">units =</span> <span class="dv">256</span>, <span class="dt">activation =</span> <span class="st">"relu"</span>) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw"><a href="../reference/layer_dense.html">layer_dense</a></span>(<span class="dt">units =</span> <span class="dv">1</span>, <span class="dt">activation =</span> <span class="st">"sigmoid"</span>)
+
+<span class="co"># compile</span>
+model <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../reference/reexports.html">compile</a></span>(
+  <span class="dt">loss =</span> <span class="st">"binary_crossentropy"</span>,
+  <span class="dt">optimizer =</span> <span class="kw"><a href="../reference/optimizer_rmsprop.html">optimizer_rmsprop</a></span>(<span class="dt">lr =</span> <span class="fl">2e-5</span>),
+  <span class="dt">metrics =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="st">"accuracy"</span>)
+)
+
+<span class="co"># unfreeze weights from "block5_conv1" on</span>
+<span class="kw"><a href="../reference/freeze_weights.html">unfreeze_weights</a></span>(conv_base, <span class="dt">from =</span> <span class="st">"block5_conv1"</span>)
+
+<span class="co"># compile again since we froze or unfroze layers</span>
+model <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../reference/reexports.html">compile</a></span>(
+  <span class="dt">loss =</span> <span class="st">"binary_crossentropy"</span>,
+  <span class="dt">optimizer =</span> <span class="kw"><a href="../reference/optimizer_rmsprop.html">optimizer_rmsprop</a></span>(<span class="dt">lr =</span> <span class="fl">2e-5</span>),
+  <span class="dt">metrics =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="st">"accuracy"</span>)
+)</code></pre>
+</div>
+<div id="how-can-i-use-stateful-rnns" class="section level2">
+<h2>How can I use stateful RNNs?</h2>
+<p>Making a RNN stateful means that the states for the samples of each batch will be reused as initial states for the samples in the next batch.</p>
+<p>When using stateful RNNs, it is therefore assumed that:</p>
+<ul>
+<li>all batches have the same number of samples</li>
+<li>If <code>X1</code> and <code>X2</code> are successive batches of samples, then <code>X2[[i]]</code> is the follow-up sequence to <code>X1[[i]</code>, for every <code>i</code>.</li>
+</ul>
+<p>To use statefulness in RNNs, you need to:</p>
+<ul>
+<li>explicitly specify the batch size you are using, by passing a <code>batch_size</code> argument to the first layer in your model. E.g. <code>batch_size=32</code> for a 32-samples batch of sequences of 10 timesteps with 16 features per timestep.</li>
+<li>set <code>stateful=TRUE</code> in your RNN layer(s).</li>
+<li>specify <code>shuffle=FALSE</code> when calling fit().</li>
+</ul>
+<p>To reset the states accumulated in either a single layer or an entire model use the <code><a href="../reference/reset_states.html">reset_states()</a></code> function.</p>
+<p>Notes that the methods <code><a href="https://www.rdocumentation.org/packages/stats/topics/predict">predict()</a></code>, <code><a href="../reference/reexports.html">fit()</a></code>, <code><a href="../reference/train_on_batch.html">train_on_batch()</a></code>, <code><a href="../reference/predict_proba.html">predict_classes()</a></code>, etc. will <em>all</em> update the states of the stateful layers in a model. This allows you to do not only stateful training, but also stateful prediction.</p>
+</div>
+<div id="how-can-i-remove-a-layer-from-a-sequential-model" class="section level2">
+<h2>How can I remove a layer from a Sequential model?</h2>
+<p>You can remove the last added layer in a Sequential model by calling <code><a href="../reference/pop_layer.html">pop_layer()</a></code>:</p>
+<pre class="sourceCode r"><code class="sourceCode r">model &lt;-<span class="st"> </span><span class="kw"><a href="../reference/keras_model_sequential.html">keras_model_sequential</a></span>()
+model <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw"><a href="../reference/layer_dense.html">layer_dense</a></span>(<span class="dt">units =</span> <span class="dv">32</span>, <span class="dt">activation =</span> <span class="st">'relu'</span>, <span class="dt">input_shape =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="dv">784</span>)) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw"><a href="../reference/layer_dense.html">layer_dense</a></span>(<span class="dt">units =</span> <span class="dv">32</span>, <span class="dt">activation =</span> <span class="st">'relu'</span>) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw"><a href="../reference/layer_dense.html">layer_dense</a></span>(<span class="dt">units =</span> <span class="dv">32</span>, <span class="dt">activation =</span> <span class="st">'relu'</span>)
+
+<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/length">length</a></span>(model<span class="op">$</span>layers)     <span class="co"># "3"</span>
+model <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../reference/pop_layer.html">pop_layer</a></span>()
+<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/length">length</a></span>(model<span class="op">$</span>layers)     <span class="co"># "2"</span></code></pre>
+</div>
+<div id="how-can-i-use-pre-trained-models-in-keras" class="section level2">
+<h2>How can I use pre-trained models in Keras?</h2>
+<p>Code and pre-trained weights are available for the following image classification models:</p>
+<ul>
+<li><a href="https://keras.rstudio.com/reference/application_xception.html">Xception</a></li>
+<li><a href="https://keras.rstudio.com/reference/application_vgg.html">VGG16</a></li>
+<li><a href="https://keras.rstudio.com/reference/application_vgg.html">VGG19</a></li>
+<li><a href="https://keras.rstudio.com/reference/application_resnet50.html">ResNet50</a></li>
+<li><a href="https://keras.rstudio.com/reference/application_inception_v3.html">InceptionV3</a></li>
+<li><a href="https://keras.rstudio.com/reference/application_inception_resnet_v2.html">InceptionResNetV2</a></li>
+<li><a href="https://keras.rstudio.com/reference/application_mobilenet.html">MobileNet</a></li>
+<li><a href="https://keras.rstudio.com/reference/application_mobilenet_v2.html">MobileNetV2</a></li>
+<li><a href="https://keras.rstudio.com/reference/application_densenet.html">DenseNet</a></li>
+<li><a href="https://keras.rstudio.com/reference/application_nasnet.html">NASNet</a></li>
+</ul>
+<p>For example:</p>
+<pre class="sourceCode r"><code class="sourceCode r">model &lt;-<span class="st"> </span><span class="kw"><a href="../reference/application_vgg.html">application_vgg16</a></span>(<span class="dt">weights =</span> <span class="st">'imagenet'</span>, <span class="dt">include_top =</span> <span class="ot">TRUE</span>)</code></pre>
+<p>For a few simple usage examples, see <a href="applications.html">the documentation for the Applications module</a>.</p>
+<p>The VGG16 model is also the basis for the <a href="https://keras.rstudio.com/articles/examples/deep_dream.html">Deep dream</a> Keras example script.</p>
+</div>
+<div id="how-can-i-use-other-keras-backends" class="section level2">
+<h2>How can I use other Keras backends?</h2>
+<p>By default the Keras Python and R packages use the TensorFlow backend. Other available backends include Theano or CNTK. To learn more about using alternatate backends (e.g. Theano or CNTK) see the <a href="backend.html">article on Keras backends</a>.</p>
+</div>
+<div id="how-can-i-use-the-plaidml-backend" class="section level2">
+<h2>How can I use the PlaidML backend?</h2>
+<p><a href="http://vertex.ai/blog/announcing-plaidml">PlaidML</a> is an open source portable deep learning engine that runs on most existing PC hardware with OpenCL-capable GPUs from NVIDIA, AMD, or Intel. PlaidML includes a Keras backend which you can use as described below.</p>
+<p>First, build and install PlaidML as described on the <a href="https://github.com/plaidml/plaidml">project website</a>. You must be sure that PlaidML is correctly installed, setup, and working before proceeding further!</p>
+<p>Then, to use Keras with the PlaidML backend you do the following:</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(keras)
+<span class="kw"><a href="../reference/use_implementation.html">use_backend</a></span>(<span class="st">"plaidml"</span>)</code></pre>
+<p>This should automatically discover and use the Python environment where <code>plaidml</code> and <code>plaidml-keras</code> were installed. If this doesn’t work as expected you can also force the selection of a particular Python environment. For example, if you installed PlaidML in conda environment named “plaidml” you would do this:</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(keras)
+<span class="kw"><a href="../reference/reexports.html">use_condaenv</a></span>(<span class="st">"plaidml"</span>) 
+<span class="kw"><a href="../reference/use_implementation.html">use_backend</a></span>(<span class="st">"plaidml"</span>)</code></pre>
+</div>
+<div id="how-can-i-use-keras-in-another-r-package" class="section level2">
+<h2>How can I use Keras in another R package?</h2>
+<div id="testing-on-cran" class="section level3">
+<h3>Testing on CRAN</h3>
+<p>The main consideration in using Keras within another R package is to ensure that your package can be tested in an environment where Keras is not available (e.g. the CRAN test servers). To do this, arrange for your tests to be skipped when Keras isn’t available using the <code><a href="../reference/is_keras_available.html">is_keras_available()</a></code> function.</p>
+<p>For example, here’s a <a href="http://r-pkgs.had.co.nz/tests.html">testthat</a> utility function that can be used to skip a test when Keras isn’t available:</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># testthat utilty for skipping tests when Keras isn't available</span>
+skip_if_no_keras &lt;-<span class="st"> </span><span class="cf">function</span>(<span class="dt">version =</span> <span class="ot">NULL</span>) {
+  <span class="cf">if</span> (<span class="op">!</span><span class="kw"><a href="../reference/is_keras_available.html">is_keras_available</a></span>(version))
+    <span class="kw">skip</span>(<span class="st">"Required keras version not available for testing"</span>)
+}
+
+<span class="co"># use the function within a test</span>
+<span class="kw">test_that</span>(<span class="st">"keras function works correctly"</span>, {
+  <span class="kw">skip_if_no_keras</span>()
+  <span class="co"># test code here</span>
+})</code></pre>
+<p>You can pass the <code>version</code> argument to check for a specific version of Keras.</p>
+</div>
+<div id="keras-module" class="section level3">
+<h3>Keras Module</h3>
+<p>Another consideration is gaining access to the underlying Keras python module. You might need to do this if you require lower level access to Keras than is provided for by the Keras R package.</p>
+<p>Since the Keras R package can bind to multiple different implementations of Keras (either the original Keras or the TensorFlow implementation of Keras), you should use the <code><a href="../reference/implementation.html">keras::implementation()</a></code> function to obtain access to the correct python module. You can use this function within the <code>.onLoad</code> function of a package to provide global access to the module within your package. For example:</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Keras python module</span>
+keras &lt;-<span class="st"> </span><span class="ot">NULL</span>
+
+<span class="co"># Obtain a reference to the module from the keras R package</span>
+.onLoad &lt;-<span class="st"> </span><span class="cf">function</span>(libname, pkgname) {
+  keras &lt;&lt;-<span class="st"> </span>keras<span class="op">::</span><span class="kw"><a href="../reference/implementation.html">implementation</a></span>() 
+}</code></pre>
+</div>
+<div id="custom-layers" class="section level3">
+<h3>Custom Layers</h3>
+<p>If you create <a href="custom_layers.html">custom layers in R</a> or import other Python packages which include custom Keras layers, be sure to wrap them using the <code><a href="../reference/create_layer.html">create_layer()</a></code> function so that they are composable using the magrittr pipe operator. See the documentation on <a href="custom_layers.html#layer-wrapper-function">layer wrapper functions</a> for additional details.</p>
+</div>
+</div>
+<div id="how-can-i-obtain-reproducible-results-using-keras-during-development" class="section level2">
+<h2>How can I obtain reproducible results using Keras during development?</h2>
+<p>During development of a model, sometimes it is useful to be able to obtain reproducible results from run to run in order to determine if a change in performance is due to an actual model or data modification, or merely a result of a new random sample.</p>
+<p>The <code><a href="../reference/reexports.html">use_session_with_seed()</a></code> function establishes a common random seed for R, Python, NumPy, and TensorFlow. It furthermore disables hash randomization, GPU computations, and CPU parallelization, which can be additional sources of non-reproducibility.</p>
+<p>To use the function, call it immediately after you load the keras package:</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(keras)
+<span class="kw"><a href="../reference/reexports.html">use_session_with_seed</a></span>(<span class="dv">42</span>)
+
+<span class="co"># ...rest of code follows...</span></code></pre>
+<p>This function takes all measures known to promote reproducible results from Keras sessions, however it’s possible that various individual features or libraries used by the backend escape its effects. If you encounter non-reproducible results please investigate the possible sources of the problem. The source code for <code><a href="../reference/reexports.html">use_session_with_seed()</a></code> is here: <a href="https://github.com/rstudio/tensorflow/blob/master/R/seed.R" class="uri">https://github.com/rstudio/tensorflow/blob/master/R/seed.R</a>. Contributions via pull request are very welcome!</p>
+<p>Please note again that <code><a href="../reference/reexports.html">use_session_with_seed()</a></code> disables GPU computations and CPU parallelization by default (as both can lead to non-deterministic computations) so should generally not be used when model training time is paramount. You can re-enable GPU computations and/or CPU parallelism using the <code>disable_gpu</code> and <code>disable_parallel_cpu</code> arguments. For example:</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(keras)
+<span class="kw"><a href="../reference/reexports.html">use_session_with_seed</a></span>(<span class="dv">42</span>, <span class="dt">disable_gpu =</span> <span class="ot">FALSE</span>, <span class="dt">disable_parallel_cpu =</span> <span class="ot">FALSE</span>)</code></pre>
+</div>
+<div id="where-is-the-keras-configuration-filed-stored" class="section level2">
+<h2>Where is the Keras configuration filed stored?</h2>
+<p>The default directory where all Keras data is stored is:</p>
+<pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">~/.keras/</span></code></pre>
+<p>In case Keras cannot create the above directory (e.g. due to permission issues), <code>/tmp/.keras/</code> is used as a backup.</p>
+<p>The Keras configuration file is a JSON file stored at <code>$HOME/.keras/keras.json</code>. The default configuration file looks like this:</p>
+<pre><code>{
+    "image_data_format": "channels_last",
+    "epsilon": 1e-07,
+    "floatx": "float32",
+    "backend": "tensorflow"
+}</code></pre>
+<p>It contains the following fields:</p>
+<ul>
+<li>The image data format to be used as default by image processing layers and utilities (either <code>channels_last</code> or <code>channels_first</code>).</li>
+<li>The <code>epsilon</code> numerical fuzz factor to be used to prevent division by zero in some operations.</li>
+<li>The default float data type.</li>
+<li>The default backend (this will always be “tensorflow” in the R interface to Keras)</li>
+</ul>
+<p>Likewise, cached dataset files, such as those downloaded with <code><a href="../reference/get_file.html">get_file()</a></code>, are stored by default in <code>$HOME/.keras/datasets/</code>.</p>
+</div>

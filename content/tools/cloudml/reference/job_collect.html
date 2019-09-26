@@ -1,0 +1,63 @@
+---
+title: "Collect job output"
+type: docs
+repo: https://github.com/rstudio/cloudml
+menu:
+  main:
+    name: "Collect job output - cloudml"
+    parent: cloudml-reference
+---
+    
+    
+    <p>Collect the job outputs (e.g. fitted model) from a job. If the job has not
+yet finished running, <code>job_collect()</code> will block and wait until the job has
+finished.</p>
+    
+
+    <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>job_collect</span>(<span class='kw'>job</span> <span class='kw'>=</span> <span class='st'>"latest"</span>, <span class='kw'>trials</span> <span class='kw'>=</span> <span class='st'>"best"</span>, <span class='kw'>destination</span> <span class='kw'>=</span> <span class='st'>"runs"</span>,
+  <span class='kw'>timeout</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>view</span> <span class='kw'>=</span> <span class='fu'>interactive</span>())</code></pre></div>
+    
+    <h2 id="arguments">Arguments</h2>
+    <table class="ref-arguments">
+    
+    <colgroup>
+      <col class="name" />
+      <col class="desc" />
+    </colgroup>  
+      
+    <tr>
+      <td>job</td>
+      <td><p>Job name or job object. Pass "latest" to indicate the
+most recently submitted job.</p></td>
+    </tr>
+    <tr>
+      <td>trials</td>
+      <td><p>Under hyperparameter tuning, specifies which trials to
+download. Use <code>"best"</code> to download best trial, <code>"all"</code> to
+download all, or a vector of trials <code>c(1,2)</code> or <code>1</code>.</p></td>
+    </tr>
+    <tr>
+      <td>destination</td>
+      <td><p>The destination directory in which model outputs should
+be downloaded. Defaults to <code>runs</code>.</p></td>
+    </tr>
+    <tr>
+      <td>timeout</td>
+      <td><p>Give up collecting job after the specified minutes.</p></td>
+    </tr>
+    <tr>
+      <td>view</td>
+      <td><p>View the job results after collecting it. You can also pass
+"save" to save a copy of the run report at <code>tfruns.d/view.html</code></p></td>
+    </tr>
+    </table>
+    
+    <h2 id="see-also">See also</h2>
+
+    <div class='dont-index'><p>Other job management functions: <code><a href='job_cancel.html'>job_cancel</a></code>,
+  <code><a href='job_list.html'>job_list</a></code>, <code><a href='job_status.html'>job_status</a></code>,
+  <code><a href='job_stream_logs.html'>job_stream_logs</a></code>, <code><a href='job_trials.html'>job_trials</a></code></p></div>
+    
+
+
+

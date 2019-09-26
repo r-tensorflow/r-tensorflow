@@ -1,0 +1,71 @@
+---
+title: "Save model weights in the SavedModel format"
+type: docs
+repo: https://github.com/rstudio/keras
+menu:
+  main:
+    name: "Save model weights in the SavedModel format - keras"
+    parent: keras-reference
+---
+    
+    
+    <p>Save model weights in the SavedModel format</p>
+    
+
+    <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>save_model_weights_tf</span>(<span class='no'>object</span>, <span class='no'>filepath</span>, <span class='kw'>overwrite</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)
+
+<span class='fu'>load_model_weights_tf</span>(<span class='no'>object</span>, <span class='no'>filepath</span>, <span class='kw'>by_name</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
+  <span class='kw'>skip_mismatch</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>reshape</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)</code></pre></div>
+    
+    <h2 id="arguments">Arguments</h2>
+    <table class="ref-arguments">
+    
+    <colgroup>
+      <col class="name" />
+      <col class="desc" />
+    </colgroup>  
+      
+    <tr>
+      <td>object</td>
+      <td><p>Model object to save/load</p></td>
+    </tr>
+    <tr>
+      <td>filepath</td>
+      <td><p>Path to the file</p></td>
+    </tr>
+    <tr>
+      <td>overwrite</td>
+      <td><p>Whether to silently overwrite any existing
+file at the target location</p></td>
+    </tr>
+    <tr>
+      <td>by_name</td>
+      <td><p>Whether to load weights by name or by topological order.</p></td>
+    </tr>
+    <tr>
+      <td>skip_mismatch</td>
+      <td><p>Logical, whether to skip loading of layers
+where there is a mismatch in the number of weights, or a mismatch in the
+shape of the weight (only valid when <code>by_name = FALSE</code>).</p></td>
+    </tr>
+    <tr>
+      <td>reshape</td>
+      <td><p>Reshape weights to fit the layer when the correct number
+of values are present but the shape does not match.</p></td>
+    </tr>
+    </table>
+    
+    <h2 id="details">Details</h2>
+
+    <p>When saving in TensorFlow format, all objects referenced by the network
+are saved in the same format as <code>tf.train.Checkpoint</code>, including any Layer instances
+or Optimizer instances assigned to object attributes. For networks constructed from
+inputs and outputs using <code>tf.keras.Model(inputs, outputs)</code>, Layer instances used by
+the network are tracked/saved automatically. For user-defined classes which inherit
+from <code>tf.keras.Model</code>, Layer instances must be assigned to object attributes,
+typically in the constructor.</p>
+<p>See the documentation of <code>tf.train.Checkpoint</code> and <code>tf.keras.Model</code> for details.</p>
+    
+
+
+

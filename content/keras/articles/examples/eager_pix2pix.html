@@ -1,0 +1,452 @@
+---
+title: eager_pix2pix
+type: docs
+repo: https://github.com/rstudio/keras
+menu:
+  main:
+    parent: keras-examples
+---
+
+
+
+<div class="source-ref">
+<p><span class="caption">Source: </span><a href="https://github.com/rstudio/keras/blob/master/vignettes/examples/eager_pix2pix.R" class="uri">https://github.com/rstudio/keras/blob/master/vignettes/examples/eager_pix2pix.R</a></p>
+</div>
+<p>This is the companion code to the post
+“Image-to-image translation with Pix2Pix: An implementation using Keras and eager execution”
+on the TensorFlow for R blog.</p>
+<p><a href="https://blogs.rstudio.com/tensorflow/posts/2018-09-20-eager-pix2pix" class="uri">https://blogs.rstudio.com/tensorflow/posts/2018-09-20-eager-pix2pix</a></p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(keras)
+<span class="kw"><a href="../../reference/use_implementation.html">use_implementation</a></span>(<span class="st">"tensorflow"</span>)
+
+<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(tensorflow)
+
+<span class="kw"><a href="../../../tensorflow/reference/tfe_enable_eager_execution.html">tfe_enable_eager_execution</a></span>(<span class="dt">device_policy =</span> <span class="st">"silent"</span>)
+
+<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(tfdatasets)
+<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(purrr)
+
+restore &lt;-<span class="st"> </span><span class="ot">TRUE</span>
+
+data_dir &lt;-<span class="st"> "facades"</span>
+
+buffer_size &lt;-<span class="st"> </span><span class="dv">400</span>
+batch_size &lt;-<span class="st"> </span><span class="dv">1</span>
+batches_per_epoch &lt;-<span class="st"> </span>buffer_size <span class="op">/</span><span class="st"> </span>batch_size
+img_width &lt;-<span class="st"> </span>256L
+img_height &lt;-<span class="st"> </span>256L
+
+load_image &lt;-<span class="st"> </span><span class="cf">function</span>(image_file, is_train) {
+
+  image &lt;-<span class="st"> </span>tf<span class="op">$</span><span class="kw">read_file</span>(image_file)
+  image &lt;-<span class="st"> </span>tf<span class="op">$</span>image<span class="op">$</span><span class="kw">decode_jpeg</span>(image)
+  
+  w &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/integer">as.integer</a></span>(<span class="kw"><a href="../../reference/k_shape.html">k_shape</a></span>(image)[<span class="dv">2</span>])
+  w2 &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/integer">as.integer</a></span>(w <span class="op">/</span><span class="st"> </span>2L)
+  real_image &lt;-<span class="st"> </span>image[ , 1L<span class="op">:</span>w2, ]
+  input_image &lt;-<span class="st"> </span>image[ , (w2 <span class="op">+</span><span class="st"> </span>1L)<span class="op">:</span>w, ]
+  
+  input_image &lt;-<span class="st"> </span><span class="kw"><a href="../../reference/k_cast.html">k_cast</a></span>(input_image, tf<span class="op">$</span>float32)
+  real_image &lt;-<span class="st"> </span><span class="kw"><a href="../../reference/k_cast.html">k_cast</a></span>(real_image, tf<span class="op">$</span>float32)
+
+  <span class="cf">if</span> (is_train) {
+      input_image &lt;-
+<span class="st">      </span>tf<span class="op">$</span>image<span class="op">$</span><span class="kw">resize_images</span>(input_image,
+                             <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(286L, 286L),
+                             <span class="dt">align_corners =</span> <span class="ot">TRUE</span>,
+                             <span class="dt">method =</span> <span class="dv">2</span>)
+    real_image &lt;-<span class="st"> </span>tf<span class="op">$</span>image<span class="op">$</span><span class="kw">resize_images</span>(real_image,
+                                         <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(286L, 286L),
+                                         <span class="dt">align_corners =</span> <span class="ot">TRUE</span>,
+                                         <span class="dt">method =</span> <span class="dv">2</span>)
+    
+    stacked_image &lt;-
+<span class="st">      </span><span class="kw"><a href="../../reference/k_stack.html">k_stack</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/list">list</a></span>(input_image, real_image), <span class="dt">axis =</span> <span class="dv">1</span>)
+    cropped_image &lt;-
+<span class="st">      </span>tf<span class="op">$</span><span class="kw">random_crop</span>(stacked_image, <span class="dt">size =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(2L, img_height, img_width, 3L))
+    <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(input_image, real_image) <span class="op">%&lt;-%</span><span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/list">list</a></span>(cropped_image[<span class="dv">1</span>, , , ], cropped_image[<span class="dv">2</span>, , , ])
+    
+    <span class="cf">if</span> (<span class="kw"><a href="https://www.rdocumentation.org/packages/stats/topics/Uniform">runif</a></span>(<span class="dv">1</span>) <span class="op">&gt;</span><span class="st"> </span><span class="fl">0.5</span>) {
+      input_image &lt;-<span class="st"> </span>tf<span class="op">$</span>image<span class="op">$</span><span class="kw">flip_left_right</span>(input_image)
+      real_image &lt;-<span class="st"> </span>tf<span class="op">$</span>image<span class="op">$</span><span class="kw">flip_left_right</span>(real_image)
+    }
+  } <span class="cf">else</span> {
+    input_image &lt;-
+<span class="st">      </span>tf<span class="op">$</span>image<span class="op">$</span><span class="kw">resize_images</span>(
+        input_image,
+        <span class="dt">size =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(img_height, img_width),
+        <span class="dt">align_corners =</span> <span class="ot">TRUE</span>,
+        <span class="dt">method =</span> <span class="dv">2</span>
+      )
+    real_image &lt;-
+<span class="st">      </span>tf<span class="op">$</span>image<span class="op">$</span><span class="kw">resize_images</span>(
+        real_image,
+        <span class="dt">size =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(img_height, img_width),
+        <span class="dt">align_corners =</span> <span class="ot">TRUE</span>,
+        <span class="dt">method =</span> <span class="dv">2</span>
+      )
+  }
+  
+  input_image &lt;-<span class="st"> </span>(input_image <span class="op">/</span><span class="st"> </span><span class="fl">127.5</span>) <span class="op">-</span><span class="st"> </span><span class="dv">1</span>
+  real_image &lt;-<span class="st"> </span>(real_image <span class="op">/</span><span class="st"> </span><span class="fl">127.5</span>) <span class="op">-</span><span class="st"> </span><span class="dv">1</span>
+  
+  <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/list">list</a></span>(input_image, real_image)
+}
+
+train_dataset &lt;-
+<span class="st">  </span>tf<span class="op">$</span>data<span class="op">$</span>Dataset<span class="op">$</span><span class="kw">list_files</span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/file.path">file.path</a></span>(data_dir, <span class="st">"train/*.jpg"</span>)) <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw"><a href="../../../tools/tfdatasets/reference/dataset_shuffle.html">dataset_shuffle</a></span>(buffer_size) <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw"><a href="../../../tools/tfdatasets/reference/dataset_map.html">dataset_map</a></span>(<span class="cf">function</span>(image)
+    tf<span class="op">$</span><span class="kw">py_func</span>(load_image, <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/list">list</a></span>(image, <span class="ot">TRUE</span>), <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/list">list</a></span>(tf<span class="op">$</span>float32, tf<span class="op">$</span>float32))) <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw"><a href="../../../tools/tfdatasets/reference/dataset_batch.html">dataset_batch</a></span>(batch_size)
+
+test_dataset &lt;-
+<span class="st">  </span>tf<span class="op">$</span>data<span class="op">$</span>Dataset<span class="op">$</span><span class="kw">list_files</span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/file.path">file.path</a></span>(data_dir, <span class="st">"test/*.jpg"</span>)) <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw"><a href="../../../tools/tfdatasets/reference/dataset_map.html">dataset_map</a></span>(<span class="cf">function</span>(image)
+    tf<span class="op">$</span><span class="kw">py_func</span>(load_image, <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/list">list</a></span>(image, <span class="ot">TRUE</span>), <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/list">list</a></span>(tf<span class="op">$</span>float32, tf<span class="op">$</span>float32))) <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw"><a href="../../../tools/tfdatasets/reference/dataset_batch.html">dataset_batch</a></span>(batch_size)
+
+
+downsample &lt;-<span class="st"> </span><span class="cf">function</span>(filters,
+                       size,
+                       <span class="dt">apply_batchnorm =</span> <span class="ot">TRUE</span>,
+                       <span class="dt">name =</span> <span class="st">"downsample"</span>) {
+  <span class="kw"><a href="../../reference/keras_model_custom.html">keras_model_custom</a></span>(<span class="dt">name =</span> name, <span class="cf">function</span>(self) {
+    self<span class="op">$</span>apply_batchnorm &lt;-<span class="st"> </span>apply_batchnorm
+    self<span class="op">$</span>conv1 &lt;-<span class="st"> </span><span class="kw"><a href="../../reference/layer_conv_2d.html">layer_conv_2d</a></span>(
+      <span class="dt">filters =</span> filters,
+      <span class="dt">kernel_size =</span> size,
+      <span class="dt">strides =</span> <span class="dv">2</span>,
+      <span class="dt">padding =</span> <span class="st">'same'</span>,
+      <span class="dt">kernel_initializer =</span> <span class="kw"><a href="../../reference/initializer_random_normal.html">initializer_random_normal</a></span>(<span class="dv">0</span>, <span class="fl">0.2</span>),
+      <span class="dt">use_bias =</span> <span class="ot">FALSE</span>
+    )
+    <span class="cf">if</span> (self<span class="op">$</span>apply_batchnorm) {
+      self<span class="op">$</span>batchnorm &lt;-<span class="st"> </span><span class="kw"><a href="../../reference/layer_batch_normalization.html">layer_batch_normalization</a></span>()
+    }
+    
+    <span class="cf">function</span>(x,
+             <span class="dt">mask =</span> <span class="ot">NULL</span>,
+             <span class="dt">training =</span> <span class="ot">TRUE</span>) {
+      x &lt;-<span class="st"> </span>self<span class="op">$</span><span class="kw">conv1</span>(x)
+      <span class="cf">if</span> (self<span class="op">$</span>apply_batchnorm) {
+        x <span class="op">%&gt;%</span><span class="st"> </span>self<span class="op">$</span><span class="kw">batchnorm</span>(<span class="dt">training =</span> training)
+      }
+      <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/cat">cat</a></span>(<span class="st">"downsample (generator) output: "</span>, x<span class="op">$</span>shape<span class="op">$</span><span class="kw">as_list</span>(), <span class="st">"</span><span class="ch">\n</span><span class="st">"</span>)
+      x <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../../reference/layer_activation_leaky_relu.html">layer_activation_leaky_relu</a></span>()
+    }
+    
+  })
+}
+
+upsample &lt;-<span class="st"> </span><span class="cf">function</span>(filters,
+                     size,
+                     <span class="dt">apply_dropout =</span> <span class="ot">FALSE</span>,
+                     <span class="dt">name =</span> <span class="st">"upsample"</span>) {
+  <span class="kw"><a href="../../reference/keras_model_custom.html">keras_model_custom</a></span>(<span class="dt">name =</span> <span class="ot">NULL</span>, <span class="cf">function</span>(self) {
+    self<span class="op">$</span>apply_dropout &lt;-<span class="st"> </span>apply_dropout
+    self<span class="op">$</span>up_conv &lt;-<span class="st"> </span><span class="kw"><a href="../../reference/layer_conv_2d_transpose.html">layer_conv_2d_transpose</a></span>(
+      <span class="dt">filters =</span> filters,
+      <span class="dt">kernel_size =</span> size,
+      <span class="dt">strides =</span> <span class="dv">2</span>,
+      <span class="dt">padding =</span> <span class="st">"same"</span>,
+      <span class="dt">kernel_initializer =</span> <span class="kw"><a href="../../reference/initializer_random_normal.html">initializer_random_normal</a></span>(),
+      <span class="dt">use_bias =</span> <span class="ot">FALSE</span>
+    )
+    self<span class="op">$</span>batchnorm &lt;-<span class="st"> </span><span class="kw"><a href="../../reference/layer_batch_normalization.html">layer_batch_normalization</a></span>()
+    <span class="cf">if</span> (self<span class="op">$</span>apply_dropout) {
+      self<span class="op">$</span>dropout &lt;-<span class="st"> </span><span class="kw"><a href="../../reference/layer_dropout.html">layer_dropout</a></span>(<span class="dt">rate =</span> <span class="fl">0.5</span>)
+    }
+    <span class="cf">function</span>(xs,
+             <span class="dt">mask =</span> <span class="ot">NULL</span>,
+             <span class="dt">training =</span> <span class="ot">TRUE</span>) {
+      <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(x1, x2) <span class="op">%&lt;-%</span><span class="st"> </span>xs
+      x &lt;-<span class="st"> </span>self<span class="op">$</span><span class="kw">up_conv</span>(x1) <span class="op">%&gt;%</span><span class="st"> </span>self<span class="op">$</span><span class="kw">batchnorm</span>(<span class="dt">training =</span> training)
+      <span class="cf">if</span> (self<span class="op">$</span>apply_dropout) {
+        x <span class="op">%&gt;%</span><span class="st"> </span>self<span class="op">$</span><span class="kw">dropout</span>(<span class="dt">training =</span> training)
+      }
+      x <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../../reference/layer_activation.html">layer_activation</a></span>(<span class="st">"relu"</span>)
+      concat &lt;-<span class="st"> </span><span class="kw"><a href="../../reference/k_concatenate.html">k_concatenate</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/list">list</a></span>(x, x2))
+      <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/cat">cat</a></span>(<span class="st">"upsample (generator) output: "</span>, concat<span class="op">$</span>shape<span class="op">$</span><span class="kw">as_list</span>(), <span class="st">"</span><span class="ch">\n</span><span class="st">"</span>)
+      concat
+    }
+  })
+}
+
+generator &lt;-<span class="st"> </span><span class="cf">function</span>(<span class="dt">name =</span> <span class="st">"generator"</span>) {
+  <span class="kw"><a href="../../reference/keras_model_custom.html">keras_model_custom</a></span>(<span class="dt">name =</span> name, <span class="cf">function</span>(self) {
+    self<span class="op">$</span>down1 &lt;-<span class="st"> </span><span class="kw">downsample</span>(<span class="dv">64</span>, <span class="dv">4</span>, <span class="dt">apply_batchnorm =</span> <span class="ot">FALSE</span>)
+    self<span class="op">$</span>down2 &lt;-<span class="st"> </span><span class="kw">downsample</span>(<span class="dv">128</span>, <span class="dv">4</span>)
+    self<span class="op">$</span>down3 &lt;-<span class="st"> </span><span class="kw">downsample</span>(<span class="dv">256</span>, <span class="dv">4</span>)
+    self<span class="op">$</span>down4 &lt;-<span class="st"> </span><span class="kw">downsample</span>(<span class="dv">512</span>, <span class="dv">4</span>)
+    self<span class="op">$</span>down5 &lt;-<span class="st"> </span><span class="kw">downsample</span>(<span class="dv">512</span>, <span class="dv">4</span>)
+    self<span class="op">$</span>down6 &lt;-<span class="st"> </span><span class="kw">downsample</span>(<span class="dv">512</span>, <span class="dv">4</span>)
+    self<span class="op">$</span>down7 &lt;-<span class="st"> </span><span class="kw">downsample</span>(<span class="dv">512</span>, <span class="dv">4</span>)
+    self<span class="op">$</span>down8 &lt;-<span class="st"> </span><span class="kw">downsample</span>(<span class="dv">512</span>, <span class="dv">4</span>)
+    
+    self<span class="op">$</span>up1 &lt;-<span class="st"> </span><span class="kw">upsample</span>(<span class="dv">512</span>, <span class="dv">4</span>, <span class="dt">apply_dropout =</span> <span class="ot">TRUE</span>)
+    self<span class="op">$</span>up2 &lt;-<span class="st"> </span><span class="kw">upsample</span>(<span class="dv">512</span>, <span class="dv">4</span>, <span class="dt">apply_dropout =</span> <span class="ot">TRUE</span>)
+    self<span class="op">$</span>up3 &lt;-<span class="st"> </span><span class="kw">upsample</span>(<span class="dv">512</span>, <span class="dv">4</span>, <span class="dt">apply_dropout =</span> <span class="ot">TRUE</span>)
+    self<span class="op">$</span>up4 &lt;-<span class="st"> </span><span class="kw">upsample</span>(<span class="dv">512</span>, <span class="dv">4</span>)
+    self<span class="op">$</span>up5 &lt;-<span class="st"> </span><span class="kw">upsample</span>(<span class="dv">256</span>, <span class="dv">4</span>)
+    self<span class="op">$</span>up6 &lt;-<span class="st"> </span><span class="kw">upsample</span>(<span class="dv">128</span>, <span class="dv">4</span>)
+    self<span class="op">$</span>up7 &lt;-<span class="st"> </span><span class="kw">upsample</span>(<span class="dv">64</span>, <span class="dv">4</span>)
+    self<span class="op">$</span>last &lt;-<span class="st"> </span><span class="kw"><a href="../../reference/layer_conv_2d_transpose.html">layer_conv_2d_transpose</a></span>(
+      <span class="dt">filters =</span> <span class="dv">3</span>,
+      <span class="dt">kernel_size =</span> <span class="dv">4</span>,
+      <span class="dt">strides =</span> <span class="dv">2</span>,
+      <span class="dt">padding =</span> <span class="st">"same"</span>,
+      <span class="dt">kernel_initializer =</span> <span class="kw"><a href="../../reference/initializer_random_normal.html">initializer_random_normal</a></span>(<span class="dv">0</span>, <span class="fl">0.2</span>),
+      <span class="dt">activation =</span> <span class="st">"tanh"</span>
+    )
+    
+    <span class="cf">function</span>(x,
+             <span class="dt">mask =</span> <span class="ot">NULL</span>,
+             <span class="dt">training =</span> <span class="ot">TRUE</span>) {
+      <span class="co"># x shape == (bs, 256, 256, 3)</span>
+      x1 &lt;-
+<span class="st">        </span>x <span class="op">%&gt;%</span><span class="st"> </span>self<span class="op">$</span><span class="kw">down1</span>(<span class="dt">training =</span> training)  <span class="co"># (bs, 128, 128, 64)</span>
+      x2 &lt;-<span class="st"> </span>self<span class="op">$</span><span class="kw">down2</span>(x1, <span class="dt">training =</span> training) <span class="co"># (bs, 64, 64, 128)</span>
+      x3 &lt;-<span class="st"> </span>self<span class="op">$</span><span class="kw">down3</span>(x2, <span class="dt">training =</span> training) <span class="co"># (bs, 32, 32, 256)</span>
+      x4 &lt;-<span class="st"> </span>self<span class="op">$</span><span class="kw">down4</span>(x3, <span class="dt">training =</span> training) <span class="co"># (bs, 16, 16, 512)</span>
+      x5 &lt;-<span class="st"> </span>self<span class="op">$</span><span class="kw">down5</span>(x4, <span class="dt">training =</span> training) <span class="co"># (bs, 8, 8, 512)</span>
+      x6 &lt;-<span class="st"> </span>self<span class="op">$</span><span class="kw">down6</span>(x5, <span class="dt">training =</span> training) <span class="co"># (bs, 4, 4, 512)</span>
+      x7 &lt;-<span class="st"> </span>self<span class="op">$</span><span class="kw">down7</span>(x6, <span class="dt">training =</span> training) <span class="co"># (bs, 2, 2, 512)</span>
+      x8 &lt;-<span class="st"> </span>self<span class="op">$</span><span class="kw">down8</span>(x7, <span class="dt">training =</span> training) <span class="co"># (bs, 1, 1, 512)</span>
+
+      x9 &lt;-
+<span class="st">        </span>self<span class="op">$</span><span class="kw">up1</span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/list">list</a></span>(x8, x7), <span class="dt">training =</span> training) <span class="co"># (bs, 2, 2, 1024)</span>
+      x10 &lt;-
+<span class="st">        </span>self<span class="op">$</span><span class="kw">up2</span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/list">list</a></span>(x9, x6), <span class="dt">training =</span> training) <span class="co"># (bs, 4, 4, 1024)</span>
+      x11 &lt;-
+<span class="st">        </span>self<span class="op">$</span><span class="kw">up3</span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/list">list</a></span>(x10, x5), <span class="dt">training =</span> training) <span class="co"># (bs, 8, 8, 1024)</span>
+      x12 &lt;-
+<span class="st">        </span>self<span class="op">$</span><span class="kw">up4</span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/list">list</a></span>(x11, x4), <span class="dt">training =</span> training) <span class="co"># (bs, 16, 16, 1024)</span>
+      x13 &lt;-
+<span class="st">        </span>self<span class="op">$</span><span class="kw">up5</span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/list">list</a></span>(x12, x3), <span class="dt">training =</span> training) <span class="co"># (bs, 32, 32, 512)</span>
+      x14 &lt;-
+<span class="st">        </span>self<span class="op">$</span><span class="kw">up6</span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/list">list</a></span>(x13, x2), <span class="dt">training =</span> training) <span class="co"># (bs, 64, 64, 256)</span>
+      x15 &lt;-
+<span class="st">        </span>self<span class="op">$</span><span class="kw">up7</span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/list">list</a></span>(x14, x1), <span class="dt">training =</span> training) <span class="co"># (bs, 128, 128, 128)</span>
+      x16 &lt;-<span class="st"> </span>self<span class="op">$</span><span class="kw">last</span>(x15) <span class="co"># (bs, 256, 256, 3)</span>
+      <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/cat">cat</a></span>(<span class="st">"generator output: "</span>, x16<span class="op">$</span>shape<span class="op">$</span><span class="kw">as_list</span>(), <span class="st">"</span><span class="ch">\n</span><span class="st">"</span>)
+      x16
+    }
+  })
+}
+
+
+disc_downsample &lt;-<span class="st"> </span><span class="cf">function</span>(filters,
+                            size,
+                            <span class="dt">apply_batchnorm =</span> <span class="ot">TRUE</span>,
+                            <span class="dt">name =</span> <span class="st">"disc_downsample"</span>) {
+  <span class="kw"><a href="../../reference/keras_model_custom.html">keras_model_custom</a></span>(<span class="dt">name =</span> name, <span class="cf">function</span>(self) {
+    self<span class="op">$</span>apply_batchnorm &lt;-<span class="st"> </span>apply_batchnorm
+    self<span class="op">$</span>conv1 &lt;-<span class="st"> </span><span class="kw"><a href="../../reference/layer_conv_2d.html">layer_conv_2d</a></span>(
+      <span class="dt">filters =</span> filters,
+      <span class="dt">kernel_size =</span> size,
+      <span class="dt">strides =</span> <span class="dv">2</span>,
+      <span class="dt">padding =</span> <span class="st">'same'</span>,
+      <span class="dt">kernel_initializer =</span> <span class="kw"><a href="../../reference/initializer_random_normal.html">initializer_random_normal</a></span>(<span class="dv">0</span>, <span class="fl">0.2</span>),
+      <span class="dt">use_bias =</span> <span class="ot">FALSE</span>
+    )
+    <span class="cf">if</span> (self<span class="op">$</span>apply_batchnorm) {
+      self<span class="op">$</span>batchnorm &lt;-<span class="st"> </span><span class="kw"><a href="../../reference/layer_batch_normalization.html">layer_batch_normalization</a></span>()
+    }
+    
+    <span class="cf">function</span>(x,
+             <span class="dt">mask =</span> <span class="ot">NULL</span>,
+             <span class="dt">training =</span> <span class="ot">TRUE</span>) {
+      x &lt;-<span class="st"> </span>self<span class="op">$</span><span class="kw">conv1</span>(x)
+      <span class="cf">if</span> (self<span class="op">$</span>apply_batchnorm) {
+        x <span class="op">%&gt;%</span><span class="st"> </span>self<span class="op">$</span><span class="kw">batchnorm</span>(<span class="dt">training =</span> training)
+      }
+      x <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../../reference/layer_activation_leaky_relu.html">layer_activation_leaky_relu</a></span>()
+    }
+    
+  })
+}
+
+discriminator &lt;-<span class="st"> </span><span class="cf">function</span>(<span class="dt">name =</span> <span class="st">"discriminator"</span>) {
+  <span class="kw"><a href="../../reference/keras_model_custom.html">keras_model_custom</a></span>(<span class="dt">name =</span> name, <span class="cf">function</span>(self) {
+    self<span class="op">$</span>down1 &lt;-<span class="st"> </span><span class="kw">disc_downsample</span>(<span class="dv">64</span>, <span class="dv">4</span>, <span class="ot">FALSE</span>)
+    self<span class="op">$</span>down2 &lt;-<span class="st"> </span><span class="kw">disc_downsample</span>(<span class="dv">128</span>, <span class="dv">4</span>)
+    self<span class="op">$</span>down3 &lt;-<span class="st"> </span><span class="kw">disc_downsample</span>(<span class="dv">256</span>, <span class="dv">4</span>)
+    <span class="co"># we are zero padding here with 1 because we need our shape to</span>
+    <span class="co"># go from (batch_size, 32, 32, 256) to (batch_size, 31, 31, 512)</span>
+    self<span class="op">$</span>zero_pad1 &lt;-<span class="st"> </span><span class="kw"><a href="../../reference/layer_zero_padding_2d.html">layer_zero_padding_2d</a></span>()
+    self<span class="op">$</span>conv &lt;-<span class="st"> </span><span class="kw"><a href="../../reference/layer_conv_2d.html">layer_conv_2d</a></span>(
+      <span class="dt">filters =</span> <span class="dv">512</span>,
+      <span class="dt">kernel_size =</span> <span class="dv">4</span>,
+      <span class="dt">strides =</span> <span class="dv">1</span>,
+      <span class="dt">kernel_initializer =</span> <span class="kw"><a href="../../reference/initializer_random_normal.html">initializer_random_normal</a></span>(),
+      <span class="dt">use_bias =</span> <span class="ot">FALSE</span>
+    )
+    self<span class="op">$</span>batchnorm &lt;-<span class="st"> </span><span class="kw"><a href="../../reference/layer_batch_normalization.html">layer_batch_normalization</a></span>()
+    self<span class="op">$</span>zero_pad2 &lt;-<span class="st"> </span><span class="kw"><a href="../../reference/layer_zero_padding_2d.html">layer_zero_padding_2d</a></span>()
+    self<span class="op">$</span>last &lt;-<span class="st"> </span><span class="kw"><a href="../../reference/layer_conv_2d.html">layer_conv_2d</a></span>(
+      <span class="dt">filters =</span> <span class="dv">1</span>,
+      <span class="dt">kernel_size =</span> <span class="dv">4</span>,
+      <span class="dt">strides =</span> <span class="dv">1</span>,
+      <span class="dt">kernel_initializer =</span> <span class="kw"><a href="../../reference/initializer_random_normal.html">initializer_random_normal</a></span>()
+    )
+    
+    <span class="cf">function</span>(x,
+             y,
+             <span class="dt">mask =</span> <span class="ot">NULL</span>,
+             <span class="dt">training =</span> <span class="ot">TRUE</span>) {
+      x &lt;-<span class="st"> </span><span class="kw"><a href="../../reference/k_concatenate.html">k_concatenate</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/list">list</a></span>(x, y)) <span class="op">%&gt;%</span><span class="st"> </span><span class="co"># (bs, 256, 256, channels*2)</span>
+<span class="st">        </span>self<span class="op">$</span><span class="kw">down1</span>(<span class="dt">training =</span> training) <span class="op">%&gt;%</span><span class="st"> </span><span class="co"># (bs, 128, 128, 64)</span>
+<span class="st">        </span>self<span class="op">$</span><span class="kw">down2</span>(<span class="dt">training =</span> training) <span class="op">%&gt;%</span><span class="st"> </span><span class="co"># (bs, 64, 64, 128)</span>
+<span class="st">        </span>self<span class="op">$</span><span class="kw">down3</span>(<span class="dt">training =</span> training) <span class="op">%&gt;%</span><span class="st"> </span><span class="co"># (bs, 32, 32, 256)</span>
+<span class="st">        </span>self<span class="op">$</span><span class="kw">zero_pad1</span>() <span class="op">%&gt;%</span><span class="st"> </span><span class="co"># (bs, 34, 34, 256)</span>
+<span class="st">        </span>self<span class="op">$</span><span class="kw">conv</span>() <span class="op">%&gt;%</span><span class="st"> </span><span class="co"># (bs, 31, 31, 512)</span>
+<span class="st">        </span>self<span class="op">$</span><span class="kw">batchnorm</span>(<span class="dt">training =</span> training) <span class="op">%&gt;%</span>
+<span class="st">        </span><span class="kw"><a href="../../reference/layer_activation_leaky_relu.html">layer_activation_leaky_relu</a></span>() <span class="op">%&gt;%</span>
+<span class="st">        </span>self<span class="op">$</span><span class="kw">zero_pad2</span>() <span class="op">%&gt;%</span><span class="st"> </span><span class="co"># (bs, 33, 33, 512)</span>
+<span class="st">        </span>self<span class="op">$</span><span class="kw">last</span>() <span class="co"># (bs, 30, 30, 1)</span>
+      <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/cat">cat</a></span>(<span class="st">"discriminator output: "</span>, x<span class="op">$</span>shape<span class="op">$</span><span class="kw">as_list</span>(), <span class="st">"</span><span class="ch">\n</span><span class="st">"</span>)
+      x
+    }
+  })
+  
+}
+
+generator &lt;-<span class="st"> </span><span class="kw">generator</span>()
+discriminator &lt;-<span class="st"> </span><span class="kw">discriminator</span>()
+
+generator<span class="op">$</span>call =<span class="st"> </span>tf<span class="op">$</span>contrib<span class="op">$</span>eager<span class="op">$</span><span class="kw">defun</span>(generator<span class="op">$</span>call)
+discriminator<span class="op">$</span>call =<span class="st"> </span>tf<span class="op">$</span>contrib<span class="op">$</span>eager<span class="op">$</span><span class="kw">defun</span>(discriminator<span class="op">$</span>call)
+
+discriminator_loss &lt;-<span class="st"> </span><span class="cf">function</span>(real_output, generated_output) {
+  real_loss &lt;-
+<span class="st">    </span>tf<span class="op">$</span>losses<span class="op">$</span><span class="kw">sigmoid_cross_entropy</span>(<span class="dt">multi_class_labels =</span> tf<span class="op">$</span><span class="kw">ones_like</span>(real_output),
+                                    <span class="dt">logits =</span> real_output)
+  generated_loss &lt;-
+<span class="st">    </span>tf<span class="op">$</span>losses<span class="op">$</span><span class="kw">sigmoid_cross_entropy</span>(<span class="dt">multi_class_labels =</span> tf<span class="op">$</span><span class="kw">zeros_like</span>(generated_output),
+                                    <span class="dt">logits =</span> generated_output)
+  real_loss <span class="op">+</span><span class="st"> </span>generated_loss
+}
+
+lambda &lt;-<span class="st"> </span><span class="dv">100</span>
+generator_loss &lt;-
+<span class="st">  </span><span class="cf">function</span>(disc_judgment, generated_output, target) {
+    gan_loss &lt;-
+<span class="st">      </span>tf<span class="op">$</span>losses<span class="op">$</span><span class="kw">sigmoid_cross_entropy</span>(tf<span class="op">$</span><span class="kw">ones_like</span>(disc_judgment), disc_judgment)
+    l1_loss &lt;-<span class="st"> </span>tf<span class="op">$</span><span class="kw">reduce_mean</span>(tf<span class="op">$</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/MathFun">abs</a></span>(target <span class="op">-</span><span class="st"> </span>generated_output))
+    gan_loss <span class="op">+</span><span class="st"> </span>(lambda <span class="op">*</span><span class="st"> </span>l1_loss)
+  }
+
+discriminator_optimizer &lt;-<span class="st"> </span>tf<span class="op">$</span>train<span class="op">$</span><span class="kw">AdamOptimizer</span>(<span class="fl">2e-4</span>, <span class="dt">beta1 =</span> <span class="fl">0.5</span>)
+generator_optimizer &lt;-<span class="st"> </span>tf<span class="op">$</span>train<span class="op">$</span><span class="kw">AdamOptimizer</span>(<span class="fl">2e-4</span>, <span class="dt">beta1 =</span> <span class="fl">0.5</span>)
+
+checkpoint_dir &lt;-<span class="st"> "./checkpoints_pix2pix"</span>
+checkpoint_prefix &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/file.path">file.path</a></span>(checkpoint_dir, <span class="st">"ckpt"</span>)
+checkpoint &lt;-
+<span class="st">  </span>tf<span class="op">$</span>train<span class="op">$</span><span class="kw">Checkpoint</span>(
+    <span class="dt">generator_optimizer =</span> generator_optimizer,
+    <span class="dt">discriminator_optimizer =</span> discriminator_optimizer,
+    <span class="dt">generator =</span> generator,
+    <span class="dt">discriminator =</span> discriminator
+  )
+
+generate_images &lt;-<span class="st"> </span><span class="cf">function</span>(generator, input, target, id) {
+  prediction &lt;-<span class="st"> </span><span class="kw">generator</span>(input, <span class="dt">training =</span> <span class="ot">TRUE</span>)
+  <span class="kw"><a href="https://www.rdocumentation.org/packages/grDevices/topics/png">png</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/paste">paste0</a></span>(<span class="st">"pix2pix_"</span>, id, <span class="st">".png"</span>), <span class="dt">width =</span> <span class="dv">900</span>, <span class="dt">height =</span> <span class="dv">300</span>)
+  <span class="kw"><a href="https://www.rdocumentation.org/packages/graphics/topics/par">par</a></span>(<span class="dt">mfcol =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="dv">1</span>, <span class="dv">3</span>))
+  <span class="kw"><a href="https://www.rdocumentation.org/packages/graphics/topics/par">par</a></span>(<span class="dt">mar =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>),
+      <span class="dt">xaxs =</span> <span class="st">'i'</span>,
+      <span class="dt">yaxs =</span> <span class="st">'i'</span>)
+  input &lt;-<span class="st"> </span>input[<span class="dv">1</span>, , ,]<span class="op">$</span><span class="kw">numpy</span>() <span class="op">*</span><span class="st"> </span><span class="fl">0.5</span> <span class="op">+</span><span class="st"> </span><span class="fl">0.5</span>
+  input[input <span class="op">&gt;</span><span class="st"> </span><span class="dv">1</span>] &lt;-<span class="st"> </span><span class="dv">1</span>
+  input[input <span class="op">&lt;</span><span class="st"> </span><span class="dv">0</span>] &lt;-<span class="st"> </span><span class="dv">0</span>
+  <span class="kw"><a href="https://www.rdocumentation.org/packages/graphics/topics/plot">plot</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/grDevices/topics/as.raster">as.raster</a></span>(input, <span class="dt">main =</span> <span class="st">"input image"</span>))
+  target &lt;-<span class="st"> </span>target[<span class="dv">1</span>, , ,]<span class="op">$</span><span class="kw">numpy</span>() <span class="op">*</span><span class="st"> </span><span class="fl">0.5</span> <span class="op">+</span><span class="st"> </span><span class="fl">0.5</span>
+  target[target <span class="op">&gt;</span><span class="st"> </span><span class="dv">1</span>] &lt;-<span class="st"> </span><span class="dv">1</span>
+  target[target <span class="op">&lt;</span><span class="st"> </span><span class="dv">0</span>] &lt;-<span class="st"> </span><span class="dv">0</span>
+  <span class="kw"><a href="https://www.rdocumentation.org/packages/graphics/topics/plot">plot</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/grDevices/topics/as.raster">as.raster</a></span>(target, <span class="dt">main =</span> <span class="st">"ground truth"</span>))
+  prediction &lt;-<span class="st"> </span>prediction[<span class="dv">1</span>, , ,]<span class="op">$</span><span class="kw">numpy</span>() <span class="op">*</span><span class="st"> </span><span class="fl">0.5</span> <span class="op">+</span><span class="st"> </span><span class="fl">0.5</span>
+  prediction[prediction <span class="op">&gt;</span><span class="st"> </span><span class="dv">1</span>] &lt;-<span class="st"> </span><span class="dv">1</span>
+  prediction[prediction <span class="op">&lt;</span><span class="st"> </span><span class="dv">0</span>] &lt;-<span class="st"> </span><span class="dv">0</span>
+  <span class="kw"><a href="https://www.rdocumentation.org/packages/graphics/topics/plot">plot</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/grDevices/topics/as.raster">as.raster</a></span>(prediction, <span class="dt">main =</span> <span class="st">"generated"</span>))
+  <span class="kw"><a href="https://www.rdocumentation.org/packages/grDevices/topics/dev">dev.off</a></span>()
+}
+
+train &lt;-<span class="st"> </span><span class="cf">function</span>(dataset, num_epochs) {
+  <span class="cf">for</span> (epoch <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span>num_epochs) {
+    total_loss_gen &lt;-<span class="st"> </span><span class="dv">0</span>
+    total_loss_disc &lt;-<span class="st"> </span><span class="dv">0</span>
+    iter &lt;-<span class="st"> </span><span class="kw"><a href="../../../tools/tfdatasets/reference/make-iterator.html">make_iterator_one_shot</a></span>(train_dataset)
+    
+    <span class="kw"><a href="../../../tools/tfdatasets/reference/until_out_of_range.html">until_out_of_range</a></span>({
+      batch &lt;-<span class="st"> </span><span class="kw"><a href="../../../tools/tfdatasets/reference/iterator_get_next.html">iterator_get_next</a></span>(iter)
+      input_image &lt;-<span class="st"> </span>batch[[<span class="dv">1</span>]]
+      target &lt;-<span class="st"> </span>batch[[<span class="dv">2</span>]]
+      
+      <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/with">with</a></span>(tf<span class="op">$</span><span class="kw">GradientTape</span>() <span class="op">%as%</span><span class="st"> </span>gen_tape, {
+        <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/with">with</a></span>(tf<span class="op">$</span><span class="kw">GradientTape</span>() <span class="op">%as%</span><span class="st"> </span>disc_tape, {
+          gen_output &lt;-<span class="st"> </span><span class="kw">generator</span>(input_image, <span class="dt">training =</span> <span class="ot">TRUE</span>)
+          disc_real_output &lt;-
+<span class="st">            </span><span class="kw">discriminator</span>(input_image, target, <span class="dt">training =</span> <span class="ot">TRUE</span>)
+          disc_generated_output &lt;-
+<span class="st">            </span><span class="kw">discriminator</span>(input_image, gen_output, <span class="dt">training =</span> <span class="ot">TRUE</span>)
+          gen_loss &lt;-
+<span class="st">            </span><span class="kw">generator_loss</span>(disc_generated_output, gen_output, target)
+          disc_loss &lt;-
+<span class="st">            </span><span class="kw">discriminator_loss</span>(disc_real_output, disc_generated_output)
+          total_loss_gen &lt;-<span class="st"> </span>total_loss_gen <span class="op">+</span><span class="st"> </span>gen_loss
+          total_loss_disc &lt;-<span class="st"> </span>total_loss_disc <span class="op">+</span><span class="st"> </span>disc_loss
+        })
+      })
+      generator_gradients &lt;-<span class="st"> </span>gen_tape<span class="op">$</span><span class="kw">gradient</span>(gen_loss,
+                                               generator<span class="op">$</span>variables)
+      discriminator_gradients &lt;-<span class="st"> </span>disc_tape<span class="op">$</span><span class="kw">gradient</span>(disc_loss,
+                                                    discriminator<span class="op">$</span>variables)
+      
+      generator_optimizer<span class="op">$</span><span class="kw">apply_gradients</span>(<span class="kw"><a href="https://purrr.tidyverse.org/reference/transpose.html">transpose</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/list">list</a></span>(
+        generator_gradients,
+        generator<span class="op">$</span>variables
+      )))
+      discriminator_optimizer<span class="op">$</span><span class="kw">apply_gradients</span>(<span class="kw"><a href="https://purrr.tidyverse.org/reference/transpose.html">transpose</a></span>(
+        <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/list">list</a></span>(discriminator_gradients,
+             discriminator<span class="op">$</span>variables)
+      ))
+      
+    })
+    <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/cat">cat</a></span>(<span class="st">"Epoch "</span>, epoch, <span class="st">"</span><span class="ch">\n</span><span class="st">"</span>)
+    <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/cat">cat</a></span>(<span class="st">"Generator loss: "</span>,
+        total_loss_gen<span class="op">$</span><span class="kw">numpy</span>() <span class="op">/</span><span class="st"> </span>batches_per_epoch,
+        <span class="st">"</span><span class="ch">\n</span><span class="st">"</span>)
+    <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/cat">cat</a></span>(<span class="st">"Discriminator loss: "</span>,
+        total_loss_disc<span class="op">$</span><span class="kw">numpy</span>() <span class="op">/</span><span class="st"> </span>batches_per_epoch,
+        <span class="st">"</span><span class="ch">\n\n</span><span class="st">"</span>)
+    <span class="cf">if</span> (epoch <span class="op">%%</span><span class="st"> </span><span class="dv">10</span> <span class="op">==</span><span class="st"> </span><span class="dv">0</span>) {
+      test_iter &lt;-<span class="st"> </span><span class="kw"><a href="../../../tools/tfdatasets/reference/make-iterator.html">make_iterator_one_shot</a></span>(test_dataset)
+      batch &lt;-<span class="st"> </span><span class="kw"><a href="../../../tools/tfdatasets/reference/iterator_get_next.html">iterator_get_next</a></span>(test_iter)
+      input &lt;-<span class="st"> </span>batch[[<span class="dv">1</span>]]
+      target &lt;-<span class="st"> </span>batch[[<span class="dv">2</span>]]
+      <span class="kw">generate_images</span>(generator, input, target, <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/paste">paste0</a></span>(<span class="st">"epoch_"</span>, i))
+    }
+    <span class="cf">if</span> (epoch <span class="op">%%</span><span class="st"> </span><span class="dv">10</span> <span class="op">==</span><span class="st"> </span><span class="dv">0</span>) {
+      checkpoint<span class="op">$</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/save">save</a></span>(<span class="dt">file_prefix =</span> checkpoint_prefix)
+    }
+    
+  }
+}
+
+<span class="cf">if</span> (<span class="op">!</span>restore) {
+  <span class="kw"><a href="../../../tensorflow/reference/train.html">train</a></span>(train_dataset, <span class="dv">200</span>)
+} 
+
+
+checkpoint<span class="op">$</span><span class="kw">restore</span>(tf<span class="op">$</span>train<span class="op">$</span><span class="kw">latest_checkpoint</span>(checkpoint_dir))
+
+test_iter &lt;-<span class="st"> </span><span class="kw"><a href="../../../tools/tfdatasets/reference/make-iterator.html">make_iterator_one_shot</a></span>(test_dataset)
+i &lt;-<span class="st"> </span><span class="dv">1</span>
+<span class="kw"><a href="../../../tools/tfdatasets/reference/until_out_of_range.html">until_out_of_range</a></span>({
+  batch &lt;-<span class="st"> </span><span class="kw"><a href="../../../tools/tfdatasets/reference/iterator_get_next.html">iterator_get_next</a></span>(test_iter)
+  input &lt;-<span class="st"> </span>batch[[<span class="dv">1</span>]]
+  target &lt;-<span class="st"> </span>batch[[<span class="dv">2</span>]]
+  <span class="kw">generate_images</span>(generator, input, target, <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/paste">paste0</a></span>(<span class="st">"test_"</span>, i))
+  i &lt;-<span class="st"> </span>i <span class="op">+</span><span class="st"> </span><span class="dv">1</span>
+})</code></pre>

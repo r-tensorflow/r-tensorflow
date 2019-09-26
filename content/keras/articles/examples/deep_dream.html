@@ -1,0 +1,178 @@
+---
+title: deep_dream
+type: docs
+repo: https://github.com/rstudio/keras
+menu:
+  main:
+    parent: keras-examples
+---
+
+
+
+<div class="source-ref">
+<p><span class="caption">Source: </span><a href="https://github.com/rstudio/keras/blob/master/vignettes/examples/deep_dream.R" class="uri">https://github.com/rstudio/keras/blob/master/vignettes/examples/deep_dream.R</a></p>
+</div>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(keras)
+
+
+<span class="co"># Utility functions -------------------------------------------------------</span>
+
+<span class="co"># Util function to open, resize, and format pictures into tensors that Inception V3 can process</span>
+preprocess_image &lt;-<span class="st"> </span><span class="cf">function</span>(image_path) {
+  <span class="kw"><a href="../../reference/image_load.html">image_load</a></span>(image_path) <span class="op">%&gt;%</span>
+<span class="st">    </span><span class="kw"><a href="../../reference/image_to_array.html">image_to_array</a></span>() <span class="op">%&gt;%</span>
+<span class="st">    </span><span class="kw"><a href="../../reference/reexports.html">array_reshape</a></span>(<span class="dt">dim =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="dv">1</span>, <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/dim">dim</a></span>(.))) <span class="op">%&gt;%</span>
+<span class="st">    </span><span class="kw"><a href="../../reference/application_inception_v3.html">inception_v3_preprocess_input</a></span>()
+}
+
+<span class="co"># Util function to convert a tensor into a valid image</span>
+deprocess_image &lt;-<span class="st"> </span><span class="cf">function</span>(img) {
+  img &lt;-<span class="st"> </span><span class="kw"><a href="../../reference/reexports.html">array_reshape</a></span>(img, <span class="dt">dim =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/dim">dim</a></span>(img)[[<span class="dv">2</span>]], <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/dim">dim</a></span>(img)[[<span class="dv">3</span>]], <span class="dv">3</span>))
+  <span class="co"># Undoes preprocessing that was performed by `imagenet_preprocess_input`</span>
+  img &lt;-<span class="st"> </span>img <span class="op">/</span><span class="st"> </span><span class="dv">2</span>
+  img &lt;-<span class="st"> </span>img <span class="op">+</span><span class="st"> </span><span class="fl">0.5</span>
+  img &lt;-<span class="st"> </span>img <span class="op">*</span><span class="st"> </span><span class="dv">255</span>
+  
+  dims &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/dim">dim</a></span>(img)
+  img &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/Extremes">pmax</a></span>(<span class="dv">0</span>, <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/Extremes">pmin</a></span>(img, <span class="dv">255</span>))
+  <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/dim">dim</a></span>(img) &lt;-<span class="st"> </span>dims
+  img
+}
+
+resize_img &lt;-<span class="st"> </span><span class="cf">function</span>(img, size) {
+  <span class="kw"><a href="../../reference/image_to_array.html">image_array_resize</a></span>(img, size[[<span class="dv">1</span>]], size[[<span class="dv">2</span>]])
+}
+
+save_img &lt;-<span class="st"> </span><span class="cf">function</span>(img, fname) {
+  img &lt;-<span class="st"> </span><span class="kw">deprocess_image</span>(img)
+  <span class="kw"><a href="../../reference/image_to_array.html">image_array_save</a></span>(img, fname)
+}
+
+
+<span class="co"># Model  ----------------------------------------------</span>
+
+<span class="co"># You won't be training the model, so this command disables all training-specific operations.</span>
+<span class="kw"><a href="../../reference/k_set_learning_phase.html">k_set_learning_phase</a></span>(<span class="dv">0</span>)
+
+<span class="co"># Builds the Inception V3 network, without its convolutional base. The model will be loaded with pretrained ImageNet weights.</span>
+model &lt;-<span class="st"> </span><span class="kw"><a href="../../reference/application_inception_v3.html">application_inception_v3</a></span>(<span class="dt">weights =</span> <span class="st">"imagenet"</span>,
+                                  <span class="dt">include_top =</span> <span class="ot">FALSE</span>)
+
+<span class="co"># Named list mapping layer names to a coefficient quantifying how much the layer's activation contributes to the loss you'll seek to maximize. Note that the layer names are hardcoded in the built-in Inception V3 application. You can list all layer names using `summary(model)`.</span>
+layer_contributions &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/list">list</a></span>(
+  <span class="dt">mixed2 =</span> <span class="fl">0.2</span>,
+  <span class="dt">mixed3 =</span> <span class="dv">3</span>,
+  <span class="dt">mixed4 =</span> <span class="dv">2</span>,
+  <span class="dt">mixed5 =</span> <span class="fl">1.5</span>
+)
+
+<span class="co"># You'll define the loss by adding layer contributions to this scalar variable</span>
+loss &lt;-<span class="st"> </span><span class="kw"><a href="../../reference/k_variable.html">k_variable</a></span>(<span class="dv">0</span>)
+<span class="cf">for</span> (layer_name <span class="cf">in</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/names">names</a></span>(layer_contributions)) {
+  coeff &lt;-<span class="st"> </span>layer_contributions[[layer_name]]
+  <span class="co"># Retrieves the layer's output</span>
+  activation &lt;-<span class="st"> </span><span class="kw"><a href="../../reference/get_layer.html">get_layer</a></span>(model, layer_name)<span class="op">$</span>output
+  scaling &lt;-<span class="st"> </span><span class="kw"><a href="../../reference/k_prod.html">k_prod</a></span>(<span class="kw"><a href="../../reference/k_cast.html">k_cast</a></span>(<span class="kw"><a href="../../reference/k_shape.html">k_shape</a></span>(activation), <span class="st">"float32"</span>))
+  <span class="co"># Retrieves the layer's output</span>
+  loss &lt;-<span class="st"> </span>loss <span class="op">+</span><span class="st"> </span>(coeff <span class="op">*</span><span class="st"> </span><span class="kw"><a href="../../reference/k_sum.html">k_sum</a></span>(<span class="kw"><a href="../../reference/k_square.html">k_square</a></span>(activation)) <span class="op">/</span><span class="st"> </span>scaling)
+}
+
+<span class="co"># Retrieves the layer's output</span>
+dream &lt;-<span class="st"> </span>model<span class="op">$</span>input
+
+<span class="co"># Computes the gradients of the dream with regard to the loss</span>
+grads &lt;-<span class="st"> </span><span class="kw"><a href="../../reference/k_gradients.html">k_gradients</a></span>(loss, dream)[[<span class="dv">1</span>]]
+
+<span class="co"># Normalizes the gradients (important trick)</span>
+grads &lt;-<span class="st"> </span>grads <span class="op">/</span><span class="st"> </span><span class="kw"><a href="../../reference/k_maximum.html">k_maximum</a></span>(<span class="kw"><a href="../../reference/k_mean.html">k_mean</a></span>(<span class="kw"><a href="../../reference/k_abs.html">k_abs</a></span>(grads)), <span class="fl">1e-7</span>)
+
+outputs &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/list">list</a></span>(loss, grads)
+
+<span class="co"># Sets up a Keras function to retrieve the value of the loss and gradients, given an input image</span>
+fetch_loss_and_grads &lt;-<span class="st"> </span><span class="kw"><a href="../../reference/k_function.html">k_function</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/list">list</a></span>(dream), outputs)
+
+eval_loss_and_grads &lt;-<span class="st"> </span><span class="cf">function</span>(x) {
+  outs &lt;-<span class="st"> </span><span class="kw">fetch_loss_and_grads</span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/list">list</a></span>(x))
+  loss_value &lt;-<span class="st"> </span>outs[[<span class="dv">1</span>]]
+  grad_values &lt;-<span class="st"> </span>outs[[<span class="dv">2</span>]]
+  <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/list">list</a></span>(loss_value, grad_values)
+}
+
+
+<span class="co"># Run gradient ascent -----------------------------------------------------</span>
+
+<span class="co"># This function runs gradient ascent for a number of iterations.</span>
+gradient_ascent &lt;-
+<span class="st">  </span><span class="cf">function</span>(x, iterations, step, <span class="dt">max_loss =</span> <span class="ot">NULL</span>) {
+    <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span>iterations) {
+      <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(loss_value, grad_values) <span class="op">%&lt;-%</span><span class="st"> </span><span class="kw">eval_loss_and_grads</span>(x)
+      <span class="cf">if</span> (<span class="op">!</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/NULL">is.null</a></span>(max_loss) <span class="op">&amp;&amp;</span><span class="st"> </span>loss_value <span class="op">&gt;</span><span class="st"> </span>max_loss)
+        <span class="cf">break</span>
+      <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/cat">cat</a></span>(<span class="st">"...Loss value at"</span>, i, <span class="st">":"</span>, loss_value, <span class="st">"</span><span class="ch">\n</span><span class="st">"</span>)
+      x &lt;-<span class="st"> </span>x <span class="op">+</span><span class="st"> </span>(step <span class="op">*</span><span class="st"> </span>grad_values)
+    }
+    x
+  }
+
+<span class="co"># Playing with these hyperparameters will let you achieve new effects.</span>
+<span class="co"># Gradient ascent step size</span>
+step &lt;-<span class="st"> </span><span class="fl">0.01</span>
+<span class="co"># Number of scales at which to run gradient ascent</span>
+num_octave &lt;-<span class="st"> </span><span class="dv">3</span>
+<span class="co"># Size ratio between scales</span>
+octave_scale &lt;-<span class="st"> </span><span class="fl">1.4</span>
+<span class="co"># Number of ascent steps to run at each scale</span>
+iterations &lt;-<span class="st"> </span><span class="dv">20</span>
+<span class="co"># If the loss grows larger than 10, we will interrupt the gradient-ascent process to avoid ugly artifacts.</span>
+max_loss &lt;-<span class="st"> </span><span class="dv">10</span>
+
+<span class="co"># Fill this with the path to the image you want to use.</span>
+base_image_path &lt;-<span class="st"> "/tmp/mypic.jpg"</span>
+
+<span class="co"># Loads the base image into an array</span>
+img &lt;-
+<span class="st">  </span><span class="kw">preprocess_image</span>(base_image_path)
+
+<span class="co"># Prepares a list of shape tuples defining the different scales at which to run gradient ascent</span>
+original_shape &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/dim">dim</a></span>(img)[<span class="op">-</span><span class="dv">1</span>]
+successive_shapes &lt;-
+<span class="st">  </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/list">list</a></span>(original_shape)
+<span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span>num_octave) {
+  shape &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/integer">as.integer</a></span>(original_shape <span class="op">/</span><span class="st"> </span>(octave_scale <span class="op">^</span><span class="st"> </span>i))
+  successive_shapes[[<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/length">length</a></span>(successive_shapes) <span class="op">+</span><span class="st"> </span><span class="dv">1</span>]] &lt;-
+<span class="st">    </span>shape
+}
+<span class="co"># Reverses the list of shapes so they're in increasing order</span>
+successive_shapes &lt;-
+<span class="st">  </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/rev">rev</a></span>(successive_shapes)
+
+original_img &lt;-<span class="st"> </span>img
+<span class="co">#  Resizes the array of the image to the smallest scale</span>
+shrunk_original_img &lt;-
+<span class="st">  </span><span class="kw">resize_img</span>(img, successive_shapes[[<span class="dv">1</span>]])
+
+<span class="cf">for</span> (shape <span class="cf">in</span> successive_shapes) {
+  <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/cat">cat</a></span>(<span class="st">"Processing image shape"</span>, shape, <span class="st">"</span><span class="ch">\n</span><span class="st">"</span>)
+  <span class="co"># Scales up the dream image</span>
+  img &lt;-<span class="st"> </span><span class="kw">resize_img</span>(img, shape)
+  <span class="co"># Runs gradient ascent, altering the dream</span>
+  img &lt;-<span class="st"> </span><span class="kw">gradient_ascent</span>(img,
+                         <span class="dt">iterations =</span> iterations,
+                         <span class="dt">step =</span> step,
+                         <span class="dt">max_loss =</span> max_loss)
+  <span class="co"># Scales up the smaller version of the original image: it will be pixellated</span>
+  upscaled_shrunk_original_img &lt;-
+<span class="st">    </span><span class="kw">resize_img</span>(shrunk_original_img, shape)
+  <span class="co"># Computes the high-quality version of the original image at this size</span>
+  same_size_original &lt;-
+<span class="st">    </span><span class="kw">resize_img</span>(original_img, shape)
+  <span class="co"># The difference between the two is the detail that was lost when scaling up</span>
+  lost_detail &lt;-
+<span class="st">    </span>same_size_original <span class="op">-</span><span class="st"> </span>upscaled_shrunk_original_img
+  <span class="co"># Reinjects lost detail into the dream</span>
+  img &lt;-<span class="st"> </span>img <span class="op">+</span><span class="st"> </span>lost_detail
+  shrunk_original_img &lt;-
+<span class="st">    </span><span class="kw">resize_img</span>(original_img, shape)
+  <span class="kw">save_img</span>(img, <span class="dt">fname =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/sprintf">sprintf</a></span>(<span class="st">"dream_at_scale_%s.png"</span>,
+                                <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/paste">paste</a></span>(shape, <span class="dt">collapse =</span> <span class="st">"x"</span>)))
+}</code></pre>

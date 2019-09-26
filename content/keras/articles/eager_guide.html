@@ -1,0 +1,397 @@
+---
+title: "Keras with Eager Execution"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Keras with eager execution}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+type: docs
+repo: https://github.com/rstudio/keras
+menu:
+  main:
+    name: "Keras with Eager Execution"
+    identifier: "keras-eager"
+    parent: "keras-using-keras"
+    weight: 15
+    
+---
+
+
+
+<p>Eager execution is a way to train a Keras model without building a graph. Operations return values, not tensors.
+Consequently, you can inspect what goes in and comes out of an operation simply by printing a variable’s contents.
+This is an important advantage in model development and debugging.</p>
+<p>You can use eager execution with Keras as long as you use the TensorFlow implementation. This guide gives an outline of the workflow by way of a simple regression example. Specifically, you will see how to:</p>
+<ul>
+<li>Set up your environment for eager execution</li>
+<li>Define the main ingredients: a Keras model, an optimizer and a loss function</li>
+<li>Feed data to the training routine</li>
+<li>Write a simple training loop that does backprop on the model’s weights</li>
+<li>Make predictions on the test set</li>
+<li>Save the model’s weights</li>
+</ul>
+<div id="requirements" class="section level2">
+<h2>Requirements</h2>
+<p>To use eager execution with Keras, you need a current version of the R package <code>keras</code> with a TensorFlow backend of version at least 1.9.</p>
+<p>The following preamble is required when using eager execution:</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(keras)
+<span class="co"># make sure we use the tensorflow implementation of Keras</span>
+<span class="co"># this line has to be executed immediately after loading the library</span>
+<span class="kw"><a href="../reference/use_implementation.html">use_implementation</a></span>(<span class="st">"tensorflow"</span>)
+
+<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(tensorflow)
+<span class="co"># enable eager execution</span>
+<span class="co"># the argument device_policy is needed only when using a GPU</span>
+<span class="kw"><a href="../../tensorflow/reference/tfe_enable_eager_execution.html">tfe_enable_eager_execution</a></span>(<span class="dt">device_policy =</span> <span class="st">"silent"</span>)</code></pre>
+<p>When in doubt, check if you are in fact using eager execution:</p>
+<pre class="sourceCode r"><code class="sourceCode r">tf<span class="op">$</span><span class="kw">executing_eagerly</span>()</code></pre>
+</div>
+<div id="define-a-model" class="section level2">
+<h2>Define a model</h2>
+<p>Models for use with eager execution are defined as Keras <a href="https://tensorflow.rstudio.com/keras/articles/custom_models.html">custom models</a>.</p>
+<p>Custom models are usually made up of normal Keras layers, which you configure as usual. However, you are free to implement custom logic in the model’s (implicit) <em>call</em> function.</p>
+<p>Our simple regression example will use <code>iris</code> to predict <code>Sepal.Width</code> from <code>Petal.Length</code>, <code>Sepal.Length</code> and <code>Petal.Width</code>.</p>
+<p>Here is a model that can be used for that purpose:</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># model instantiator </span>
+iris_regression_model &lt;-<span class="st"> </span><span class="cf">function</span>(<span class="dt">name =</span> <span class="ot">NULL</span>) {
+  
+  <span class="kw"><a href="../reference/keras_model_custom.html">keras_model_custom</a></span>(<span class="dt">name =</span> name, <span class="cf">function</span>(self) {
+    
+    <span class="co"># define any number of layers here</span>
+    self<span class="op">$</span>dense1 &lt;-<span class="st"> </span><span class="kw"><a href="../reference/layer_dense.html">layer_dense</a></span>(<span class="dt">units =</span> <span class="dv">32</span>)
+    self<span class="op">$</span>dropout &lt;-<span class="st"> </span><span class="kw"><a href="../reference/layer_dropout.html">layer_dropout</a></span>(<span class="dt">rate =</span> <span class="fl">0.5</span>)
+    self<span class="op">$</span>dense2 &lt;-<span class="st"> </span><span class="kw"><a href="../reference/layer_dense.html">layer_dense</a></span>(<span class="dt">units =</span> <span class="dv">1</span>)
+    
+    <span class="co"># this is the "call" function that defines what happens when the model is called</span>
+    <span class="cf">function</span> (x, <span class="dt">mask =</span> <span class="ot">NULL</span>) {
+      x <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">        </span>self<span class="op">$</span><span class="kw">dense1</span>() <span class="op">%&gt;%</span>
+<span class="st">        </span>self<span class="op">$</span><span class="kw">dropout</span>() <span class="op">%&gt;%</span>
+<span class="st">        </span>self<span class="op">$</span><span class="kw">dense2</span>()
+    }
+  })
+}</code></pre>
+<p>The model is created simply by instantiating it via its wrapper:</p>
+<pre class="sourceCode r"><code class="sourceCode r">model &lt;-<span class="st"> </span><span class="kw">iris_regression_model</span>()</code></pre>
+<p>At this point, the shapes of the model’s weights are still unknown (note how no <code>input_shape</code> has been defined for its first layer).
+You can, however, already call the model on some dummy data:</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">model</span>(<span class="kw"><a href="../reference/k_constant.html">k_constant</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/matrix">matrix</a></span>(<span class="dv">1</span><span class="op">:</span><span class="dv">6</span>, <span class="dt">nrow =</span> <span class="dv">2</span>, <span class="dt">ncol =</span> <span class="dv">3</span>)))</code></pre>
+<pre><code>tf.Tensor(
+[[-1.1474639]
+ [-1.0472134]], shape=(2, 1), dtype=float32)</code></pre>
+<p>After that call, you can inspect the model’s weights using</p>
+<pre class="sourceCode r"><code class="sourceCode r">model<span class="op">$</span>weights</code></pre>
+<p>This will not just display the tensor shapes, but the actual weight values.</p>
+</div>
+<div id="losses-and-optimizers" class="section level2">
+<h2>Losses and optimizers</h2>
+<p>An appropriate loss function for a regression task like this is mean squared error:</p>
+<pre class="sourceCode r"><code class="sourceCode r">mse_loss &lt;-<span class="st"> </span><span class="cf">function</span>(y_true, y_pred, x) {
+  <span class="co"># it's required to use a TensorFlow function here, not loss_mean_squared_error() from Keras</span>
+  mse &lt;-<span class="st"> </span>tf<span class="op">$</span>losses<span class="op">$</span><span class="kw">mean_squared_error</span>(y_true, y_pred)
+  <span class="co"># here you could compute and add other losses </span>
+  mse
+}</code></pre>
+<p>Note how we have to use loss functions from TensorFlow, not the Keras equivalents. In the same vein, we need to use an optimizer from the <code>tf$train</code> module.</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># have to use an optimizer from tf$train, not Keras</span>
+optimizer &lt;-<span class="st"> </span>tf<span class="op">$</span>train<span class="op">$</span><span class="kw">AdamOptimizer</span>()</code></pre>
+</div>
+<div id="use-tfdatasets-to-feed-the-data" class="section level2">
+<h2>Use tfdatasets to feed the data</h2>
+<p>In eager execution, you use <a href="https://tensorflow.rstudio.com/tools/tfdatasets">tfdatasets</a> to stream input and target data to the model.
+In our simple <code>iris</code> example, we use <a href="https://tensorflow.rstudio.com/tools/tfdatasets/reference/tensor_slices_dataset.html">tensor_slices_dataset</a> to directly create a dataset from the underlying R matrices <code>x_train</code> and <code>y_train</code>.</p>
+<p>However, a wide variety of other <a href="https://tensorflow.rstudio.com/tools/tfdatasets/reference/#section-creating-datasets">dataset creation</a> functions is available.
+Datasets also allow for a variety of pre-processing <a href="https://tensorflow.rstudio.com/tools/tfdatasets/reference/#section-transforming-datasets">transformations</a>.</p>
+<pre class="sourceCode r"><code class="sourceCode r">x_train &lt;-
+<span class="st">  </span>iris[<span class="dv">1</span><span class="op">:</span><span class="dv">120</span>, <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="st">"Petal.Length"</span>, <span class="st">"Sepal.Length"</span>, <span class="st">"Petal.Width"</span>)] <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/matrix">as.matrix</a></span>()
+y_train &lt;-
+<span class="st">  </span>iris[<span class="dv">1</span><span class="op">:</span><span class="dv">120</span>, <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="st">"Sepal.Width"</span>)] <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/matrix">as.matrix</a></span>()
+
+<span class="co"># Convert to approriate tensor floating point type for backend</span>
+x_train &lt;-<span class="st"> </span><span class="kw"><a href="../reference/k_constant.html">k_constant</a></span>(x_train)
+y_train &lt;-<span class="st"> </span><span class="kw"><a href="../reference/k_constant.html">k_constant</a></span>(y_train)
+
+<span class="co"># same for test set</span>
+x_test &lt;-
+<span class="st">  </span>iris[<span class="dv">121</span><span class="op">:</span><span class="dv">150</span>, <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="st">"Petal.Length"</span>, <span class="st">"Sepal.Length"</span>, <span class="st">"Petal.Width"</span>)] <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/matrix">as.matrix</a></span>()
+y_test &lt;-
+<span class="st">  </span>iris[<span class="dv">121</span><span class="op">:</span><span class="dv">150</span>, <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="st">"Sepal.Width"</span>)] <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/matrix">as.matrix</a></span>()
+x_test &lt;-<span class="st"> </span><span class="kw"><a href="../reference/k_constant.html">k_constant</a></span>(x_test)
+y_test &lt;-<span class="st"> </span><span class="kw"><a href="../reference/k_constant.html">k_constant</a></span>(y_test)
+
+<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(tfdatasets)
+train_dataset &lt;-<span class="st"> </span><span class="kw"><a href="../../tools/tfdatasets/reference/tensor_slices_dataset.html">tensor_slices_dataset</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/list">list</a></span> (x_train, y_train)) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw"><a href="../../tools/tfdatasets/reference/dataset_batch.html">dataset_batch</a></span>(<span class="dv">10</span>)
+test_dataset &lt;-<span class="st"> </span><span class="kw"><a href="../../tools/tfdatasets/reference/tensor_slices_dataset.html">tensor_slices_dataset</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/list">list</a></span> (x_test, y_test)) <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw"><a href="../../tools/tfdatasets/reference/dataset_batch.html">dataset_batch</a></span>(<span class="dv">10</span>)</code></pre>
+<p>Data is accessed from a dataset via <code>make_iterator_one_shot</code> (to create an iterator) and <code>iterator_get_next</code> (to obtain the next batch).</p>
+<pre class="sourceCode r"><code class="sourceCode r">iter &lt;-<span class="st"> </span><span class="kw"><a href="../../tools/tfdatasets/reference/make-iterator.html">make_iterator_one_shot</a></span>(train_dataset)
+batch &lt;-<span class="st">  </span><span class="kw"><a href="../../tools/tfdatasets/reference/iterator_get_next.html">iterator_get_next</a></span>(iter)</code></pre>
+<p>Datasets are available in non-eager (graph) execution as well. However, in eager mode, we can examine the actual values returned from the iterator:</p>
+<pre class="sourceCode r"><code class="sourceCode r">batch</code></pre>
+<pre><code>[[1]]
+tf.Tensor(
+[[1.4 5.1 0.2]
+ [1.4 4.9 0.2]
+ [1.3 4.7 0.2]
+ [1.5 4.6 0.2]
+ [1.4 5.  0.2]
+ [1.7 5.4 0.4]
+ [1.4 4.6 0.3]
+ [1.5 5.  0.2]
+ [1.4 4.4 0.2]
+ [1.5 4.9 0.1]], shape=(10, 3), dtype=float32)
+
+[[2]]
+tf.Tensor(
+[[3.5]
+ [3. ]
+ [3.2]
+ [3.1]
+ [3.6]
+ [3.9]
+ [3.4]
+ [3.4]
+ [2.9]
+ [3.1]], shape=(10, 1), dtype=float32)</code></pre>
+</div>
+<div id="training-loop" class="section level2">
+<h2>Training loop</h2>
+<p>With eager execution, you take full control over the training process.</p>
+<p>In general, you will have at least two loops: an outer loop over epochs, and an inner loop over batches of data returned by the iterator (implemented implicitly by <code>until_out_of_range</code>).
+The iterator is recreated at the start of each new epoch.</p>
+<pre class="sourceCode r"><code class="sourceCode r">n_epochs &lt;-<span class="st"> </span><span class="dv">10</span>
+
+<span class="cf">for</span> (i <span class="cf">in</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/seq">seq_len</a></span>(n_epochs)) {
+  
+  iter &lt;-<span class="st"> </span><span class="kw"><a href="../../tools/tfdatasets/reference/make-iterator.html">make_iterator_one_shot</a></span>(train_dataset)
+  total_loss &lt;-<span class="st"> </span><span class="dv">0</span>
+  
+  <span class="kw"><a href="../../tools/tfdatasets/reference/until_out_of_range.html">until_out_of_range</a></span>({
+    
+    <span class="co"># get a new batch and run forward pass on it </span>
+    
+    <span class="co"># calculate loss </span>
+    
+    <span class="co"># calculate gradients of loss w.r.t. model weights</span>
+    
+    <span class="co"># update model weights</span>
+    
+  })
+  
+  <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/cat">cat</a></span>(<span class="st">"Total loss (epoch): "</span>, i, <span class="st">": "</span>, <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/numeric">as.numeric</a></span>(total_loss), <span class="st">"</span><span class="ch">\n</span><span class="st">"</span>)
+}</code></pre>
+<p>Filling in the missing pieces in the above outline, we will see that</p>
+<ul>
+<li>Forward propagation is simply a call to <code>model()</code>.</li>
+<li>This call has to happen inside the context of a <code>GradientTape</code> that records all operations.</li>
+<li>Loss is calculated using the loss function defined before.</li>
+<li>From the loss on the one hand and the model’s current weights on the other hand, <code>GradientTape</code> then determines the gradients.</li>
+<li>Finally, the optimizer applies the gradients to the weights in its algorithm-specific way.</li>
+</ul>
+<p>Here is the complete code for the training loop:</p>
+<pre class="sourceCode r"><code class="sourceCode r">n_epochs &lt;-<span class="st"> </span><span class="dv">10</span>
+
+<span class="co"># loop over epochs</span>
+<span class="cf">for</span> (i <span class="cf">in</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/seq">seq_len</a></span>(n_epochs)) {
+  
+  <span class="co"># create fresh iterator from dataset</span>
+  iter &lt;-<span class="st"> </span><span class="kw"><a href="../../tools/tfdatasets/reference/make-iterator.html">make_iterator_one_shot</a></span>(train_dataset)
+  
+  <span class="co"># accumulate current epoch's loss (for display purposes only)</span>
+  total_loss &lt;-<span class="st"> </span><span class="dv">0</span>
+  
+  <span class="co"># loop once through the dataset</span>
+  <span class="kw"><a href="../../tools/tfdatasets/reference/until_out_of_range.html">until_out_of_range</a></span>({
+    
+    <span class="co"># get next batch</span>
+    batch &lt;-<span class="st">  </span><span class="kw"><a href="../../tools/tfdatasets/reference/iterator_get_next.html">iterator_get_next</a></span>(iter)
+    x &lt;-<span class="st"> </span>batch[[<span class="dv">1</span>]]
+    y &lt;-<span class="st"> </span>batch[[<span class="dv">2</span>]]
+    
+    <span class="co"># forward pass is recorded by tf$GradientTape</span>
+    <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/with">with</a></span>(tf<span class="op">$</span><span class="kw">GradientTape</span>() <span class="op">%as%</span><span class="st"> </span>tape, {
+     
+      <span class="co"># run model on current batch</span>
+      preds &lt;-<span class="st"> </span><span class="kw">model</span>(x)
+     
+      <span class="co"># compute the loss</span>
+      loss &lt;-<span class="st"> </span><span class="kw">mse_loss</span>(y, preds, x)
+    })
+    
+    <span class="co"># update total loss</span>
+    total_loss &lt;-<span class="st"> </span>total_loss <span class="op">+</span><span class="st"> </span>loss
+    
+    <span class="co"># get gradients of loss w.r.t. model weights</span>
+    gradients &lt;-<span class="st"> </span>tape<span class="op">$</span><span class="kw">gradient</span>(loss, model<span class="op">$</span>variables)
+    
+    <span class="co"># update model weights</span>
+    optimizer<span class="op">$</span><span class="kw">apply_gradients</span>(
+      purrr<span class="op">::</span><span class="kw"><a href="https://purrr.tidyverse.org/reference/transpose.html">transpose</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/list">list</a></span>(gradients, model<span class="op">$</span>variables)),
+      <span class="dt">global_step =</span> tf<span class="op">$</span>train<span class="op">$</span><span class="kw">get_or_create_global_step</span>()
+    )
+
+  })
+  
+  <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/cat">cat</a></span>(<span class="st">"Total loss (epoch): "</span>, i, <span class="st">": "</span>, <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/numeric">as.numeric</a></span>(total_loss), <span class="st">"</span><span class="ch">\n</span><span class="st">"</span>)
+}</code></pre>
+</div>
+<div id="predictions-on-the-test-set" class="section level2">
+<h2>Predictions on the test set</h2>
+<p>Getting predictions on the test set is just a call to <code>model</code>, just like training has been.</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">model</span>(x_test)</code></pre>
+</div>
+<div id="saving-and-restoring-model-weights" class="section level2">
+<h2>Saving and restoring model weights</h2>
+<p>To save model weights, create an instance of <code>tf$Checkpoint</code> and pass it the objects to be saved: in our case, the <code>model</code> and the <code>optimizer</code>.
+This has to happen after the respective objects have been created, but before the training loop.</p>
+<pre class="sourceCode r"><code class="sourceCode r">checkpoint_dir &lt;-<span class="st"> "./checkpoints"</span>
+checkpoint_prefix &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/file.path">file.path</a></span>(checkpoint_dir, <span class="st">"ckpt"</span>)
+checkpoint &lt;-
+<span class="st">  </span>tf<span class="op">$</span>train<span class="op">$</span><span class="kw">Checkpoint</span>(
+    <span class="dt">optimizer =</span> optimizer,
+    <span class="dt">model =</span> model
+  )</code></pre>
+<p>Then at the end of each epoch, you save the model’s current weights, like so:</p>
+<pre class="sourceCode r"><code class="sourceCode r">checkpoint<span class="op">$</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/save">save</a></span>(<span class="dt">file_prefix =</span> checkpoint_prefix)</code></pre>
+<p>This call saves model weights only, not the complete graph. Thus on restore, you re-create all components in the same way as above, and then load saved the model weights using e.g.</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># restore from recent checkpoint, you can also use a different one</span>
+checkpoint<span class="op">$</span><span class="kw">restore</span>(tf<span class="op">$</span>train<span class="op">$</span><span class="kw">latest_checkpoint</span>(checkpoint_dir))</code></pre>
+<p>You can then obtain predictions from the restored model, on the test set as a whole or batch-wise, using an iterator.</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">model</span>(x_test)
+
+iter &lt;-<span class="st"> </span><span class="kw"><a href="../../tools/tfdatasets/reference/make-iterator.html">make_iterator_one_shot</a></span>(test_dataset)
+<span class="kw"><a href="../../tools/tfdatasets/reference/until_out_of_range.html">until_out_of_range</a></span>({
+  batch &lt;-<span class="st">  </span><span class="kw"><a href="../../tools/tfdatasets/reference/iterator_get_next.html">iterator_get_next</a></span>(iter)
+  preds &lt;-<span class="st"> </span><span class="kw">model</span>(batch[[<span class="dv">1</span>]])
+  <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/print">print</a></span>(preds)
+})</code></pre>
+</div>
+<div id="complete-example" class="section level2">
+<h2>Complete example</h2>
+<p>Here is the complete example.</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(keras)
+<span class="kw"><a href="../reference/use_implementation.html">use_implementation</a></span>(<span class="st">"tensorflow"</span>)
+
+<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(tensorflow)
+<span class="kw"><a href="../../tensorflow/reference/tfe_enable_eager_execution.html">tfe_enable_eager_execution</a></span>(<span class="dt">device_policy =</span> <span class="st">"silent"</span>)
+
+<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(tfdatasets)
+
+
+<span class="co"># Prepare training and test sets ------------------------------------------</span>
+
+x_train &lt;-
+<span class="st">  </span>iris[<span class="dv">1</span><span class="op">:</span><span class="dv">120</span>, <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="st">"Petal.Length"</span>, <span class="st">"Sepal.Length"</span>, <span class="st">"Petal.Width"</span>)] <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/matrix">as.matrix</a></span>()
+x_train &lt;-<span class="st"> </span><span class="kw"><a href="../reference/k_constant.html">k_constant</a></span>(x_train)
+y_train &lt;-
+<span class="st">  </span>iris[<span class="dv">1</span><span class="op">:</span><span class="dv">120</span>, <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="st">"Sepal.Width"</span>)] <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/matrix">as.matrix</a></span>()
+y_train &lt;-<span class="st"> </span><span class="kw"><a href="../reference/k_constant.html">k_constant</a></span>(y_train)
+
+x_test &lt;-
+<span class="st">  </span>iris[<span class="dv">121</span><span class="op">:</span><span class="dv">150</span>, <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="st">"Petal.Length"</span>, <span class="st">"Sepal.Length"</span>, <span class="st">"Petal.Width"</span>)] <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/matrix">as.matrix</a></span>()
+x_test &lt;-<span class="st"> </span><span class="kw"><a href="../reference/k_constant.html">k_constant</a></span>(x_test)
+y_test &lt;-
+<span class="st">  </span>iris[<span class="dv">121</span><span class="op">:</span><span class="dv">150</span>, <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="st">"Sepal.Width"</span>)] <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/matrix">as.matrix</a></span>()
+y_test &lt;-<span class="st"> </span><span class="kw"><a href="../reference/k_constant.html">k_constant</a></span>(y_test)
+
+
+
+<span class="co"># Create datasets for training and testing --------------------------------</span>
+
+train_dataset &lt;-<span class="st"> </span><span class="kw"><a href="../../tools/tfdatasets/reference/tensor_slices_dataset.html">tensor_slices_dataset</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/list">list</a></span> (x_train, y_train)) <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw"><a href="../../tools/tfdatasets/reference/dataset_batch.html">dataset_batch</a></span>(<span class="dv">10</span>)
+test_dataset &lt;-<span class="st"> </span><span class="kw"><a href="../../tools/tfdatasets/reference/tensor_slices_dataset.html">tensor_slices_dataset</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/list">list</a></span> (x_test, y_test)) <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw"><a href="../../tools/tfdatasets/reference/dataset_batch.html">dataset_batch</a></span>(<span class="dv">10</span>)
+
+
+<span class="co"># Create model ------------------------------------------------------------</span>
+
+iris_regression_model &lt;-<span class="st"> </span><span class="cf">function</span>(<span class="dt">name =</span> <span class="ot">NULL</span>) {
+  <span class="kw"><a href="../reference/keras_model_custom.html">keras_model_custom</a></span>(<span class="dt">name =</span> name, <span class="cf">function</span>(self) {
+    self<span class="op">$</span>dense1 &lt;-<span class="st"> </span><span class="kw"><a href="../reference/layer_dense.html">layer_dense</a></span>(<span class="dt">units =</span> <span class="dv">32</span>, <span class="dt">input_shape =</span> <span class="dv">3</span>)
+    self<span class="op">$</span>dropout &lt;-<span class="st"> </span><span class="kw"><a href="../reference/layer_dropout.html">layer_dropout</a></span>(<span class="dt">rate =</span> <span class="fl">0.5</span>)
+    self<span class="op">$</span>dense2 &lt;-<span class="st"> </span><span class="kw"><a href="../reference/layer_dense.html">layer_dense</a></span>(<span class="dt">units =</span> <span class="dv">1</span>)
+    
+    <span class="cf">function</span> (x, <span class="dt">mask =</span> <span class="ot">NULL</span>) {
+      self<span class="op">$</span><span class="kw">dense1</span>(x) <span class="op">%&gt;%</span>
+<span class="st">        </span>self<span class="op">$</span><span class="kw">dropout</span>() <span class="op">%&gt;%</span>
+<span class="st">        </span>self<span class="op">$</span><span class="kw">dense2</span>()
+    }
+  })
+}
+
+model &lt;-<span class="st"> </span><span class="kw">iris_regression_model</span>()
+
+
+<span class="co"># Define loss function and optimizer --------------------------------------</span>
+
+mse_loss &lt;-<span class="st"> </span><span class="cf">function</span>(y_true, y_pred, x) {
+  mse &lt;-<span class="st"> </span>tf<span class="op">$</span>losses<span class="op">$</span><span class="kw">mean_squared_error</span>(y_true, y_pred)
+  mse
+}
+
+optimizer &lt;-<span class="st"> </span>tf<span class="op">$</span>train<span class="op">$</span><span class="kw">AdamOptimizer</span>()
+
+
+<span class="co"># Set up checkpointing ----------------------------------------------------</span>
+
+checkpoint_dir &lt;-<span class="st"> "./checkpoints"</span>
+checkpoint_prefix &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/file.path">file.path</a></span>(checkpoint_dir, <span class="st">"ckpt"</span>)
+checkpoint &lt;-
+<span class="st">  </span>tf<span class="op">$</span>train<span class="op">$</span><span class="kw">Checkpoint</span>(<span class="dt">optimizer =</span> optimizer,
+                      <span class="dt">model =</span> model)
+
+n_epochs &lt;-<span class="st"> </span><span class="dv">10</span>
+
+<span class="co"># change to TRUE if you want to restore weights</span>
+restore &lt;-<span class="st"> </span><span class="ot">FALSE</span>
+
+<span class="cf">if</span> (<span class="op">!</span>restore) {
+  <span class="cf">for</span> (i <span class="cf">in</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/seq">seq_len</a></span>(n_epochs)) {
+    iter &lt;-<span class="st"> </span><span class="kw"><a href="../../tools/tfdatasets/reference/make-iterator.html">make_iterator_one_shot</a></span>(train_dataset)
+    total_loss &lt;-<span class="st"> </span><span class="dv">0</span>
+    
+    <span class="kw"><a href="../../tools/tfdatasets/reference/until_out_of_range.html">until_out_of_range</a></span>({
+      batch &lt;-<span class="st">  </span><span class="kw"><a href="../../tools/tfdatasets/reference/iterator_get_next.html">iterator_get_next</a></span>(iter)
+      x &lt;-<span class="st"> </span>batch[[<span class="dv">1</span>]]
+      y &lt;-<span class="st"> </span>batch[[<span class="dv">2</span>]]
+      
+      <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/with">with</a></span>(tf<span class="op">$</span><span class="kw">GradientTape</span>() <span class="op">%as%</span><span class="st"> </span>tape, {
+        preds &lt;-<span class="st"> </span><span class="kw">model</span>(x)
+        loss &lt;-<span class="st"> </span><span class="kw">mse_loss</span>(y, preds, x)
+      })
+      
+      total_loss &lt;-<span class="st"> </span>total_loss <span class="op">+</span><span class="st"> </span>loss
+      gradients &lt;-<span class="st"> </span>tape<span class="op">$</span><span class="kw">gradient</span>(loss, model<span class="op">$</span>variables)
+      
+      optimizer<span class="op">$</span><span class="kw">apply_gradients</span>(purrr<span class="op">::</span><span class="kw"><a href="https://purrr.tidyverse.org/reference/transpose.html">transpose</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/list">list</a></span>(gradients, model<span class="op">$</span>variables)),
+                                <span class="dt">global_step =</span> tf<span class="op">$</span>train<span class="op">$</span><span class="kw">get_or_create_global_step</span>())
+      
+    })
+    
+    <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/cat">cat</a></span>(<span class="st">"Total loss (epoch): "</span>, i, <span class="st">": "</span>, <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/numeric">as.numeric</a></span>(total_loss), <span class="st">"</span><span class="ch">\n</span><span class="st">"</span>)
+    
+    checkpoint<span class="op">$</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/save">save</a></span>(<span class="dt">file_prefix =</span> checkpoint_prefix)
+  }
+} <span class="cf">else</span> {
+  checkpoint<span class="op">$</span><span class="kw">restore</span>(tf<span class="op">$</span>train<span class="op">$</span><span class="kw">latest_checkpoint</span>(checkpoint_dir))
+}
+
+
+<span class="co"># Get model predictions on test set ---------------------------------------</span>
+
+<span class="kw">model</span>(x_test)
+
+iter &lt;-<span class="st"> </span><span class="kw"><a href="../../tools/tfdatasets/reference/make-iterator.html">make_iterator_one_shot</a></span>(test_dataset)
+<span class="kw"><a href="../../tools/tfdatasets/reference/until_out_of_range.html">until_out_of_range</a></span>({
+  batch &lt;-<span class="st">  </span><span class="kw"><a href="../../tools/tfdatasets/reference/iterator_get_next.html">iterator_get_next</a></span>(iter)
+  preds &lt;-<span class="st"> </span><span class="kw">model</span>(batch[[<span class="dv">1</span>]])
+  <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/print">print</a></span>(preds)
+})</code></pre>
+</div>
+<div id="where-to-from-here" class="section level2">
+<h2>Where to from here</h2>
+<p>In this guide, the task - and consequently, the custom model, associated loss and training routine - have been chosen for their simplicity.
+Visit the <a href="https://blogs.rstudio.com/tensorflow/">TensorFlow for R blog</a> for case studies and paper implementations that use more intricate custom logic.</p>
+</div>

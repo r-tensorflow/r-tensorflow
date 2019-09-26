@@ -1,0 +1,148 @@
+---
+title: "Training Flags"
+output: html_document
+type: docs
+menu:
+  main:
+    name: "Training Flags"
+    identifier: "tools-training-flags"
+    parent: "tools-top"
+    weight: 40
+---
+
+
+
+<div id="defining-flags" class="section level2">
+<h2>Defining Flags</h2>
+<p>Tuning a model often requires exploring the impact of changes to many hyperparameters. The best way to approach this is generally not to progressively change your source code, but rather to define external flags for key parameters which you may want to vary. This allows you to easily try out different combinations of parameters without changing your code, and makes your training script easier to integrate with hyperparameter tuning tools.</p>
+<p>Use the <code><a href="../tools/tfruns/reference/flags.html">flags()</a></code> function to define a set of flags (and default values) for a training script. For example,</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(keras)
+
+FLAGS &lt;-<span class="st"> </span><span class="kw"><a href="../keras/reference/reexports.html">flags</a></span>(
+  <span class="kw"><a href="../keras/reference/reexports.html">flag_integer</a></span>(<span class="st">"dense_units1"</span>, <span class="dv">128</span>),
+  <span class="kw"><a href="../keras/reference/reexports.html">flag_numeric</a></span>(<span class="st">"dropout1"</span>, <span class="fl">0.4</span>),
+  <span class="kw"><a href="../keras/reference/reexports.html">flag_integer</a></span>(<span class="st">"dense_units2"</span>, <span class="dv">128</span>),
+  <span class="kw"><a href="../keras/reference/reexports.html">flag_numeric</a></span>(<span class="st">"dropout2"</span>, <span class="fl">0.3</span>),
+  <span class="kw"><a href="../keras/reference/reexports.html">flag_integer</a></span>(<span class="st">"epochs"</span>, <span class="dv">30</span>),
+  <span class="kw"><a href="../keras/reference/reexports.html">flag_integer</a></span>(<span class="st">"batch_size"</span>, <span class="dv">128</span>),
+  <span class="kw"><a href="../keras/reference/reexports.html">flag_numeric</a></span>(<span class="st">"learning_rate"</span>, <span class="fl">0.001</span>)
+)</code></pre>
+<p>These flags would then used within a script as follows:</p>
+<pre class="sourceCode r"><code class="sourceCode r">input &lt;-<span class="st"> </span><span class="kw"><a href="../keras/reference/layer_input.html">layer_input</a></span>(<span class="dt">shape =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="dv">784</span>))
+predictions &lt;-<span class="st"> </span>input <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw"><a href="../keras/reference/layer_dense.html">layer_dense</a></span>(<span class="dt">units =</span> FLAGS<span class="op">$</span>dense_units1, <span class="dt">activation =</span> <span class="st">'relu'</span>) <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw"><a href="../keras/reference/layer_dropout.html">layer_dropout</a></span>(<span class="dt">rate =</span> FLAGS<span class="op">$</span>dropout1) <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw"><a href="../keras/reference/layer_dense.html">layer_dense</a></span>(<span class="dt">units =</span> FLAGS<span class="op">$</span>dense_units2, <span class="dt">activation =</span> <span class="st">'relu'</span>) <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw"><a href="../keras/reference/layer_dropout.html">layer_dropout</a></span>(<span class="dt">rate =</span> FLAGS<span class="op">$</span>dropout2) <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw"><a href="../keras/reference/layer_dense.html">layer_dense</a></span>(<span class="dt">units =</span> <span class="dv">10</span>, <span class="dt">activation =</span> <span class="st">'softmax'</span>)
+
+model &lt;-<span class="st"> </span><span class="kw"><a href="../keras/reference/keras_model.html">keras_model</a></span>(input, predictions) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../keras/reference/reexports.html">compile</a></span>(
+  <span class="dt">loss =</span> <span class="st">'categorical_crossentropy'</span>,
+  <span class="dt">optimizer =</span> <span class="kw"><a href="../keras/reference/optimizer_rmsprop.html">optimizer_rmsprop</a></span>(<span class="dt">lr =</span> FLAGS<span class="op">$</span>learning_rate),
+  <span class="dt">metrics =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="st">'accuracy'</span>)
+)
+
+history &lt;-<span class="st"> </span>model <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../keras/reference/reexports.html">fit</a></span>(
+  x_train, y_train,
+  <span class="dt">batch_size =</span> FLAGS<span class="op">$</span>batch_size,
+  <span class="dt">epochs =</span> FLAGS<span class="op">$</span>epochs,
+  <span class="dt">verbose =</span> <span class="dv">1</span>,
+  <span class="dt">validation_split =</span> <span class="fl">0.2</span>
+)</code></pre>
+<p>Note that instead of literal values for the various parameters we want to vary we now reference members of the <code>FLAGS</code> list returned from the <code><a href="../tools/tfruns/reference/flags.html">flags()</a></code> function.</p>
+</div>
+<div id="using-flags" class="section level2">
+<h2>Using Flags</h2>
+<p>When you execute your training script either interactively or using the <code><a href="https://www.rdocumentation.org/packages/base/topics/source">source()</a></code> function then the default values defined for your <code>FLAGS</code> will be utilized. There are a number of ways to train with alternate flag values, each of which is described below.</p>
+<div id="command-line" class="section level3">
+<h3>Command Line</h3>
+<p>If you execute your training script via <a href="https://stat.ethz.ch/R-manual/R-devel/library/utils/html/Rscript.html">Rscript</a>, you can vary the values of <code>FLAGS</code> by passing them on the command line.</p>
+<p>For example, to run your training script with alternate dropout values you would do this:</p>
+<pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="ex">Rscript</span> mnist_mlp.R --dropout1=0.2 --dropout2==0.1</code></pre>
+<p>To run your training script with a different number of epochs and alternate learning rate:</p>
+<pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="ex">Rscript</span> mnist_mlp.R --epochs=40 --learning-rate=0.005</code></pre>
+<p>Note that for the <code>learning_rate</code> flag we used a dash (“-”) rather than underscore on the command line. Either is valid (dashes are automatically converted to underscores). This accommodation is made because dashes are not valid R identifiers but are commonly used within command line arguments.</p>
+</div>
+<div id="config-file" class="section level3">
+<h3>Config File</h3>
+<p>You can also create a <a href="http://www.yaml.org/start.html">YAML</a> configuration file (by default “flags.yml”) with alternate flag values. For example:</p>
+<p><strong>flags.yml</strong></p>
+<pre class="sourceCode yaml"><code class="sourceCode yaml"><span class="fu">dropout1:</span><span class="at"> 0.2</span>
+<span class="fu">dropout2:</span><span class="at"> 0.1</span>
+<span class="fu">epochs:</span><span class="at"> 40</span>
+<span class="fu">learning_rate:</span><span class="at"> 0.005</span></code></pre>
+<p>If a “flags.yml” file is located within the current working directory when the <code><a href="../tools/tfruns/reference/flags.html">flags()</a></code> function is called then it’s values will be read and used within the training script.</p>
+<p>Note that you can combine the use of a “flags.yml” file and command-line parameters. In that case flags passed as command-line parameters take priority over flags defined in the config file.</p>
+<p>You can vary the file used to provide flags using the <code>file</code> parameter. For example, to use a file named “alt_flags.yml” you would use this in your training script:</p>
+<pre class="sourceCode r"><code class="sourceCode r">FLAGS &lt;-<span class="st"> </span><span class="kw"><a href="../keras/reference/reexports.html">flags</a></span>(<span class="dt">file =</span> <span class="st">"alt_flags.yml"</span>,
+  <span class="co"># flag definitions here               </span>
+)</code></pre>
+<p>You can also define a “flags.yml” that has named configurations which inherit from each other, for example:</p>
+<pre class="sourceCode yaml"><code class="sourceCode yaml"><span class="fu">alt:</span>
+  <span class="fu">epochs:</span><span class="at"> 50</span>
+  <span class="fu">learning_rate:</span><span class="at"> 0.003</span>
+<span class="fu">alt2:</span>
+  <span class="fu">inherits:</span><span class="at"> alt1</span>
+  learning_rate; 0.002</code></pre>
+<p>You would use the “alt2” config in your training script as follows:</p>
+<pre class="sourceCode r"><code class="sourceCode r">FLAGS &lt;-<span class="st"> </span><span class="kw"><a href="../keras/reference/reexports.html">flags</a></span>(<span class="dt">config =</span> <span class="st">"alt2"</span>,
+   <span class="co"># flag definitions here </span>
+)</code></pre>
+<p>See the documentation for the <a href="https://github.com/rstudio/config">config package</a> for additional details on using named configuration profiles.</p>
+</div>
+<div id="tfruns" class="section level3">
+<h3>tfruns</h3>
+<p>The <a href="tfruns/articles/overview.html">tfruns package</a> provides a suite of tools for tracking, visualizing, and managing TensorFlow training runs. The package includes integrated support for both invoking scripts with flags via the <code><a href="../tools/tfruns/reference/training_run.html">training_run()</a></code> function as well as tracking flag values used within each training run.</p>
+<p>Here are some example uses of <code><a href="../tools/tfruns/reference/training_run.html">training_run()</a></code> that mirror the flag examples from above:</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(tfruns)
+<span class="kw"><a href="../tools/tfruns/reference/training_run.html">training_run</a></span>(<span class="st">"mnist_mlp.R"</span>, <span class="dt">flags =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="dt">dropout1 =</span> <span class="fl">0.2</span>, <span class="dt">dropout2 =</span> <span class="fl">0.1</span>))
+<span class="kw"><a href="../tools/tfruns/reference/training_run.html">training_run</a></span>(<span class="st">"mnist_mlp.R"</span>, <span class="dt">flags =</span> <span class="st">"alt_flags.yml"</span>)
+<span class="kw"><a href="../tools/tfruns/reference/training_run.html">training_run</a></span>(<span class="st">"mnist_mlp.R"</span>, <span class="dt">config =</span> <span class="st">"alt2"</span>)</code></pre>
+<p>If you are a frequent user of flags then training with the tfruns package is strongly recommended.</p>
+</div>
+</div>
+<div id="flag-types" class="section level2">
+<h2>Flag Types</h2>
+<p>Flags have a data type which is validated when flag values are parsed. Available flag types correspond to the following functions:</p>
+<table>
+<thead><tr class="header">
+<th>Function</th>
+<th>Description</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td><code><a href="../tools/tfruns/reference/flags.html">flag_integer()</a></code></td>
+<td>Integer values (e.g. 1, 2, 3, 4)</td>
+</tr>
+<tr class="even">
+<td><code><a href="../tools/tfruns/reference/flags.html">flag_numeric()</a></code></td>
+<td>Floating point values (e.g. 1.1, 2.2)</td>
+</tr>
+<tr class="odd">
+<td><code><a href="../tools/tfruns/reference/flags.html">flag_boolean()</a></code></td>
+<td>Logical values (e.g. true, false, 1, 0)</td>
+</tr>
+<tr class="even">
+<td><code><a href="../tools/tfruns/reference/flags.html">flag_string()</a></code></td>
+<td>Character values (e.g. “train.csv”)</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="flag-descriptions" class="section level2">
+<h2>Flag Descriptions</h2>
+<p>Flag definitions can include an optional description. For example:</p>
+<pre class="sourceCode r"><code class="sourceCode r">FLAGS &lt;-<span class="st"> </span><span class="kw"><a href="../tools/tfruns/reference/flags.html">flags</a></span>(
+  <span class="kw"><a href="../tools/tfruns/reference/flags.html">flag_integer</a></span>(<span class="st">"dense_units1"</span>, <span class="dv">128</span>,  <span class="st">"Dense units in first layer"</span>),
+  <span class="kw"><a href="../tools/tfruns/reference/flags.html">flag_numeric</a></span>(<span class="st">"dropout1"</span>,     <span class="fl">0.4</span>,  <span class="st">"Dropout after first layer"</span>),
+  <span class="kw"><a href="../tools/tfruns/reference/flags.html">flag_integer</a></span>(<span class="st">"epochs"</span>,        <span class="dv">30</span>,  <span class="st">"Number of epochs to train for"</span>)
+)</code></pre>
+<p>This description is used when the <code>--help</code> argument is used to invoke your training script. For example:</p>
+<pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="ex">Rscript</span> mnist_mlp.R --help
+
+<span class="ex">Options</span>:
+  <span class="ex">--dense-units1</span>    Dense units in first layer (128)
+  <span class="ex">--dropout1</span>        Dropout after first layer (0.4)
+  <span class="ex">--epochs</span>          Number of epochs to train for (30)</code></pre>
+<p>Flag descriptions are a nice way to provide basic documentation on the parameters available within training scripts that you plan on sharing with other users.</p>
+</div>

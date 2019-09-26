@@ -1,0 +1,91 @@
+---
+title: imdb_cnn_lstm
+type: docs
+repo: https://github.com/rstudio/keras
+menu:
+  main:
+    parent: keras-examples
+---
+
+
+
+<div class="source-ref">
+<p><span class="caption">Source: </span><a href="https://github.com/rstudio/keras/blob/master/vignettes/examples/imdb_cnn_lstm.R" class="uri">https://github.com/rstudio/keras/blob/master/vignettes/examples/imdb_cnn_lstm.R</a></p>
+</div>
+<p>Train a recurrent convolutional network on the IMDB sentiment
+classification task.</p>
+<p>Achieves 0.8498 test accuracy after 2 epochs. 41s/epoch on K520 GPU.</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(keras)
+
+<span class="co"># Parameters --------------------------------------------------------------</span>
+
+<span class="co"># Embedding</span>
+max_features =<span class="st"> </span><span class="dv">20000</span>
+maxlen =<span class="st"> </span><span class="dv">100</span>
+embedding_size =<span class="st"> </span><span class="dv">128</span>
+
+<span class="co"># Convolution</span>
+kernel_size =<span class="st"> </span><span class="dv">5</span>
+filters =<span class="st"> </span><span class="dv">64</span>
+pool_size =<span class="st"> </span><span class="dv">4</span>
+
+<span class="co"># LSTM</span>
+lstm_output_size =<span class="st"> </span><span class="dv">70</span>
+
+<span class="co"># Training</span>
+batch_size =<span class="st"> </span><span class="dv">30</span>
+epochs =<span class="st"> </span><span class="dv">2</span>
+
+<span class="co"># Data Preparation --------------------------------------------------------</span>
+
+<span class="co"># The x data includes integer sequences, each integer is a word</span>
+<span class="co"># The y data includes a set of integer labels (0 or 1)</span>
+<span class="co"># The num_words argument indicates that only the max_fetures most frequent</span>
+<span class="co"># words will be integerized. All other will be ignored.</span>
+<span class="co"># See help(dataset_imdb)</span>
+imdb &lt;-<span class="st"> </span><span class="kw"><a href="../../reference/dataset_imdb.html">dataset_imdb</a></span>(<span class="dt">num_words =</span> max_features)
+<span class="co"># Keras load all data into a list with the following structure:</span>
+<span class="kw"><a href="https://www.rdocumentation.org/packages/utils/topics/str">str</a></span>(imdb)
+
+<span class="co"># Pad the sequences to the same length</span>
+  <span class="co"># This will convert our dataset into a matrix: each line is a review</span>
+  <span class="co"># and each column a word on the sequence</span>
+<span class="co"># We pad the sequences with 0s to the left</span>
+x_train &lt;-<span class="st"> </span>imdb<span class="op">$</span>train<span class="op">$</span>x <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw"><a href="../../reference/pad_sequences.html">pad_sequences</a></span>(<span class="dt">maxlen =</span> maxlen)
+x_test &lt;-<span class="st"> </span>imdb<span class="op">$</span>test<span class="op">$</span>x <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw"><a href="../../reference/pad_sequences.html">pad_sequences</a></span>(<span class="dt">maxlen =</span> maxlen)
+
+<span class="co"># Defining Model ------------------------------------------------------</span>
+
+model &lt;-<span class="st"> </span><span class="kw"><a href="../../reference/keras_model_sequential.html">keras_model_sequential</a></span>()
+
+model <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw"><a href="../../reference/layer_embedding.html">layer_embedding</a></span>(max_features, embedding_size, <span class="dt">input_length =</span> maxlen) <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw"><a href="../../reference/layer_dropout.html">layer_dropout</a></span>(<span class="fl">0.25</span>) <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw"><a href="../../reference/layer_conv_1d.html">layer_conv_1d</a></span>(
+    filters, 
+    kernel_size, 
+    <span class="dt">padding =</span> <span class="st">"valid"</span>,
+    <span class="dt">activation =</span> <span class="st">"relu"</span>,
+    <span class="dt">strides =</span> <span class="dv">1</span>
+  ) <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw"><a href="../../reference/layer_max_pooling_1d.html">layer_max_pooling_1d</a></span>(pool_size) <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw"><a href="../../reference/layer_lstm.html">layer_lstm</a></span>(lstm_output_size) <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw"><a href="../../reference/layer_dense.html">layer_dense</a></span>(<span class="dv">1</span>) <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw"><a href="../../reference/layer_activation.html">layer_activation</a></span>(<span class="st">"sigmoid"</span>)
+
+model <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../../reference/reexports.html">compile</a></span>(
+  <span class="dt">loss =</span> <span class="st">"binary_crossentropy"</span>,
+  <span class="dt">optimizer =</span> <span class="st">"adam"</span>,
+  <span class="dt">metrics =</span> <span class="st">"accuracy"</span>
+)
+
+<span class="co"># Training ----------------------------------------------------------------</span>
+
+model <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../../reference/reexports.html">fit</a></span>(
+  x_train, imdb<span class="op">$</span>train<span class="op">$</span>y,
+  <span class="dt">batch_size =</span> batch_size,
+  <span class="dt">epochs =</span> epochs,
+  <span class="dt">validation_data =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/list">list</a></span>(x_test, imdb<span class="op">$</span>test<span class="op">$</span>y)
+)</code></pre>

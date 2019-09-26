@@ -1,0 +1,39 @@
+---
+title: "Add the tf_dataset class to a dataset"
+type: docs
+repo: https://github.com/rstudio/tfdatasets
+menu:
+  main:
+    name: "Add the tf_dataset class to a dataset - tfdatasets"
+    parent: tfdatasets-reference
+---
+    
+    
+    <p>Calling this function on a dataset adds the "tf_dataset" class to the dataset
+object. All datasets returned by functions in the <span class="pkg">tfdatasets</span> package
+call this function on the dataset before returning it.</p>
+    
+
+    <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>as_tf_dataset</span>(<span class='no'>dataset</span>)</code></pre></div>
+    
+    <h2 id="arguments">Arguments</h2>
+    <table class="ref-arguments">
+    
+    <colgroup>
+      <col class="name" />
+      <col class="desc" />
+    </colgroup>  
+      
+    <tr>
+      <td>dataset</td>
+      <td><p>A dataset</p></td>
+    </tr>
+    </table>
+    
+    <h2 id="value">Value</h2>
+
+    <p>A dataset with class "tf_dataset"</p>
+    
+
+
+

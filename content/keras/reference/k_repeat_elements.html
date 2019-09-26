@@ -1,0 +1,55 @@
+---
+title: "Repeats the elements of a tensor along an axis."
+type: docs
+repo: https://github.com/rstudio/keras
+menu:
+  main:
+    name: "Repeats the elements of a tensor along an axis. - keras"
+    parent: keras-reference
+---
+    
+    
+    <p>If <code>x</code> has shape <code>(s1, s2, s3)</code> and <code>axis</code> is <code>2</code>, the output
+will have shape <code>(s1, s2 * rep, s3)</code>.</p>
+    
+
+    <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>k_repeat_elements</span>(<span class='no'>x</span>, <span class='no'>rep</span>, <span class='no'>axis</span>)</code></pre></div>
+    
+    <h2 id="arguments">Arguments</h2>
+    <table class="ref-arguments">
+    
+    <colgroup>
+      <col class="name" />
+      <col class="desc" />
+    </colgroup>  
+      
+    <tr>
+      <td>x</td>
+      <td><p>Tensor or variable.</p></td>
+    </tr>
+    <tr>
+      <td>rep</td>
+      <td><p>Integer, number of times to repeat.</p></td>
+    </tr>
+    <tr>
+      <td>axis</td>
+      <td><p>Axis along which to repeat (axis indexes are 1-based)</p></td>
+    </tr>
+    </table>
+    
+    <h2 id="value">Value</h2>
+
+    <p>A tensor.</p>
+    
+    <h2 id="keras-backend">Keras Backend</h2>
+
+    
+    <p>This function is part of a set of Keras backend functions that enable
+lower level access to the core operations of the backend tensor engine
+(e.g. TensorFlow, CNTK, Theano, etc.).</p>
+<p>You can see a list of all available backend functions here:
+<a href='https://keras.rstudio.com/articles/backend.html#backend-functions'>https://keras.rstudio.com/articles/backend.html#backend-functions</a>.</p>
+    
+
+
+

@@ -1,0 +1,39 @@
+---
+title: "Save a run comparison as HTML"
+type: docs
+repo: https://github.com/rstudio/tfruns
+menu:
+  main:
+    name: "Save a run comparison as HTML - tfruns"
+    parent: tfruns-reference
+---
+    
+    
+    <p>Save a run comparison as HTML</p>
+    
+
+    <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>save_run_comparison</span>(<span class='kw'>runs</span> <span class='kw'>=</span> <span class='fu'><a href='ls_runs.html'>ls_runs</a></span>(<span class='kw'>latest_n</span> <span class='kw'>=</span> <span class='fl'>2</span>), <span class='kw'>filename</span> <span class='kw'>=</span> <span class='st'>"auto"</span>)</code></pre></div>
+    
+    <h2 id="arguments">Arguments</h2>
+    <table class="ref-arguments">
+    
+    <colgroup>
+      <col class="name" />
+      <col class="desc" />
+    </colgroup>  
+      
+    <tr>
+      <td>runs</td>
+      <td><p>Character vector of 2 training run directories or
+data frame returned from <code><a href='ls_runs.html'>ls_runs()</a></code> with at least 2 elements.</p></td>
+    </tr>
+    <tr>
+      <td>filename</td>
+      <td><p>Path to save the HTML to. If no <code>filename</code> is specified
+then a temporary file is used (the path to the file is returned invisibly).</p></td>
+    </tr>
+    </table>
+    
+
+
+

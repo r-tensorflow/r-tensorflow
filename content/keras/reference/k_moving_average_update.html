@@ -1,0 +1,54 @@
+---
+title: "Compute the moving average of a variable."
+type: docs
+repo: https://github.com/rstudio/keras
+menu:
+  main:
+    name: "Compute the moving average of a variable. - keras"
+    parent: keras-reference
+---
+    
+    
+    <p>Compute the moving average of a variable.</p>
+    
+
+    <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>k_moving_average_update</span>(<span class='no'>x</span>, <span class='no'>value</span>, <span class='no'>momentum</span>)</code></pre></div>
+    
+    <h2 id="arguments">Arguments</h2>
+    <table class="ref-arguments">
+    
+    <colgroup>
+      <col class="name" />
+      <col class="desc" />
+    </colgroup>  
+      
+    <tr>
+      <td>x</td>
+      <td><p>A <code>Variable</code>.</p></td>
+    </tr>
+    <tr>
+      <td>value</td>
+      <td><p>A tensor with the same shape as <code>x</code>.</p></td>
+    </tr>
+    <tr>
+      <td>momentum</td>
+      <td><p>The moving average momentum.</p></td>
+    </tr>
+    </table>
+    
+    <h2 id="value">Value</h2>
+
+    <p>An operation to update the variable.</p>
+    
+    <h2 id="keras-backend">Keras Backend</h2>
+
+    
+    <p>This function is part of a set of Keras backend functions that enable
+lower level access to the core operations of the backend tensor engine
+(e.g. TensorFlow, CNTK, Theano, etc.).</p>
+<p>You can see a list of all available backend functions here:
+<a href='https://keras.rstudio.com/articles/backend.html#backend-functions'>https://keras.rstudio.com/articles/backend.html#backend-functions</a>.</p>
+    
+
+
+

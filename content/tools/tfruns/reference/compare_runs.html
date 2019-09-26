@@ -1,0 +1,43 @@
+---
+title: "Compare training runs"
+type: docs
+repo: https://github.com/rstudio/tfruns
+menu:
+  main:
+    name: "Compare training runs - tfruns"
+    parent: tfruns-reference
+---
+    
+    
+    <p>Render a visual comparison of two training runs. The runs are
+displayed with the most recent run on the right and the
+earlier run on the left.</p>
+    
+
+    <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>compare_runs</span>(<span class='kw'>runs</span> <span class='kw'>=</span> <span class='fu'><a href='ls_runs.html'>ls_runs</a></span>(<span class='kw'>latest_n</span> <span class='kw'>=</span> <span class='fl'>2</span>),
+  <span class='kw'>viewer</span> <span class='kw'>=</span> <span class='fu'>getOption</span>(<span class='st'>"tfruns.viewer"</span>))</code></pre></div>
+    
+    <h2 id="arguments">Arguments</h2>
+    <table class="ref-arguments">
+    
+    <colgroup>
+      <col class="name" />
+      <col class="desc" />
+    </colgroup>  
+      
+    <tr>
+      <td>runs</td>
+      <td><p>Character vector of 2 training run directories or
+data frame returned from <code><a href='ls_runs.html'>ls_runs()</a></code> with at least 2 elements.</p></td>
+    </tr>
+    <tr>
+      <td>viewer</td>
+      <td><p>Viewer to display training run information within
+(default to an internal page viewer if available, otherwise
+to the R session default web browser).</p></td>
+    </tr>
+    </table>
+    
+
+
+

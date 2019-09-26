@@ -1,0 +1,49 @@
+---
+title: "Converts a class vector (integers) to binary class matrix."
+type: docs
+repo: https://github.com/rstudio/keras
+menu:
+  main:
+    name: "Converts a class vector (integers) to binary class matrix. - keras"
+    parent: keras-reference
+---
+    
+    
+    <p>Converts a class vector (integers) to binary class matrix.</p>
+    
+
+    <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>to_categorical</span>(<span class='no'>y</span>, <span class='kw'>num_classes</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>dtype</span> <span class='kw'>=</span> <span class='st'>"float32"</span>)</code></pre></div>
+    
+    <h2 id="arguments">Arguments</h2>
+    <table class="ref-arguments">
+    
+    <colgroup>
+      <col class="name" />
+      <col class="desc" />
+    </colgroup>  
+      
+    <tr>
+      <td>y</td>
+      <td><p>Class vector to be converted into a matrix (integers from 0 to num_classes).</p></td>
+    </tr>
+    <tr>
+      <td>num_classes</td>
+      <td><p>Total number of classes.</p></td>
+    </tr>
+    <tr>
+      <td>dtype</td>
+      <td><p>The data type expected by the input, as a string</p></td>
+    </tr>
+    </table>
+    
+    <h2 id="value">Value</h2>
+
+    <p>A binary matrix representation of the input.</p>
+    
+    <h2 id="details">Details</h2>
+
+    <p>E.g. for use with <code><a href='loss_mean_squared_error.html'>loss_categorical_crossentropy()</a></code>.</p>
+    
+
+
+

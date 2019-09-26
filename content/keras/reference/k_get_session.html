@@ -1,0 +1,51 @@
+---
+title: "TF session to be used by the backend."
+type: docs
+repo: https://github.com/rstudio/keras
+menu:
+  main:
+    name: "TF session to be used by the backend. - keras"
+    parent: keras-reference
+---
+    
+    
+    <p>If a default TensorFlow session is available, we will return it. Else, we
+will return the global Keras session. If no global Keras session exists at
+this point: we will create a new global session. Note that you can manually
+set the global session via <code>k_set_session()</code>.</p>
+    
+
+    <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>k_get_session</span>()
+
+<span class='fu'>k_set_session</span>(<span class='no'>session</span>)</code></pre></div>
+    
+    <h2 id="arguments">Arguments</h2>
+    <table class="ref-arguments">
+    
+    <colgroup>
+      <col class="name" />
+      <col class="desc" />
+    </colgroup>  
+      
+    <tr>
+      <td>session</td>
+      <td><p>A TensorFlow Session.</p></td>
+    </tr>
+    </table>
+    
+    <h2 id="value">Value</h2>
+
+    <p>A TensorFlow session</p>
+    
+    <h2 id="keras-backend">Keras Backend</h2>
+
+    
+    <p>This function is part of a set of Keras backend functions that enable
+lower level access to the core operations of the backend tensor engine
+(e.g. TensorFlow, CNTK, Theano, etc.).</p>
+<p>You can see a list of all available backend functions here:
+<a href='https://keras.rstudio.com/articles/backend.html#backend-functions'>https://keras.rstudio.com/articles/backend.html#backend-functions</a>.</p>
+    
+
+
+

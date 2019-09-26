@@ -1,0 +1,97 @@
+---
+title: "Generates Parsing Spec for TensorFlow Example to be Used with Classifiers"
+type: docs
+repo: https://github.com/rstudio/tfestimators
+menu:
+  main:
+    name: "Generates Parsing Spec for TensorFlow Example to be Used with Classifiers - tfestimators"
+    parent: tfestimators-reference
+---
+    
+    
+    <p>If users keep data in TensorFlow Example format, they need to call <code>tf$parse_example</code>
+with a proper feature spec. There are two main things that this utility
+helps:</p><ul>
+<li><p>Users need to combine parsing spec of features with labels and
+weights (if any) since they are all parsed from same <code>tf$Example</code> instance.
+This utility combines these specs.</p></li>
+<li><p>It is difficult to map expected label by
+a classifier such as <code>dnn_classifier</code> to corresponding <code>tf$parse_example</code> spec.
+This utility encodes it by getting related information from users (key,
+dtype).</p></li>
+</ul>
+    
+
+    <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>classifier_parse_example_spec</span>(<span class='no'>feature_columns</span>, <span class='no'>label_key</span>,
+  <span class='kw'>label_dtype</span> <span class='kw'>=</span> <span class='no'>tf</span>$<span class='no'>int64</span>, <span class='kw'>label_default</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>weight_column</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</code></pre></div>
+    
+    <h2 id="arguments">Arguments</h2>
+    <table class="ref-arguments">
+    
+    <colgroup>
+      <col class="name" />
+      <col class="desc" />
+    </colgroup>  
+      
+    <tr>
+      <td>feature_columns</td>
+      <td><p>An iterable containing all feature columns. All items
+should be instances of classes derived from <code>_FeatureColumn</code>.</p></td>
+    </tr>
+    <tr>
+      <td>label_key</td>
+      <td><p>A string identifying the label. It means <code>tf$Example</code> stores
+labels with this key.</p></td>
+    </tr>
+    <tr>
+      <td>label_dtype</td>
+      <td><p>A <code>tf$dtype</code> identifies the type of labels. By default it
+is <code>tf$int64</code>. If user defines a <code>label_vocabulary</code>, this should be set as
+<code>tf$string</code>. <code>tf$float32</code> labels are only supported for binary
+classification.</p></td>
+    </tr>
+    <tr>
+      <td>label_default</td>
+      <td><p>used as label if label_key does not exist in given
+<code>tf$Example</code>. An example usage: let's say <code>label_key</code> is 'clicked' and
+<code>tf$Example</code> contains clicked data only for positive examples in following
+format <code>key:clicked, value:1</code>. This means that if there is no data with key
+'clicked' it should count as negative example by setting
+<code>label_deafault=0</code>. Type of this value should be compatible with
+<code>label_dtype</code>.</p></td>
+    </tr>
+    <tr>
+      <td>weight_column</td>
+      <td><p>A string or a numeric column created by
+<code><a href='column_numeric.html'>column_numeric()</a></code> defining feature column representing
+weights. It is used to down weight or boost examples during training. It
+will be multiplied by the loss of the example. If it is a string, it is
+used as a key to fetch weight tensor from the <code>features</code>. If it is a
+numeric column, raw tensor is fetched by key <code>weight_column$key</code>, then
+<code>weight_column$normalizer_fn</code> is applied on it to get weight tensor.</p></td>
+    </tr>
+    </table>
+    
+    <h2 id="value">Value</h2>
+
+    <p>A dict mapping each feature key to a <code>FixedLenFeature</code> or
+<code>VarLenFeature</code> value.</p>
+    
+    <h2 id="raises">Raises</h2>
+
+    
+    <ul>
+<li><p>ValueError: If label is used in <code>feature_columns</code>.</p></li>
+<li><p>ValueError: If weight_column is used in <code>feature_columns</code>.</p></li>
+<li><p>ValueError: If any of the given <code>feature_columns</code> is not a feature column instance.</p></li>
+<li><p>ValueError: If <code>weight_column</code> is not a numeric column instance.</p></li>
+<li><p>ValueError: if label_key is <code>NULL</code>.</p></li>
+</ul>
+    
+    <h2 id="see-also">See also</h2>
+
+    <div class='dont-index'><p>Other parsing utilities: <code><a href='regressor_parse_example_spec.html'>regressor_parse_example_spec</a></code></p></div>
+    
+
+
+

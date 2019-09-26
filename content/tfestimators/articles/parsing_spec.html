@@ -1,0 +1,88 @@
+---
+title: "Parsing Utilities"
+output: 
+  rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Parsing Utilities}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+type: docs
+repo: https://github.com/rstudio/tfestimators
+menu:
+  main:
+    name: "Parsing Utilities"
+    identifier: "tfestimators-parsing-utilities"
+    parent: "tfestimators-advanced"
+    weight: 30
+---
+
+
+
+<div id="overview" class="section level2">
+<h2>Overview</h2>
+<p>Parsing utilities are a set of functions that helps generate parsing spec for <code>tf$parse_example</code> to be used with estimators. If users keep data in <code>tf$Example</code> format, they need to call
+<code>tf$parse_example</code> with a proper feature spec. There are two main things that
+these utility functions help:</p>
+<ul>
+<li><p>Users need to combine parsing spec of features with labels and weights (if any) since they are all parsed from same <code>tf$Example</code> instance. The utility functions combine these specs.</p></li>
+<li><p>It is difficult to map expected label by a estimator such as <code>dnn_classifier</code>
+to corresponding <code>tf$parse_example</code> spec. The utility functions encode it by getting
+related information from users (key, dtype).</p></li>
+</ul>
+</div>
+<div id="example-output-of-parsing-spec" class="section level2">
+<h2>Example output of parsing spec</h2>
+<pre class="sourceCode r"><code class="sourceCode r">parsing_spec &lt;-<span class="st"> </span><span class="kw">classifier_parse_example_spec</span>(
+  <span class="dt">feature_columns =</span> <span class="kw">column_numeric</span>(<span class="st">'a'</span>),
+  <span class="dt">label_key =</span> <span class="st">'b'</span>,
+  <span class="dt">weight_column =</span> <span class="st">'c'</span>
+)</code></pre>
+<p>For the above example, <code>classifier_parse_example_spec</code> would return the following:</p>
+<pre class="sourceCode r"><code class="sourceCode r">expected_spec &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/list">list</a></span>(
+  <span class="dt">a =</span> tf<span class="op">$</span>python<span class="op">$</span>ops<span class="op">$</span>parsing_ops<span class="op">$</span><span class="kw">FixedLenFeature</span>(reticulate<span class="op">::</span><span class="kw"><a href="https://www.rdocumentation.org/packages/reticulate/topics/tuple">tuple</a></span>(1L), <span class="dt">dtype =</span> tf<span class="op">$</span>float32),
+  <span class="dt">c =</span> tf<span class="op">$</span>python<span class="op">$</span>ops<span class="op">$</span>parsing_ops<span class="op">$</span><span class="kw">FixedLenFeature</span>(reticulate<span class="op">::</span><span class="kw"><a href="https://www.rdocumentation.org/packages/reticulate/topics/tuple">tuple</a></span>(1L), <span class="dt">dtype =</span> tf<span class="op">$</span>float32),
+  <span class="dt">b =</span> tf<span class="op">$</span>python<span class="op">$</span>ops<span class="op">$</span>parsing_ops<span class="op">$</span><span class="kw">FixedLenFeature</span>(reticulate<span class="op">::</span><span class="kw"><a href="https://www.rdocumentation.org/packages/reticulate/topics/tuple">tuple</a></span>(1L), <span class="dt">dtype =</span> tf<span class="op">$</span>int64)
+)
+
+<span class="co"># This should be the same as the one we constructed using `classifier_parse_example_spec`</span>
+testthat<span class="op">::</span><span class="kw"><a href="https://www.rdocumentation.org/packages/testthat/topics/equality-expectations">expect_equal</a></span>(parsing_spec, expected_spec)</code></pre>
+</div>
+<div id="example-usage-with-a-classifier" class="section level2">
+<h2>Example usage with a classifier</h2>
+<p>Firstly, define features transformations and initiailize your classifier similar to the following:</p>
+<pre class="sourceCode r"><code class="sourceCode r">fcs &lt;-<span class="st"> </span><span class="kw">feature_columns</span>(...)
+
+model &lt;-<span class="st"> </span><span class="kw">dnn_classifier</span>(
+  <span class="dt">n_classes =</span> <span class="dv">1000</span>,
+  <span class="dt">feature_columns =</span> fcs,
+  <span class="dt">weight_column =</span> <span class="st">'example-weight'</span>,
+  <span class="dt">label_vocabulary=</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="st">'photos'</span>, <span class="st">'keep'</span>, ...),
+  <span class="dt">hidden_units =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="dv">256</span>, <span class="dv">64</span>, <span class="dv">16</span>)
+)</code></pre>
+<p>Next, create the parsing configuration for <code>tf$parse_example</code> using <code>classifier_parse_example_spec</code> and the feature columns <code>fcs</code> we have just defined:</p>
+<pre class="sourceCode r"><code class="sourceCode r">parsing_spec &lt;-<span class="st"> </span><span class="kw">classifier_parse_example_spec</span>(
+  <span class="dt">feature_columns =</span> fcs,
+  <span class="dt">label_key =</span> <span class="st">'my-label'</span>,
+  <span class="dt">label_dtype =</span> tf<span class="op">$</span>string,
+  <span class="dt">weight_column =</span> <span class="st">'example-weight'</span>
+)</code></pre>
+<p>This label configuration tells the classifier the following:</p>
+<ul>
+<li>weights are retrieved with key ‘example-weight’</li>
+<li>label is string and can be one of the following <code><a href="https://www.rdocumentation.org/packages/base/topics/c">c('photos', 'keep', ...)</a></code>
+</li>
+<li>integer id for label ‘photos’ is 0, ‘keep’ is 1, etc</li>
+</ul>
+<p>Then define your input function with the help of <code>read_batch_features</code> that reads the batches of features from files in <code>tf$Example</code> format with the parsing configuration <code>parsing_spec</code> we just defined:</p>
+<pre class="sourceCode r"><code class="sourceCode r">input_fn_train &lt;-<span class="st"> </span><span class="cf">function</span>() {
+  features &lt;-<span class="st"> </span>tf<span class="op">$</span>contrib<span class="op">$</span>learn<span class="op">$</span><span class="kw">read_batch_features</span>(
+    <span class="dt">file_pattern =</span> train_files,
+    <span class="dt">batch_size =</span> batch_size,
+    <span class="dt">features =</span> parsing_spec,
+    <span class="dt">reader =</span> tf<span class="op">$</span>RecordIOReader)
+  labels &lt;-<span class="st"> </span>features[[<span class="st">"my-label"</span>]]
+  <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/function">return</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/list">list</a></span>(features, labels))
+}</code></pre>
+<p>Finally we can train the model using the training input function parsed by <code>classifier_parse_example_spec</code>:</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">train</span>(model, <span class="dt">input_fn =</span> input_fn_train)</code></pre>
+</div>

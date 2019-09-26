@@ -1,0 +1,41 @@
+---
+title: "TensorBoard Visualization"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{TensorBoard Visualization}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+type: docs
+repo: https://github.com/rstudio/tfestimators
+menu:
+  main:
+    name: "TensorBoard"
+    identifier: "tfestimators-tensorboard-visualizations"
+    parent: "tfestimators-using-tfestimators"
+    weight: 50
+---
+
+
+
+<div id="overview" class="section level2">
+<h2>Overview</h2>
+<p>TensorBoard is a visualization tool included with TensorFlow that enables you to visualize your TensorFlow graph, plot quantitative metrics about the execution of your graph, and show additional data like images that pass through it.</p>
+<p>Models built using tfestimators automatically contain most of the necessary information to visualize the TensorFlow graph, variables, etc., for you so you can easily launch the TensorBoard without additional manual specifications.</p>
+</div>
+<div id="examples" class="section level2">
+<h2>Examples</h2>
+<p>To start the TensorBoard, you trained a model in a similar fashion as follows:</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">estimator</span>(
+    <span class="dt">model_fn =</span> model_fn,
+    <span class="dt">model_dir =</span> <span class="st">"/tmp/test"</span>
+) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">train</span>(<span class="dt">input_fn =</span> input, <span class="dt">steps =</span> 100L)</code></pre>
+<p>and then you can call</p>
+<pre><code>tensorboard(log_dir = "/tmp/test", launch_browser = TRUE)</code></pre>
+<p>with <code>log_dir</code> being the directory you used to save the model checkpoints, to launch the TensorBoard in browser.</p>
+<p>For example, here’s a TensorBoard display for a model’s training loss:</p>
+<p><img src="images/tensorboard-loss.png" class="screenshot"></p>
+<p>Here’s another TensorBoard display for this model’s TensorFlow graph that demonstrates the architecture of the model:</p>
+<p><img src="images/tensorboard-graph.png" class="screenshot"></p>
+<p>You can also click to see each subgraph’s details:</p>
+<p><img src="images/tensorboard-graph-details.png" class="screenshot"></p>
+</div>

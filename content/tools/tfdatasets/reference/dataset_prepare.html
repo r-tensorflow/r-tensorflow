@@ -1,0 +1,96 @@
+---
+title: "Prepare a dataset for analysis"
+type: docs
+repo: https://github.com/rstudio/tfdatasets
+menu:
+  main:
+    name: "Prepare a dataset for analysis - tfdatasets"
+    parent: tfdatasets-reference
+---
+    
+    
+    <p>Transform a dataset with named columns into a list with features (<code>x</code>) and
+response (<code>y</code>) elements.</p>
+    
+
+    <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>dataset_prepare</span>(<span class='no'>dataset</span>, <span class='no'>x</span>, <span class='kw'>y</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>named</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='kw'>named_features</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>parallel_records</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>batch_size</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>num_parallel_batches</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>drop_remainder</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)</code></pre></div>
+    
+    <h2 id="arguments">Arguments</h2>
+    <table class="ref-arguments">
+    
+    <colgroup>
+      <col class="name" />
+      <col class="desc" />
+    </colgroup>  
+      
+    <tr>
+      <td>dataset</td>
+      <td><p>A dataset</p></td>
+    </tr>
+    <tr>
+      <td>x</td>
+      <td><p>Features to include. When <code>named_features</code> is <code>FALSE</code> all features
+will be stacked into a single tensor so must have an identical data type.</p></td>
+    </tr>
+    <tr>
+      <td>y</td>
+      <td><p>(Optional). Response variable.</p></td>
+    </tr>
+    <tr>
+      <td>named</td>
+      <td><p><code>TRUE</code> to name the dataset elements "x" and "y", <code>FALSE</code> to
+not name the dataset elements.</p></td>
+    </tr>
+    <tr>
+      <td>named_features</td>
+      <td><p><code>TRUE</code> to yield features as a named list; <code>FALSE</code> to
+stack features into a single array. Note that in the case of <code>FALSE</code> (the
+default) all features will be stacked into a single 2D tensor so need to
+have the same underlying data type.</p></td>
+    </tr>
+    <tr>
+      <td>parallel_records</td>
+      <td><p>(Optional) An integer, representing the number of
+records to decode in parallel. If not specified, records will be
+processed sequentially.</p></td>
+    </tr>
+    <tr>
+      <td>batch_size</td>
+      <td><p>(Optional). Batch size if you would like to fuse the
+<code>dataset_prepare()</code> operation together with a <code><a href='dataset_batch.html'>dataset_batch()</a></code> (fusing
+generally improves overall training performance).</p></td>
+    </tr>
+    <tr>
+      <td>num_parallel_batches</td>
+      <td><p>(Optional) An integer, representing the number of batches
+to create in parallel. On one hand, higher values can help mitigate the effect of
+stragglers. On the other hand, higher values can increase contention if CPU is
+scarce.</p></td>
+    </tr>
+    <tr>
+      <td>drop_remainder</td>
+      <td><p>Ensure that batches have a fixed size by
+omitting any final smaller batch if it's present. Note that this is
+required for use with the Keras tensor inputs to fit/evaluate/etc.</p></td>
+    </tr>
+    </table>
+    
+    <h2 id="value">Value</h2>
+
+    <p>A dataset. The dataset will have a structure of either:</p><ul>
+<li><p>When <code>named_features</code> is <code>TRUE</code>: <code><a href='https://www.rdocumentation.org/packages/base/topics/list'>list(x = list(feature_name = feature_values, ...), y = response_values)</a></code></p></li>
+<li><p>When <code>named_features</code> is <code>FALSE</code>: <code><a href='https://www.rdocumentation.org/packages/base/topics/list'>list(x = features_array, y = response_values)</a></code>,
+where <code>features_array</code> is a Rank 2 array of <code>(batch_size, num_features)</code>.</p></li>
+</ul>
+
+<p>Note that the <code>y</code> element will be omitted when <code>y</code> is <code>NULL</code>.</p>
+    
+    <h2 id="see-also">See also</h2>
+
+    <div class='dont-index'><p><a href='input_fn.html'>input_fn()</a> for use with <span class="pkg">tfestimators</span>.</p></div>
+    
+
+
+

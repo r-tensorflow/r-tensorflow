@@ -1,0 +1,25 @@
+- name: hello_tensorflow
+  type: core
+  description: >
+    Simplest possible TensorFlow program illustrating creation a session, evaluating
+    constants, and performing basic arithmetic.
+- name: linear_regression_simple
+  type: core
+  description: >
+    Simple model that learns W and b by minimizing mean squared errors via gradient descent.
+- name: linear_regression_multiple
+  type: core
+  description: >
+    Illustrate how a multiple linear regression (Y ~ XW + b) might be fit using TensorFlow.
+- name: mnist_softmax
+  type: core
+  description: >
+    Use softmax regression to train a model to look at MNIST images and predict what digits they are.
+- name: mnist_with_summaries
+  type: core
+  description: >
+    A simple MNIST classifier which displays summaries in TensorBoard.
+- name: mnist_fully_connected_feed
+  type: core
+  description: >
+    Trains and Evaluates the MNIST network using a feed dictionary.

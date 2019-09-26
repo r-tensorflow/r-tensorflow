@@ -1,0 +1,424 @@
+---
+title: "Using the TensorFlow API from R"
+output: 
+  html_document:
+    toc_depth: 2
+type: docs
+menu:
+  main:
+    name: "TensorFlow API"
+    identifier: "tensorflow-using-tensorflow-api"
+    parent: "tensorflow-using-tensorflow"
+    weight: 40
+aliases:
+  - /using_tensorflow_api.html
+---
+
+
+
+<p>The <a href="https://www.tensorflow.org/api_docs/python/index.html">TensorFlow API</a> is composed of a set of Python modules that enable constructing and executing TensorFlow graphs. The tensorflow package provides access to the complete TensorFlow API from within R. This article describes the basic syntax and mechanics of using TensorFlow from R.</p>
+<div id="modules" class="section level2">
+<h2>Modules</h2>
+<p>The TensorFlow API is divided into modules. The top-level entry point to the API is <code>tf</code>, which provides access to the main TensorFlow module (<code>tf</code> is exported from the tensorflow package). For example, here is a simple “Hello, World” script:</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(tensorflow)
+
+sess =<span class="st"> </span>tf<span class="op">$</span><span class="kw">Session</span>()
+
+hello &lt;-<span class="st"> </span>tf<span class="op">$</span><span class="kw">constant</span>(<span class="st">'Hello, TensorFlow!'</span>)
+sess<span class="op">$</span><span class="kw">run</span>(hello)
+
+a &lt;-<span class="st"> </span>tf<span class="op">$</span><span class="kw">constant</span>(10L)
+b &lt;-<span class="st"> </span>tf<span class="op">$</span><span class="kw">constant</span>(32L)
+sess<span class="op">$</span><span class="kw">run</span>(a <span class="op">+</span><span class="st"> </span>b)</code></pre>
+<div id="functions-classes" class="section level3">
+<h3>Functions &amp; Classes</h3>
+<p>Functions that begin with a lowercase letter (e.g. <code>tf$constant</code>) are normal R functions. Functions that begin within an uppercase letter (e.g. <code>tf$Session</code>) are functions that create new instances of TensorFlow classes.</p>
+<p>The main TensorFlow module (<code>tf</code>) includes a wide variety of functions and classes which you can read more more about in the <a href="https://www.tensorflow.org/api_docs/python/">TensorFlow API</a> documentation (see also the <a href="#getting-help">Getting Help</a> section below which describes accessing help for the TensorFlow API directly within the RStudio IDE editor and console).</p>
+</div>
+<div id="sub-modules" class="section level3">
+<h3>Sub-Modules</h3>
+<p>The TensorFlow API also includes many sub-modules, including the <code>tf$nn</code> module which provides specialized functions for neural networks and the <code>tf$train</code> module which provides a set of classes and functions that helps train models. You can access these modules the same way that functions are accessed (via the <code>$</code> operator). For example:</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Call the conv2d function within the nn sub-module</span>
+tf<span class="op">$</span>nn<span class="op">$</span><span class="kw">conv2d</span>(x, W, <span class="dt">strides=</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(1L, 1L, 1L, 1L), <span class="dt">padding=</span><span class="st">'SAME'</span>)
+
+<span class="co"># Create an optimizer from the train sub-module</span>
+optimizer &lt;-<span class="st"> </span>tf<span class="op">$</span>train<span class="op">$</span><span class="kw">GradientDescentOptimizer</span>(<span class="fl">0.5</span>)</code></pre>
+</div>
+</div>
+<div id="simple-example" class="section level2">
+<h2>Simple Example</h2>
+<p>Here’s a simple example of using R to define a TensorFlow model:</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(tensorflow)
+
+<span class="co"># Create 100 phony x, y data points, y = x * 0.1 + 0.3</span>
+x_data &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/stats/topics/Uniform">runif</a></span>(<span class="dv">100</span>, <span class="dt">min=</span><span class="dv">0</span>, <span class="dt">max=</span><span class="dv">1</span>)
+y_data &lt;-<span class="st"> </span>x_data <span class="op">*</span><span class="st"> </span><span class="fl">0.1</span> <span class="op">+</span><span class="st"> </span><span class="fl">0.3</span>
+
+<span class="co"># Try to find values for W and b that compute y_data = W * x_data + b</span>
+<span class="co"># (We know that W should be 0.1 and b 0.3, but TensorFlow will</span>
+<span class="co"># figure that out for us.)</span>
+W &lt;-<span class="st"> </span>tf<span class="op">$</span><span class="kw">Variable</span>(tf<span class="op">$</span><span class="kw">random_uniform</span>(<span class="kw"><a href="../../tensorflow/reference/shape.html">shape</a></span>(1L), <span class="fl">-1.0</span>, <span class="fl">1.0</span>))
+b &lt;-<span class="st"> </span>tf<span class="op">$</span><span class="kw">Variable</span>(tf<span class="op">$</span><span class="kw">zeros</span>(<span class="kw"><a href="../../tensorflow/reference/shape.html">shape</a></span>(1L)))
+y &lt;-<span class="st"> </span>W <span class="op">*</span><span class="st"> </span>x_data <span class="op">+</span><span class="st"> </span>b
+
+<span class="co"># Minimize the mean squared errors.</span>
+loss &lt;-<span class="st"> </span>tf<span class="op">$</span><span class="kw">reduce_mean</span>((y <span class="op">-</span><span class="st"> </span>y_data) <span class="op">^</span><span class="st"> </span><span class="dv">2</span>)
+optimizer &lt;-<span class="st"> </span>tf<span class="op">$</span>train<span class="op">$</span><span class="kw">GradientDescentOptimizer</span>(<span class="fl">0.5</span>)
+train &lt;-<span class="st"> </span>optimizer<span class="op">$</span><span class="kw">minimize</span>(loss)
+
+<span class="co"># Launch the graph and initialize the variables.</span>
+sess =<span class="st"> </span>tf<span class="op">$</span><span class="kw">Session</span>()
+sess<span class="op">$</span><span class="kw">run</span>(tf<span class="op">$</span><span class="kw">global_variables_initializer</span>())
+
+<span class="co"># Fit the line (Learns best fit is W: 0.1, b: 0.3)</span>
+<span class="cf">for</span> (step <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span><span class="dv">201</span>) {
+  sess<span class="op">$</span><span class="kw">run</span>(train)
+  <span class="cf">if</span> (step <span class="op">%%</span><span class="st"> </span><span class="dv">20</span> <span class="op">==</span><span class="st"> </span><span class="dv">0</span>)
+    <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/cat">cat</a></span>(step, <span class="st">"-"</span>, sess<span class="op">$</span><span class="kw">run</span>(W), sess<span class="op">$</span><span class="kw">run</span>(b), <span class="st">"</span><span class="ch">\n</span><span class="st">"</span>)
+}</code></pre>
+<p>If you’ve seen TensorFlow code written in Python you’ll recognize this code as nearly identical save for some minor syntactic differences (e.g. the use of <code>$</code> rather than <code>.</code> as an object delimiter). You’ll also note that R numeric vectors and random distribution functions are used, whereas Python code would typically use their NumPy equivalents.</p>
+<p>The remainder of this article describes the core patterns used for interacting with the TensorFlow API from R,</p>
+</div>
+<div id="numeric-types" class="section level2">
+<h2>Numeric Types</h2>
+<p>The TensorFlow API is more strict about numeric types than is customary in R (which often automatically casts from integer to float and vice-versa as necessary). Many TensorFlow function parameters require integers (e.g. for tensor dimensions) and in those cases it’s important to use an R integer literal (e.g. <code>1L</code>). Here’s an example of specifying the <code>strides</code> parameter for a 4-dimensional tensor using integer literals:</p>
+<pre class="sourceCode r"><code class="sourceCode r">tf<span class="op">$</span>nn<span class="op">$</span><span class="kw">conv2d</span>(x, W, <span class="dt">strides=</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(1L, 1L, 1L, 1L), <span class="dt">padding=</span><span class="st">'SAME'</span>)</code></pre>
+</div>
+<div id="numeric-lists" class="section level2">
+<h2>Numeric Lists</h2>
+<p>Some TensorFlow APIs call for lists of a numeric type. Typically you can use the <code>c</code> function (as illustrated above) to create lists of numeric types. However, there are a couple of special cases (mostly involving specifying the shapes of tensors) where you may need to create a numeric list with an embedded <code>NULL</code> or a numeric list with only a single item. In those cases you’ll want to use the <code>list</code> function rather than <code>c</code> in order to force the argument to be treated as a list rather than a scalar, and to ensure that <code>NULL</code> elements are preserved. For example:</p>
+<pre class="sourceCode r"><code class="sourceCode r">x &lt;-<span class="st"> </span>tf<span class="op">$</span><span class="kw">placeholder</span>(tf<span class="op">$</span>float32, <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/list">list</a></span>(<span class="ot">NULL</span>, 784L))
+W &lt;-<span class="st"> </span>tf<span class="op">$</span><span class="kw">Variable</span>(tf<span class="op">$</span><span class="kw">zeros</span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/list">list</a></span>(784L, 10L)))
+b &lt;-<span class="st"> </span>tf<span class="op">$</span><span class="kw">Variable</span>(tf<span class="op">$</span><span class="kw">zeros</span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/list">list</a></span>(10L)))</code></pre>
+</div>
+<div id="tensor-shapes" class="section level2">
+<h2>Tensor Shapes</h2>
+<p>This need to use <code>list</code> rather than <code>c</code> is very common for shape arguments (since they are often of one dimension and in the case of placeholders often have a <code>NULL</code> dimension). For these cases there is a <code>shape</code> function which you can use to make the calling syntax a bit more more clear. For example, the above code could be re-written as:</p>
+<pre class="sourceCode r"><code class="sourceCode r">x &lt;-<span class="st"> </span>tf<span class="op">$</span><span class="kw">placeholder</span>(tf<span class="op">$</span>float32, <span class="kw"><a href="../../tensorflow/reference/shape.html">shape</a></span>(<span class="ot">NULL</span>, 784L))
+W &lt;-<span class="st"> </span>tf<span class="op">$</span><span class="kw">Variable</span>(tf<span class="op">$</span><span class="kw">zeros</span>(<span class="kw"><a href="../../tensorflow/reference/shape.html">shape</a></span>(784L, 10L)))
+b &lt;-<span class="st"> </span>tf<span class="op">$</span><span class="kw">Variable</span>(tf<span class="op">$</span><span class="kw">zeros</span>(<span class="kw"><a href="../../tensorflow/reference/shape.html">shape</a></span>(10L)))</code></pre>
+</div>
+<div id="tensor-values" class="section level2">
+<h2>Tensor Values</h2>
+<p>A tensor is a typed multi-dimensional array. Tensors can take the form of a single value, a vector, a matrix, or an array in many dimensions. When you initialize the value of a tensor you can use the following R data types for various tensor shapes:</p>
+<table>
+<thead><tr class="header">
+<th>Dimensions</th>
+<th>R Type</th>
+<th>Example</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td>1</td>
+<td>vector</td>
+<td><code><a href="https://www.rdocumentation.org/packages/base/topics/c">c(1.0, 2.0, 3.0, 4.0)</a></code></td>
+</tr>
+<tr class="even">
+<td>2</td>
+<td>matrix</td>
+<td><code><a href="https://www.rdocumentation.org/packages/base/topics/matrix">matrix(c(1.0,2.0,3.0,4.0), nrow = 2, ncol = 2)</a></code></td>
+</tr>
+<tr class="odd">
+<td>3+</td>
+<td>array</td>
+<td><code><a href="https://www.rdocumentation.org/packages/base/topics/array">array(rep(1, 365*5*4), dim=c(365, 5, 4))</a></code></td>
+</tr>
+</tbody>
+</table>
+<p>Correspondingly, when a TensorFlow computation yields a value back to R the appropriate data type (vector, matrix, or array) will be returned. You may see references to NumPy arrays in TensorFlow documentation or examples written in Python. The TensorFlow R API doesn’t make use of NumPy arrays but rather their R analogs as described above.</p>
+</div>
+<div id="tensor-indexes" class="section level2">
+<h2>Tensor Indexes</h2>
+<p>Tensor indexes within the TensorFlow API are 0-based (rather than 1-based as R vectors are). This typically comes up when specifying the dimension of a tensor to operate on (e.g with a function like <code>tf$reduce_mean</code> or <code>tf$argmax</code>). The first dimension of a tensor is specified as <code>0L</code>, the second <code>1L</code>, and so on. For example:</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># call tf$reduce_mean on the second dimension of the specified tensor</span>
+cross_entropy &lt;-<span class="st"> </span>tf<span class="op">$</span><span class="kw">reduce_mean</span>(
+  <span class="op">-</span>tf<span class="op">$</span><span class="kw">reduce_sum</span>(y_ <span class="op">*</span><span class="st"> </span>tf<span class="op">$</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/Log">log</a></span>(y_conv), <span class="dt">reduction_indices=</span>1L)
+)
+
+<span class="co"># call tf$argmax on the second dimension of the specified tensor</span>
+correct_prediction &lt;-<span class="st"> </span>tf<span class="op">$</span><span class="kw">equal</span>(tf<span class="op">$</span><span class="kw">argmax</span>(y_conv, 1L), tf<span class="op">$</span><span class="kw">argmax</span>(y_, 1L))</code></pre>
+</div>
+<div id="tensor-extraction" class="section level2">
+<h2>Tensor Extraction</h2>
+<p>Tensor elements can be extracted either by using functions like <code>tf$gather()</code> and <code>tf$slice()</code>, or by using <code>[</code> syntax.</p>
+<p>Extracting tensor elements with <code>[</code> in R is similar to extracting elements from standard R arrays, albeit with some minor differences in capabilities. In contrast to most <code>tf$</code> functions, <code>[</code> defaults to R style 1-based rather than 0-based indexes. Currently, only numeric indexes in <code>[</code> are supported (no logical or character indexes)</p>
+<p>Extracting works identically to R arrays if the slicing index is missing, supplied as a scalar, or as a sequence (e.g, created by <code>:</code> or <code><a href="https://www.rdocumentation.org/packages/base/topics/seq">seq_len()</a></code>)</p>
+<pre class="sourceCode r"><code class="sourceCode r">x[,<span class="dv">1</span>] <span class="er">)</span>      <span class="co"># all rows, first column</span>
+x[<span class="dv">1</span><span class="op">:</span><span class="dv">2</span>,] <span class="er">)</span>    <span class="co"># first two rows, all columns</span>
+x[,<span class="dv">1</span>, drop =<span class="st"> </span><span class="ot">FALSE</span>] <span class="er">)</span> <span class="co"># all rows, first column, but preserving the tensor rank</span></code></pre>
+<p><code>[</code> also supports slices with a strided step, which can be specified in traditional R style with <code><a href="https://www.rdocumentation.org/packages/base/topics/seq">seq()</a></code> or with a python-style second colon. If you are unfamiliar with python-style strided step syntax, see here for a <a href="https://docs.scipy.org/doc/numpy-1.13.0/reference/arrays.indexing.html#basic-slicing-and-indexing">quick primer</a></p>
+<pre class="sourceCode r"><code class="sourceCode r">x[, <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/seq">seq</a></span>(<span class="dv">1</span>, <span class="dv">5</span>, <span class="dt">by =</span> <span class="dv">2</span>)]  <span class="co"># R style</span>
+x[, <span class="dv">1</span><span class="op">:</span><span class="dv">5</span><span class="op">:</span><span class="dv">2</span>]              <span class="co"># Equivalent python-style strided step </span></code></pre>
+<p>Missing arguments for python syntax are valid, but they must be supplied as NULL or whole expression must by backticked.</p>
+<pre class="sourceCode r"><code class="sourceCode r">x[, <span class="st">`</span><span class="dt">::2</span><span class="st">`</span>] 
+x[, <span class="ot">NULL</span><span class="op">:</span><span class="ot">NULL</span><span class="op">:</span><span class="dv">2</span>] 
+x[, <span class="st">`</span><span class="dt">2:</span><span class="st">`</span>] </code></pre>
+<p><code>[</code> also accepts <code>tf$newaxis</code> and <code><a href="../../tensorflow/reference/all_dims.html">all_dims()</a></code> as arguments</p>
+<pre class="sourceCode r"><code class="sourceCode r">x[,, tf<span class="op">$</span>newaxis]
+x[<span class="kw"><a href="../../tensorflow/reference/all_dims.html">all_dims</a></span>(), <span class="dv">1</span>] <span class="co"># all_dims expands to the shape of the tensor</span></code></pre>
+<p>An important difference between extracting R arrays and tensorflow tensors with <code>[</code> is how negative numbers are interpreted. For tensorflow tensors, negative numbers are interpreted as selecting elements by counting from tail (e.g, they are interpreted python-style).</p>
+<pre class="sourceCode r"><code class="sourceCode r">x[<span class="op">-</span><span class="dv">1</span>,]  <span class="co"># the last row</span></code></pre>
+<p>Tensors are accepted by <code>[</code> as well, but note that tensors suplied to <code>[</code> are not translated from R to python. Meaning that tensors are interpreted as 0-based, and if slicing a range with <code>:</code>, then the returned arrays is exclusive of the upper bound.</p>
+<pre class="sourceCode r"><code class="sourceCode r">x[, tf<span class="op">$</span><span class="kw">constant</span>(1L)] <span class="co"># second column</span>
+x[, tf<span class="op">$</span><span class="kw">constant</span>(0L)<span class="op">:</span>tf<span class="op">$</span><span class="kw">constant</span>(2L)] <span class="co"># first two columns</span></code></pre>
+<p>If you are translating existing python code to R, note that you can set an option to have all <code>[</code> arguments be interpreted pure-python style by setting <code><a href="https://www.rdocumentation.org/packages/base/topics/options">options(tensorflow.extract.style = "python")</a></code>. See <code><a href="../../tensorflow/reference/sub-.tensorflow.tensor.html">?`[.tensorflow.tensor`</a></code> for additional options and details.</p>
+</div>
+<div id="generics" class="section level2">
+<h2>Generics</h2>
+<p>The tensorflow package provides Tensor implementations for a number of R generic operators and functions. You can use these in place of the equivalent <code>tf</code> function to make your code more readable and compact. The following generics are implemented:</p>
+<table>
+<thead><tr class="header">
+<th>Generic</th>
+<th>TensorFlow</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td>-</td>
+<td>tf$neg, tf$sub</td>
+</tr>
+<tr class="even">
+<td>+</td>
+<td>tf$add</td>
+</tr>
+<tr class="odd">
+<td>*</td>
+<td>tf$mul</td>
+</tr>
+<tr class="even">
+<td>/</td>
+<td>tf$truediv</td>
+</tr>
+<tr class="odd">
+<td>%/%</td>
+<td>tf$floordiv</td>
+</tr>
+<tr class="even">
+<td>%%</td>
+<td>tf$mod</td>
+</tr>
+<tr class="odd">
+<td>^</td>
+<td>tf$pow</td>
+</tr>
+<tr class="even">
+<td>%%</td>
+<td>tf$mod</td>
+</tr>
+<tr class="odd">
+<td>&amp;</td>
+<td>tf$logical_and</td>
+</tr>
+<tr class="even">
+<td>|</td>
+<td>tf$logical_or</td>
+</tr>
+<tr class="odd">
+<td>!</td>
+<td>tf$logical_not</td>
+</tr>
+<tr class="even">
+<td>==</td>
+<td>tf$equal</td>
+</tr>
+<tr class="odd">
+<td>!=</td>
+<td>tf$not_equal</td>
+</tr>
+<tr class="even">
+<td>&lt;</td>
+<td>tf$less</td>
+</tr>
+<tr class="odd">
+<td>&lt;=</td>
+<td>tf$less_equal</td>
+</tr>
+<tr class="even">
+<td>&gt;</td>
+<td>tf$greater</td>
+</tr>
+<tr class="odd">
+<td>&gt;=</td>
+<td>tf$greater_equal</td>
+</tr>
+<tr class="even">
+<td>[</td>
+<td>tf$strided_slice</td>
+</tr>
+<tr class="odd">
+<td>abs</td>
+<td>tf$abs</td>
+</tr>
+<tr class="even">
+<td>sign</td>
+<td>tf$sign</td>
+</tr>
+<tr class="odd">
+<td>sqrt</td>
+<td>tf$sqrt</td>
+</tr>
+<tr class="even">
+<td>floor</td>
+<td>tf$floor</td>
+</tr>
+<tr class="odd">
+<td>ceiling</td>
+<td>tf$ceiling</td>
+</tr>
+<tr class="even">
+<td>round</td>
+<td>tf$round</td>
+</tr>
+<tr class="odd">
+<td>exp</td>
+<td>tf$exp</td>
+</tr>
+<tr class="even">
+<td>log</td>
+<td>tf$log</td>
+</tr>
+<tr class="odd">
+<td>cos</td>
+<td>tf$cos</td>
+</tr>
+<tr class="even">
+<td>sin</td>
+<td>tf$sin</td>
+</tr>
+<tr class="odd">
+<td>tan</td>
+<td>tf$tan</td>
+</tr>
+<tr class="even">
+<td>acos</td>
+<td>tf$acos</td>
+</tr>
+<tr class="odd">
+<td>asin</td>
+<td>tf$asin</td>
+</tr>
+<tr class="even">
+<td>atan</td>
+<td>tf$atan</td>
+</tr>
+<tr class="odd">
+<td>lgamma</td>
+<td>tf$lgamma</td>
+</tr>
+<tr class="even">
+<td>digamma</td>
+<td>tf$digamma</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="dictionaries" class="section level2">
+<h2>Dictionaries</h2>
+<p>Some TensorFlow APIs accept dictionaries as arguments, the most common of which is the <code>feed_dict</code> argument which feeds training and test data to various functions. If a dictionary is keyed by character string you can simply pass an R named list. However, if a dictionary is keyed by another object type like a tensor (as <code>feed_dict</code> is) then you should use the <code>dict</code> function rather than a named list. For example:</p>
+<pre class="sourceCode r"><code class="sourceCode r">sess<span class="op">$</span><span class="kw">run</span>(train_step, <span class="dt">feed_dict =</span> <span class="kw"><a href="../../tensorflow/reference/reexports.html">dict</a></span>(<span class="dt">x =</span> batch_xs, <span class="dt">y_ =</span> batch_ys))</code></pre>
+<p>The <code>x</code> and <code>y_</code> variables in the above example are tensor placeholders which are substituted for by the specified training data.</p>
+</div>
+<div id="tuples" class="section level2">
+<h2>Tuples</h2>
+<p>Some TensorFlow APIs accept tuples as arguments. In many cases if you pass a list the API will automatically convert it to a tuple, however there may be instances where you need to explicitly pass a tuple. For these cases you can use the <code>tuple</code> function, for example:</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="../../tensorflow/reference/reexports.html">tuple</a></span>(1L, 2L, 3L)</code></pre>
+</div>
+<div id="with-contexts" class="section level2">
+<h2>With Contexts</h2>
+<p>The TensorFlow API includes several functions that yield scoped execution contexts (i.e. blocks of code which execute code on enter and exit, for example to set a default or to open and close a resource).</p>
+<p>The R <code>with</code> generic function can be used with TensorFlow objects that define a scoped execution context. For example:</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/with">with</a></span>(tf<span class="op">$</span><span class="kw">name_scope</span>(<span class="st">'input'</span>), {
+  x &lt;-<span class="st"> </span>tf<span class="op">$</span><span class="kw">placeholder</span>(tf<span class="op">$</span>float32, <span class="kw"><a href="../../tensorflow/reference/shape.html">shape</a></span>(<span class="ot">NULL</span>, 784L), <span class="dt">name=</span><span class="st">'x-input'</span>)
+  y_ &lt;-<span class="st"> </span>tf<span class="op">$</span><span class="kw">placeholder</span>(tf<span class="op">$</span>float32, <span class="kw"><a href="../../tensorflow/reference/shape.html">shape</a></span>(<span class="ot">NULL</span>, 10L), <span class="dt">name=</span><span class="st">'y-input'</span>)
+})</code></pre>
+<p>In this case the <code>tf$name_scope</code> execution context will automatically pre-pend <code>"input/"</code> to the specified names, so they will become <code>"input/x-input"</code> and <code>"input/y-input"</code> respectively.</p>
+<p>It is sometimes convenient to gain access to the execution context via an R object. For this purpose there is also a custom <code>%as%</code> operator defined, for example:</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/with">with</a></span>(tf<span class="op">$</span><span class="kw">Session</span>() <span class="op">%as%</span><span class="st"> </span>sess, {
+  sess<span class="op">$</span><span class="kw">run</span>(hello)
+})</code></pre>
+<p>The <code>sess</code> variable will be assigned from the execution context and be available only within the expression passed to <code>with</code>.</p>
+</div>
+<div id="iterators" class="section level2">
+<h2>Iterators</h2>
+<p>The TensorFlow API includes several functions that return Python <a href="http://anandology.com/python-practice-book/iterators.html">iterators or generators</a> (these are typically used for streaming back results from training or evaluation). You can use the <code>iterate</code> function to apply an R function to each item returned from an interator or generator. For example:</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="../../tensorflow/reference/reexports.html">iterate</a></span>(tf<span class="op">$</span>python_io<span class="op">$</span><span class="kw">tf_record_iterator</span>(filename), <span class="cf">function</span>(record) {
+  <span class="co"># Process the record</span>
+})</code></pre>
+<p>If you just want to collect all of the items into an R list or vector, you can call the <code>iterate</code> function with just the iterator and no function to apply:</p>
+<pre class="sourceCode r"><code class="sourceCode r">records &lt;-<span class="st"> </span><span class="kw"><a href="../../tensorflow/reference/reexports.html">iterate</a></span>(tf<span class="op">$</span>python_io<span class="op">$</span><span class="kw">tf_record_iterator</span>(filename))</code></pre>
+<p>The result will be automatically simplified to an R vector if all values returned from the iteration are length 1 vectors of single primitive type “character”, “complex”, “double”, “integer”, or “logical” (otherwise the result will be an R list).</p>
+<p>Note that Python iterators and generators are stateful objects. This means that after making a single pass through an iterator it will be empty (i.e. you can’t execute another iteration against the same underlying iterator).</p>
+</div>
+<div id="numpy-types" class="section level2">
+<h2>NumPy Types</h2>
+<p>When you use a TensorFlow API that expects NumPy arrays you can simply use the equivalent R matrix or multi-dimensional array and it will be automatically converted to the required NumPy array type.</p>
+<p>There are however some parts of the TensorFlow API which require direct specification of NumPy data types (e.g. the CSV loading functions in tflearn). For these contexts you can import the NumPy module explicitly and refer to it’s types as needed.</p>
+<p>For example, here’s a call to tflearn’s <code>load_csv_with_header</code> function that specifies data types using the NumPy module:</p>
+<pre class="sourceCode r"><code class="sourceCode r">np &lt;-<span class="st"> </span><span class="kw"><a href="../../tensorflow/reference/reexports.html">import</a></span>(<span class="st">"numpy"</span>)
+training_set &lt;-<span class="st"> </span>tf<span class="op">$</span>contrib<span class="op">$</span>learn<span class="op">$</span>datasets<span class="op">$</span>base<span class="op">$</span><span class="kw">load_csv_with_header</span>(
+  <span class="dt">filename =</span> <span class="st">"iris_training.csv"</span>,
+  <span class="dt">target_dtype =</span> np<span class="op">$</span>int,
+  <span class="dt">features_dtype =</span> np<span class="op">$</span>float32
+)</code></pre>
+<p>Note that we explicitly import NumPy via <code>np &lt;- import("numpy")</code> prior to accessing the <code>np$int</code> and <code>np$float32</code> types.</p>
+</div>
+<div id="getting-help" class="section level2">
+<h2>Getting Help</h2>
+<p>As you use TensorFlow from R you’ll want to get help on the various functions and classes available within the API. If you are running the vary latest <a href="https://www.rstudio.com/products/rstudio/download/preview/">Preview Release</a> (v1.0.18 or later) of RStudio IDE you can get code completion and inline help for the TensorFlow API within RStudio. For example:</p>
+<p><img src="images/completion-functions.png" style="margin-bottom: 15px; border: solid 1px #cccccc;" width="804" height="260"></p>
+<p>Inline help is also available for function parameters:</p>
+<p><img src="images/completion-params.png" style="margin-bottom: 15px; border: solid 1px #cccccc;" width="804" height="177"></p>
+<p>You can press the F1 key while viewing inline help (or whenever your cursor is over a TensorFlow API symbol) and you will be navigated to the location of that symbol’s help within the <a href="https://www.tensorflow.org/api_docs/python/">TensorFlow API</a> documentation.</p>
+</div>
+<div id="api-reference" class="section level2">
+<h2>API Reference</h2>
+<p>The main <a href="https://www.tensorflow.org/api_docs/python/">TensorFlow API</a> reference documents all of the modules, classes, and functions within TensorFlow. This documentation is for the Python API, however since the R API is based on the Python API the documentation is also easily adapted for use with R.</p>
+<p>Python data types in the TensorFlow API map to R as follows:</p>
+<table>
+<thead><tr class="header">
+<th>Python</th>
+<th>R</th>
+<th>Examples</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td>Scalar</td>
+<td>Single-element vector</td>
+<td>
+<code>1</code>, <code>1L</code>, <code>TRUE</code>, <code>"foo"</code>
+</td>
+</tr>
+<tr class="even">
+<td>List</td>
+<td>Multi-element vector</td>
+<td>
+<code><a href="https://www.rdocumentation.org/packages/base/topics/c">c(1.0, 2.0, 3.0)</a></code>, <code><a href="https://www.rdocumentation.org/packages/base/topics/c">c(1L, 2L, 3L)</a></code>
+</td>
+</tr>
+<tr class="odd">
+<td>Tuple</td>
+<td>List of multiple types</td>
+<td><code><a href="https://www.rdocumentation.org/packages/base/topics/list">list(1L, TRUE, "foo")</a></code></td>
+</tr>
+<tr class="even">
+<td>Dict</td>
+<td>Named list or <code>dict</code>
+</td>
+<td>
+<code><a href="https://www.rdocumentation.org/packages/base/topics/list">list(a = 1L, b = 2.0)</a></code>, <code><a href="../../tensorflow/reference/reexports.html">dict(x = x_data)</a></code>
+</td>
+</tr>
+<tr class="odd">
+<td>NumPy ndarray</td>
+<td>Matrix/Array</td>
+<td><code><a href="https://www.rdocumentation.org/packages/base/topics/matrix">matrix(c(1,2,3,4), nrow = 2, ncol = 2)</a></code></td>
+</tr>
+<tr class="even">
+<td>None, True, False</td>
+<td>NULL, TRUE, FALSE</td>
+<td>
+<code>NULL</code>, <code>TRUE</code>, <code>FALSE</code>
+</td>
+</tr>
+</tbody>
+</table>
+</div>

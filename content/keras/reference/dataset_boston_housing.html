@@ -1,0 +1,60 @@
+---
+title: "Boston housing price regression dataset"
+type: docs
+repo: https://github.com/rstudio/keras
+menu:
+  main:
+    name: "Boston housing price regression dataset - keras"
+    parent: keras-reference
+---
+    
+    
+    <p>Dataset taken from the StatLib library which is maintained at Carnegie Mellon
+University.</p>
+    
+
+    <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>dataset_boston_housing</span>(<span class='kw'>path</span> <span class='kw'>=</span> <span class='st'>"boston_housing.npz"</span>, <span class='kw'>test_split</span> <span class='kw'>=</span> <span class='fl'>0.2</span>,
+  <span class='kw'>seed</span> <span class='kw'>=</span> <span class='fl'>113L</span>)</code></pre></div>
+    
+    <h2 id="arguments">Arguments</h2>
+    <table class="ref-arguments">
+    
+    <colgroup>
+      <col class="name" />
+      <col class="desc" />
+    </colgroup>  
+      
+    <tr>
+      <td>path</td>
+      <td><p>Path where to cache the dataset locally (relative to
+~/.keras/datasets).</p></td>
+    </tr>
+    <tr>
+      <td>test_split</td>
+      <td><p>fraction of the data to reserve as test set.</p></td>
+    </tr>
+    <tr>
+      <td>seed</td>
+      <td><p>Random seed for shuffling the data before computing the test
+split.</p></td>
+    </tr>
+    </table>
+    
+    <h2 id="value">Value</h2>
+
+    <p>Lists of training and test data: <code>train$x, train$y, test$x, test$y</code>.</p>
+<p>Samples contain 13 attributes of houses at different locations around
+the Boston suburbs in the late 1970s. Targets are the median values of the
+houses at a location (in k$).</p>
+    
+    <h2 id="see-also">See also</h2>
+
+    <div class='dont-index'><p>Other datasets: <code><a href='dataset_cifar100.html'>dataset_cifar100</a></code>,
+  <code><a href='dataset_cifar10.html'>dataset_cifar10</a></code>,
+  <code><a href='dataset_fashion_mnist.html'>dataset_fashion_mnist</a></code>,
+  <code><a href='dataset_imdb.html'>dataset_imdb</a></code>, <code><a href='dataset_mnist.html'>dataset_mnist</a></code>,
+  <code><a href='dataset_reuters.html'>dataset_reuters</a></code></p></div>
+    
+
+
+

@@ -1,0 +1,245 @@
+---
+title: "Estimator Basics"
+output: 
+  rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Estimators Basics}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+type: docs
+repo: https://github.com/rstudio/tfestimators
+menu:
+  main:
+    name: "Estimator Basics"
+    identifier: "tfestimators-basics"
+    parent: "tfestimators-using-tfestimators"
+    weight: 20
+---
+
+
+
+<div id="overview" class="section level2">
+<h2>Overview</h2>
+<p>The basic components of the TensorFlow Estimators API include:</p>
+<ul>
+<li><p>Canned estimators (pre-built implementations of various models).</p></li>
+<li><p>Custom estimators (custom model implementations).</p></li>
+<li><p>Estimator methods (core methods like <code><a href="../reference/reexports.html">train()</a></code>, <code><a href="https://www.rdocumentation.org/packages/stats/topics/predict">predict()</a></code>, <code><a href="../reference/reexports.html">evaluate()</a></code>, etc. which work the same for all canned and custom estimators).</p></li>
+<li><p>Feature columns (definitions of how features should be transformed during modeling).</p></li>
+<li><p>Input functions (sources of data for training, evaluation, and prediction).</p></li>
+</ul>
+<p>In addition, there are APIs that cover more advanced usages:</p>
+<ul>
+<li><p>Experiments (wrappers around estimators that handle concerns like distributed training, hyperparameter tuning, etc.)</p></li>
+<li><p>Run hooks (callbacks for recording context and interacting with each modelling processes)</p></li>
+<li><p>SavedModel export utilities (exports the trained model to be deployed in places like CloudML)</p></li>
+</ul>
+<p>Please read our <a href="http://terrytangyuan.github.io/data/papers/tf-estimators-kdd-paper.pdf">white paper</a> if you are interested in the detailed design of the above components.</p>
+<p>Below we enumerate some of the core functions in each of these components to provide a high level overview of what’s available. See the linked articles for more details on using all of the components together.</p>
+</div>
+<div id="canned-estimators" class="section level2">
+<h2>Canned Estimators</h2>
+<p>The <strong>tfestimators</strong> package includes a wide variety of canned estimators for common machine learning tasks. Currently, the following canned estimators are available:</p>
+<table>
+<thead><tr class="header">
+<th>Estimator</th>
+<th>Description</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td><code><a href="../reference/linear_estimators.html">linear_regressor()</a></code></td>
+<td>Linear regressor model.</td>
+</tr>
+<tr class="even">
+<td><code><a href="../reference/linear_estimators.html">linear_classifier()</a></code></td>
+<td>Linear classifier model.</td>
+</tr>
+<tr class="odd">
+<td><code><a href="../reference/dnn_estimators.html">dnn_regressor()</a></code></td>
+<td>DNN Regression.</td>
+</tr>
+<tr class="even">
+<td><code><a href="../reference/dnn_estimators.html">dnn_classifier()</a></code></td>
+<td>DNN Classification.</td>
+</tr>
+<tr class="odd">
+<td><code><a href="../reference/dnn_linear_combined_estimators.html">dnn_linear_combined_regressor()</a></code></td>
+<td>DNN Linear Combined Regression.</td>
+</tr>
+<tr class="even">
+<td><code><a href="../reference/dnn_linear_combined_estimators.html">dnn_linear_combined_classifier()</a></code></td>
+<td>DNN Linear Combined Classification.</td>
+</tr>
+</tbody>
+</table>
+<p>Before you can use an estimator, you need to provide an input function and define a set of feature columns. The following two sections cover how to do this.</p>
+</div>
+<div id="input-functions" class="section level2">
+<h2>Input Functions</h2>
+<p>Input functions are used to provide data to estimators during training, evaluation and prediction. The R interface provides several high-level input function implementations for various common R data sources, including:</p>
+<ul>
+<li>Formulas</li>
+<li>Matrices</li>
+<li>Data Frames</li>
+<li>Lists of vectors</li>
+</ul>
+<p>For example, here’s how we might construct an input function that uses the <code>mtcars</code> data frame as a data source, treating the <code>drat</code>, <code>mpg</code>, and <code>am</code> variables as feature columns, and <code>vs</code> as a response.</p>
+<pre class="sourceCode r"><code class="sourceCode r">input &lt;-<span class="st"> </span><span class="kw">input_fn</span>(mtcars, 
+                  <span class="dt">features =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="st">"drat"</span>, <span class="st">"mpg"</span>, <span class="st">"am"</span>),
+                  <span class="dt">response =</span> <span class="st">"vs"</span>,
+                  <span class="dt">batch_size =</span> <span class="dv">128</span>,
+                  <span class="dt">epochs =</span> <span class="dv">3</span>)</code></pre>
+<p>The formula interface is a bit more succinct, in this case, and should feel familiar to R users who have experience fitting models using the R <code>stats</code> package.</p>
+<pre class="sourceCode r"><code class="sourceCode r">input &lt;-<span class="st"> </span><span class="kw">input_fn</span>(vs <span class="op">~</span><span class="st"> </span>drat <span class="op">+</span><span class="st"> </span>mpg <span class="op">+</span><span class="st"> </span>am, <span class="dt">data =</span> mtcars,
+                  <span class="dt">batch_size =</span> <span class="dv">128</span>,
+                  <span class="dt">epochs =</span> <span class="dv">3</span>)</code></pre>
+<p>You can also write fully custom input functions that draw data from arbitrary data sources. See the <a href="input_functions.html">input functions</a> article for additional details.</p>
+</div>
+<div id="feature-columns" class="section level2">
+<h2>Feature Columns</h2>
+<p>In TensorFlow, feature columns are used to specify the ‘shapes’, or ‘types’, of inputs that can be expected by a particular model. For example, in the following code, we define two simple feature columns: a numeric column called <code>"drat"</code>, and a indicator column called <code>"am"</code> with one-hot representation.</p>
+<pre class="sourceCode r"><code class="sourceCode r">cols &lt;-<span class="st"> </span><span class="kw">feature_columns</span>(
+  <span class="kw">column_numeric</span>(<span class="st">"drat"</span>),
+  <span class="kw">column_indicator</span>(<span class="st">"am"</span>)
+)</code></pre>
+<p>There are a wide variety of feature column functions available:</p>
+<table>
+<colgroup>
+<col width="37%">
+<col width="62%">
+</colgroup>
+<thead><tr class="header">
+<th>Method</th>
+<th>Description</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td><code><a href="../reference/column_indicator.html">column_indicator()</a></code></td>
+<td>Represents multi-hot representation of given categorical column.</td>
+</tr>
+<tr class="even">
+<td><code><a href="../reference/column_numeric.html">column_numeric()</a></code></td>
+<td>Represents real valued or numerical features.</td>
+</tr>
+<tr class="odd">
+<td><code><a href="../reference/column_embedding.html">column_embedding()</a></code></td>
+<td>Creates an dense column that converts from sparse, categorical input.</td>
+</tr>
+<tr class="even">
+<td><code><a href="../reference/column_bucketized.html">column_bucketized()</a></code></td>
+<td>Represents discretized dense input.</td>
+</tr>
+<tr class="odd">
+<td><code><a href="../reference/column_categorical_weighted.html">column_categorical_weighted()</a></code></td>
+<td>Applies weight values to a categorical column.</td>
+</tr>
+<tr class="even">
+<td><code><a href="../reference/column_categorical_with_vocabulary_list.html">column_categorical_with_vocabulary_list()</a></code></td>
+<td>Creates a categorical column with in-memory vocabulary.</td>
+</tr>
+<tr class="odd">
+<td><code><a href="../reference/column_categorical_with_vocabulary_file.html">column_categorical_with_vocabulary_file()</a></code></td>
+<td>Creates a categorical column with a vocabulary file.</td>
+</tr>
+<tr class="even">
+<td><code><a href="../reference/column_categorical_with_identity.html">column_categorical_with_identity()</a></code></td>
+<td>Creates a categorical column that returns identity values.</td>
+</tr>
+<tr class="odd">
+<td><code><a href="../reference/column_categorical_with_hash_bucket.html">column_categorical_with_hash_bucket()</a></code></td>
+<td>Represents sparse feature where ids are set by hashing.</td>
+</tr>
+</tbody>
+</table>
+<p>See the article on <a href="feature_columns.html">feature columns</a> for additional details.</p>
+</div>
+<div id="creating-an-estimator" class="section level2">
+<h2>Creating an Estimator</h2>
+<p>Here’s an example of creating a DNN Linear Combined canned Estimator. In creating the estimator we pass the feature columns and other parameters that specifies the layers and architecture of the model. Note that this particular estimator takes two sets of feature columns – one used for constructing the linear layer, and the other used for the fully connected deep layer.</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># construct feature columns</span>
+linear_feature_columns &lt;-<span class="st"> </span><span class="kw">feature_columns</span>(<span class="kw">column_numeric</span>(<span class="st">"mpg"</span>))
+dnn_feature_columns &lt;-<span class="st"> </span><span class="kw">feature_columns</span>(<span class="kw">column_numeric</span>(<span class="st">"drat"</span>))
+
+<span class="co"># generate classifier</span>
+classifier &lt;-
+<span class="st">    </span><span class="kw">dnn_linear_combined_classifier</span>(
+      <span class="dt">linear_feature_columns =</span> linear_feature_columns,
+      <span class="dt">dnn_feature_columns =</span> dnn_feature_columns,
+      <span class="dt">dnn_hidden_units =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="dv">3</span>, <span class="dv">3</span>),
+      <span class="dt">dnn_optimizer =</span> <span class="st">"Adagrad"</span>
+    )</code></pre>
+</div>
+<div id="training-and-prediction" class="section level2">
+<h2>Training and Prediction</h2>
+<p>Users can then call <code><a href="../reference/reexports.html">train()</a></code> to train the initialized Estimator for a number of steps:</p>
+<pre class="sourceCode r"><code class="sourceCode r">classifier <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">train</span>(<span class="dt">input_fn =</span> input, <span class="dt">steps =</span> <span class="dv">2</span>)</code></pre>
+<p>Once a model is trained, users can use <code><a href="https://www.rdocumentation.org/packages/stats/topics/predict">predict()</a></code> that makes predictions on a given input function that represents the inference data source.</p>
+<pre class="sourceCode r"><code class="sourceCode r">predictions &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/stats/topics/predict">predict</a></span>(classifier, <span class="dt">input_fn =</span> input)</code></pre>
+<p>Users can also pass a key to <code>predict_keys</code> argument in <code><a href="https://www.rdocumentation.org/packages/stats/topics/predict">predict()</a></code> that generates different types of predictions, such as probabilities using <code>"probabilities"</code>:</p>
+<pre class="sourceCode r"><code class="sourceCode r">predictions &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/stats/topics/predict">predict</a></span>(
+  classifier,
+  <span class="dt">input_fn =</span> input,
+  <span class="dt">predict_keys =</span> <span class="st">"probabilities"</span>)</code></pre>
+<p>or logistic:</p>
+<pre class="sourceCode r"><code class="sourceCode r">predictions &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/stats/topics/predict">predict</a></span>(
+  classifier,
+  <span class="dt">input_fn =</span> input,
+  <span class="dt">predict_keys =</span> <span class="st">"logistic"</span>)</code></pre>
+<p>You can find all the available keys by printing <code><a href="../reference/prediction_keys.html">prediction_keys()</a></code>. However, not all keys can be used by different types of estimators. For example, regressors cannot use <code>"probabilities"</code> as one of the keys since probability output only makes sense for classification models.</p>
+</div>
+<div id="model-persistence" class="section level2">
+<h2>Model Persistence</h2>
+<p>Models created via <code>tfestimators</code> are persisted on disk. To obtain the location of where the model artifacts are stored, we can call <code><a href="../reference/model_dir.html">model_dir()</a></code>:</p>
+<pre class="sourceCode r"><code class="sourceCode r">saved_model_dir &lt;-<span class="st"> </span><span class="kw">model_dir</span>(classifier)</code></pre>
+<p>And subsequently load the saved model (in a new session) by passing the directory to the <code>model_dir</code> argument of the model constructor and use it for prediction or continue training:</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(tfestimators)
+linear_feature_columns &lt;-<span class="st"> </span><span class="kw"><a href="../reference/feature_columns.html">feature_columns</a></span>(<span class="kw"><a href="../reference/column_numeric.html">column_numeric</a></span>(<span class="st">"mpg"</span>))
+dnn_feature_columns &lt;-<span class="st"> </span><span class="kw"><a href="../reference/feature_columns.html">feature_columns</a></span>(<span class="kw"><a href="../reference/column_numeric.html">column_numeric</a></span>(<span class="st">"drat"</span>))
+
+loaded_model &lt;-
+<span class="st">    </span><span class="kw"><a href="../reference/dnn_linear_combined_estimators.html">dnn_linear_combined_classifier</a></span>(
+      <span class="dt">linear_feature_columns =</span> linear_feature_columns,
+      <span class="dt">dnn_feature_columns =</span> dnn_feature_columns,
+      <span class="dt">dnn_hidden_units =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="dv">3</span>, <span class="dv">3</span>),
+      <span class="dt">dnn_optimizer =</span> <span class="st">"Adagrad"</span>,
+      <span class="dt">model_dir =</span> saved_model_dir
+    )
+loaded_model</code></pre>
+</div>
+<div id="generic-methods" class="section level2">
+<h2>Generic methods</h2>
+<p>There are a number of estimator methods which can be used generically with any canned or custom estimator:</p>
+<table>
+<colgroup>
+<col width="37%">
+<col width="62%">
+</colgroup>
+<thead><tr class="header">
+<th>Method</th>
+<th>Description</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td><code><a href="../reference/reexports.html">train()</a></code></td>
+<td>Trains a model given training data input_fn.</td>
+</tr>
+<tr class="even">
+<td><code><a href="https://www.rdocumentation.org/packages/stats/topics/predict">predict()</a></code></td>
+<td>Returns predictions for given features.</td>
+</tr>
+<tr class="odd">
+<td><code><a href="../reference/reexports.html">evaluate()</a></code></td>
+<td>Evaluates the model given evaluation data input_fn.</td>
+</tr>
+<tr class="even">
+<td><code><a href="../reference/reexports.html">train_and_evaluate()</a></code></td>
+<td>Trains and evaluates a model for both local and distributed configurations.</td>
+</tr>
+<tr class="odd">
+<td><code><a href="../reference/reexports.html">export_savedmodel()</a></code></td>
+<td>Exports inference graph as a SavedModel into a given directory.</td>
+</tr>
+</tbody>
+</table>
+</div>

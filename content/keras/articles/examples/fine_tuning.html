@@ -1,0 +1,189 @@
+---
+title: fine_tuning
+type: docs
+repo: https://github.com/rstudio/keras
+menu:
+  main:
+    parent: keras-examples
+---
+
+
+
+<div class="source-ref">
+<p><span class="caption">Source: </span><a href="https://github.com/rstudio/keras/blob/master/vignettes/examples/fine_tuning.R" class="uri">https://github.com/rstudio/keras/blob/master/vignettes/examples/fine_tuning.R</a></p>
+</div>
+<p>In this example we fine tune Mobile Net to better predict cats and
+dogs in photos. It also demonstrates the usage of image data generators
+for efficient preprocessing and training.</p>
+<p>It’s preferable to run this example in a GPU.</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Download data -----------------------------------------------------------</span>
+
+<span class="kw"><a href="https://www.rdocumentation.org/packages/utils/topics/download.file">download.file</a></span>(
+  <span class="st">"https://download.microsoft.com/download/3/E/1/3E1C3F21-ECDB-4869-8368-6DEBA77B919F/kagglecatsanddogs_3367a.zip"</span>, 
+  <span class="dt">destfile =</span> <span class="st">"cats-dogs.zip"</span>
+)
+
+<span class="co"># Pre-processing ----------------------------------------------------------</span>
+
+zip<span class="op">::</span><span class="kw"><a href="https://www.rdocumentation.org/packages/zip/topics/unzip">unzip</a></span>(<span class="st">"cats-dogs.zip"</span>, <span class="dt">exdir =</span> <span class="st">"data-raw"</span>)
+
+<span class="co"># We will organize images in the following structure:</span>
+<span class="co"># data/</span>
+<span class="co">#     train/</span>
+<span class="co">#          Cat/</span>
+<span class="co">#          Dog/</span>
+<span class="co">#     validation</span>
+<span class="co">#          Cat/</span>
+<span class="co">#          Dog/</span>
+<span class="co">#     test/</span>
+<span class="co">#          images/</span>
+<span class="co">#</span>
+
+all_imgs &lt;-<span class="st"> </span>fs<span class="op">::</span><span class="kw"><a href="http://fs.r-lib.org/reference/dir_ls.html">dir_ls</a></span>(
+  <span class="st">"data-raw/PetImages/"</span>, 
+  <span class="dt">recursive =</span> <span class="ot">TRUE</span>, 
+  <span class="dt">type =</span> <span class="st">"file"</span>,
+  <span class="dt">glob =</span> <span class="st">"*.jpg"</span>
+)
+
+<span class="co"># some images are corrupt and we exclude them</span>
+<span class="co"># this will make sure all images can be read.</span>
+<span class="cf">for</span> (im <span class="cf">in</span> all_imgs) {
+  out &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/try">try</a></span>(magick<span class="op">::</span><span class="kw"><a href="https://www.rdocumentation.org/packages/magick/topics/editing">image_read</a></span>(im), <span class="dt">silent =</span> <span class="ot">TRUE</span>)
+  <span class="cf">if</span> (<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/class">inherits</a></span>(out, <span class="st">"try-error"</span>)) {
+    fs<span class="op">::</span><span class="kw"><a href="http://fs.r-lib.org/reference/delete.html">file_delete</a></span>(im)
+    <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/message">message</a></span>(<span class="st">"removed image: "</span>, im)
+  }
+}
+
+<span class="co"># re-list all imgs</span>
+all_imgs &lt;-<span class="st"> </span>fs<span class="op">::</span><span class="kw"><a href="http://fs.r-lib.org/reference/dir_ls.html">dir_ls</a></span>(
+  <span class="st">"data-raw/PetImages/"</span>, 
+  <span class="dt">recursive =</span> <span class="ot">TRUE</span>, 
+  <span class="dt">type =</span> <span class="st">"file"</span>,
+  <span class="dt">glob =</span> <span class="st">"*.jpg"</span>
+)
+
+<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/Random">set.seed</a></span>(<span class="dv">5</span>)
+
+training_imgs &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/sample">sample</a></span>(all_imgs, <span class="dt">size =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/length">length</a></span>(all_imgs)<span class="op">/</span><span class="dv">2</span>)
+validation_imgs &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/sample">sample</a></span>(all_imgs[<span class="op">!</span>all_imgs <span class="op">%in%</span><span class="st"> </span>training_imgs], <span class="dt">size =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/length">length</a></span>(all_imgs)<span class="op">/</span><span class="dv">4</span>)         
+testing_imgs &lt;-<span class="st"> </span>all_imgs[<span class="op">!</span>all_imgs <span class="op">%in%</span><span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(training_imgs, validation_imgs)]
+
+<span class="co"># create directory structure</span>
+fs<span class="op">::</span><span class="kw"><a href="http://fs.r-lib.org/reference/create.html">dir_create</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(
+  <span class="st">"data/train/Cat"</span>,
+  <span class="st">"data/train/Dog"</span>,
+  <span class="st">"data/validation/Cat"</span>,
+  <span class="st">"data/validation/Dog"</span>,
+  <span class="st">"data/test/images"</span>
+))
+
+<span class="co"># copy training images</span>
+fs<span class="op">::</span><span class="kw"><a href="http://fs.r-lib.org/reference/copy.html">file_copy</a></span>(
+  <span class="dt">path =</span> training_imgs, 
+  <span class="dt">new_path =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/grep">gsub</a></span>(<span class="st">"data-raw/PetImages"</span>, <span class="st">"data/train"</span>, training_imgs)
+)
+
+<span class="co"># copy valid images</span>
+fs<span class="op">::</span><span class="kw"><a href="http://fs.r-lib.org/reference/copy.html">file_copy</a></span>(
+  <span class="dt">path =</span> validation_imgs, 
+  <span class="dt">new_path =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/grep">gsub</a></span>(<span class="st">"data-raw/PetImages"</span>, <span class="st">"data/validation"</span>, validation_imgs)
+)
+
+<span class="co"># copy testing imgs</span>
+fs<span class="op">::</span><span class="kw"><a href="http://fs.r-lib.org/reference/copy.html">file_copy</a></span>(
+  <span class="dt">path =</span> testing_imgs,
+  <span class="dt">new_path =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/grep">gsub</a></span>(<span class="st">"data-raw/PetImages/(Dog|Cat)/"</span>, <span class="st">"data/test/images/</span><span class="ch">\\</span><span class="st">1"</span>, testing_imgs)
+)
+
+<span class="co"># Image flow --------------------------------------------------------------</span>
+
+<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(keras)
+
+training_image_gen &lt;-<span class="st"> </span><span class="kw"><a href="../../reference/image_data_generator.html">image_data_generator</a></span>(
+  <span class="dt">rotation_range =</span> <span class="dv">20</span>,
+  <span class="dt">width_shift_range =</span> <span class="fl">0.2</span>,
+  <span class="dt">height_shift_range =</span> <span class="fl">0.2</span>,
+  <span class="dt">horizontal_flip =</span> <span class="ot">TRUE</span>,
+  <span class="dt">preprocessing_function =</span> imagenet_preprocess_input
+)
+
+validation_image_gen &lt;-<span class="st"> </span><span class="kw"><a href="../../reference/image_data_generator.html">image_data_generator</a></span>(
+  <span class="dt">preprocessing_function =</span> imagenet_preprocess_input
+)
+
+training_image_flow &lt;-<span class="st"> </span><span class="kw"><a href="../../reference/flow_images_from_directory.html">flow_images_from_directory</a></span>(
+  <span class="dt">directory =</span> <span class="st">"data/train/"</span>, 
+  <span class="dt">generator =</span> training_image_gen, 
+  <span class="dt">class_mode =</span> <span class="st">"binary"</span>,
+  <span class="dt">batch_size =</span> <span class="dv">100</span>,
+  <span class="dt">target_size =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="dv">224</span>, <span class="dv">224</span>), 
+)
+
+validation_image_flow &lt;-<span class="st"> </span><span class="kw"><a href="../../reference/flow_images_from_directory.html">flow_images_from_directory</a></span>(
+  <span class="dt">directory =</span> <span class="st">"data/validation/"</span>, 
+  <span class="dt">generator =</span> validation_image_gen, 
+  <span class="dt">class_mode =</span> <span class="st">"binary"</span>,
+  <span class="dt">batch_size =</span> <span class="dv">100</span>,
+  <span class="dt">target_size =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="dv">224</span>, <span class="dv">224</span>), 
+  <span class="dt">shuffle =</span> <span class="ot">FALSE</span>
+)
+
+<span class="co"># Model -------------------------------------------------------------------</span>
+
+mob &lt;-<span class="st"> </span><span class="kw"><a href="../../reference/application_mobilenet.html">application_mobilenet</a></span>(<span class="dt">include_top =</span> <span class="ot">FALSE</span>, <span class="dt">pooling =</span> <span class="st">"avg"</span>)
+<span class="kw"><a href="../../reference/freeze_weights.html">freeze_weights</a></span>(mob)
+
+model &lt;-<span class="st"> </span><span class="kw"><a href="../../reference/keras_model_sequential.html">keras_model_sequential</a></span>() <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">mob</span>() <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw"><a href="../../reference/layer_dense.html">layer_dense</a></span>(<span class="dv">256</span>, <span class="dt">activation =</span> <span class="st">"relu"</span>) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw"><a href="../../reference/layer_dropout.html">layer_dropout</a></span>(<span class="dt">rate =</span> <span class="fl">0.2</span>) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw"><a href="../../reference/layer_dense.html">layer_dense</a></span>(<span class="dt">units =</span> <span class="dv">1</span>, <span class="dt">activation =</span> <span class="st">"sigmoid"</span>)
+
+model <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw"><a href="../../reference/reexports.html">compile</a></span>(<span class="dt">loss =</span> <span class="st">"binary_crossentropy"</span>, <span class="dt">optimizer =</span> <span class="st">"adam"</span>, <span class="dt">metrics =</span> <span class="st">"accuracy"</span>)
+
+model <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../../reference/fit_generator.html">fit_generator</a></span>(
+  <span class="dt">generator =</span> training_image_flow, 
+  <span class="dt">epochs =</span> <span class="dv">1</span>, 
+  <span class="dt">steps_per_epoch =</span> training_image_flow<span class="op">$</span>n<span class="op">/</span>training_image_flow<span class="op">$</span>batch_size,
+  <span class="dt">validation_data =</span> validation_image_flow,
+  <span class="dt">validation_steps =</span> validation_image_flow<span class="op">$</span>n<span class="op">/</span>validation_image_flow<span class="op">$</span>batch_size
+)
+
+<span class="co"># now top layers weights are fine, we can unfreeze the lower layer weights.</span>
+<span class="kw"><a href="../../reference/freeze_weights.html">unfreeze_weights</a></span>(mob)
+
+model <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw"><a href="../../reference/reexports.html">compile</a></span>(<span class="dt">loss =</span> <span class="st">"binary_crossentropy"</span>, <span class="dt">optimizer =</span> <span class="st">"adam"</span>, <span class="dt">metrics =</span> <span class="st">"accuracy"</span>)
+
+model <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../../reference/fit_generator.html">fit_generator</a></span>(
+  <span class="dt">generator =</span> training_image_flow, 
+  <span class="dt">epochs =</span> <span class="dv">3</span>, 
+  <span class="dt">steps_per_epoch =</span> training_image_flow<span class="op">$</span>n<span class="op">/</span>training_image_flow<span class="op">$</span>batch_size,
+  <span class="dt">validation_data =</span> validation_image_flow,
+  <span class="dt">validation_steps =</span> validation_image_flow<span class="op">$</span>n<span class="op">/</span>validation_image_flow<span class="op">$</span>batch_size
+)
+
+<span class="co"># Generate predictions for test data --------------------------------------</span>
+
+test_flow &lt;-<span class="st"> </span><span class="kw"><a href="../../reference/flow_images_from_directory.html">flow_images_from_directory</a></span>(
+  <span class="dt">generator =</span> validation_image_gen,
+  <span class="dt">directory =</span> <span class="st">"data/test"</span>, 
+  <span class="dt">target_size =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="dv">224</span>, <span class="dv">224</span>),
+  <span class="dt">class_mode =</span> <span class="ot">NULL</span>,
+  <span class="dt">shuffle =</span> <span class="ot">FALSE</span>
+)
+
+predictions &lt;-<span class="st"> </span><span class="kw"><a href="../../reference/predict_generator.html">predict_generator</a></span>(
+  model, 
+  test_flow,
+  <span class="dt">steps =</span> test_flow<span class="op">$</span>n<span class="op">/</span>test_flow<span class="op">$</span>batch_size
+)
+
+magick<span class="op">::</span><span class="kw"><a href="https://www.rdocumentation.org/packages/magick/topics/editing">image_read</a></span>(testing_imgs[<span class="dv">1</span>])
+predictions[<span class="dv">1</span>]
+
+magick<span class="op">::</span><span class="kw"><a href="https://www.rdocumentation.org/packages/magick/topics/editing">image_read</a></span>(testing_imgs[<span class="dv">6250</span>])
+predictions[<span class="dv">6250</span>]</code></pre>

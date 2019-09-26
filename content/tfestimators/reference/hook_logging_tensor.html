@@ -1,0 +1,71 @@
+---
+title: "Prints Given Tensors Every N Local Steps, Every N Seconds, or at End"
+type: docs
+repo: https://github.com/rstudio/tfestimators
+menu:
+  main:
+    name: "Prints Given Tensors Every N Local Steps, Every N Seconds, or at End - tfestimators"
+    parent: tfestimators-reference
+---
+    
+    
+    <p>The tensors will be printed to the log, with <code>INFO</code> severity.</p>
+    
+
+    <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>hook_logging_tensor</span>(<span class='no'>tensors</span>, <span class='kw'>every_n_iter</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>every_n_secs</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>formatter</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>at_end</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)</code></pre></div>
+    
+    <h2 id="arguments">Arguments</h2>
+    <table class="ref-arguments">
+    
+    <colgroup>
+      <col class="name" />
+      <col class="desc" />
+    </colgroup>  
+      
+    <tr>
+      <td>tensors</td>
+      <td><p>A list that maps string-valued tags to tensors/tensor names.</p></td>
+    </tr>
+    <tr>
+      <td>every_n_iter</td>
+      <td><p>An integer value, indicating the values of <code>tensors</code> will be printed
+once every N local steps taken on the current worker.</p></td>
+    </tr>
+    <tr>
+      <td>every_n_secs</td>
+      <td><p>An integer or float value, indicating the values of <code>tensors</code> will be printed
+once every N seconds. Exactly one of <code>every_n_iter</code> and <code>every_n_secs</code> should be provided.</p></td>
+    </tr>
+    <tr>
+      <td>formatter</td>
+      <td><p>A function that takes <code>list(tag = tensor)</code> and returns a
+string. If <code>NULL</code> uses default printing all tensors.</p></td>
+    </tr>
+    <tr>
+      <td>at_end</td>
+      <td><p>A boolean value specifying whether to print the values of <code>tensors</code> at the
+end of the run.</p></td>
+    </tr>
+    </table>
+    
+    <h2 id="details">Details</h2>
+
+    <p>Note that if <code>at_end</code> is <code>TRUE</code>, <code>tensors</code> should not include any tensor
+whose evaluation produces a side effect such as consuming additional inputs.</p>
+    
+    <h2 id="see-also">See also</h2>
+
+    <div class='dont-index'><p>Other session_run_hook wrappers: <code><a href='hook_checkpoint_saver.html'>hook_checkpoint_saver</a></code>,
+  <code><a href='hook_global_step_waiter.html'>hook_global_step_waiter</a></code>,
+  <code><a href='hook_history_saver.html'>hook_history_saver</a></code>,
+  <code><a href='hook_nan_tensor.html'>hook_nan_tensor</a></code>,
+  <code><a href='hook_progress_bar.html'>hook_progress_bar</a></code>,
+  <code><a href='hook_step_counter.html'>hook_step_counter</a></code>,
+  <code><a href='hook_stop_at_step.html'>hook_stop_at_step</a></code>,
+  <code><a href='hook_summary_saver.html'>hook_summary_saver</a></code>,
+  <code><a href='session_run_hook.html'>session_run_hook</a></code></p></div>
+    
+
+
+

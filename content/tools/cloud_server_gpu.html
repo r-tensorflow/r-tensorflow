@@ -1,0 +1,98 @@
+---
+title: "Cloud Server GPUs"
+output: 
+  html_document:
+    toc_depth: 3
+    toc_float:
+        collapsed: false
+type: docs
+menu:
+  main:
+    name: "Cloud Server"
+    identifier: "tools-cloud-server-gpu"
+    parent: "gpu-top"
+    weight: 40
+---
+
+
+
+<div id="overview" class="section level2">
+<h2>Overview</h2>
+<p>Cloud server instances with GPUs are available from services like Amazon EC2 and Google Compute Engine. You can use RStudio Server on these instances, making the development experience nearly identical to working locally.</p>
+</div>
+<div id="amazon-ec2" class="section level2">
+<h2>Amazon EC2</h2>
+<p>RStudio has AWS Marketplace offerings that are designed to provide stable, secure, and high performance execution environments for deep learning applications running on Amazon EC2. The tensorflow, tfestimators, and keras R packages (along with their pre-requisites, including the GPU version of TensorFlow) are installed as part of the image.</p>
+<div id="launching-the-server" class="section level3">
+<h3>Launching the Server</h3>
+<p>There are AMIs on the Amazon Cloud Marketplace for both the open-source and Professional versions of RStudio Server. You can find them here:</p>
+<ul>
+<li><p>Open Source: <a href="https://aws.amazon.com/marketplace/pp/B0785SXYB2" class="uri">https://aws.amazon.com/marketplace/pp/B0785SXYB2</a></p></li>
+<li><p>Professional: <a href="https://aws.amazon.com/marketplace/pp/B07B8G3FZP" class="uri">https://aws.amazon.com/marketplace/pp/B07B8G3FZP</a></p></li>
+</ul>
+<p>You should launch these AMIs on the <code>p2.xlarge</code> instance type. This type includes a single GPU whereas other GPU-based images include up to 16 GPUs (however they are commensurately much more expensive). Note that you may need to select a different region than your default to be able to launch <code>p2.xlarge</code> instances (for example, selecting “US East (Ohio)” rather than “US East (N Virginia)”).</p>
+<p><img src="images/aws-launch.png" class="illustration"></p>
+</div>
+<div id="accessing-the-server" class="section level3">
+<h3>Accessing the Server</h3>
+<p>After you’ve launched the server you can access an instance of <a href="https://www.rstudio.com/products/rstudio/download-server/">RStudio Server</a> running on port 8787. For example:</p>
+<p><a href="http://ec2-18-217-204-43.us-east-2.compute.amazonaws.com:8787" class="uri">http://ec2-18-217-204-43.us-east-2.compute.amazonaws.com:8787</a></p>
+<p>Note that the above server address needs to be substituted for the public IP of the server you launched, which you can find in the EC2 Dashboard.</p>
+<p>The first time you access the server you will be presented with a login screen:</p>
+<p><img src="images/aws-login.png" class="illustration"></p>
+<p>Login with user id “rstudio-user” and password the instance ID of your AWS server (for example “i-0a8ea329c18892dfa”, your specific ID is available via the EC2 dashboard).</p>
+<p>Then, use the RStudio Terminal to change the default password using the <code>passwd</code> utility:</p>
+<p><img src="images/aws-passwd.png" class="illustration"></p>
+<p>Your EC2 deep learning instance is now ready to use (the tensorflow, tfestimators, and keras R packages along with their pre-requisites, including the GPU version of TensorFlow, are installed as part of the image).</p>
+<p>See the sections below for discussion of various ways in which you can make your EC2 instance more secure.</p>
+</div>
+<div id="limiting-inbound-traffic" class="section level3">
+<h3>Limiting Inbound Traffic</h3>
+<p>The EC2 instance is by default configured to allow access to SSH and HTTP traffic from all IP addresses on the internet, whereas it would be more desirable to restrict this to IP addresses that you know you will access the server from (this can however be challenging if you plan on accessing the server from a variety of public networks).</p>
+<p>You can see these settings in the <a href="https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-network-security.html">Security Group</a> of your EC2 instance:</p>
+<p><img src="images/aws-security-group.png" class="illustration"></p>
+<p>Edit the <strong>Source</strong> for the SSH and HTTP protocols to limit access to specific blocks of IP addresses.</p>
+</div>
+<div id="using-https" class="section level3">
+<h3>Using HTTPS</h3>
+<p>By default the EC2 instance which you launched is accessed over HTTP, a non-encrypted channel. This means that data transmitted to the instance (including your username and password) can potentially be compromised during transmission.</p>
+<p>There are many ways to add HTTPS support to a server including <a href="https://aws.amazon.com/elasticloadbalancing/">AWS Elastic Load Balancing</a>, <a href="https://www.cloudflare.com/ssl/">CloudFlare SSL</a>, and setting up reverse proxy from an <a href="https://www.nginx.com/resources/wiki/">Nginx</a> or <a href="https://httpd.apache.org/">Apache</a> web server configured with SSL support.</p>
+<p>The details of adding HTTPS support to your server are beyond the scope of this article (see the links above to learn more). An alternative to this is to prohibit external HTTP connections entirely and access the server over an SSH Tunnel, this option is covered in the next section.</p>
+</div>
+<div id="ssh-tunnel" class="section level3">
+<h3>SSH Tunnel</h3>
+<p>Using an <a href="https://help.ubuntu.com/community/SSH/OpenSSH/PortForwarding">SSH Tunnel</a> to access your EC2 instance provides a number of benefits, including:</p>
+<ol style="list-style-type: decimal">
+<li><p>Use of the SSH authentication protocol to identify and authorize remote users</p></li>
+<li><p>Encrypting traffic that would otherwise be sent in the clear</p></li>
+</ol>
+<p>Note that SSH tunnel access as described below works only for Linux and OS X clients.</p>
+<div id="security-group" class="section level4">
+<h4>Security Group</h4>
+<p>To use an SSH Tunnel with your EC2 instance, first configure the <a href="https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-network-security.html">Security Group</a> of your instance to only accept SSH traffic (removing any HTTP entry that existed previously):</p>
+<p><img src="images/aws-ssh-only.png" class="illustration"></p>
+<p>Note that you may also want to restrict the <strong>Source</strong> of SSH traffic to the specific block of IP addresses you plan to access the server from.</p>
+</div>
+<div id="server-configuration" class="section level4">
+<h4>Server Configuration</h4>
+<p>Next, connect to your instance over SSH (click the <strong>Connect</strong> button in the EC2 console for instructions specific to your server):</p>
+<pre class="sourceCode bash"><code class="sourceCode bash"><span class="fu">ssh</span> -i <span class="st">"my-security-key.pem"</span> ubuntu@my-ec2-server-address</code></pre>
+<p>Note that if you copied and pasted the command from the EC2 console you may see this error message:</p>
+<pre><code>Please login as the user "ubuntu" rather than the user "root".</code></pre>
+<p>In that case be sure that you use <code>ubuntu@my-ec2-server-address</code> rather than <code>root@my-ec2-server-address</code>.</p>
+<p>Execute the following commands to configure RStudio Server to only accept local connections:</p>
+<pre class="sourceCode bash"><code class="sourceCode bash"><span class="co"># Configure RStudio to only allow local connections </span>
+<span class="fu">sudo</span> /bin/bash -c <span class="st">"echo 'www-address=127.0.0.1' &gt;&gt; /etc/rstudio/rserver.conf"</span>
+
+<span class="co"># Restart RStudio with new settings</span>
+<span class="fu">sudo</span> rstudio-server restart</code></pre>
+</div>
+<div id="connecting-to-the-server" class="section level4">
+<h4>Connecting to the Server</h4>
+<p>You should now be able to connect to the server via SSH tunnel as follows:</p>
+<pre class="sourceCode bash"><code class="sourceCode bash"><span class="fu">ssh</span> -N -L 8787:localhost:8787 -i my-security-key.pem ubuntu@my-ec2-server-address</code></pre>
+<p>(where <code>my-security-key.pem</code> and <code>my-ec2-server-address</code> are specific to your server configuration).</p>
+<p>Once the SSH connection is established, RStudio Server will be available at <a href="http://localhost:8787/" class="uri">http://localhost:8787/</a></p>
+</div>
+</div>
+</div>

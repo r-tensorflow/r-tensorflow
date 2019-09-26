@@ -1,0 +1,150 @@
+---
+title: text_explanation_lime
+type: docs
+repo: https://github.com/rstudio/keras
+menu:
+  main:
+    parent: keras-examples
+---
+
+
+
+<div class="source-ref">
+<p><span class="caption">Source: </span><a href="https://github.com/rstudio/keras/blob/master/vignettes/examples/text_explanation_lime.R" class="uri">https://github.com/rstudio/keras/blob/master/vignettes/examples/text_explanation_lime.R</a></p>
+</div>
+<p>This example shows how to use lime to explain text data.</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(readr)
+<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(dplyr)
+<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(keras)
+<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(tidyverse)
+
+<span class="co"># Download and unzip data</span>
+
+activity_url &lt;-<span class="st"> "https://archive.ics.uci.edu/ml/machine-learning-databases/00461/drugLib_raw.zip"</span>
+temp &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/tempfile">tempfile</a></span>()
+<span class="kw"><a href="https://www.rdocumentation.org/packages/utils/topics/download.file">download.file</a></span>(activity_url, temp)
+<span class="kw"><a href="https://www.rdocumentation.org/packages/utils/topics/unzip">unzip</a></span>(temp, <span class="st">"drugLibTest_raw.tsv"</span>)
+
+
+<span class="co"># Read dataset</span>
+
+df &lt;-<span class="st"> </span><span class="kw"><a href="https://readr.tidyverse.org/reference/read_delim.html">read_delim</a></span>(<span class="st">'drugLibTest_raw.tsv'</span>,<span class="dt">delim =</span> <span class="st">'</span><span class="ch">\t</span><span class="st">'</span>)
+<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/unlink">unlink</a></span>(temp)
+
+<span class="co"># Select only rating and text from the whole dataset</span>
+
+df =<span class="st"> </span>df <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span>(rating,commentsReview) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span>(<span class="dt">rating =</span> <span class="kw"><a href="https://dplyr.tidyverse.org/reference/if_else.html">if_else</a></span>(rating <span class="op">&gt;=</span><span class="st"> </span><span class="dv">8</span>, <span class="dv">0</span>, <span class="dv">1</span>))
+
+<span class="co"># This is our text</span>
+text &lt;-<span class="st"> </span>df<span class="op">$</span>commentsReview
+
+<span class="co"># And these are ratings given by customers</span>
+y_train &lt;-<span class="st"> </span>df<span class="op">$</span>rating
+
+
+<span class="co"># text_tokenizer helps us to turn each word into integers. By selecting maximum number of features</span>
+<span class="co"># we also keep the most frequent words. Additionally, by default, all punctuation is removed.</span>
+
+max_features &lt;-<span class="st"> </span><span class="dv">1000</span>
+tokenizer &lt;-<span class="st"> </span><span class="kw"><a href="../../reference/text_tokenizer.html">text_tokenizer</a></span>(<span class="dt">num_words =</span> max_features)
+
+<span class="co"># Then, we need to fit the tokenizer object to our text data</span>
+
+tokenizer <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../../reference/fit_text_tokenizer.html">fit_text_tokenizer</a></span>(text)
+
+<span class="co"># Via tokenizer object you can check word indices, word counts and other interesting properties.</span>
+
+tokenizer<span class="op">$</span>word_counts 
+tokenizer<span class="op">$</span>word_index
+
+<span class="co"># Finally, we can replace words in dataset with integers</span>
+text_seqs &lt;-<span class="st"> </span><span class="kw"><a href="../../reference/texts_to_sequences.html">texts_to_sequences</a></span>(tokenizer, text)
+
+text_seqs <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/utils/topics/head">head</a></span>(<span class="dv">3</span>)
+
+<span class="co"># Define the parameters of the keras model</span>
+
+maxlen &lt;-<span class="st"> </span><span class="dv">15</span>
+batch_size &lt;-<span class="st"> </span><span class="dv">32</span>
+embedding_dims &lt;-<span class="st"> </span><span class="dv">50</span>
+filters &lt;-<span class="st"> </span><span class="dv">64</span>
+kernel_size &lt;-<span class="st"> </span><span class="dv">3</span>
+hidden_dims &lt;-<span class="st"> </span><span class="dv">50</span>
+epochs &lt;-<span class="st"> </span><span class="dv">15</span>
+
+<span class="co"># As a final step, restrict the maximum length of all sequences and create a matrix as input for model</span>
+x_train &lt;-<span class="st"> </span>text_seqs <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../../reference/pad_sequences.html">pad_sequences</a></span>(<span class="dt">maxlen =</span> maxlen)
+
+<span class="co"># Lets print the first 2 rows and see that max length of first 2 sequences equals to 15</span>
+x_train[<span class="dv">1</span><span class="op">:</span><span class="dv">2</span>,]
+
+<span class="co"># Create a model</span>
+model &lt;-<span class="st"> </span><span class="kw"><a href="../../reference/keras_model_sequential.html">keras_model_sequential</a></span>() <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw"><a href="../../reference/layer_embedding.html">layer_embedding</a></span>(max_features, embedding_dims, <span class="dt">input_length =</span> maxlen) <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw"><a href="../../reference/layer_dropout.html">layer_dropout</a></span>(<span class="fl">0.2</span>) <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw"><a href="../../reference/layer_conv_1d.html">layer_conv_1d</a></span>(
+    filters, kernel_size, 
+    <span class="dt">padding =</span> <span class="st">"valid"</span>, <span class="dt">activation =</span> <span class="st">"relu"</span>, <span class="dt">strides =</span> <span class="dv">1</span>
+  ) <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw"><a href="../../reference/layer_global_max_pooling_1d.html">layer_global_max_pooling_1d</a></span>() <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw"><a href="../../reference/layer_dense.html">layer_dense</a></span>(hidden_dims) <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw"><a href="../../reference/layer_dropout.html">layer_dropout</a></span>(<span class="fl">0.2</span>) <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw"><a href="../../reference/layer_activation.html">layer_activation</a></span>(<span class="st">"relu"</span>) <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw"><a href="../../reference/layer_dense.html">layer_dense</a></span>(<span class="dv">1</span>) <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw"><a href="../../reference/layer_activation.html">layer_activation</a></span>(<span class="st">"sigmoid"</span>)
+
+<span class="co"># Compile</span>
+model <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../../reference/reexports.html">compile</a></span>(
+  <span class="dt">loss =</span> <span class="st">"binary_crossentropy"</span>,
+  <span class="dt">optimizer =</span> <span class="st">"adam"</span>,
+  <span class="dt">metrics =</span> <span class="st">"accuracy"</span>
+)
+
+<span class="co"># Run</span>
+hist &lt;-<span class="st"> </span>model <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw"><a href="../../reference/reexports.html">fit</a></span>(
+    x_train,
+    y_train,
+    <span class="dt">batch_size =</span> batch_size,
+    <span class="dt">epochs =</span> epochs,
+    <span class="dt">validation_split =</span> <span class="fl">0.1</span>
+  )
+
+<span class="co"># Understanding lime for Keras Embedding Layers</span>
+
+<span class="co"># In order to explain a text with LIME, we should write a preprocess function</span>
+<span class="co"># which will help to turn words into integers. Therefore, above mentioned steps </span>
+<span class="co"># (how to encode a text) should be repeated BUT within a function. </span>
+<span class="co"># As we already have had a tokenizer object, we can apply the same object to train/test or a new text.</span>
+
+get_embedding_explanation &lt;-<span class="st"> </span><span class="cf">function</span>(text) {
+  
+  tokenizer <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../../reference/fit_text_tokenizer.html">fit_text_tokenizer</a></span>(text)
+  
+  text_to_seq &lt;-<span class="st"> </span><span class="kw"><a href="../../reference/texts_to_sequences.html">texts_to_sequences</a></span>(tokenizer, text)
+  sentences &lt;-<span class="st"> </span>text_to_seq <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../../reference/pad_sequences.html">pad_sequences</a></span>(<span class="dt">maxlen =</span> maxlen)
+}
+
+
+<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(lime)
+
+<span class="co"># Lets choose some text (3 rows) to explain</span>
+sentence_to_explain &lt;-<span class="st"> </span>train_sentences<span class="op">$</span>text[<span class="dv">15</span><span class="op">:</span><span class="dv">17</span>]
+sentence_to_explain
+
+<span class="co"># You could notice that our input is just a plain text. Unlike tabular data, lime function </span>
+<span class="co"># for text classification requires a preprocess fuction. Because it will help to convert a text to integers </span>
+<span class="co"># with provided function. </span>
+explainer &lt;-<span class="st"> </span><span class="kw">lime</span>(sentence_to_explain, <span class="dt">model =</span> model, <span class="dt">preprocess =</span> get_embedding_explanation)
+
+<span class="co"># Get explanation for the first 10 words</span>
+explanation &lt;-<span class="st"> </span><span class="kw"><a href="https://dplyr.tidyverse.org/reference/explain.html">explain</a></span>(sentence_to_explain, explainer, <span class="dt">n_labels =</span> <span class="dv">1</span>, <span class="dt">n_features =</span> <span class="dv">10</span>,<span class="dt">n_permutations =</span> <span class="fl">1e4</span>)
+
+
+<span class="co"># Different graphical ways to show the same information</span>
+
+<span class="kw">plot_text_explanations</span>(explanation)
+
+<span class="kw">plot_features</span>(explanation)
+
+<span class="kw">interactive_text_explanations</span>(explainer)</code></pre>

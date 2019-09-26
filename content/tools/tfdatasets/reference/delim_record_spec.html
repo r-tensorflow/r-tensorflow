@@ -1,0 +1,85 @@
+---
+title: "Specification for reading a record from a text file with delimited values"
+type: docs
+repo: https://github.com/rstudio/tfdatasets
+menu:
+  main:
+    name: "Specification for reading a record from a text file with delimited values - tfdatasets"
+    parent: tfdatasets-reference
+---
+    
+    
+    <p>Specification for reading a record from a text file with delimited values</p>
+    
+
+    <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>delim_record_spec</span>(<span class='no'>example_file</span>, <span class='kw'>delim</span> <span class='kw'>=</span> <span class='st'>","</span>, <span class='kw'>skip</span> <span class='kw'>=</span> <span class='fl'>0</span>, <span class='kw'>names</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>types</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>defaults</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)
+
+<span class='fu'>csv_record_spec</span>(<span class='no'>example_file</span>, <span class='kw'>skip</span> <span class='kw'>=</span> <span class='fl'>0</span>, <span class='kw'>names</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>types</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>defaults</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)
+
+<span class='fu'>tsv_record_spec</span>(<span class='no'>example_file</span>, <span class='kw'>skip</span> <span class='kw'>=</span> <span class='fl'>0</span>, <span class='kw'>names</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>types</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>defaults</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</code></pre></div>
+    
+    <h2 id="arguments">Arguments</h2>
+    <table class="ref-arguments">
+    
+    <colgroup>
+      <col class="name" />
+      <col class="desc" />
+    </colgroup>  
+      
+    <tr>
+      <td>example_file</td>
+      <td><p>File that provides an example of the records to be read.
+If you don't explicitly specify names and types (or defaults) then this
+file will be read to generate default values.</p></td>
+    </tr>
+    <tr>
+      <td>delim</td>
+      <td><p>Character delimiter to separate fields in a record (defaults to
+",")</p></td>
+    </tr>
+    <tr>
+      <td>skip</td>
+      <td><p>Number of lines to skip before reading data. Note that if
+<code>names</code> is explicitly provided and there are column names witin the
+file then <code>skip</code> should be set to 1 to ensure that the column names are
+bypassed.</p></td>
+    </tr>
+    <tr>
+      <td>names</td>
+      <td><p>Character vector with column names (or <code>NULL</code> to automatically
+detect the column names from the first row of <code>example_file</code>).</p>
+<p>If <code>names</code> is a character vector, the values will be used as the names of
+the columns, and the first row of the input will be read into the first row
+of the datset. Note that if the underlying text file also includes column
+names in it's first row, this row should be skipped explicitly with <code>skip = 1</code>.</p>
+<p>If <code>NULL</code>, the first row of the example_file will be used as the column
+names, and will be skipped when reading the dataset.</p></td>
+    </tr>
+    <tr>
+      <td>types</td>
+      <td><p>Column types. If <code>NULL</code> and <code>defaults</code> is specified then types
+will be imputed from the defaults. Otherwise, all column types will be
+imputed from the first 1000 rows of the <code>example_file</code>. This is convenient
+(and fast), but not robust. If the imputation fails, you'll need to supply
+the correct types yourself.</p>
+<p>Types can be explicitliy specified in a character vector as "integer",
+"double", and "character" (e.g. <code>col_types = c("double", "double", "integer"</code>).</p>
+<p>Alternatively, you can use a compact string representation where each
+character represents one column: c = character, i = integer, d = double
+(e.g. <code>types = </code>ddi`).</p></td>
+    </tr>
+    <tr>
+      <td>defaults</td>
+      <td><p>List of default values which are used when data is
+missing from a record (e.g. <code>list(0, 0, 0L</code>). If <code>NULL</code> then defaults will
+be automatically provided based on <code>types</code> (<code>0</code> for numeric columns and
+<code>""</code> for character columns).</p></td>
+    </tr>
+    </table>
+    
+
+
+

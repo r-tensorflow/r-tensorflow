@@ -1,0 +1,34 @@
+---
+title: "Keras implementation"
+type: docs
+repo: https://github.com/rstudio/keras
+menu:
+  main:
+    name: "Keras implementation - keras"
+    parent: keras-reference
+---
+    
+    
+    <p>Obtain a reference to the Python module used for the implementation of Keras.</p>
+    
+
+    <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>implementation</span>()</code></pre></div>
+        
+    <h2 id="value">Value</h2>
+
+    <p>Reference to the Python module used for the implementation of Keras.</p>
+    
+    <h2 id="details">Details</h2>
+
+    <p>There are currently two Python modules which implement Keras:</p><ul>
+<li><p>keras ("keras")</p></li>
+<li><p>tensorflow.keras ("tensorflow")</p></li>
+</ul>
+    <p>This function returns a reference to the implementation being currently
+used by the keras package. The default implementation is "keras".
+You can override this by setting the <code>KERAS_IMPLEMENTATION</code> environment
+variable to "tensorflow".</p>
+    
+
+
+

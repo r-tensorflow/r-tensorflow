@@ -1,0 +1,47 @@
+---
+title: "Creates a dataset that includes only 1 / num_shards of this dataset."
+type: docs
+repo: https://github.com/rstudio/tfdatasets
+menu:
+  main:
+    name: "Creates a dataset that includes only 1 / num_shards of this dataset. - tfdatasets"
+    parent: tfdatasets-reference
+---
+    
+    
+    <p>This dataset operator is very useful when running distributed training, as it
+allows each worker to read a unique subset.</p>
+    
+
+    <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>dataset_shard</span>(<span class='no'>dataset</span>, <span class='no'>num_shards</span>, <span class='no'>index</span>)</code></pre></div>
+    
+    <h2 id="arguments">Arguments</h2>
+    <table class="ref-arguments">
+    
+    <colgroup>
+      <col class="name" />
+      <col class="desc" />
+    </colgroup>  
+      
+    <tr>
+      <td>dataset</td>
+      <td><p>A dataset</p></td>
+    </tr>
+    <tr>
+      <td>num_shards</td>
+      <td><p>A integer representing the number of shards operating in
+parallel.</p></td>
+    </tr>
+    <tr>
+      <td>index</td>
+      <td><p>A integer, representing the worker index.</p></td>
+    </tr>
+    </table>
+    
+    <h2 id="value">Value</h2>
+
+    <p>A dataset</p>
+    
+
+
+

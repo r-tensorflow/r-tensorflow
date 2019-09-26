@@ -1,0 +1,156 @@
+---
+title: tensorflow_layers
+type: docs
+repo: https://github.com/rstudio/tfestimators
+description: Build an estimator using TensorFlow layers.
+menu:
+  main:
+    parent: tfestimators-examples
+---
+
+
+
+<div class="source-ref">
+<p><span class="caption">Source: </span><a href="https://github.com/rstudio/tfestimators/blob/master/vignettes/examples/tensorflow_layers.R" class="uri">https://github.com/rstudio/tfestimators/blob/master/vignettes/examples/tensorflow_layers.R</a></p>
+</div>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(tensorflow)
+<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(tfestimators)
+tf<span class="op">$</span>logging<span class="op">$</span><span class="kw">set_verbosity</span>(tf<span class="op">$</span>logging<span class="op">$</span>INFO)
+
+cnn_model_fn &lt;-<span class="st"> </span><span class="cf">function</span>(features, labels, mode, params, config) {
+  
+  <span class="co"># Input Layer</span>
+  <span class="co"># Reshape X to 4-D tensor: [batch_size, width, height, channels]</span>
+  <span class="co"># MNIST images are 28x28 pixels, and have one color channel</span>
+  input_layer &lt;-<span class="st"> </span>tf<span class="op">$</span><span class="kw"><a href="https://www.rdocumentation.org/packages/stats/topics/reshape">reshape</a></span>(features<span class="op">$</span>x, <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="op">-</span>1L, 28L, 28L, 1L))
+  
+  <span class="co"># Convolutional Layer #1</span>
+  <span class="co"># Computes 32 features using a 5x5 filter with ReLU activation.</span>
+  <span class="co"># Padding is added to preserve width and height.</span>
+  <span class="co"># Input Tensor Shape: [batch_size, 28, 28, 1]</span>
+  <span class="co"># Output Tensor Shape: [batch_size, 28, 28, 32]</span>
+  conv1 &lt;-<span class="st"> </span>tf<span class="op">$</span>layers<span class="op">$</span><span class="kw">conv2d</span>(
+    <span class="dt">inputs =</span> input_layer,
+    <span class="dt">filters =</span> 32L,
+    <span class="dt">kernel_size =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(5L, 5L),
+    <span class="dt">padding =</span> <span class="st">"same"</span>,
+    <span class="dt">activation =</span> tf<span class="op">$</span>nn<span class="op">$</span>relu)
+  
+  <span class="co"># Pooling Layer #1</span>
+  <span class="co"># First max pooling layer with a 2x2 filter and stride of 2</span>
+  <span class="co"># Input Tensor Shape: [batch_size, 28, 28, 32]</span>
+  <span class="co"># Output Tensor Shape: [batch_size, 14, 14, 32]</span>
+  pool1 &lt;-<span class="st"> </span>tf<span class="op">$</span>layers<span class="op">$</span><span class="kw">max_pooling2d</span>(<span class="dt">inputs =</span> conv1, <span class="dt">pool_size =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(2L, 2L), <span class="dt">strides =</span> 2L)
+  
+  <span class="co"># Convolutional Layer #2</span>
+  <span class="co"># Computes 64 features using a 5x5 filter.</span>
+  <span class="co"># Padding is added to preserve width and height.</span>
+  <span class="co"># Input Tensor Shape: [batch_size, 14, 14, 32]</span>
+  <span class="co"># Output Tensor Shape: [batch_size, 14, 14, 64]</span>
+  conv2 &lt;-<span class="st"> </span>tf<span class="op">$</span>layers<span class="op">$</span><span class="kw">conv2d</span>(
+    <span class="dt">inputs =</span> pool1,
+    <span class="dt">filters =</span> 64L,
+    <span class="dt">kernel_size =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(5L, 5L),
+    <span class="dt">padding =</span> <span class="st">"same"</span>,
+    <span class="dt">activation =</span> tf<span class="op">$</span>nn<span class="op">$</span>relu)
+  
+  <span class="co"># Pooling Layer #2</span>
+  <span class="co"># Second max pooling layer with a 2x2 filter and stride of 2</span>
+  <span class="co"># Input Tensor Shape: [batch_size, 14, 14, 64]</span>
+  <span class="co"># Output Tensor Shape: [batch_size, 7, 7, 64]</span>
+  pool2 &lt;-<span class="st"> </span>tf<span class="op">$</span>layers<span class="op">$</span><span class="kw">max_pooling2d</span>(<span class="dt">inputs =</span> conv2, <span class="dt">pool_size =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(2L, 2L), <span class="dt">strides =</span> 2L)
+  
+  <span class="co"># Flatten tensor into a batch of vectors</span>
+  <span class="co"># Input Tensor Shape: [batch_size, 7, 7, 64]</span>
+  <span class="co"># Output Tensor Shape: [batch_size, 7 * 7 * 64]</span>
+  pool2_flat &lt;-<span class="st"> </span>tf<span class="op">$</span><span class="kw"><a href="https://www.rdocumentation.org/packages/stats/topics/reshape">reshape</a></span>(pool2, <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="op">-</span>1L, 7L <span class="op">*</span><span class="st"> </span>7L <span class="op">*</span><span class="st"> </span>64L))
+  
+  <span class="co"># Dense Layer</span>
+  <span class="co"># Densely connected layer with 1024 neurons</span>
+  <span class="co"># Input Tensor Shape: [batch_size, 7 * 7 * 64]</span>
+  <span class="co"># Output Tensor Shape: [batch_size, 1024]</span>
+  dense &lt;-<span class="st"> </span>tf<span class="op">$</span>layers<span class="op">$</span><span class="kw">dense</span>(<span class="dt">inputs =</span> pool2_flat, <span class="dt">units =</span> 1024L, <span class="dt">activation =</span> tf<span class="op">$</span>nn<span class="op">$</span>relu)
+  
+  <span class="co"># Add dropout operation; 0.6 probability that element will be kept</span>
+  dropout &lt;-<span class="st"> </span>tf<span class="op">$</span>layers<span class="op">$</span><span class="kw">dropout</span>(
+    <span class="dt">inputs =</span> dense, <span class="dt">rate =</span> <span class="fl">0.4</span>, <span class="dt">training =</span> (mode <span class="op">==</span><span class="st"> "train"</span>))
+  
+  <span class="co"># Logits layer</span>
+  <span class="co"># Input Tensor Shape: [batch_size, 1024]</span>
+  <span class="co"># Output Tensor Shape: [batch_size, 10]</span>
+  logits &lt;-<span class="st"> </span>tf<span class="op">$</span>layers<span class="op">$</span><span class="kw">dense</span>(<span class="dt">inputs =</span> dropout, <span class="dt">units =</span> 10L)
+  
+  <span class="co"># Generate Predictions (for prediction mode)</span>
+  predicted_classes &lt;-<span class="st"> </span>tf<span class="op">$</span><span class="kw">argmax</span>(<span class="dt">input =</span> logits, <span class="dt">axis =</span> 1L, <span class="dt">name =</span> <span class="st">"predicted_classes"</span>)
+  <span class="cf">if</span> (mode <span class="op">==</span><span class="st"> "infer"</span>) {
+    predictions &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/list">list</a></span>(
+      <span class="dt">classes =</span> predicted_classes,
+      <span class="dt">probabilities =</span> tf<span class="op">$</span>nn<span class="op">$</span><span class="kw">softmax</span>(logits, <span class="dt">name =</span> <span class="st">"softmax_tensor"</span>)
+    )
+    <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/function">return</a></span>(<span class="kw"><a href="../../reference/estimator_spec.html">estimator_spec</a></span>(<span class="dt">mode =</span> mode, <span class="dt">predictions =</span> predictions))
+  }
+  
+  <span class="co"># Calculate Loss (for both train and eval modes)</span>
+  onehot_labels &lt;-<span class="st"> </span>tf<span class="op">$</span><span class="kw">one_hot</span>(<span class="dt">indices =</span> tf<span class="op">$</span><span class="kw">cast</span>(labels, tf<span class="op">$</span>int32), <span class="dt">depth =</span> 10L)
+  loss &lt;-<span class="st"> </span>tf<span class="op">$</span>losses<span class="op">$</span><span class="kw">softmax_cross_entropy</span>(
+    <span class="dt">onehot_labels =</span> onehot_labels, <span class="dt">logits =</span> logits)
+  
+  <span class="co"># Configure the Training Op (for train mode)</span>
+  <span class="cf">if</span> (mode <span class="op">==</span><span class="st"> "train"</span>) {
+    optimizer &lt;-<span class="st"> </span>tf<span class="op">$</span>train<span class="op">$</span><span class="kw">GradientDescentOptimizer</span>(<span class="dt">learning_rate =</span> <span class="fl">0.001</span>)
+    train_op &lt;-<span class="st"> </span>optimizer<span class="op">$</span><span class="kw">minimize</span>(
+      <span class="dt">loss =</span> loss,
+      <span class="dt">global_step =</span> tf<span class="op">$</span>train<span class="op">$</span><span class="kw">get_global_step</span>())
+    <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/function">return</a></span>(<span class="kw"><a href="../../reference/estimator_spec.html">estimator_spec</a></span>(<span class="dt">mode =</span> mode, <span class="dt">loss =</span> loss, <span class="dt">train_op =</span> train_op))
+  }
+    
+  <span class="co"># Add evaluation metrics (for eval mode)</span>
+  eval_metric_ops &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/list">list</a></span>(<span class="dt">accuracy =</span> tf<span class="op">$</span>metrics<span class="op">$</span><span class="kw">accuracy</span>(
+    <span class="dt">labels =</span> labels, <span class="dt">predictions =</span> predicted_classes))
+
+  <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/function">return</a></span>(<span class="kw"><a href="../../reference/estimator_spec.html">estimator_spec</a></span>(
+    <span class="dt">mode =</span> mode, <span class="dt">loss =</span> loss, <span class="dt">eval_metric_ops =</span> eval_metric_ops))
+}
+
+np &lt;-<span class="st"> </span><span class="kw"><a href="../../../tensorflow/reference/reexports.html">import</a></span>(<span class="st">"numpy"</span>, <span class="dt">convert =</span> <span class="ot">FALSE</span>)
+<span class="co"># Load training and eval data</span>
+mnist &lt;-<span class="st"> </span>tf<span class="op">$</span>contrib<span class="op">$</span>learn<span class="op">$</span>datasets<span class="op">$</span><span class="kw">load_dataset</span>(<span class="st">"mnist"</span>)
+train_data &lt;-<span class="st"> </span>np<span class="op">$</span><span class="kw">asmatrix</span>(mnist<span class="op">$</span>train<span class="op">$</span>images, <span class="dt">dtype =</span> np<span class="op">$</span>float32)
+train_labels &lt;-<span class="st"> </span>np<span class="op">$</span><span class="kw">asarray</span>(mnist<span class="op">$</span>train<span class="op">$</span>labels, <span class="dt">dtype =</span> np<span class="op">$</span>int32)
+eval_data &lt;-<span class="st"> </span>np<span class="op">$</span><span class="kw">asmatrix</span>(mnist<span class="op">$</span>test<span class="op">$</span>images, <span class="dt">dtype =</span> np<span class="op">$</span>float32)
+eval_labels &lt;-<span class="st"> </span>np<span class="op">$</span><span class="kw">asarray</span>(mnist<span class="op">$</span>test<span class="op">$</span>labels, <span class="dt">dtype =</span> np<span class="op">$</span>int32)
+
+<span class="co"># Create the Estimator</span>
+mnist_classifier &lt;-<span class="st"> </span><span class="kw"><a href="../../reference/estimator.html">estimator</a></span>(
+  <span class="dt">model_fn =</span> cnn_model_fn, <span class="dt">model_dir =</span> <span class="st">"/tmp/mnist_convnet_model"</span>)
+
+<span class="co"># Set up logging for predictions</span>
+<span class="co"># Log the values in the "Argmax" tensor with label "predicted_classes"</span>
+tensors_to_log &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/list">list</a></span>(<span class="dt">predicted_classes =</span> <span class="st">"predicted_classes"</span>)
+logging_hook &lt;-<span class="st"> </span><span class="kw"><a href="../../reference/hook_logging_tensor.html">hook_logging_tensor</a></span>(
+  <span class="dt">tensors =</span> tensors_to_log, <span class="dt">every_n_iter =</span> <span class="dv">2</span>)
+
+train_input_fn &lt;-<span class="st"> </span><span class="kw"><a href="../../reference/numpy_input_fn.html">numpy_input_fn</a></span>(
+  <span class="dt">x =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/list">list</a></span>(<span class="dt">x =</span> train_data),
+  <span class="dt">y =</span> train_labels,
+  <span class="dt">batch_size =</span> <span class="dv">100</span>,
+  <span class="dt">num_epochs =</span> <span class="ot">NULL</span>,
+  <span class="dt">shuffle =</span> <span class="ot">TRUE</span>)
+
+eval_input_fn &lt;-<span class="st"> </span><span class="kw"><a href="../../reference/numpy_input_fn.html">numpy_input_fn</a></span>(
+  <span class="dt">x =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/list">list</a></span>(<span class="dt">x =</span> eval_data),
+  <span class="dt">y =</span> eval_labels,
+  <span class="dt">batch_size =</span> <span class="dv">100</span>,
+  <span class="dt">num_epochs =</span> <span class="ot">NULL</span>,
+  <span class="dt">shuffle =</span> <span class="ot">TRUE</span>)
+
+<span class="kw"><a href="../../../tensorflow/reference/train.html">train</a></span>(
+  mnist_classifier,
+  <span class="dt">input_fn =</span> train_input_fn,
+  <span class="dt">steps =</span> <span class="dv">10</span>)
+
+<span class="kw"><a href="../../../tensorflow/reference/evaluate.html">evaluate</a></span>(
+  mnist_classifier,
+  <span class="dt">input_fn =</span> eval_input_fn,
+  <span class="dt">steps =</span> <span class="dv">10</span>,
+  <span class="dt">hooks =</span> logging_hook)</code></pre>

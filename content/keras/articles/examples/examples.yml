@@ -1,0 +1,130 @@
+
+# Also consider incorporating examples from here: https://github.com/astorfi/TensorFlow-World
+
+- name: addition_rnn
+  type: keras
+  description: >
+    Implementation of sequence to sequence learning for performing addition of
+    two numbers (as strings).
+- name: babi_memnn
+  type: keras
+  description: >
+    Trains a memory network on the bAbI dataset for reading comprehension.
+- name: babi_rnn
+  type: keras
+  description: >
+    Trains a two-branch recurrent network on the bAbI dataset for reading comprehension.
+- name: cifar10_cnn
+  type: keras
+  description: >
+    Trains a simple deep CNN on the CIFAR10 small images dataset.
+- name: cifar10_densenet
+  type: keras
+  description: >
+    Trains a DenseNet-40-12 on the CIFAR10 small images dataset.
+- name: conv_lstm
+  type: keras
+  description: >
+    Demonstrates the use of a convolutional LSTM network.
+- name: deep_dream
+  type: keras
+  description: >
+    Deep Dreams in Keras. 
+- name: eager_dcgan
+  type: keras
+  description: >
+    Generating digits with generative adversarial networks and eager execution. 
+- name: eager_image_captioning
+  type: keras
+  description: >
+    Generating image captions with Keras and eager execution.
+- name: eager_pix2pix
+  type: keras
+  description: >
+    Image-to-image translation with Pix2Pix, using eager execution.
+- name: eager_styletransfer
+  type: keras
+  description: >
+    Neural style transfer with eager execution.
+- name: fine_tuning
+  type: keras
+  description: >
+    Fine tune a pre-trained model to classify images.
+- name: imdb_bidirectional_lstm
+  type: keras
+  description: >
+    Trains a Bidirectional LSTM on the IMDB sentiment classification task.
+- name: imdb_cnn
+  type: keras
+  description: >
+    Demonstrates the use of Convolution1D for text classification.
+- name: imdb_cnn_lstm
+  type: keras
+  description: >
+    Trains a convolutional stack followed by a recurrent stack network on the IMDB sentiment classification task.
+- name: imdb_fasttext
+  type: keras
+  description: >
+    Trains a FastText model on the IMDB sentiment classification task.
+- name: imdb_lstm
+  type: keras
+  description: >
+    Trains a LSTM on the IMDB sentiment classification task.
+- name: lstm_text_generation
+  type: keras
+  description: >
+    Generates text from Nietzsche's writings.
+- name: mnist_acgan
+  type: keras
+  description: >
+    Implementation of AC-GAN (Auxiliary Classifier GAN ) on the MNIST dataset
+- name: mnist_antirectifier
+  type: keras
+  description: >
+    Demonstrates how to write custom layers for Keras
+- name: mnist_cnn
+  type: keras
+  description: >
+    Trains a simple convnet on the MNIST dataset. 
+- name: mnist_irnn
+  type: keras
+  description: >
+    Reproduction of the IRNN experiment with pixel-by-pixel sequential MNIST in "A Simple Way to Initialize 
+    Recurrent Networks of Rectified Linear Units" by Le et al.
+- name: mnist_mlp
+  type: keras
+  description: >
+    Trains a simple deep multi-layer perceptron on the MNIST dataset.
+- name: mnist_hierarchical_rnn
+  type: keras
+  description: >
+    Trains a Hierarchical RNN (HRNN) to classify MNIST digits.
+- name: mnist_tfrecord
+  type: keras
+  description: >
+     MNIST dataset with TFRecords, the standard TensorFlow data format.
+- name: mnist_transfer_cnn
+  type: keras
+  description: >
+     Transfer learning toy example.
+- name: neural_style_transfer
+  type: keras
+  description: > 
+     Neural style transfer (generating an image with the same "content"" as a base image, but with the
+     "style"" of a different picture).
+- name: reuters_mlp
+  type: keras
+  description: >
+     Trains and evaluatea a simple MLP on the Reuters newswire topic classification task. 
+- name: stateful_lstm
+  type: keras
+  description: >
+    Demonstrates how to use stateful RNNs to model long sequences efficiently.
+- name: variational_autoencoder
+  type: keras
+  description: >
+    Demonstrates how to build a variational autoencoder.
+- name: variational_autoencoder_deconv
+  type: keras
+  description: >
+    Demonstrates how to build a variational autoencoder with Keras using deconvolution layers.

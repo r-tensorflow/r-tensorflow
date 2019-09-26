@@ -1,0 +1,53 @@
+---
+title: "Configuration for the train component of <code>train_and_evaluate</code>"
+type: docs
+repo: https://github.com/rstudio/tfestimators
+menu:
+  main:
+    name: "Configuration for the train component of &lt;code&gt;train_and_evaluate&lt;/code&gt; - tfestimators"
+    parent: tfestimators-reference
+---
+    
+    
+    <p><code>TrainSpec</code> determines the input data for the training, as well as the
+duration. Optional hooks run at various stages of training.</p>
+    
+
+    <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>train_spec</span>(<span class='no'>input_fn</span>, <span class='kw'>max_steps</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>hooks</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</code></pre></div>
+    
+    <h2 id="arguments">Arguments</h2>
+    <table class="ref-arguments">
+    
+    <colgroup>
+      <col class="name" />
+      <col class="desc" />
+    </colgroup>  
+      
+    <tr>
+      <td>input_fn</td>
+      <td><p>Training input function returning a tuple of:</p><ul>
+<li><p>features - <code>Tensor</code> or dictionary of string feature name to <code>Tensor</code>.</p></li>
+<li><p>labels - <code>Tensor</code> or dictionary of <code>Tensor</code> with labels.</p></li>
+</ul></td>
+    </tr>
+    <tr>
+      <td>max_steps</td>
+      <td><p>Positive number of total steps for which to train model.
+If <code>NULL</code>, train forever. The training <code>input_fn</code> is not expected to
+generate <code>OutOfRangeError</code> or <code>StopIteration</code> exceptions.</p></td>
+    </tr>
+    <tr>
+      <td>hooks</td>
+      <td><p>List of session run hooks to run on all workers
+(including chief) during training.</p></td>
+    </tr>
+    </table>
+    
+    <h2 id="see-also">See also</h2>
+
+    <div class='dont-index'><p>Other training methods: <code><a href='eval_spec.html'>eval_spec</a></code>,
+  <code><a href='train_and_evaluate.tf_estimator.html'>train_and_evaluate.tf_estimator</a></code></p></div>
+    
+
+
+

@@ -1,0 +1,50 @@
+---
+title: "Casts a tensor to a different dtype and returns it."
+type: docs
+repo: https://github.com/rstudio/keras
+menu:
+  main:
+    name: "Casts a tensor to a different dtype and returns it. - keras"
+    parent: keras-reference
+---
+    
+    
+    <p>You can cast a Keras variable but it still returns a Keras tensor.</p>
+    
+
+    <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>k_cast</span>(<span class='no'>x</span>, <span class='no'>dtype</span>)</code></pre></div>
+    
+    <h2 id="arguments">Arguments</h2>
+    <table class="ref-arguments">
+    
+    <colgroup>
+      <col class="name" />
+      <col class="desc" />
+    </colgroup>  
+      
+    <tr>
+      <td>x</td>
+      <td><p>Keras tensor (or variable).</p></td>
+    </tr>
+    <tr>
+      <td>dtype</td>
+      <td><p>String, either (<code>'float16'</code>, <code>'float32'</code>, or <code>'float64'</code>).</p></td>
+    </tr>
+    </table>
+    
+    <h2 id="value">Value</h2>
+
+    <p>Keras tensor with dtype <code>dtype</code>.</p>
+    
+    <h2 id="keras-backend">Keras Backend</h2>
+
+    
+    <p>This function is part of a set of Keras backend functions that enable
+lower level access to the core operations of the backend tensor engine
+(e.g. TensorFlow, CNTK, Theano, etc.).</p>
+<p>You can see a list of all available backend functions here:
+<a href='https://keras.rstudio.com/articles/backend.html#backend-functions'>https://keras.rstudio.com/articles/backend.html#backend-functions</a>.</p>
+    
+
+
+

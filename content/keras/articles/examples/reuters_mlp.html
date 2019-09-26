@@ -1,0 +1,81 @@
+---
+title: reuters_mlp
+type: docs
+repo: https://github.com/rstudio/keras
+menu:
+  main:
+    parent: keras-examples
+---
+
+
+
+<div class="source-ref">
+<p><span class="caption">Source: </span><a href="https://github.com/rstudio/keras/blob/master/vignettes/examples/reuters_mlp.R" class="uri">https://github.com/rstudio/keras/blob/master/vignettes/examples/reuters_mlp.R</a></p>
+</div>
+<p>Train and evaluate a simple MLP on the Reuters newswire topic classification task.</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(keras)
+
+max_words &lt;-<span class="st"> </span><span class="dv">1000</span>
+batch_size &lt;-<span class="st"> </span><span class="dv">32</span>
+epochs &lt;-<span class="st"> </span><span class="dv">5</span>
+
+<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/cat">cat</a></span>(<span class="st">'Loading data...</span><span class="ch">\n</span><span class="st">'</span>)
+reuters &lt;-<span class="st"> </span><span class="kw"><a href="../../reference/dataset_reuters.html">dataset_reuters</a></span>(<span class="dt">num_words =</span> max_words, <span class="dt">test_split =</span> <span class="fl">0.2</span>)
+x_train &lt;-<span class="st"> </span>reuters<span class="op">$</span>train<span class="op">$</span>x
+y_train &lt;-<span class="st"> </span>reuters<span class="op">$</span>train<span class="op">$</span>y
+x_test &lt;-<span class="st"> </span>reuters<span class="op">$</span>test<span class="op">$</span>x
+y_test &lt;-<span class="st"> </span>reuters<span class="op">$</span>test<span class="op">$</span>y
+
+<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/cat">cat</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/length">length</a></span>(x_train), <span class="st">'train sequences</span><span class="ch">\n</span><span class="st">'</span>)
+<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/cat">cat</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/length">length</a></span>(x_test), <span class="st">'test sequences</span><span class="ch">\n</span><span class="st">'</span>)
+
+num_classes &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/Extremes">max</a></span>(y_train) <span class="op">+</span><span class="st"> </span><span class="dv">1</span>
+<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/cat">cat</a></span>(num_classes, <span class="st">'</span><span class="ch">\n</span><span class="st">'</span>)
+
+<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/cat">cat</a></span>(<span class="st">'Vectorizing sequence data...</span><span class="ch">\n</span><span class="st">'</span>)
+
+tokenizer &lt;-<span class="st"> </span><span class="kw"><a href="../../reference/text_tokenizer.html">text_tokenizer</a></span>(<span class="dt">num_words =</span> max_words)
+x_train &lt;-<span class="st"> </span><span class="kw"><a href="../../reference/sequences_to_matrix.html">sequences_to_matrix</a></span>(tokenizer, x_train, <span class="dt">mode =</span> <span class="st">'binary'</span>)
+x_test &lt;-<span class="st"> </span><span class="kw"><a href="../../reference/sequences_to_matrix.html">sequences_to_matrix</a></span>(tokenizer, x_test, <span class="dt">mode =</span> <span class="st">'binary'</span>)
+
+<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/cat">cat</a></span>(<span class="st">'x_train shape:'</span>, <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/dim">dim</a></span>(x_train), <span class="st">'</span><span class="ch">\n</span><span class="st">'</span>)
+<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/cat">cat</a></span>(<span class="st">'x_test shape:'</span>, <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/dim">dim</a></span>(x_test), <span class="st">'</span><span class="ch">\n</span><span class="st">'</span>)
+
+<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/cat">cat</a></span>(<span class="st">'Convert class vector to binary class matrix'</span>,
+    <span class="st">'(for use with categorical_crossentropy)</span><span class="ch">\n</span><span class="st">'</span>)
+y_train &lt;-<span class="st"> </span><span class="kw"><a href="../../reference/to_categorical.html">to_categorical</a></span>(y_train, num_classes)
+y_test &lt;-<span class="st"> </span><span class="kw"><a href="../../reference/to_categorical.html">to_categorical</a></span>(y_test, num_classes)
+<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/cat">cat</a></span>(<span class="st">'y_train shape:'</span>, <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/dim">dim</a></span>(y_train), <span class="st">'</span><span class="ch">\n</span><span class="st">'</span>)
+<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/cat">cat</a></span>(<span class="st">'y_test shape:'</span>, <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/dim">dim</a></span>(y_test), <span class="st">'</span><span class="ch">\n</span><span class="st">'</span>)
+
+<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/cat">cat</a></span>(<span class="st">'Building model...</span><span class="ch">\n</span><span class="st">'</span>)
+model &lt;-<span class="st"> </span><span class="kw"><a href="../../reference/keras_model_sequential.html">keras_model_sequential</a></span>()
+model <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw"><a href="../../reference/layer_dense.html">layer_dense</a></span>(<span class="dt">units =</span> <span class="dv">512</span>, <span class="dt">input_shape =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(max_words)) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw"><a href="../../reference/layer_activation.html">layer_activation</a></span>(<span class="dt">activation =</span> <span class="st">'relu'</span>) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw"><a href="../../reference/layer_dropout.html">layer_dropout</a></span>(<span class="dt">rate =</span> <span class="fl">0.5</span>) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw"><a href="../../reference/layer_dense.html">layer_dense</a></span>(<span class="dt">units =</span> num_classes) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw"><a href="../../reference/layer_activation.html">layer_activation</a></span>(<span class="dt">activation =</span> <span class="st">'softmax'</span>)
+
+model <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../../reference/reexports.html">compile</a></span>(
+  <span class="dt">loss =</span> <span class="st">'categorical_crossentropy'</span>,
+  <span class="dt">optimizer =</span> <span class="st">'adam'</span>,
+  <span class="dt">metrics =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="st">'accuracy'</span>)
+)
+
+history &lt;-<span class="st"> </span>model <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../../reference/reexports.html">fit</a></span>(
+  x_train, y_train,
+  <span class="dt">batch_size =</span> batch_size,
+  <span class="dt">epochs =</span> epochs,
+  <span class="dt">verbose =</span> <span class="dv">1</span>,
+  <span class="dt">validation_split =</span> <span class="fl">0.1</span>
+)
+
+score &lt;-<span class="st"> </span>model <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../../reference/reexports.html">evaluate</a></span>(
+  x_test, y_test,
+  <span class="dt">batch_size =</span> batch_size,
+  <span class="dt">verbose =</span> <span class="dv">1</span>
+)
+
+<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/cat">cat</a></span>(<span class="st">'Test score:'</span>, score[[<span class="dv">1</span>]], <span class="st">'</span><span class="ch">\n</span><span class="st">'</span>)
+<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/cat">cat</a></span>(<span class="st">'Test accuracy'</span>, score[[<span class="dv">2</span>]], <span class="st">'</span><span class="ch">\n</span><span class="st">'</span>)</code></pre>

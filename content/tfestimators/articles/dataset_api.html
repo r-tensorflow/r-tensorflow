@@ -1,0 +1,88 @@
+---
+title: "Dataset API"
+output: 
+  rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Dataset API}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+type: docs
+repo: https://github.com/rstudio/tfestimators
+menu:
+  main:
+    name: "Dataset API"
+    identifier: "tfestimators-dataset-api"
+    parent: "tfestimators-advanced"
+    weight: 40
+---
+
+
+
+<div id="overview" class="section level2">
+<h2>Overview</h2>
+<p>We can access the TensorFlow Dataset API via the <a href="https://tensorflow.rstudio.com/tools/tfdatasets/">tfdatasets</a> package, which enables us to create scalable input pipelines that can be used with <strong>tfestimators</strong>. In this vignette, we demonstrate the capability to stream datasets stored on disk for training by building a classifier on the <code>iris</code> dataset.</p>
+</div>
+<div id="dataset-preparation" class="section level2">
+<h2>Dataset Preparation</h2>
+<p>Let’s assume we’re given a dataset (which could be arbitrarily large) split into training and validation, and a small sample of the dataset. To simulate this scenario, we’ll create a few CSV files as follows:</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/Random">set.seed</a></span>(<span class="dv">123</span>)
+train_idx &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/sample">sample</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/nrow">nrow</a></span>(iris), <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/nrow">nrow</a></span>(iris) <span class="op">*</span><span class="st"> </span><span class="dv">2</span><span class="op">/</span><span class="dv">3</span>)
+
+iris_train &lt;-<span class="st"> </span>iris[train_idx,]
+iris_validation &lt;-<span class="st"> </span>iris[<span class="op">-</span>train_idx,]
+iris_sample &lt;-<span class="st"> </span>iris_train <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw"><a href="https://www.rdocumentation.org/packages/utils/topics/head">head</a></span>(<span class="dv">10</span>)
+
+<span class="kw"><a href="https://www.rdocumentation.org/packages/utils/topics/write.table">write.csv</a></span>(iris_train, <span class="st">"iris_train.csv"</span>, <span class="dt">row.names =</span> <span class="ot">FALSE</span>)
+<span class="kw"><a href="https://www.rdocumentation.org/packages/utils/topics/write.table">write.csv</a></span>(iris_validation, <span class="st">"iris_validation.csv"</span>, <span class="dt">row.names =</span> <span class="ot">FALSE</span>)
+<span class="kw"><a href="https://www.rdocumentation.org/packages/utils/topics/write.table">write.csv</a></span>(iris_sample, <span class="st">"iris_sample.csv"</span>, <span class="dt">row.names =</span> <span class="ot">FALSE</span>)</code></pre>
+</div>
+<div id="estimator-construction" class="section level2">
+<h2>Estimator Construction</h2>
+<p>We construct the classifier as usual – see <a href="https://tensorflow.rstudio.com/tfestimators/articles/estimator_basics.html">Estimator Basics</a> for details on feature columns and creating estimators.</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(tfestimators)
+response &lt;-<span class="st"> "Species"</span>
+features &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/sets">setdiff</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/names">names</a></span>(iris), response)
+feature_columns &lt;-<span class="st"> </span><span class="kw"><a href="../reference/feature_columns.html">feature_columns</a></span>(
+  <span class="kw"><a href="../reference/column_numeric.html">column_numeric</a></span>(features)
+)
+
+classifier &lt;-<span class="st"> </span><span class="kw"><a href="../reference/dnn_estimators.html">dnn_classifier</a></span>(
+  <span class="dt">feature_columns =</span> feature_columns,
+  <span class="dt">hidden_units =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="dv">16</span>, <span class="dv">32</span>, <span class="dv">16</span>),
+  <span class="dt">n_classes =</span> <span class="dv">3</span>,
+  <span class="dt">label_vocabulary =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="st">"setosa"</span>, <span class="st">"virginica"</span>, <span class="st">"versicolor"</span>)
+)</code></pre>
+</div>
+<div id="input-function" class="section level2">
+<h2>Input Function</h2>
+<p>The creation of the input function is similar to the <a href="https://tensorflow.rstudio.com/tfestimators/articles/input_functions.html">in-memory case</a>. However, instead of passing data frames or matrices to <code>iris_input_fn()</code>, we pass TensorFlow dataset objects which are internally iterators of the dataset files.</p>
+<pre class="sourceCode r"><code class="sourceCode r">iris_input_fn &lt;-<span class="st"> </span><span class="cf">function</span>(data) {
+  <span class="kw"><a href="../reference/input_fn.html">input_fn</a></span>(data, <span class="dt">features =</span> features, <span class="dt">response =</span> response)
+}
+
+iris_spec &lt;-<span class="st"> </span><span class="kw">csv_record_spec</span>(<span class="st">"iris_sample.csv"</span>)
+iris_train &lt;-<span class="st"> </span><span class="kw">text_line_dataset</span>(
+  <span class="st">"iris_train.csv"</span>, <span class="dt">record_spec =</span> iris_spec) <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">dataset_batch</span>(<span class="dv">10</span>) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">dataset_repeat</span>(<span class="dv">10</span>)
+iris_validation &lt;-<span class="st"> </span><span class="kw">text_line_dataset</span>(
+  <span class="st">"iris_validation.csv"</span>, <span class="dt">record_spec =</span> iris_spec) <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">dataset_batch</span>(<span class="dv">10</span>) <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">dataset_repeat</span>(<span class="dv">1</span>)</code></pre>
+<p>The <code>csv_record_spec()</code> function is a helper function that creates a specification from a sample file; the returned specification is required by the <code>text_line_dataset()</code> function to parse the files. There are many <a href="https://tensorflow.rstudio.com/tools/tfdatasets/reference/index.html#section-transforming-datasets">transformations</a> available for dataset objects, but here we just demonstrate <code>dataset_batch()</code> and <code>dataset_repeat()</code> which control the batch size and how many times we iterate through the dataset files, respectively.</p>
+</div>
+<div id="training-and-evaluation" class="section level2">
+<h2>Training and Evaluation</h2>
+<p>Once the input functions and datasets are defined, the training and evaluation interface is exactly the same as in the in-memory case.</p>
+<pre class="sourceCode r"><code class="sourceCode r">history &lt;-<span class="st"> </span><span class="kw"><a href="../reference/reexports.html">train</a></span>(classifier, <span class="dt">input_fn =</span> <span class="kw">iris_input_fn</span>(iris_train))
+<span class="kw"><a href="https://www.rdocumentation.org/packages/graphics/topics/plot">plot</a></span>(history)
+predictions &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/stats/topics/predict">predict</a></span>(classifier, <span class="dt">input_fn =</span> <span class="kw">iris_input_fn</span>(iris_validation))
+predictions
+evaluation &lt;-<span class="st"> </span><span class="kw"><a href="../reference/reexports.html">evaluate</a></span>(classifier, <span class="dt">input_fn =</span> <span class="kw">iris_input_fn</span>(iris_validation))
+evaluation</code></pre>
+</div>
+<div id="learning-more" class="section level2">
+<h2>Learning More</h2>
+<p>See the documetnation for the <a href="https://tensorflow.rstudio.com/tools/tfdatasets/">tfdatasets</a> package for additional details on using TensorFlow datasets.</p>
+</div>

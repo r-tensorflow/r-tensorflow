@@ -1,0 +1,83 @@
+---
+title: "Utility function for generating batches of temporal data."
+type: docs
+repo: https://github.com/rstudio/keras
+menu:
+  main:
+    name: "Utility function for generating batches of temporal data. - keras"
+    parent: keras-reference
+---
+    
+    
+    <p>Utility function for generating batches of temporal data.</p>
+    
+
+    <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>timeseries_generator</span>(<span class='no'>data</span>, <span class='no'>targets</span>, <span class='no'>length</span>, <span class='kw'>sampling_rate</span> <span class='kw'>=</span> <span class='fl'>1</span>,
+  <span class='kw'>stride</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>start_index</span> <span class='kw'>=</span> <span class='fl'>0</span>, <span class='kw'>end_index</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>shuffle</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
+  <span class='kw'>reverse</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>batch_size</span> <span class='kw'>=</span> <span class='fl'>128</span>)</code></pre></div>
+    
+    <h2 id="arguments">Arguments</h2>
+    <table class="ref-arguments">
+    
+    <colgroup>
+      <col class="name" />
+      <col class="desc" />
+    </colgroup>  
+      
+    <tr>
+      <td>data</td>
+      <td><p>Object containing consecutive data points (timesteps). The data
+should be 2D, and axis 1 is expected to be the time dimension.</p></td>
+    </tr>
+    <tr>
+      <td>targets</td>
+      <td><p>Targets corresponding to timesteps in <code>data</code>.
+It should have same length as <code>data</code>.</p></td>
+    </tr>
+    <tr>
+      <td>length</td>
+      <td><p>Length of the output sequences (in number of timesteps).</p></td>
+    </tr>
+    <tr>
+      <td>sampling_rate</td>
+      <td><p>Period between successive individual timesteps
+within sequences. For rate <code>r</code>, timesteps <code>data[i]</code>, <code>data[i-r]</code>, ... <code>data[i - length]</code>
+are used for create a sample sequence.</p></td>
+    </tr>
+    <tr>
+      <td>stride</td>
+      <td><p>Period between successive output sequences.
+For stride <code>s</code>, consecutive output samples would
+be centered around <code>data[i]</code>, <code>data[i+s]</code>, <code>data[i+2*s]</code>, etc.</p></td>
+    </tr>
+    <tr>
+      <td>start_index, end_index</td>
+      <td><p>Data points earlier than <code>start_index</code>
+or later than <code>end_index</code> will not be used in the output sequences.
+This is useful to reserve part of the data for test or validation.</p></td>
+    </tr>
+    <tr>
+      <td>shuffle</td>
+      <td><p>Whether to shuffle output samples,
+or instead draw them in chronological order.</p></td>
+    </tr>
+    <tr>
+      <td>reverse</td>
+      <td><p>Boolean: if <code>true</code>, timesteps in each output sample will be
+in reverse chronological order.</p></td>
+    </tr>
+    <tr>
+      <td>batch_size</td>
+      <td><p>Number of timeseries samples in each batch
+(except maybe the last one).</p></td>
+    </tr>
+    </table>
+    
+    <h2 id="value">Value</h2>
+
+    <p>An object that can be passed to generator based training
+functions (e.g. <code><a href='fit_generator.html'>fit_generator()</a></code>).ma</p>
+    
+
+
+

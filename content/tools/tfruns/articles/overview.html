@@ -1,0 +1,156 @@
+---
+title: "tfruns: Track and Visualize Training Runs"
+output: 
+  rmarkdown::html_vignette: default
+vignette: >
+  %\VignetteIndexEntry{Introduction to tfruns}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+type: docs
+repo: https://github.com/rstudio/tfruns
+menu:
+  main:
+    name: "Introduction to tfruns"
+    identifier: "tools-tfruns-overview"
+    parent: "tfruns-top"
+    weight: 10
+aliases:
+  - /tools/tfruns/
+---
+
+
+
+<p><img src="images/view_run.png" align="right" style="border: 1px solid #CCCCCC; margin-left: 15px;" width="220/"></p>
+<p>The <strong>tfruns</strong> package provides a suite of tools for tracking, visualizing, and managing TensorFlow training runs and experiments from R:</p>
+<ul>
+<li><p>Track the hyperparameters, metrics, output, and source code of every training run.</p></li>
+<li><p>Compare hyperparmaeters and metrics across runs to find the best performing model.</p></li>
+<li><p>Automatically generate reports to visualize individual training runs or comparisons between runs.</p></li>
+<li><p>No changes to source code required (run data is automatically captured for all Keras and TF Estimator models).</p></li>
+</ul>
+<div id="installation" class="section level2">
+<h2>Installation</h2>
+<p>You can install the <strong>tfruns</strong> package from CRAN as follows:</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="https://www.rdocumentation.org/packages/utils/topics/install.packages">install.packages</a></span>(<span class="st">"tfruns"</span>)</code></pre>
+<p>The package is intended to be used with the <a href="https://tensorflow.rstudio.com/keras">keras</a> and/or the <a href="https://tensorflow.rstudio.com/keras">tfestimators</a> packages, both of which provide higher level interfaces to TensorFlow from R. These packages can be installed with:</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="https://www.rdocumentation.org/packages/utils/topics/install.packages">install.packages</a></span>(<span class="st">"keras"</span>)
+<span class="kw"><a href="https://www.rdocumentation.org/packages/utils/topics/install.packages">install.packages</a></span>(<span class="st">"tfestimators"</span>)</code></pre>
+</div>
+<div id="training" class="section level2">
+<h2>Training</h2>
+<p>In the following sections we’ll describe the various capabilities of <strong>tfruns</strong>. Our example training script (<a href="https://github.com/rstudio/tfruns/blob/master/inst/examples/mnist_mlp/mnist_mlp.R">mnist_mlp.R</a>) trains a Keras model to recognize MNIST digits.</p>
+<p>To train a model with <strong>tfruns</strong>, just use the <code><a href="../../../tools/tfruns/reference/training_run.html">training_run()</a></code> function in place of the <code><a href="https://www.rdocumentation.org/packages/base/topics/source">source()</a></code> function to execute your R script. For example:</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(tfruns)
+<span class="kw"><a href="../../../tools/tfruns/reference/training_run.html">training_run</a></span>(<span class="st">"mnist_mlp.R"</span>)</code></pre>
+<p>When training is completed, a summary of the run will automatically be displayed if you are within an interactive R session:</p>
+<p><kbd><img src="images/view_run.png" style="border: 1px solid #CCCCCC;" width="675/"></kbd></p>
+<p>The metrics and output of each run are automatically captured within a <em>run directory</em> which is unique for each run that you initiate. Note that for Keras and TF Estimator models this data is captured automatically (no changes to your source code are required).</p>
+<p>You can call the <code><a href="../../../tools/tfruns/reference/latest_run.html">latest_run()</a></code> function to view the results of the last run (including the path to the run directory which stores all of the run’s output):</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="../../../tools/tfruns/reference/latest_run.html">latest_run</a></span>()</code></pre>
+<pre><code>$ run_dir           : chr "runs/2017-10-02T14-23-38Z"
+$ eval_loss         : num 0.0956
+$ eval_acc          : num 0.98
+$ metric_loss       : num 0.0624
+$ metric_acc        : num 0.984
+$ metric_val_loss   : num 0.0962
+$ metric_val_acc    : num 0.98
+$ flag_dropout1     : num 0.4
+$ flag_dropout2     : num 0.3
+$ samples           : int 48000
+$ validation_samples: int 12000
+$ batch_size        : int 128
+$ epochs            : int 20
+$ epochs_completed  : int 20
+$ metrics           : chr "(metrics data frame)"
+$ model             : chr "(model summary)"
+$ loss_function     : chr "categorical_crossentropy"
+$ optimizer         : chr "RMSprop"
+$ learning_rate     : num 0.001
+$ script            : chr "mnist_mlp.R"
+$ start             : POSIXct[1:1], format: "2017-10-02 14:23:38"
+$ end               : POSIXct[1:1], format: "2017-10-02 14:24:24"
+$ completed         : logi TRUE
+$ output            : chr "(script ouptut)"
+$ source_code       : chr "(source archive)"
+$ context           : chr "local"
+$ type              : chr "training"</code></pre>
+<p>The run directory used in the example above is “runs/2017-10-02T14-23-38Z”. Run directories are by default generated within the “runs” subdirectory of the current working directory, and use a timestamp as the name of the run directory. You can view the report for any given run using the <code><a href="../../../tools/tfruns/reference/view_run.html">view_run()</a></code> function:</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="../../../tools/tfruns/reference/view_run.html">view_run</a></span>(<span class="st">"runs/2017-10-02T14-23-38Z"</span>)</code></pre>
+</div>
+<div id="comparing-runs" class="section level2">
+<h2>Comparing Runs</h2>
+<p>Let’s make a couple of changes to our training script to see if we can improve model performance. We’ll change the number of units in our first dense layer to 128, change the <code>learning_rate</code> from 0.001 to 0.003 and run 30 rather than 20 <code>epochs</code>. After making these changes to the source code we re-run the script using <code><a href="../../../tools/tfruns/reference/training_run.html">training_run()</a></code> as before:</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="../../../tools/tfruns/reference/training_run.html">training_run</a></span>(<span class="st">"mnist_mlp.R"</span>)</code></pre>
+<p>This will also show us a report summarizing the results of the run, but what we are really interested in is a comparison between this run and the previous one. We can view a comparison via the <code><a href="../../../tools/tfruns/reference/compare_runs.html">compare_runs()</a></code> function:</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="../../../tools/tfruns/reference/compare_runs.html">compare_runs</a></span>()</code></pre>
+<p><kbd><img src="images/compare_runs.png" style="border: 1px solid #CCCCCC;" width="675/"></kbd></p>
+<p>The comparison report shows the model attributes and metrics side-by-side, as well as differences in the source code and output of the training script.</p>
+<p>Note that <code><a href="../../../tools/tfruns/reference/compare_runs.html">compare_runs()</a></code> will by default compare the last two runs, however you can pass any two run directories you like to be compared.</p>
+</div>
+<div id="analyzing-runs" class="section level2">
+<h2>Analyzing Runs</h2>
+<p>We’ve demonstrated visualizing and comparing one or two runs, however as you accumulate more runs you’ll generally want to analyze and compare runs many runs. You can use the <code><a href="../../../tools/tfruns/reference/ls_runs.html">ls_runs()</a></code> function to yield a data frame with summary information on all of the runs you’ve conducted within a given directory:</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="../../../tools/tfruns/reference/ls_runs.html">ls_runs</a></span>()</code></pre>
+<pre><code>Data frame: 4 x 28 
+                    run_dir eval_loss eval_acc metric_loss metric_acc metric_val_loss metric_val_acc
+1 runs/2017-12-09T21-01-11Z    0.1485   0.9562      0.2577     0.9240          0.1482         0.9545
+2 runs/2017-12-09T21-00-11Z    0.1438   0.9573      0.2655     0.9208          0.1505         0.9559
+3 runs/2017-12-09T19-59-44Z    0.1407   0.9580      0.2597     0.9241          0.1402         0.9578
+4 runs/2017-12-09T19-56-48Z    0.1437   0.9555      0.2610     0.9227          0.1459         0.9551
+# ... with 21 more columns:
+#   flag_batch_size, flag_dropout1, flag_dropout2, samples, validation_samples, batch_size,
+#   epochs, epochs_completed, metrics, model, loss_function, optimizer, learning_rate, script,
+#   start, end, completed, output, source_code, context, type</code></pre>
+<p>You can also render a sortable, filterable version all of the columns within RStudio using the <code><a href="https://www.rdocumentation.org/packages/utils/topics/View">View()</a></code> function:</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="https://www.rdocumentation.org/packages/utils/topics/View">View</a></span>(<span class="kw"><a href="../../../tools/tfruns/reference/ls_runs.html">ls_runs</a></span>())</code></pre>
+<p><kbd><img src="images/ls_runs_rstudio.png" style="border: 1px solid #CCCCCC;" width="675/"></kbd></p>
+<p>The <code><a href="../../../tools/tfruns/reference/ls_runs.html">ls_runs()</a></code> function also supports <code>subset</code> and <code>order</code> arguments. For example, the following will yield all runs with an eval accuracy better than 0.98:</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="../../../tools/tfruns/reference/ls_runs.html">ls_runs</a></span>(eval_acc <span class="op">&gt;</span><span class="st"> </span><span class="fl">0.9570</span>, <span class="dt">order =</span> eval_acc)</code></pre>
+<pre><code>Data frame: 2 x 28 
+                    run_dir eval_acc eval_loss metric_loss metric_acc metric_val_loss metric_val_acc
+1 runs/2017-12-09T19-59-44Z   0.9580    0.1407      0.2597     0.9241          0.1402         0.9578
+2 runs/2017-12-09T21-00-11Z   0.9573    0.1438      0.2655     0.9208          0.1505         0.9559
+# ... with 21 more columns:
+#   flag_batch_size, flag_dropout1, flag_dropout2, samples, validation_samples, batch_size,
+#   epochs, epochs_completed, metrics, model, loss_function, optimizer, learning_rate, script,
+#   start, end, completed, output, source_code, context, type</code></pre>
+<p>You can pass the results of <code><a href="../../../tools/tfruns/reference/ls_runs.html">ls_runs()</a></code> to compare runs (which will always compare the first two runs passed). For example, this will compare the two runs that performed best in terms of evaluation accuracy:</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="../../../tools/tfruns/reference/compare_runs.html">compare_runs</a></span>(<span class="kw"><a href="../../../tools/tfruns/reference/ls_runs.html">ls_runs</a></span>(eval_acc <span class="op">&gt;</span><span class="st"> </span><span class="fl">0.9570</span>, <span class="dt">order =</span> eval_acc))</code></pre>
+<p><kbd><img src="images/ls_runs_compare.png" style="border: 1px solid #CCCCCC;" width="675/"></kbd></p>
+</div>
+<div id="rstudio-ide" class="section level2">
+<h2>RStudio IDE</h2>
+<p>If you use RStudio with <strong>tfruns</strong>, it’s strongly recommended that you update to the current <a href="https://www.rstudio.com/products/rstudio/download/preview/">Preview Release</a> of RStudio v1.1, as there are are a number of points of integration with the IDE that require this newer release.</p>
+<div id="addin" class="section level3">
+<h3>Addin</h3>
+<p>The <strong>tfruns</strong> package installs an RStudio IDE addin which provides quick access to frequently used functions from the Addins menu:</p>
+<p><kbd><img src="images/rstudio_addin.png" style="border: 1px solid #CCCCCC;" width="675/"></kbd></p>
+<p>Note that you can use <strong>Tools</strong> -&gt; <strong>Modify Keyboard Shortcuts</strong> within RStudio to assign a keyboard shortcut to one or more of the addin commands.</p>
+</div>
+<div id="background-training" class="section level3">
+<h3>Background Training</h3>
+<p>RStudio v1.1 includes a Terminal pane alongside the Console pane. Since training runs can become quite lengthy, it’s often useful to run them in the background in order to keep the R console free for other work. You can do this from a Terminal as follows:</p>
+<p><kbd><img src="images/rstudio_terminal.png" style="border: 1px solid #CCCCCC;" width="675/"></kbd></p>
+<p>If you are not running within RStudio then you can of course use a system terminal window for background training.</p>
+</div>
+<div id="publishing-reports" class="section level3">
+<h3>Publishing Reports</h3>
+<p>Training run views and comparisons are HTML documents which can be saved and shared with others. When viewing a report within RStudio v1.1 you can save a copy of the report or publish it to RPubs or RStudio Connect:</p>
+<p><kbd><img src="images/rstudio_publish.png" style="border: 1px solid #CCCCCC;" width="675/"></kbd></p>
+<p>If you are not running within RStudio then you can use the <code><a href="../../../tools/tfruns/reference/save_run_view.html">save_run_view()</a></code> and <code><a href="../../../tools/tfruns/reference/save_run_comparison.html">save_run_comparison()</a></code> functions to create standalone HTML versions of run reports.</p>
+</div>
+</div>
+<div id="hyperparameter-tuning" class="section level2">
+<h2>Hyperparameter Tuning</h2>
+<p>Tuning a model often requires exploring the impact of changes to many hyperparameters. The best way to approach this is generally to systematically train over the combinations of those parameters to determine which combination yields the best model. See the <a href="https://tensorflow.rstudio.com/tools/tfruns/articles/tuning.html">Hyperparmeter Tuning</a> article for details on how to accomplish this with tfruns.</p>
+</div>
+<div id="managing-runs" class="section level2">
+<h2>Managing Runs</h2>
+<p>There are a variety of tools available for managing training run output, including:</p>
+<ol style="list-style-type: decimal">
+<li><p>Exporting run artifacts (e.g. saved models).</p></li>
+<li><p>Copying and purging run directories.</p></li>
+<li><p>Using a custom run directory for an experiment or other set of related runs.</p></li>
+</ol>
+<p>The <a href="https://tensorflow.rstudio.com/tools/tfruns/articles/managing.html">Managing Runs</a> article provides additional details on using these features.</p>
+</div>

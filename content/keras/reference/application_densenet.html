@@ -1,0 +1,108 @@
+---
+title: "Instantiates the DenseNet architecture."
+type: docs
+repo: https://github.com/rstudio/keras
+menu:
+  main:
+    name: "Instantiates the DenseNet architecture. - keras"
+    parent: keras-reference
+---
+    
+    
+    <p>Instantiates the DenseNet architecture.</p>
+    
+
+    <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>application_densenet</span>(<span class='no'>blocks</span>, <span class='kw'>include_top</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>weights</span> <span class='kw'>=</span> <span class='st'>"imagenet"</span>,
+  <span class='kw'>input_tensor</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>input_shape</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>pooling</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>classes</span> <span class='kw'>=</span> <span class='fl'>1000</span>)
+
+<span class='fu'>application_densenet121</span>(<span class='kw'>include_top</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>weights</span> <span class='kw'>=</span> <span class='st'>"imagenet"</span>,
+  <span class='kw'>input_tensor</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>input_shape</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>pooling</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>classes</span> <span class='kw'>=</span> <span class='fl'>1000</span>)
+
+<span class='fu'>application_densenet169</span>(<span class='kw'>include_top</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>weights</span> <span class='kw'>=</span> <span class='st'>"imagenet"</span>,
+  <span class='kw'>input_tensor</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>input_shape</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>pooling</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>classes</span> <span class='kw'>=</span> <span class='fl'>1000</span>)
+
+<span class='fu'>application_densenet201</span>(<span class='kw'>include_top</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>weights</span> <span class='kw'>=</span> <span class='st'>"imagenet"</span>,
+  <span class='kw'>input_tensor</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>input_shape</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>pooling</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>classes</span> <span class='kw'>=</span> <span class='fl'>1000</span>)
+
+<span class='fu'>densenet_preprocess_input</span>(<span class='no'>x</span>, <span class='kw'>data_format</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</code></pre></div>
+    
+    <h2 id="arguments">Arguments</h2>
+    <table class="ref-arguments">
+    
+    <colgroup>
+      <col class="name" />
+      <col class="desc" />
+    </colgroup>  
+      
+    <tr>
+      <td>blocks</td>
+      <td><p>numbers of building blocks for the four dense layers.</p></td>
+    </tr>
+    <tr>
+      <td>include_top</td>
+      <td><p>whether to include the fully-connected layer at the top
+of the network.</p></td>
+    </tr>
+    <tr>
+      <td>weights</td>
+      <td><p>one of <code>NULL</code> (random initialization), 'imagenet'
+(pre-training on ImageNet), or the path to the weights file to be loaded.</p></td>
+    </tr>
+    <tr>
+      <td>input_tensor</td>
+      <td><p>optional Keras tensor (i.e. output of <code><a href='layer_input.html'>layer_input()</a></code>)
+to use as image input for the model.</p></td>
+    </tr>
+    <tr>
+      <td>input_shape</td>
+      <td><p>optional shape list, only to be specified if <code>include_top</code>
+is FALSE (otherwise the input shape has to be <code>(224, 224, 3)</code>
+(with <code>channels_last</code> data format) or <code>(3, 224, 224)</code> (with
+<code>channels_first</code> data format). It should have exactly 3 inputs channels.</p></td>
+    </tr>
+    <tr>
+      <td>pooling</td>
+      <td><p>optional pooling mode for feature extraction when
+<code>include_top</code> is <code>FALSE</code>.
+- <code>NULL</code> means that the output of the model will be the 4D tensor output
+of the last convolutional layer.
+- <code>avg</code> means that global average pooling will be applied to the output
+of the last convolutional layer, and thus the output of the model
+will be a 2D tensor.
+- <code>max</code> means that global max pooling will be applied.</p></td>
+    </tr>
+    <tr>
+      <td>classes</td>
+      <td><p>optional number of classes to classify images into, only to be
+specified if <code>include_top</code> is TRUE, and if no <code>weights</code> argument is
+specified.</p></td>
+    </tr>
+    <tr>
+      <td>x</td>
+      <td><p>a 3D or 4D array consists of RGB values within <code>[0, 255]</code>.</p></td>
+    </tr>
+    <tr>
+      <td>data_format</td>
+      <td><p>data format of the image tensor.</p></td>
+    </tr>
+    </table>
+    
+    <h2 id="details">Details</h2>
+
+    <p>Optionally loads weights pre-trained
+on ImageNet. Note that when using TensorFlow,
+for best performance you should set
+<code>image_data_format='channels_last'</code> in your Keras config
+at ~/.keras/keras.json.</p>
+<p>The model and the weights are compatible with
+TensorFlow, Theano, and CNTK. The data format
+convention used by the model is the one
+specified in your Keras config file.</p>
+    
+
+
+

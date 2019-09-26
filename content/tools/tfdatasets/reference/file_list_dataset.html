@@ -1,0 +1,57 @@
+---
+title: "A dataset of all files matching a pattern"
+type: docs
+repo: https://github.com/rstudio/tfdatasets
+menu:
+  main:
+    name: "A dataset of all files matching a pattern - tfdatasets"
+    parent: tfdatasets-reference
+---
+    
+    
+    <p>A dataset of all files matching a pattern</p>
+    
+
+    <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>file_list_dataset</span>(<span class='no'>file_pattern</span>, <span class='kw'>shuffle</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>seed</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</code></pre></div>
+    
+    <h2 id="arguments">Arguments</h2>
+    <table class="ref-arguments">
+    
+    <colgroup>
+      <col class="name" />
+      <col class="desc" />
+    </colgroup>  
+      
+    <tr>
+      <td>file_pattern</td>
+      <td><p>A string, representing the filename pattern that will be matched.</p></td>
+    </tr>
+    <tr>
+      <td>shuffle</td>
+      <td><p>(Optional) If <code>TRUE``, the file names will be shuffled randomly. Defaults to </code>TRUE`</p></td>
+    </tr>
+    <tr>
+      <td>seed</td>
+      <td><p>(Optional) An integer, representing the random seed that
+will be used to create the distribution.</p></td>
+    </tr>
+    </table>
+    
+    <h2 id="value">Value</h2>
+
+    <p>A dataset of string correponding to file names</p>
+    
+    <h2 id="details">Details</h2>
+
+    <p>For example, if we had the following files on our filesystem: - /path/to/dir/a.txt -
+/path/to/dir/b.csv - /path/to/dir/c.csv</p>
+<p>If we pass "/path/to/dir/*.csv" as the <code>file_pattern</code>, the dataset would produce: -
+/path/to/dir/b.csv - /path/to/dir/c.csv</p>
+    
+    <h2 id="note">Note</h2>
+
+    <p>The <code>shuffle</code> and <code>seed</code> arguments only apply for TensorFlow &gt;= v1.8</p>
+    
+
+
+

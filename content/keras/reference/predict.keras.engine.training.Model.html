@@ -1,0 +1,82 @@
+---
+title: "Generate predictions from a Keras model"
+type: docs
+repo: https://github.com/rstudio/keras
+menu:
+  main:
+    name: "Generate predictions from a Keras model - keras"
+    parent: keras-reference
+---
+    
+    
+    <p>Generates output predictions for the input samples, processing the samples in
+a batched way.</p>
+    
+
+    <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class='co'># S3 method for keras.engine.training.Model</span>
+<span class='fu'><a href='https://www.rdocumentation.org/packages/stats/topics/predict'>predict</a></span>(<span class='no'>object</span>, <span class='no'>x</span>,
+  <span class='kw'>batch_size</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>0</span>, <span class='kw'>steps</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>callbacks</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='no'>...</span>)</code></pre></div>
+    
+    <h2 id="arguments">Arguments</h2>
+    <table class="ref-arguments">
+    
+    <colgroup>
+      <col class="name" />
+      <col class="desc" />
+    </colgroup>  
+      
+    <tr>
+      <td>object</td>
+      <td><p>Keras model</p></td>
+    </tr>
+    <tr>
+      <td>x</td>
+      <td><p>Input data (vector, matrix, or array)</p></td>
+    </tr>
+    <tr>
+      <td>batch_size</td>
+      <td><p>Integer. If unspecified, it will default to 32.</p></td>
+    </tr>
+    <tr>
+      <td>verbose</td>
+      <td><p>Verbosity mode, 0 or 1.</p></td>
+    </tr>
+    <tr>
+      <td>steps</td>
+      <td><p>Total number of steps (batches of samples) before declaring the
+evaluation round finished. Ignored with the default value of <code>NULL</code>.</p></td>
+    </tr>
+    <tr>
+      <td>callbacks</td>
+      <td><p>List of callbacks to apply during prediction.</p></td>
+    </tr>
+    <tr>
+      <td>...</td>
+      <td><p>Unused</p></td>
+    </tr>
+    </table>
+    
+    <h2 id="value">Value</h2>
+
+    <p>vector, matrix, or array of predictions</p>
+    
+    <h2 id="see-also">See also</h2>
+
+    <div class='dont-index'><p>Other model functions: <code><a href='compile.keras.engine.training.Model.html'>compile.keras.engine.training.Model</a></code>,
+  <code><a href='evaluate.keras.engine.training.Model.html'>evaluate.keras.engine.training.Model</a></code>,
+  <code><a href='evaluate_generator.html'>evaluate_generator</a></code>,
+  <code><a href='fit.keras.engine.training.Model.html'>fit.keras.engine.training.Model</a></code>,
+  <code><a href='fit_generator.html'>fit_generator</a></code>, <code><a href='get_config.html'>get_config</a></code>,
+  <code><a href='get_layer.html'>get_layer</a></code>,
+  <code><a href='keras_model_sequential.html'>keras_model_sequential</a></code>,
+  <code><a href='keras_model.html'>keras_model</a></code>, <code><a href='multi_gpu_model.html'>multi_gpu_model</a></code>,
+  <code><a href='pop_layer.html'>pop_layer</a></code>, <code><a href='predict_generator.html'>predict_generator</a></code>,
+  <code><a href='predict_on_batch.html'>predict_on_batch</a></code>,
+  <code><a href='predict_proba.html'>predict_proba</a></code>,
+  <code><a href='summary.keras.engine.training.Model.html'>summary.keras.engine.training.Model</a></code>,
+  <code><a href='train_on_batch.html'>train_on_batch</a></code></p></div>
+    
+
+
+

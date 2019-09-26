@@ -1,0 +1,60 @@
+---
+title: "Representation of HDF5 dataset to be used instead of an R array"
+type: docs
+repo: https://github.com/rstudio/keras
+menu:
+  main:
+    name: "Representation of HDF5 dataset to be used instead of an R array - keras"
+    parent: keras-reference
+---
+    
+    
+    <p>Representation of HDF5 dataset to be used instead of an R array</p>
+    
+
+    <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>hdf5_matrix</span>(<span class='no'>datapath</span>, <span class='no'>dataset</span>, <span class='kw'>start</span> <span class='kw'>=</span> <span class='fl'>0</span>, <span class='kw'>end</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>normalizer</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</code></pre></div>
+    
+    <h2 id="arguments">Arguments</h2>
+    <table class="ref-arguments">
+    
+    <colgroup>
+      <col class="name" />
+      <col class="desc" />
+    </colgroup>  
+      
+    <tr>
+      <td>datapath</td>
+      <td><p>string, path to a HDF5 file</p></td>
+    </tr>
+    <tr>
+      <td>dataset</td>
+      <td><p>string, name of the HDF5 dataset in the file specified in datapath</p></td>
+    </tr>
+    <tr>
+      <td>start</td>
+      <td><p>int, start of desired slice of the specified dataset</p></td>
+    </tr>
+    <tr>
+      <td>end</td>
+      <td><p>int, end of desired slice of the specified dataset</p></td>
+    </tr>
+    <tr>
+      <td>normalizer</td>
+      <td><p>function to be called on data when retrieved</p></td>
+    </tr>
+    </table>
+    
+    <h2 id="value">Value</h2>
+
+    <p>An array-like HDF5 dataset.</p>
+    
+    <h2 id="details">Details</h2>
+
+    <p>Providing <code>start</code> and <code>end</code> allows use of a slice of the dataset.</p>
+<p>Optionally, a normalizer function (or lambda) can be given. This will
+be called on every slice of data retrieved.</p>
+    
+
+
+

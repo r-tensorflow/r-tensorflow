@@ -1,0 +1,199 @@
+---
+title: mnist_with_summaries
+type: docs
+menu:
+  main:
+    parent: tensorflow-examples
+---
+
+
+
+<p>A simple MNIST classifier which displays summaries in TensorBoard.</p>
+<p>This is an unimpressive MNIST model, but it is a good example of using
+`tf$name_scope`` to make a graph legible in the TensorBoard graph explorer, and of
+naming summary tags so that they are grouped meaningfully in TensorBoard.</p>
+<p>It demonstrates the functionality of every TensorBoard dashboard.</p>
+<p>See the <a href="../howto_summaries_and_tensorboard.html">TensorBoard Basics</a> article for an in-depth
+explanation of the code in this example.</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(tensorflow)
+
+FLAGS &lt;-<span class="st"> </span><span class="kw"><a href="../../../tensorflow/reference/reexports.html">flags</a></span>(
+  <span class="kw"><a href="../../../tensorflow/reference/reexports.html">flag_boolean</a></span>(<span class="st">'fake_data'</span>, <span class="ot">FALSE</span>, <span class="st">'If true, uses fake data for unit testing.'</span>),
+  <span class="kw"><a href="../../../tensorflow/reference/reexports.html">flag_integer</a></span>(<span class="st">'max_steps'</span>, <span class="dv">1000</span>, <span class="st">'Number of steps to run trainer.'</span>),
+  <span class="kw"><a href="../../../tensorflow/reference/reexports.html">flag_numeric</a></span>(<span class="st">'learning_rate'</span>, <span class="fl">0.001</span>, <span class="st">'Initial learning rate.'</span>),
+  <span class="kw"><a href="../../../tensorflow/reference/reexports.html">flag_numeric</a></span>(<span class="st">'dropout'</span>, <span class="fl">0.9</span>, <span class="st">'Keep probability for training dropout.'</span>),
+  <span class="kw"><a href="../../../tensorflow/reference/reexports.html">flag_string</a></span>(<span class="st">'summaries_dir'</span>, <span class="st">'/tmp/mnist_logs'</span>, <span class="st">'Summaries directory'</span>)
+)
+
+train &lt;-<span class="st"> </span><span class="cf">function</span>() {
+  <span class="co"># Import data</span>
+  datasets &lt;-<span class="st"> </span>tf<span class="op">$</span>contrib<span class="op">$</span>learn<span class="op">$</span>datasets
+  mnist &lt;-<span class="st"> </span>datasets<span class="op">$</span>mnist<span class="op">$</span><span class="kw">read_data_sets</span>(<span class="st">"MNIST-data"</span>, <span class="dt">one_hot =</span> <span class="ot">TRUE</span>)
+
+  sess &lt;-<span class="st"> </span>tf<span class="op">$</span><span class="kw">InteractiveSession</span>()
+
+  <span class="co"># Create a multilayer model.</span>
+
+  <span class="co"># Input placeholders</span>
+  <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/with">with</a></span>(tf<span class="op">$</span><span class="kw">name_scope</span>(<span class="st">"input"</span>), {
+    x &lt;-<span class="st"> </span>tf<span class="op">$</span><span class="kw">placeholder</span>(tf<span class="op">$</span>float32, <span class="kw"><a href="../../../tensorflow/reference/shape.html">shape</a></span>(<span class="ot">NULL</span>, 784L), <span class="dt">name =</span> <span class="st">"x-input"</span>)
+    y_ &lt;-<span class="st"> </span>tf<span class="op">$</span><span class="kw">placeholder</span>(tf<span class="op">$</span>float32, <span class="kw"><a href="../../../tensorflow/reference/shape.html">shape</a></span>(<span class="ot">NULL</span>, 10L), <span class="dt">name =</span> <span class="st">"y-input"</span>)
+  })
+
+  <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/with">with</a></span>(tf<span class="op">$</span><span class="kw">name_scope</span>(<span class="st">"input_reshape"</span>), {
+    image_shaped_input &lt;-<span class="st"> </span>tf<span class="op">$</span><span class="kw"><a href="https://www.rdocumentation.org/packages/stats/topics/reshape">reshape</a></span>(x, <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="op">-</span>1L, 28L, 28L, 1L))
+    tf<span class="op">$</span>summary<span class="op">$</span><span class="kw"><a href="https://www.rdocumentation.org/packages/graphics/topics/image">image</a></span>(<span class="st">"input"</span>, image_shaped_input, 10L)
+  })
+
+  <span class="co"># We can't initialize these variables to 0 - the network will get stuck.</span>
+  weight_variable &lt;-<span class="st"> </span><span class="cf">function</span>(shape) {
+    initial &lt;-<span class="st"> </span>tf<span class="op">$</span><span class="kw">truncated_normal</span>(shape, <span class="dt">stddev =</span> <span class="fl">0.1</span>)
+    tf<span class="op">$</span><span class="kw">Variable</span>(initial)
+  }
+
+  bias_variable &lt;-<span class="st"> </span><span class="cf">function</span>(shape) {
+    initial &lt;-<span class="st"> </span>tf<span class="op">$</span><span class="kw">constant</span>(<span class="fl">0.1</span>, <span class="dt">shape =</span> shape)
+    tf<span class="op">$</span><span class="kw">Variable</span>(initial)
+  }
+
+  <span class="co"># Attach a lot of summaries to a Tensor</span>
+  variable_summaries &lt;-<span class="st"> </span><span class="cf">function</span>(var, name) {
+    <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/with">with</a></span>(tf<span class="op">$</span><span class="kw">name_scope</span>(<span class="st">"summaries"</span>), {
+      mean &lt;-<span class="st"> </span>tf<span class="op">$</span><span class="kw">reduce_mean</span>(var)
+      tf<span class="op">$</span>summary<span class="op">$</span><span class="kw">scalar</span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/paste">paste0</a></span>(<span class="st">"mean/"</span>, name), mean)
+      <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/with">with</a></span>(tf<span class="op">$</span><span class="kw">name_scope</span>(<span class="st">"stddev"</span>), {
+        stddev &lt;-<span class="st"> </span>tf<span class="op">$</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/MathFun">sqrt</a></span>(tf<span class="op">$</span><span class="kw">reduce_mean</span>(tf<span class="op">$</span><span class="kw">square</span>(var <span class="op">-</span><span class="st"> </span>mean)))
+      })
+      tf<span class="op">$</span>summary<span class="op">$</span><span class="kw">scalar</span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/paste">paste0</a></span>(<span class="st">"stddev/"</span>, name), stddev)
+      tf<span class="op">$</span>summary<span class="op">$</span><span class="kw">scalar</span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/paste">paste0</a></span>(<span class="st">"max/"</span>, name), tf<span class="op">$</span><span class="kw">reduce_max</span>(var))
+      tf<span class="op">$</span>summary<span class="op">$</span><span class="kw">scalar</span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/paste">paste0</a></span>(<span class="st">"min/"</span>, name), tf<span class="op">$</span><span class="kw">reduce_min</span>(var))
+      tf<span class="op">$</span>summary<span class="op">$</span><span class="kw">histogram</span>(name, var)
+    })
+  }
+
+  <span class="co"># Reusable code for making a simple neural net layer.</span>
+  <span class="co">#</span>
+  <span class="co"># It does a matrix multiply, bias add, and then uses relu to nonlinearize.</span>
+  <span class="co"># It also sets up name scoping so that the resultant graph is easy to read,</span>
+  <span class="co"># and adds a number of summary ops.</span>
+  <span class="co">#</span>
+  nn_layer &lt;-<span class="st"> </span><span class="cf">function</span>(input_tensor, input_dim, output_dim,
+                       layer_name, <span class="dt">act=</span>tf<span class="op">$</span>nn<span class="op">$</span>relu) {
+    <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/with">with</a></span>(tf<span class="op">$</span><span class="kw">name_scope</span>(layer_name), {
+      <span class="co"># This Variable will hold the state of the weights for the layer</span>
+      <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/with">with</a></span>(tf<span class="op">$</span><span class="kw">name_scope</span>(<span class="st">"weights"</span>), {
+        weights &lt;-<span class="st"> </span><span class="kw">weight_variable</span>(<span class="kw"><a href="../../../tensorflow/reference/shape.html">shape</a></span>(input_dim, output_dim))
+        <span class="kw">variable_summaries</span>(weights, <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/paste">paste0</a></span>(layer_name, <span class="st">"/weights"</span>))
+      })
+      <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/with">with</a></span>(tf<span class="op">$</span><span class="kw">name_scope</span>(<span class="st">"biases"</span>), {
+        biases &lt;-<span class="st"> </span><span class="kw">bias_variable</span>(<span class="kw"><a href="../../../tensorflow/reference/shape.html">shape</a></span>(output_dim))
+        <span class="kw">variable_summaries</span>(biases, <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/paste">paste0</a></span>(layer_name, <span class="st">"/biases"</span>))
+      })
+      <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/with">with</a></span> (tf<span class="op">$</span><span class="kw">name_scope</span>(<span class="st">"Wx_plus_b"</span>), {
+        preactivate &lt;-<span class="st"> </span>tf<span class="op">$</span><span class="kw">matmul</span>(input_tensor, weights) <span class="op">+</span><span class="st"> </span>biases
+        tf<span class="op">$</span>summary<span class="op">$</span><span class="kw">histogram</span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/paste">paste0</a></span>(layer_name, <span class="st">"/pre_activations"</span>), preactivate)
+      })
+      activations &lt;-<span class="st"> </span><span class="kw">act</span>(preactivate, <span class="dt">name =</span> <span class="st">"activation"</span>)
+      tf<span class="op">$</span>summary<span class="op">$</span><span class="kw">histogram</span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/paste">paste0</a></span>(layer_name, <span class="st">"/activations"</span>), activations)
+    })
+    activations
+  }
+
+  hidden1 &lt;-<span class="st"> </span><span class="kw">nn_layer</span>(x, 784L, 500L, <span class="st">"layer1"</span>)
+
+  <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/with">with</a></span>(tf<span class="op">$</span><span class="kw">name_scope</span>(<span class="st">"dropout"</span>), {
+    keep_prob &lt;-<span class="st"> </span>tf<span class="op">$</span><span class="kw">placeholder</span>(tf<span class="op">$</span>float32)
+    tf<span class="op">$</span>summary<span class="op">$</span><span class="kw">scalar</span>(<span class="st">"dropout_keep_probability"</span>, keep_prob)
+    dropped &lt;-<span class="st"> </span>tf<span class="op">$</span>nn<span class="op">$</span><span class="kw">dropout</span>(hidden1, keep_prob)
+  })
+
+  y &lt;-<span class="st"> </span><span class="kw">nn_layer</span>(dropped, 500L, 10L, <span class="st">"layer2"</span>, <span class="dt">act =</span> tf<span class="op">$</span>nn<span class="op">$</span>softmax)
+
+  <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/with">with</a></span>(tf<span class="op">$</span><span class="kw">name_scope</span>(<span class="st">"cross_entropy"</span>), {
+    diff &lt;-<span class="st"> </span>y_ <span class="op">*</span><span class="st"> </span>tf<span class="op">$</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/Log">log</a></span>(y)
+    <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/with">with</a></span>(tf<span class="op">$</span><span class="kw">name_scope</span>(<span class="st">"total"</span>), {
+      cross_entropy &lt;-<span class="st"> </span><span class="op">-</span>tf<span class="op">$</span><span class="kw">reduce_mean</span>(diff)
+    })
+    tf<span class="op">$</span>summary<span class="op">$</span><span class="kw">scalar</span>(<span class="st">"cross entropy"</span>, cross_entropy)
+  })
+
+  <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/with">with</a></span>(tf<span class="op">$</span><span class="kw">name_scope</span>(<span class="st">"train"</span>), {
+    optimizer &lt;-<span class="st"> </span>tf<span class="op">$</span>train<span class="op">$</span><span class="kw">AdamOptimizer</span>(FLAGS<span class="op">$</span>learning_rate)
+    train_step &lt;-<span class="st"> </span>optimizer<span class="op">$</span><span class="kw">minimize</span>(cross_entropy)
+  })
+
+  <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/with">with</a></span>(tf<span class="op">$</span><span class="kw">name_scope</span>(<span class="st">"accuracy"</span>), {
+    <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/with">with</a></span>(tf<span class="op">$</span><span class="kw">name_scope</span>(<span class="st">"correct_prediction"</span>), {
+      correct_prediction &lt;-<span class="st"> </span>tf<span class="op">$</span><span class="kw">equal</span>(tf<span class="op">$</span><span class="kw">arg_max</span>(y, 1L), tf<span class="op">$</span><span class="kw">arg_max</span>(y_, 1L))
+    })
+    <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/with">with</a></span>(tf<span class="op">$</span><span class="kw">name_scope</span>(<span class="st">"accuracy"</span>), {
+      accuracy &lt;-<span class="st"> </span>tf<span class="op">$</span><span class="kw">reduce_mean</span>(tf<span class="op">$</span><span class="kw">cast</span>(correct_prediction, tf<span class="op">$</span>float32))
+    })
+    tf<span class="op">$</span>summary<span class="op">$</span><span class="kw">scalar</span>(<span class="st">"accuracy"</span>, accuracy)
+  })
+
+  <span class="co"># Merge all the summaries and write them out to /tmp/mnist_logs (by default)</span>
+  merged &lt;-<span class="st"> </span>tf<span class="op">$</span>summary<span class="op">$</span><span class="kw">merge_all</span>()
+  train_writer &lt;-<span class="st"> </span>tf<span class="op">$</span>summary<span class="op">$</span><span class="kw">FileWriter</span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/file.path">file.path</a></span>(FLAGS<span class="op">$</span>summaries_dir, <span class="st">"train"</span>),
+                                        sess<span class="op">$</span>graph)
+  test_writer &lt;-<span class="st"> </span>tf<span class="op">$</span>summary<span class="op">$</span><span class="kw">FileWriter</span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/file.path">file.path</a></span>(FLAGS<span class="op">$</span>summaries_dir, <span class="st">"test"</span>))
+  sess<span class="op">$</span><span class="kw">run</span>(tf<span class="op">$</span><span class="kw">global_variables_initializer</span>())
+
+  <span class="co"># Train the model, and also write summaries.</span>
+  <span class="co"># Every 10th step, measure test-set accuracy, and write test summaries</span>
+  <span class="co"># All other steps, run train_step on training data, &amp; add training summaries</span>
+
+  <span class="co"># Make a TensorFlow feed_dict: maps data onto Tensor placeholders.</span>
+  feed_dict &lt;-<span class="st"> </span><span class="cf">function</span>(train) {
+    <span class="cf">if</span> (train <span class="op">||</span><span class="st"> </span>FLAGS<span class="op">$</span>fake_data) {
+      batch &lt;-<span class="st"> </span>mnist<span class="op">$</span>train<span class="op">$</span><span class="kw">next_batch</span>(100L, <span class="dt">fake_data =</span> FLAGS<span class="op">$</span>fake_data)
+      xs &lt;-<span class="st"> </span>batch[[<span class="dv">1</span>]]
+      ys &lt;-<span class="st"> </span>batch[[<span class="dv">2</span>]]
+      k &lt;-<span class="st"> </span>FLAGS<span class="op">$</span>dropout
+    } <span class="cf">else</span> {
+      xs &lt;-<span class="st"> </span>mnist<span class="op">$</span>test<span class="op">$</span>images
+      ys &lt;-<span class="st"> </span>mnist<span class="op">$</span>test<span class="op">$</span>labels
+      k &lt;-<span class="st"> </span><span class="fl">1.0</span>
+    }
+    <span class="kw"><a href="../../../tensorflow/reference/reexports.html">dict</a></span>(<span class="dt">x =</span> xs,
+         <span class="dt">y_ =</span> ys,
+         <span class="dt">keep_prob =</span> k)
+  }
+
+  <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span>FLAGS<span class="op">$</span>max_steps) {
+    <span class="cf">if</span> (i <span class="op">%%</span><span class="st"> </span><span class="dv">10</span> <span class="op">==</span><span class="st"> </span><span class="dv">0</span>) { <span class="co"># Record summaries and test-set accuracy</span>
+      result &lt;-<span class="st"> </span>sess<span class="op">$</span><span class="kw">run</span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/list">list</a></span>(merged, accuracy), <span class="dt">feed_dict =</span> <span class="kw">feed_dict</span>(<span class="ot">FALSE</span>))
+      summary &lt;-<span class="st"> </span>result[[<span class="dv">1</span>]]
+      acc &lt;-<span class="st"> </span>result[[<span class="dv">2</span>]]
+      test_writer<span class="op">$</span><span class="kw">add_summary</span>(summary, i)
+    } <span class="cf">else</span> {  <span class="co"># Record train set summaries, and train</span>
+      <span class="cf">if</span> (i <span class="op">%%</span><span class="st"> </span><span class="dv">100</span> <span class="op">==</span><span class="st"> </span><span class="dv">99</span>) { <span class="co"># Record execution stats</span>
+        run_options &lt;-<span class="st"> </span>tf<span class="op">$</span><span class="kw">RunOptions</span>(<span class="dt">trace_level =</span> tf<span class="op">$</span><span class="kw">RunOptions</span>()<span class="op">$</span>FULL_TRACE)
+        run_metadata &lt;-<span class="st"> </span>tf<span class="op">$</span><span class="kw">RunMetadata</span>()
+        result &lt;-<span class="st"> </span>sess<span class="op">$</span><span class="kw">run</span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/list">list</a></span>(merged, train_step),
+                           <span class="dt">feed_dict =</span> <span class="kw">feed_dict</span>(<span class="ot">TRUE</span>),
+                           <span class="dt">options =</span> run_options,
+                           <span class="dt">run_metadata =</span> run_metadata)
+        summary &lt;-<span class="st"> </span>result[[<span class="dv">1</span>]]
+        train_writer<span class="op">$</span><span class="kw">add_run_metadata</span>(run_metadata, <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/sprintf">sprintf</a></span>(<span class="st">"step%03d"</span>, i))
+        train_writer<span class="op">$</span><span class="kw">add_summary</span>(summary, i)
+        <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/cat">cat</a></span>(<span class="st">"Adding run metadata for "</span>, i, <span class="st">"</span><span class="ch">\n</span><span class="st">"</span>)
+      } <span class="cf">else</span> {  <span class="co"># Record a summary</span>
+        result &lt;-<span class="st"> </span>sess<span class="op">$</span><span class="kw">run</span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/list">list</a></span>(merged, train_step), <span class="dt">feed_dict =</span> <span class="kw">feed_dict</span>(<span class="ot">TRUE</span>))
+        summary &lt;-<span class="st"> </span>result[[<span class="dv">1</span>]]
+        train_writer<span class="op">$</span><span class="kw">add_summary</span>(summary, i)
+      }
+    }
+  }
+
+  train_writer<span class="op">$</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/connections">close</a></span>()
+  test_writer<span class="op">$</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/connections">close</a></span>()
+}
+
+<span class="co"># initialize summaries_dir (remove existing if necessary)</span>
+<span class="cf">if</span> (tf<span class="op">$</span>gfile<span class="op">$</span><span class="kw">Exists</span>(FLAGS<span class="op">$</span>summaries_dir))
+  tf<span class="op">$</span>gfile<span class="op">$</span><span class="kw">DeleteRecursively</span>(FLAGS<span class="op">$</span>summaries_dir)
+tf<span class="op">$</span>gfile<span class="op">$</span><span class="kw">MakeDirs</span>(FLAGS<span class="op">$</span>summaries_dir)
+
+<span class="co"># train</span>
+<span class="kw"><a href="../../../tensorflow/reference/train.html">train</a></span>()</code></pre>

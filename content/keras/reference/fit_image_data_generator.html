@@ -1,0 +1,59 @@
+---
+title: "Fit image data generator internal statistics to some sample data."
+type: docs
+repo: https://github.com/rstudio/keras
+menu:
+  main:
+    name: "Fit image data generator internal statistics to some sample data. - keras"
+    parent: keras-reference
+---
+    
+    
+    <p>Required for <code>featurewise_center</code>, <code>featurewise_std_normalization</code>
+and <code>zca_whitening</code>.</p>
+    
+
+    <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>fit_image_data_generator</span>(<span class='no'>object</span>, <span class='no'>x</span>, <span class='kw'>augment</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>rounds</span> <span class='kw'>=</span> <span class='fl'>1</span>,
+  <span class='kw'>seed</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</code></pre></div>
+    
+    <h2 id="arguments">Arguments</h2>
+    <table class="ref-arguments">
+    
+    <colgroup>
+      <col class="name" />
+      <col class="desc" />
+    </colgroup>  
+      
+    <tr>
+      <td>object</td>
+      <td><p><code><a href='image_data_generator.html'>image_data_generator()</a></code></p></td>
+    </tr>
+    <tr>
+      <td>x</td>
+      <td><p>array, the data to fit on (should have rank 4). In case of grayscale data,
+the channels axis should have value 1, and in case of RGB data, it should have value 3.</p></td>
+    </tr>
+    <tr>
+      <td>augment</td>
+      <td><p>Whether to fit on randomly augmented samples</p></td>
+    </tr>
+    <tr>
+      <td>rounds</td>
+      <td><p>If <code>augment</code>, how many augmentation passes to do over the data</p></td>
+    </tr>
+    <tr>
+      <td>seed</td>
+      <td><p>random seed.</p></td>
+    </tr>
+    </table>
+    
+    <h2 id="see-also">See also</h2>
+
+    <div class='dont-index'><p>Other image preprocessing: <code><a href='flow_images_from_dataframe.html'>flow_images_from_dataframe</a></code>,
+  <code><a href='flow_images_from_data.html'>flow_images_from_data</a></code>,
+  <code><a href='flow_images_from_directory.html'>flow_images_from_directory</a></code>,
+  <code><a href='image_load.html'>image_load</a></code>, <code><a href='image_to_array.html'>image_to_array</a></code></p></div>
+    
+
+
+

@@ -1,0 +1,44 @@
+---
+title: "Save a run view as HTML"
+type: docs
+repo: https://github.com/rstudio/tfruns
+menu:
+  main:
+    name: "Save a run view as HTML - tfruns"
+    parent: tfruns-reference
+---
+    
+    
+    <p>The saved view includes summary information (flags, metrics, model
+attributes, etc.), plot and console output, and the code used for the run.</p>
+    
+
+    <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>save_run_view</span>(<span class='kw'>run_dir</span> <span class='kw'>=</span> <span class='fu'><a href='latest_run.html'>latest_run</a></span>(), <span class='kw'>filename</span> <span class='kw'>=</span> <span class='st'>"auto"</span>)</code></pre></div>
+    
+    <h2 id="arguments">Arguments</h2>
+    <table class="ref-arguments">
+    
+    <colgroup>
+      <col class="name" />
+      <col class="desc" />
+    </colgroup>  
+      
+    <tr>
+      <td>run_dir</td>
+      <td><p>Training run directory or data frame returned from
+<code><a href='ls_runs.html'>ls_runs()</a></code>.</p></td>
+    </tr>
+    <tr>
+      <td>filename</td>
+      <td><p>Path to save the HTML to. If no <code>filename</code> is specified
+then a temporary file is used (the path to the file is returned invisibly).</p></td>
+    </tr>
+    </table>
+    
+    <h2 id="see-also">See also</h2>
+
+    <div class='dont-index'><p><code><a href='ls_runs.html'>ls_runs()</a></code>, <code><a href='run_info.html'>run_info()</a></code>, <code><a href='view_run.html'>view_run()</a></code></p></div>
+    
+
+
+

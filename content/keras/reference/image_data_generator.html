@@ -1,0 +1,143 @@
+---
+title: "Generate batches of image data with real-time data augmentation. The data will be
+looped over (in batches)."
+type: docs
+repo: https://github.com/rstudio/keras
+menu:
+  main:
+    name: "Generate batches of image data with real-time data augmentation. The data will be
+looped over (in batches). - keras"
+    parent: keras-reference
+---
+    
+    
+    <p>Generate batches of image data with real-time data augmentation. The data will be
+looped over (in batches).</p>
+    
+
+    <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>image_data_generator</span>(<span class='kw'>featurewise_center</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
+  <span class='kw'>samplewise_center</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>featurewise_std_normalization</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
+  <span class='kw'>samplewise_std_normalization</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>zca_whitening</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
+  <span class='kw'>zca_epsilon</span> <span class='kw'>=</span> <span class='fl'>1e-06</span>, <span class='kw'>rotation_range</span> <span class='kw'>=</span> <span class='fl'>0</span>, <span class='kw'>width_shift_range</span> <span class='kw'>=</span> <span class='fl'>0</span>,
+  <span class='kw'>height_shift_range</span> <span class='kw'>=</span> <span class='fl'>0</span>, <span class='kw'>brightness_range</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>shear_range</span> <span class='kw'>=</span> <span class='fl'>0</span>,
+  <span class='kw'>zoom_range</span> <span class='kw'>=</span> <span class='fl'>0</span>, <span class='kw'>channel_shift_range</span> <span class='kw'>=</span> <span class='fl'>0</span>, <span class='kw'>fill_mode</span> <span class='kw'>=</span> <span class='st'>"nearest"</span>,
+  <span class='kw'>cval</span> <span class='kw'>=</span> <span class='fl'>0</span>, <span class='kw'>horizontal_flip</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>vertical_flip</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
+  <span class='kw'>rescale</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>preprocessing_function</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>data_format</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>validation_split</span> <span class='kw'>=</span> <span class='fl'>0</span>)</code></pre></div>
+    
+    <h2 id="arguments">Arguments</h2>
+    <table class="ref-arguments">
+    
+    <colgroup>
+      <col class="name" />
+      <col class="desc" />
+    </colgroup>  
+      
+    <tr>
+      <td>featurewise_center</td>
+      <td><p>Set input mean to 0 over the dataset, feature-wise.</p></td>
+    </tr>
+    <tr>
+      <td>samplewise_center</td>
+      <td><p>Boolean. Set each sample mean to 0.</p></td>
+    </tr>
+    <tr>
+      <td>featurewise_std_normalization</td>
+      <td><p>Divide inputs by std of the dataset, feature-wise.</p></td>
+    </tr>
+    <tr>
+      <td>samplewise_std_normalization</td>
+      <td><p>Divide each input by its std.</p></td>
+    </tr>
+    <tr>
+      <td>zca_whitening</td>
+      <td><p>apply ZCA whitening.</p></td>
+    </tr>
+    <tr>
+      <td>zca_epsilon</td>
+      <td><p>Epsilon for ZCA whitening. Default is 1e-6.</p></td>
+    </tr>
+    <tr>
+      <td>rotation_range</td>
+      <td><p>degrees (0 to 180).</p></td>
+    </tr>
+    <tr>
+      <td>width_shift_range</td>
+      <td><p>fraction of total width.</p></td>
+    </tr>
+    <tr>
+      <td>height_shift_range</td>
+      <td><p>fraction of total height.</p></td>
+    </tr>
+    <tr>
+      <td>brightness_range</td>
+      <td><p>the range of brightness to apply</p></td>
+    </tr>
+    <tr>
+      <td>shear_range</td>
+      <td><p>shear intensity (shear angle in radians).</p></td>
+    </tr>
+    <tr>
+      <td>zoom_range</td>
+      <td><p>amount of zoom. if scalar z, zoom will be randomly picked
+in the range <code>[1-z, 1+z]</code>. A sequence of two can be passed instead to select
+this range.</p></td>
+    </tr>
+    <tr>
+      <td>channel_shift_range</td>
+      <td><p>shift range for each channels.</p></td>
+    </tr>
+    <tr>
+      <td>fill_mode</td>
+      <td><p>One of "constant", "nearest", "reflect" or "wrap".
+Points outside the boundaries of the input are filled according to
+the given mode:</p><ul>
+<li><p>"constant": <code>kkkkkkkk|abcd|kkkkkkkk</code> (<code>cval=k</code>)</p></li>
+<li><p>"nearest":  <code>aaaaaaaa|abcd|dddddddd</code></p></li>
+<li><p>"reflect":  <code>abcddcba|abcd|dcbaabcd</code></p></li>
+<li><p>"wrap":     <code>abcdabcd|abcd|abcdabcd</code></p></li>
+</ul></td>
+    </tr>
+    <tr>
+      <td>cval</td>
+      <td><p>value used for points outside the boundaries when fill_mode is
+'constant'. Default is 0.</p></td>
+    </tr>
+    <tr>
+      <td>horizontal_flip</td>
+      <td><p>whether to randomly flip images horizontally.</p></td>
+    </tr>
+    <tr>
+      <td>vertical_flip</td>
+      <td><p>whether to randomly flip images vertically.</p></td>
+    </tr>
+    <tr>
+      <td>rescale</td>
+      <td><p>rescaling factor. If NULL or 0, no rescaling is applied,
+otherwise we multiply the data by the value provided (before applying any
+other transformation).</p></td>
+    </tr>
+    <tr>
+      <td>preprocessing_function</td>
+      <td><p>function that will be implied on each input.
+The function will run before any other modification on it. The function
+should take one argument: one image (tensor with rank 3), and should
+output a tensor with the same shape.</p></td>
+    </tr>
+    <tr>
+      <td>data_format</td>
+      <td><p>'channels_first' or 'channels_last'. In 'channels_first'
+mode, the channels dimension (the depth) is at index 1, in 'channels_last'
+mode it is at index 3. It defaults to the <code>image_data_format</code> value found
+in your Keras config file at <code>~/.keras/keras.json</code>. If you never set it,
+then it will be "channels_last".</p></td>
+    </tr>
+    <tr>
+      <td>validation_split</td>
+      <td><p>fraction of images reserved for validation (strictly between 0 and 1).</p></td>
+    </tr>
+    </table>
+    
+
+
+

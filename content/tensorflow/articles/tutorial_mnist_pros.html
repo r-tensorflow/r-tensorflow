@@ -1,0 +1,239 @@
+---
+title: "Deep MNIST for Experts"
+output: 
+  html_document:
+    toc_depth: 3
+    toc_float:
+      collapsed: false
+type: docs
+menu:
+  main:
+    name: "Deep MNIST for Experts"
+    identifier: "tensorflow-tutorials-mnist-expert"
+    parent: "tensorflow-tutorials"
+    weight: 20
+aliases:
+  - /tutorial_mnist_pros.html
+---
+
+
+
+<p>TensorFlow is a powerful library for doing large-scale numerical computation. One of the tasks at which it excels is implementing and training deep neural networks. In this tutorial we will learn the basic building blocks of a TensorFlow model while constructing a deep convolutional MNIST classifier.</p>
+<p><em>This introduction assumes familiarity with neural networks and the MNIST dataset. If you don’t have a background with them, check out the <a href="tutorial_mnist_beginners.html">introduction for beginners</a>. Be sure to <a href="https://www.tensorflow.org/get_started/">install TensorFlow</a> before starting.</em></p>
+<div id="using-this-tutorial" class="section level2">
+<h2>Using this Tutorial</h2>
+<p>The first part of this tutorial explains what is happening in the
+<a href="https://github.com/rstudio/tensorflow/blob/master/inst/examples/mnist/mnist_softmax.R">mnist_softmax.R</a> code, which is a basic implementation of a TensorFlow model. The second part shows some ways to improve the accuracy.</p>
+<p>You can copy and paste each code snippet from this tutorial into an R environment, or you can choose to just read through the code.</p>
+<p>What we will accomplish in this tutorial:</p>
+<ul>
+<li><p>Create a softmax regression function that is a model for recognizing MNIST digits, based on looking at every pixel in the image</p></li>
+<li><p>Use TensorFlow to train the model to recognize digits by having it “look” at thousands of examples (and run our first TensorFlow session to do so)</p></li>
+<li><p>Check the model’s accuracy with our test data</p></li>
+<li><p>Build, train, and test a multilayer convolutional neural network to improve the results</p></li>
+</ul>
+</div>
+<div id="setup" class="section level2">
+<h2>Setup</h2>
+<p>Before we create our model, we will first load the MNIST dataset, and start a TensorFlow session.</p>
+<div id="load-mnist-data" class="section level3">
+<h3>Load MNIST Data</h3>
+<p>If you are copying and pasting in the code from this tutorial, start here with these two lines of code which will download and read in the data automatically:</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(tensorflow)
+input_dataset &lt;-<span class="st"> </span>tf<span class="op">$</span>examples<span class="op">$</span>tutorials<span class="op">$</span>mnist<span class="op">$</span>input_data
+mnist &lt;-<span class="st"> </span>input_dataset<span class="op">$</span><span class="kw">read_data_sets</span>(<span class="st">"MNIST-data"</span>, <span class="dt">one_hot =</span> <span class="ot">TRUE</span>)</code></pre>
+<p>Here <code>mnist</code> is a lightweight class which stores the training, validation, and testing sets as R matrixes It also provides a function for iterating through data minibatches, which we will use below.</p>
+</div>
+<div id="start-interactivesession" class="section level3">
+<h3>Start InteractiveSession</h3>
+<p>TensorFlow relies on a highly efficient C++ backend to do its computation. The connection to this backend is called a session.The common usage for TensorFlow programs is to first create a graph and then launch it in a session.</p>
+<p>Here we instead use the convenient <code>InteractiveSession</code> class, which makes TensorFlow more flexible about how you structure your code. It allows you to interleave operations which build a <a href="https://www.tensorflow.org/get_started/basic_usage.html#the-computation-graph">computation graph</a> with ones that run the graph. This is particularly convenient when working interactively in the R console. If you are not using an <code>InteractiveSession</code>, then you should build the entire computation graph before starting a session and
+<a href="https://www.tensorflow.org/get_started/basic_usage.html#launching-the-graph-in-a-session">launching the graph</a>.</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(tensorflow)
+sess &lt;-<span class="st"> </span>tf<span class="op">$</span><span class="kw">InteractiveSession</span>()</code></pre>
+<div id="computation-graph" class="section level4">
+<h4>Computation Graph</h4>
+<p>To do efficient numerical computing in R we typically call base R functions that do expensive operations such as matrix multiplication outside R, using highly efficient code implemented in another language. Unfortunately, there can still be a lot of overhead from switching back to R for every operation. This overhead is especially bad if you want to run computations on GPUs or in a distributed manner, where there can be a high cost to transferring data.</p>
+<p>TensorFlow also does its heavy lifting outside R, but it takes things a step further to avoid this overhead. Instead of running a single expensive operation independently from R, TensorFlow lets us describe a graph of interacting operations that run entirely outside R This approach is similar to that used in Theano or Torch.</p>
+<p>The role of the R code is therefore to build this external computation graph, and to dictate which parts of the computation graph should be run. See the <a href="https://www.tensorflow.org/get_started/basic_usage.html#the-computation-graph">Computation Graph</a> section of <a href="https://www.tensorflow.org/get_started/basic_usage.html">Basic Usage</a> for more detail.</p>
+</div>
+</div>
+</div>
+<div id="softmax-regression" class="section level2">
+<h2>Softmax Regression</h2>
+<p>In this section we will build a softmax regression model with a single linear layer. In the next section, we will extend this to the case of softmax regression with a multilayer convolutional network.</p>
+<div id="placeholders" class="section level3">
+<h3>Placeholders</h3>
+<p>We start building the computation graph by creating nodes for the input images and target output classes.</p>
+<pre class="sourceCode r"><code class="sourceCode r">x &lt;-<span class="st"> </span>tf<span class="op">$</span><span class="kw">placeholder</span>(tf<span class="op">$</span>float32, <span class="kw"><a href="../../tensorflow/reference/shape.html">shape</a></span>(<span class="ot">NULL</span>, 784L))
+y_ &lt;-<span class="st"> </span>tf<span class="op">$</span><span class="kw">placeholder</span>(tf<span class="op">$</span>float32, <span class="kw"><a href="../../tensorflow/reference/shape.html">shape</a></span>(<span class="ot">NULL</span>, 10L))</code></pre>
+<p>Here <code>x</code> and <code>y_</code> aren’t specific values. Rather, they are each a <code>placeholder</code> – a value that we’ll input when we ask TensorFlow to run a computation.</p>
+<p>The input images <code>x</code> will consist of a 2d tensor of floating point numbers. Here we assign it a <code>shape</code> of <code>(NULL, 784)</code>, where <code>784</code> is the dimensionality of a single flattened 28 by 28 pixel MNIST image, and <code>NULL</code> indicates that the first dimension, corresponding to the batch size, can be of any size. The target output classes <code>y_</code> will also consist of a 2d tensor, where each row is a one-hot 10-dimensional vector indicating which digit class (zero through nine) the corresponding MNIST image belongs to.</p>
+<p>The <code>shape</code> argument to <code>placeholder</code> is optional, but it allows TensorFlow to automatically catch bugs stemming from inconsistent tensor shapes.</p>
+</div>
+<div id="variables" class="section level3">
+<h3>Variables</h3>
+<p>We now define the weights <code>W</code> and biases <code>b</code> for our model. We could imagine treating these like additional inputs, but TensorFlow has an even better way to handle them: <code>Variable</code>. A <code>Variable</code> is a value that lives in TensorFlow’s computation graph. It can be used and even modified by the computation. In machine learning applications, one generally has the model parameters be <code>Variable</code>s.</p>
+<pre class="sourceCode r"><code class="sourceCode r">W &lt;-<span class="st"> </span>tf<span class="op">$</span><span class="kw">Variable</span>(tf<span class="op">$</span><span class="kw">zeros</span>(<span class="kw"><a href="../../tensorflow/reference/shape.html">shape</a></span>(784L, 10L)))
+b &lt;-<span class="st"> </span>tf<span class="op">$</span><span class="kw">Variable</span>(tf<span class="op">$</span><span class="kw">zeros</span>(<span class="kw"><a href="../../tensorflow/reference/shape.html">shape</a></span>(10L)))</code></pre>
+<p>We pass the initial value for each parameter in the call to <code>tf$Variable</code>. In this case, we initialize both <code>W</code> and <code>b</code> as tensors full of zeros. <code>W</code> is a 784x10 matrix (because we have 784 input features and 10 outputs) and <code>b</code> is a 10-dimensional vector (because we have 10 classes).</p>
+<p>Before <code>Variable</code>s can be used within a session, they must be initialized using that session. This step takes the initial values (in this case tensors full of zeros) that have already been specified, and assigns them to each <code>Variable</code>. This can be done for all <code>Variables</code> at once:</p>
+<pre class="sourceCode r"><code class="sourceCode r">sess<span class="op">$</span><span class="kw">run</span>(tf<span class="op">$</span><span class="kw">global_variables_initializer</span>())</code></pre>
+</div>
+<div id="prediction-loss-function" class="section level3">
+<h3>Prediction &amp; Loss Function</h3>
+<p>We can now implement our regression model. It only takes one line! We multiply the vectorized input images <code>x</code> by the weight matrix <code>W</code>, add the bias <code>b</code>, and compute the softmax probabilities that are assigned to each class.</p>
+<pre class="sourceCode r"><code class="sourceCode r">y &lt;-<span class="st"> </span>tf<span class="op">$</span>nn<span class="op">$</span><span class="kw">softmax</span>(tf<span class="op">$</span><span class="kw">matmul</span>(x,W) <span class="op">+</span><span class="st"> </span>b)</code></pre>
+<p>We can specify a loss function just as easily. Loss indicates how bad the model’s prediction was on a single example; we try to minimize that while training across all the examples. Here, our loss function is the cross-entropy between the target and the model’s prediction:</p>
+<pre class="sourceCode r"><code class="sourceCode r">cross_entropy &lt;-<span class="st"> </span>tf<span class="op">$</span><span class="kw">reduce_mean</span>(<span class="op">-</span>tf<span class="op">$</span><span class="kw">reduce_sum</span>(y_ <span class="op">*</span><span class="st"> </span>tf<span class="op">$</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/Log">log</a></span>(y), <span class="dt">reduction_indices=</span>1L))</code></pre>
+<p>Note that <code>tf$reduce_sum</code> sums across all classes and <code>tf$reduce_mean</code> takes the average over these sums.</p>
+<p>Note also that tensor indexes within the TensorFlow API (like the one used for <code>reduction_indices</code>) are 0-based rather than 1-based as is typical with R vectors.</p>
+</div>
+</div>
+<div id="train-the-model" class="section level2">
+<h2>Train the Model</h2>
+<p>Now that we have defined our model and training loss function, it is straightforward to train using TensorFlow. Because TensorFlow knows the entire computation graph, it can use automatic differentiation to find the gradients of the loss with respect to each of the variables. TensorFlow has a variety of [built-in optimization algorithms] (<a href="https://www.tensorflow.org/api_docs/python/train.html#optimizers" class="uri">https://www.tensorflow.org/api_docs/python/train.html#optimizers</a>). For this example, we will use steepest gradient descent, with a step length of 0.5, to descend the cross
+entropy.</p>
+<pre class="sourceCode r"><code class="sourceCode r">optimizer &lt;-<span class="st"> </span>tf<span class="op">$</span>train<span class="op">$</span><span class="kw">GradientDescentOptimizer</span>(<span class="fl">0.5</span>)
+train_step &lt;-<span class="st"> </span>optimizer<span class="op">$</span><span class="kw">minimize</span>(cross_entropy)</code></pre>
+<p>What TensorFlow actually did in that single line was to add new operations to the computation graph. These operations included ones to compute gradients, compute parameter update steps, and apply update steps to the parameters.</p>
+<p>The returned operation <code>train_step</code>, when run, will apply the gradient descent updates to the parameters. Training the model can therefore be accomplished by repeatedly running <code>train_step</code>.</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span><span class="dv">1000</span>) {
+  batches &lt;-<span class="st"> </span>mnist<span class="op">$</span>train<span class="op">$</span><span class="kw">next_batch</span>(100L)
+  batch_xs &lt;-<span class="st"> </span>batches[[<span class="dv">1</span>]]
+  batch_ys &lt;-<span class="st"> </span>batches[[<span class="dv">2</span>]]
+  sess<span class="op">$</span><span class="kw">run</span>(train_step,
+           <span class="dt">feed_dict =</span> <span class="kw"><a href="../../tensorflow/reference/reexports.html">dict</a></span>(<span class="dt">x =</span> batch_xs, <span class="dt">y_ =</span> batch_ys))
+}</code></pre>
+<p>We load 100 training examples in each training iteration. We then run the <code>train_step</code> operation, using <code>feed_dict</code> to replace the <code>placeholder</code> tensors <code>x</code> and <code>y_</code> with the training examples. Note that you can replace any tensor in your computation graph using <code>feed_dict</code> – it’s not restricted to just <code>placeholder</code>s.</p>
+<div id="evaluate-the-model" class="section level3">
+<h3>Evaluate the Model</h3>
+<p>How well did our model do?</p>
+<p>First we’ll figure out where we predicted the correct label. <code>tf$argmax</code> is an extremely useful function which gives you the index of the highest entry in a tensor along some axis. For example, <code>tf$argmax(y, 1L)</code> is the label our model thinks is most likely for each input, while <code>tf$argmax(y_, 1L)</code> is the true label. We can use <code>tf$equal</code> to check if our prediction matches the truth.</p>
+<pre class="sourceCode r"><code class="sourceCode r">correct_prediction &lt;-<span class="st"> </span>tf<span class="op">$</span><span class="kw">equal</span>(tf<span class="op">$</span><span class="kw">argmax</span>(y, 1L), tf<span class="op">$</span><span class="kw">argmax</span>(y_, 1L))</code></pre>
+<p>Note that since tensors in the TensorFlow API are 0-based we pass <code>1L</code> to specify that <code>tf$argmax</code> should operate on the second dimension of the tensor.</p>
+<p>That gives us a list of booleans. To determine what fraction are correct, we cast to floating point numbers and then take the mean. For example, <code>c(TRUE, FALSE, TRUE, TRUE</code> would become <code><a href="https://www.rdocumentation.org/packages/base/topics/c">c(1,0,1,1)</a></code> which would become <code>0.75</code>.</p>
+<pre class="sourceCode r"><code class="sourceCode r">accuracy &lt;-<span class="st"> </span>tf<span class="op">$</span><span class="kw">reduce_mean</span>(tf<span class="op">$</span><span class="kw">cast</span>(correct_prediction, tf<span class="op">$</span>float32))</code></pre>
+<p>Finally, we can evaluate our accuracy on the test data. This should be about 92% correct.</p>
+<pre class="sourceCode r"><code class="sourceCode r">accuracy<span class="op">$</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/eval">eval</a></span>(<span class="dt">feed_dict=</span><span class="kw"><a href="../../tensorflow/reference/reexports.html">dict</a></span>(<span class="dt">x =</span> mnist<span class="op">$</span>test<span class="op">$</span>images, <span class="dt">y_ =</span> mnist<span class="op">$</span>test<span class="op">$</span>labels))</code></pre>
+</div>
+</div>
+<div id="multilayer-convnet" class="section level2">
+<h2>Multilayer ConvNet</h2>
+<p>Getting 92% accuracy on MNIST is bad. It’s almost embarrassingly bad. In this section, we’ll fix that, jumping from a very simple model to something moderately sophisticated: a small convolutional neural network. This will get us to around 99.2% accuracy – not state of the art, but respectable.</p>
+<div id="weight-initialization" class="section level3">
+<h3>Weight Initialization</h3>
+<p>To create this model, we’re going to need to create a lot of weights and biases. One should generally initialize weights with a small amount of noise for symmetry breaking, and to prevent 0 gradients. Since we’re using <a href="https://en.wikipedia.org/wiki/Rectifier_(neural_networks)">ReLU</a> neurons, it is also good practice to initialize them with a slightly positive initial bias to avoid “dead neurons”. Instead of doing this repeatedly while we build the model, let’s create two handy functions to do it for us.</p>
+<pre class="sourceCode r"><code class="sourceCode r">weight_variable &lt;-<span class="st"> </span><span class="cf">function</span>(shape) {
+  initial &lt;-<span class="st"> </span>tf<span class="op">$</span><span class="kw">truncated_normal</span>(shape, <span class="dt">stddev=</span><span class="fl">0.1</span>)
+  tf<span class="op">$</span><span class="kw">Variable</span>(initial)
+}
+
+bias_variable &lt;-<span class="st"> </span><span class="cf">function</span>(shape) {
+  initial &lt;-<span class="st"> </span>tf<span class="op">$</span><span class="kw">constant</span>(<span class="fl">0.1</span>, <span class="dt">shape=</span>shape)
+  tf<span class="op">$</span><span class="kw">Variable</span>(initial)
+}</code></pre>
+</div>
+<div id="convolution-and-pooling" class="section level3">
+<h3>Convolution and Pooling</h3>
+<p>TensorFlow also gives us a lot of flexibility in convolution and pooling operations. How do we handle the boundaries? What is our stride size? In this example, we’re always going to choose the vanilla version. Our convolutions uses a stride of one and are zero padded so that the output is the same size as the input. Our pooling is plain old max pooling over 2x2 blocks. To keep our code cleaner, let’s also abstract those operations
+into functions.</p>
+<pre class="sourceCode r"><code class="sourceCode r">conv2d &lt;-<span class="st"> </span><span class="cf">function</span>(x, W) {
+  tf<span class="op">$</span>nn<span class="op">$</span><span class="kw">conv2d</span>(x, W, <span class="dt">strides=</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(1L, 1L, 1L, 1L), <span class="dt">padding=</span><span class="st">'SAME'</span>)
+}
+
+max_pool_2x2 &lt;-<span class="st"> </span><span class="cf">function</span>(x) {
+  tf<span class="op">$</span>nn<span class="op">$</span><span class="kw">max_pool</span>(
+    x, 
+    <span class="dt">ksize=</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(1L, 2L, 2L, 1L),
+    <span class="dt">strides=</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(1L, 2L, 2L, 1L), 
+    <span class="dt">padding=</span><span class="st">'SAME'</span>)
+}</code></pre>
+</div>
+<div id="first-convolutional-layer" class="section level3">
+<h3>First Convolutional Layer</h3>
+<p>We can now implement our first layer. It will consist of convolution, followed by max pooling. The convolutional will compute 32 features for each 5x5 patch. Its weight tensor will have a shape of <code>(5, 5, 1, 32)</code>. The first two dimensions are the patch size, the next is the number of input channels, and the last is the number of output channels. We will also have a bias vector with a component for each output channel.</p>
+<pre class="sourceCode r"><code class="sourceCode r">W_conv1 &lt;-<span class="st"> </span><span class="kw">weight_variable</span>(<span class="kw"><a href="../../tensorflow/reference/shape.html">shape</a></span>(5L, 5L, 1L, 32L))
+b_conv1 &lt;-<span class="st"> </span><span class="kw">bias_variable</span>(<span class="kw"><a href="../../tensorflow/reference/shape.html">shape</a></span>(32L))</code></pre>
+<p>To apply the layer, we first reshape <code>x</code> to a 4d tensor, with the second and third dimensions corresponding to image width and height, and the final dimension corresponding to the number of color channels.</p>
+<pre class="sourceCode r"><code class="sourceCode r">x_image &lt;-<span class="st"> </span>tf<span class="op">$</span><span class="kw"><a href="https://www.rdocumentation.org/packages/stats/topics/reshape">reshape</a></span>(x, <span class="kw"><a href="../../tensorflow/reference/shape.html">shape</a></span>(<span class="op">-</span>1L, 28L, 28L, 1L))</code></pre>
+<p>We then convolve <code>x_image</code> with the weight tensor, add the bias, apply the ReLU function, and finally max pool.</p>
+<pre class="sourceCode r"><code class="sourceCode r">h_conv1 &lt;-<span class="st"> </span>tf<span class="op">$</span>nn<span class="op">$</span><span class="kw">relu</span>(<span class="kw">conv2d</span>(x_image, W_conv1) <span class="op">+</span><span class="st"> </span>b_conv1)
+h_pool1 &lt;-<span class="st"> </span><span class="kw">max_pool_2x2</span>(h_conv1)</code></pre>
+</div>
+<div id="second-convolutional-layer" class="section level3">
+<h3>Second Convolutional Layer</h3>
+<p>In order to build a deep network, we stack several layers of this type. The second layer will have 64 features for each 5x5 patch.</p>
+<pre class="sourceCode r"><code class="sourceCode r">W_conv2 &lt;-<span class="st"> </span><span class="kw">weight_variable</span>(<span class="dt">shape =</span> <span class="kw"><a href="../../tensorflow/reference/shape.html">shape</a></span>(5L, 5L, 32L, 64L))
+b_conv2 &lt;-<span class="st"> </span><span class="kw">bias_variable</span>(<span class="dt">shape =</span> <span class="kw"><a href="../../tensorflow/reference/shape.html">shape</a></span>(64L))
+
+h_conv2 &lt;-<span class="st"> </span>tf<span class="op">$</span>nn<span class="op">$</span><span class="kw">relu</span>(<span class="kw">conv2d</span>(h_pool1, W_conv2) <span class="op">+</span><span class="st"> </span>b_conv2)
+h_pool2 &lt;-<span class="st"> </span><span class="kw">max_pool_2x2</span>(h_conv2)</code></pre>
+</div>
+<div id="densely-connected-layer" class="section level3">
+<h3>Densely Connected Layer</h3>
+<p>Now that the image size has been reduced to 7x7, we add a fully-connected layer with 1024 neurons to allow processing on the entire image. We reshape the tensor from the pooling layer into a batch of vectors, multiply by a weight matrix, add a bias, and apply a ReLU.</p>
+<pre class="sourceCode r"><code class="sourceCode r">W_fc1 &lt;-<span class="st"> </span><span class="kw">weight_variable</span>(<span class="kw"><a href="../../tensorflow/reference/shape.html">shape</a></span>(7L <span class="op">*</span><span class="st"> </span>7L <span class="op">*</span><span class="st"> </span>64L, 1024L))
+b_fc1 &lt;-<span class="st"> </span><span class="kw">bias_variable</span>(<span class="kw"><a href="../../tensorflow/reference/shape.html">shape</a></span>(1024L))
+
+h_pool2_flat &lt;-<span class="st"> </span>tf<span class="op">$</span><span class="kw"><a href="https://www.rdocumentation.org/packages/stats/topics/reshape">reshape</a></span>(h_pool2, <span class="kw"><a href="../../tensorflow/reference/shape.html">shape</a></span>(<span class="op">-</span>1L, 7L <span class="op">*</span><span class="st"> </span>7L <span class="op">*</span><span class="st"> </span>64L))
+h_fc1 &lt;-<span class="st"> </span>tf<span class="op">$</span>nn<span class="op">$</span><span class="kw">relu</span>(tf<span class="op">$</span><span class="kw">matmul</span>(h_pool2_flat, W_fc1) <span class="op">+</span><span class="st"> </span>b_fc1)</code></pre>
+<div id="dropout" class="section level4">
+<h4>Dropout</h4>
+<p>To reduce overfitting, we will apply <a href="https://www.cs.toronto.edu/~hinton/absps/JMLRdropout.pdf">dropout</a> before the readout layer. We create a <code>placeholder</code> for the probability that a neuron’s output is kept
+during dropout. This allows us to turn dropout on during training, and turn it
+off during testing. TensorFlow’s <code>tf$nn$dropout</code> op automatically handles scaling neuron outputs in addition to masking them, so dropout just works without any additional scaling.<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a></p>
+<pre class="sourceCode r"><code class="sourceCode r">keep_prob &lt;-<span class="st"> </span>tf<span class="op">$</span><span class="kw">placeholder</span>(tf<span class="op">$</span>float32)
+h_fc1_drop &lt;-<span class="st"> </span>tf<span class="op">$</span>nn<span class="op">$</span><span class="kw">dropout</span>(h_fc1, keep_prob)</code></pre>
+</div>
+</div>
+<div id="readout-layer" class="section level3">
+<h3>Readout Layer</h3>
+<p>Finally, we add a softmax layer, just like for the one layer softmax regression
+above.</p>
+<pre class="sourceCode r"><code class="sourceCode r">W_fc2 &lt;-<span class="st"> </span><span class="kw">weight_variable</span>(<span class="kw"><a href="../../tensorflow/reference/shape.html">shape</a></span>(1024L, 10L))
+b_fc2 &lt;-<span class="st"> </span><span class="kw">bias_variable</span>(<span class="kw"><a href="../../tensorflow/reference/shape.html">shape</a></span>(10L))
+
+y_conv &lt;-<span class="st"> </span>tf<span class="op">$</span>nn<span class="op">$</span><span class="kw">softmax</span>(tf<span class="op">$</span><span class="kw">matmul</span>(h_fc1_drop, W_fc2) <span class="op">+</span><span class="st"> </span>b_fc2)</code></pre>
+</div>
+<div id="train-and-evaluate-the-model" class="section level3">
+<h3>Train and Evaluate the Model</h3>
+<p>How well does this model do? To train and evaluate it we will use code that is nearly identical to that for the simple one layer SoftMax network above.</p>
+<p>The differences are that:</p>
+<ul>
+<li><p>We will replace the steepest gradient descent optimizer with the more sophisticated ADAM optimizer.</p></li>
+<li><p>We will include the additional parameter <code>keep_prob</code> in <code>feed_dict</code> to control the dropout rate.</p></li>
+<li><p>We will add logging to every 100th iteration in the training process.</p></li>
+</ul>
+<p>Feel free to go ahead and run this code, but it does 20,000 training iterations
+and may take a while (possibly up to half an hour), depending on your processor.</p>
+<pre class="sourceCode r"><code class="sourceCode r">cross_entropy &lt;-<span class="st"> </span>tf<span class="op">$</span><span class="kw">reduce_mean</span>(<span class="op">-</span>tf<span class="op">$</span><span class="kw">reduce_sum</span>(y_ <span class="op">*</span><span class="st"> </span>tf<span class="op">$</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/Log">log</a></span>(y_conv), <span class="dt">reduction_indices=</span>1L))
+train_step &lt;-<span class="st"> </span>tf<span class="op">$</span>train<span class="op">$</span><span class="kw">AdamOptimizer</span>(<span class="fl">1e-4</span>)<span class="op">$</span><span class="kw">minimize</span>(cross_entropy)
+correct_prediction &lt;-<span class="st"> </span>tf<span class="op">$</span><span class="kw">equal</span>(tf<span class="op">$</span><span class="kw">argmax</span>(y_conv, 1L), tf<span class="op">$</span><span class="kw">argmax</span>(y_, 1L))
+accuracy &lt;-<span class="st"> </span>tf<span class="op">$</span><span class="kw">reduce_mean</span>(tf<span class="op">$</span><span class="kw">cast</span>(correct_prediction, tf<span class="op">$</span>float32))
+sess<span class="op">$</span><span class="kw">run</span>(tf<span class="op">$</span><span class="kw">global_variables_initializer</span>())
+
+<span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span><span class="dv">20000</span>) {
+  batch &lt;-<span class="st"> </span>mnist<span class="op">$</span>train<span class="op">$</span><span class="kw">next_batch</span>(50L)
+  <span class="cf">if</span> (i <span class="op">%%</span><span class="st"> </span><span class="dv">100</span> <span class="op">==</span><span class="st"> </span><span class="dv">0</span>) {
+    train_accuracy &lt;-<span class="st"> </span>accuracy<span class="op">$</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/eval">eval</a></span>(<span class="dt">feed_dict =</span> <span class="kw"><a href="../../tensorflow/reference/reexports.html">dict</a></span>(
+        <span class="dt">x =</span> batch[[<span class="dv">1</span>]], <span class="dt">y_ =</span> batch[[<span class="dv">2</span>]], <span class="dt">keep_prob =</span> <span class="fl">1.0</span>))
+    <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/cat">cat</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/sprintf">sprintf</a></span>(<span class="st">"step %d, training accuracy %g</span><span class="ch">\n</span><span class="st">"</span>, i, train_accuracy))
+  }
+  train_step<span class="op">$</span><span class="kw">run</span>(<span class="dt">feed_dict =</span> <span class="kw"><a href="../../tensorflow/reference/reexports.html">dict</a></span>(
+    <span class="dt">x =</span> batch[[<span class="dv">1</span>]], <span class="dt">y_ =</span> batch[[<span class="dv">2</span>]], <span class="dt">keep_prob =</span> <span class="fl">0.5</span>))
+}
+
+test_accuracy &lt;-<span class="st"> </span>accuracy<span class="op">$</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/eval">eval</a></span>(<span class="dt">feed_dict =</span> <span class="kw"><a href="../../tensorflow/reference/reexports.html">dict</a></span>(
+     <span class="dt">x =</span> mnist<span class="op">$</span>test<span class="op">$</span>images, <span class="dt">y_ =</span> mnist<span class="op">$</span>test<span class="op">$</span>labels, <span class="dt">keep_prob =</span> <span class="fl">1.0</span>))
+<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/cat">cat</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/sprintf">sprintf</a></span>(<span class="st">"test accuracy %g"</span>, test_accuracy))</code></pre>
+<p>The final test set accuracy after running this code should be approximately 99.2%.</p>
+<p>We have learned how to quickly and easily build, train, and evaluate a fairly sophisticated deep learning model using TensorFlow.</p>
+</div>
+</div>
+<div class="footnotes">
+<hr>
+<ol>
+<li id="fn1"><p>For this small convolutional network, performance is actually nearly identical with and without dropout. Dropout is often very effective at reducing overfitting, but it is most useful when training very large neural networks.<a href="#fnref1" class="footnote-back">↩</a></p></li>
+</ol>
+</div>

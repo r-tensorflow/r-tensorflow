@@ -1,0 +1,67 @@
+---
+title: "1D convolution."
+type: docs
+repo: https://github.com/rstudio/keras
+menu:
+  main:
+    name: "1D convolution. - keras"
+    parent: keras-reference
+---
+    
+    
+    <p>1D convolution.</p>
+    
+
+    <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>k_conv1d</span>(<span class='no'>x</span>, <span class='no'>kernel</span>, <span class='kw'>strides</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>padding</span> <span class='kw'>=</span> <span class='st'>"valid"</span>,
+  <span class='kw'>data_format</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>dilation_rate</span> <span class='kw'>=</span> <span class='fl'>1</span>)</code></pre></div>
+    
+    <h2 id="arguments">Arguments</h2>
+    <table class="ref-arguments">
+    
+    <colgroup>
+      <col class="name" />
+      <col class="desc" />
+    </colgroup>  
+      
+    <tr>
+      <td>x</td>
+      <td><p>Tensor or variable.</p></td>
+    </tr>
+    <tr>
+      <td>kernel</td>
+      <td><p>kernel tensor.</p></td>
+    </tr>
+    <tr>
+      <td>strides</td>
+      <td><p>stride integer.</p></td>
+    </tr>
+    <tr>
+      <td>padding</td>
+      <td><p>string, <code>"same"</code>, <code>"causal"</code> or <code>"valid"</code>.</p></td>
+    </tr>
+    <tr>
+      <td>data_format</td>
+      <td><p>string, <code>"channels_last"</code> or <code>"channels_first"</code>.</p></td>
+    </tr>
+    <tr>
+      <td>dilation_rate</td>
+      <td><p>integer dilate rate.</p></td>
+    </tr>
+    </table>
+    
+    <h2 id="value">Value</h2>
+
+    <p>A tensor, result of 1D convolution.</p>
+    
+    <h2 id="keras-backend">Keras Backend</h2>
+
+    
+    <p>This function is part of a set of Keras backend functions that enable
+lower level access to the core operations of the backend tensor engine
+(e.g. TensorFlow, CNTK, Theano, etc.).</p>
+<p>You can see a list of all available backend functions here:
+<a href='https://keras.rstudio.com/articles/backend.html#backend-functions'>https://keras.rstudio.com/articles/backend.html#backend-functions</a>.</p>
+    
+
+
+

@@ -1,0 +1,55 @@
+---
+title: "Show job log stream"
+type: docs
+repo: https://github.com/rstudio/cloudml
+menu:
+  main:
+    name: "Show job log stream - cloudml"
+    parent: cloudml-reference
+---
+    
+    
+    <p>Show logs from a running Cloud ML Engine job.</p>
+    
+
+    <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>job_stream_logs</span>(<span class='kw'>job</span> <span class='kw'>=</span> <span class='st'>"latest"</span>,
+  <span class='kw'>polling_interval</span> <span class='kw'>=</span> <span class='fu'>getOption</span>(<span class='st'>"cloudml.stream_logs.polling"</span>, <span class='fl'>5</span>),
+  <span class='kw'>task_name</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>allow_multiline_logs</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)</code></pre></div>
+    
+    <h2 id="arguments">Arguments</h2>
+    <table class="ref-arguments">
+    
+    <colgroup>
+      <col class="name" />
+      <col class="desc" />
+    </colgroup>  
+      
+    <tr>
+      <td>job</td>
+      <td><p>Job name or job object. Pass "latest" to indicate the
+most recently submitted job.</p></td>
+    </tr>
+    <tr>
+      <td>polling_interval</td>
+      <td><p>Number of seconds to wait between efforts to fetch the
+latest log messages.</p></td>
+    </tr>
+    <tr>
+      <td>task_name</td>
+      <td><p>If set, display only the logs for this particular task.</p></td>
+    </tr>
+    <tr>
+      <td>allow_multiline_logs</td>
+      <td><p>Output multiline log messages as single records.</p></td>
+    </tr>
+    </table>
+    
+    <h2 id="see-also">See also</h2>
+
+    <div class='dont-index'><p>Other job management functions: <code><a href='job_cancel.html'>job_cancel</a></code>,
+  <code><a href='job_collect.html'>job_collect</a></code>, <code><a href='job_list.html'>job_list</a></code>,
+  <code><a href='job_status.html'>job_status</a></code>, <code><a href='job_trials.html'>job_trials</a></code></p></div>
+    
+
+
+

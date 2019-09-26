@@ -1,0 +1,73 @@
+---
+title: "Decodes the output of a softmax."
+type: docs
+repo: https://github.com/rstudio/keras
+menu:
+  main:
+    name: "Decodes the output of a softmax. - keras"
+    parent: keras-reference
+---
+    
+    
+    <p>Can use either greedy search (also known as best path) or a constrained
+dictionary search.</p>
+    
+
+    <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>k_ctc_decode</span>(<span class='no'>y_pred</span>, <span class='no'>input_length</span>, <span class='kw'>greedy</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>beam_width</span> <span class='kw'>=</span> <span class='fl'>100L</span>,
+  <span class='kw'>top_paths</span> <span class='kw'>=</span> <span class='fl'>1</span>)</code></pre></div>
+    
+    <h2 id="arguments">Arguments</h2>
+    <table class="ref-arguments">
+    
+    <colgroup>
+      <col class="name" />
+      <col class="desc" />
+    </colgroup>  
+      
+    <tr>
+      <td>y_pred</td>
+      <td><p>tensor <code>(samples, time_steps, num_categories)</code> containing the
+prediction, or output of the softmax.</p></td>
+    </tr>
+    <tr>
+      <td>input_length</td>
+      <td><p>tensor <code>(samples, )</code> containing the sequence length for
+each batch item in <code>y_pred</code>.</p></td>
+    </tr>
+    <tr>
+      <td>greedy</td>
+      <td><p>perform much faster best-path search if <code>TRUE</code>. This does not
+use a dictionary.</p></td>
+    </tr>
+    <tr>
+      <td>beam_width</td>
+      <td><p>if <code>greedy</code> is <code>FALSE</code>: a beam search decoder will be used
+with a beam of this width.</p></td>
+    </tr>
+    <tr>
+      <td>top_paths</td>
+      <td><p>if <code>greedy</code> is <code>FALSE</code>, how many of the most probable paths
+will be returned.</p></td>
+    </tr>
+    </table>
+    
+    <h2 id="value">Value</h2>
+
+    <p>If <code>greedy</code> is <code>TRUE</code>, returns a list of one element
+that contains the decoded sequence. If <code>FALSE</code>, returns the <code>top_paths</code>
+most probable decoded sequences. Important: blank labels are returned as
+<code>-1</code>. Tensor <code>(top_paths)</code> that contains the log probability of each
+decoded sequence.</p>
+    
+    <h2 id="keras-backend">Keras Backend</h2>
+
+    
+    <p>This function is part of a set of Keras backend functions that enable
+lower level access to the core operations of the backend tensor engine
+(e.g. TensorFlow, CNTK, Theano, etc.).</p>
+<p>You can see a list of all available backend functions here:
+<a href='https://keras.rstudio.com/articles/backend.html#backend-functions'>https://keras.rstudio.com/articles/backend.html#backend-functions</a>.</p>
+    
+
+
+

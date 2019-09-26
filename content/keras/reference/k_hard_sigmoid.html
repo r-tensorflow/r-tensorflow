@@ -1,0 +1,48 @@
+---
+title: "Segment-wise linear approximation of sigmoid."
+type: docs
+repo: https://github.com/rstudio/keras
+menu:
+  main:
+    name: "Segment-wise linear approximation of sigmoid. - keras"
+    parent: keras-reference
+---
+    
+    
+    <p>Faster than sigmoid.
+Returns <code>0.</code> if <code>x &lt; -2.5</code>, <code>1.</code> if <code>x &gt; 2.5</code>.
+In <code>-2.5 &lt;= x &lt;= 2.5</code>, returns <code>0.2 * x + 0.5</code>.</p>
+    
+
+    <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>k_hard_sigmoid</span>(<span class='no'>x</span>)</code></pre></div>
+    
+    <h2 id="arguments">Arguments</h2>
+    <table class="ref-arguments">
+    
+    <colgroup>
+      <col class="name" />
+      <col class="desc" />
+    </colgroup>  
+      
+    <tr>
+      <td>x</td>
+      <td><p>A tensor or variable.</p></td>
+    </tr>
+    </table>
+    
+    <h2 id="value">Value</h2>
+
+    <p>A tensor.</p>
+    
+    <h2 id="keras-backend">Keras Backend</h2>
+
+    
+    <p>This function is part of a set of Keras backend functions that enable
+lower level access to the core operations of the backend tensor engine
+(e.g. TensorFlow, CNTK, Theano, etc.).</p>
+<p>You can see a list of all available backend functions here:
+<a href='https://keras.rstudio.com/articles/backend.html#backend-functions'>https://keras.rstudio.com/articles/backend.html#backend-functions</a>.</p>
+    
+
+
+

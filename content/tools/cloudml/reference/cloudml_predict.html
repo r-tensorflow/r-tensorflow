@@ -1,0 +1,55 @@
+---
+title: "Perform Prediction over a CloudML Model."
+type: docs
+repo: https://github.com/rstudio/cloudml
+menu:
+  main:
+    name: "Perform Prediction over a CloudML Model. - cloudml"
+    parent: cloudml-reference
+---
+    
+    
+    <p>Perform online prediction over a CloudML model, usually, created using
+<code><a href='cloudml_deploy.html'>cloudml_deploy()</a></code></p>
+    
+
+    <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>cloudml_predict</span>(<span class='no'>instances</span>, <span class='no'>name</span>, <span class='kw'>version</span> <span class='kw'>=</span> <span class='fu'>paste0</span>(<span class='no'>name</span>, <span class='st'>"_1"</span>),
+  <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)</code></pre></div>
+    
+    <h2 id="arguments">Arguments</h2>
+    <table class="ref-arguments">
+    
+    <colgroup>
+      <col class="name" />
+      <col class="desc" />
+    </colgroup>  
+      
+    <tr>
+      <td>instances</td>
+      <td><p>A list of instances to be predicted. While predicting
+a single instance, list wrapping this single instance is still expected.</p></td>
+    </tr>
+    <tr>
+      <td>name</td>
+      <td><p>The name for this model (required)</p></td>
+    </tr>
+    <tr>
+      <td>version</td>
+      <td><p>The version for this model. Versions start with a letter and
+contain only letters, numbers and underscores. Defaults to name_1</p></td>
+    </tr>
+    <tr>
+      <td>verbose</td>
+      <td><p>Should additional information be reported?</p></td>
+    </tr>
+    </table>
+    
+    <h2 id="see-also">See also</h2>
+
+    <div class='dont-index'><p><code><a href='cloudml_deploy.html'>cloudml_deploy()</a></code></p>
+<p>Other CloudML functions: <code><a href='cloudml_deploy.html'>cloudml_deploy</a></code>,
+  <code><a href='cloudml_train.html'>cloudml_train</a></code></p></div>
+    
+
+
+

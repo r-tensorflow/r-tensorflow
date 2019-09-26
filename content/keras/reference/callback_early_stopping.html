@@ -1,0 +1,83 @@
+---
+title: "Stop training when a monitored quantity has stopped improving."
+type: docs
+repo: https://github.com/rstudio/keras
+menu:
+  main:
+    name: "Stop training when a monitored quantity has stopped improving. - keras"
+    parent: keras-reference
+---
+    
+    
+    <p>Stop training when a monitored quantity has stopped improving.</p>
+    
+
+    <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>callback_early_stopping</span>(<span class='kw'>monitor</span> <span class='kw'>=</span> <span class='st'>"val_loss"</span>, <span class='kw'>min_delta</span> <span class='kw'>=</span> <span class='fl'>0</span>,
+  <span class='kw'>patience</span> <span class='kw'>=</span> <span class='fl'>0</span>, <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>0</span>, <span class='kw'>mode</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='st'>"auto"</span>, <span class='st'>"min"</span>, <span class='st'>"max"</span>),
+  <span class='kw'>baseline</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>restore_best_weights</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)</code></pre></div>
+    
+    <h2 id="arguments">Arguments</h2>
+    <table class="ref-arguments">
+    
+    <colgroup>
+      <col class="name" />
+      <col class="desc" />
+    </colgroup>  
+      
+    <tr>
+      <td>monitor</td>
+      <td><p>quantity to be monitored.</p></td>
+    </tr>
+    <tr>
+      <td>min_delta</td>
+      <td><p>minimum change in the monitored quantity to qualify as an
+improvement, i.e. an absolute change of less than min_delta, will count as
+no improvement.</p></td>
+    </tr>
+    <tr>
+      <td>patience</td>
+      <td><p>number of epochs with no improvement after which training
+will be stopped.</p></td>
+    </tr>
+    <tr>
+      <td>verbose</td>
+      <td><p>verbosity mode, 0 or 1.</p></td>
+    </tr>
+    <tr>
+      <td>mode</td>
+      <td><p>one of "auto", "min", "max". In <code>min</code> mode, training will stop when
+the quantity monitored has stopped decreasing; in <code>max</code> mode it will stop
+when the quantity monitored has stopped increasing; in <code>auto</code> mode, the
+direction is automatically inferred from the name of the monitored
+quantity.</p></td>
+    </tr>
+    <tr>
+      <td>baseline</td>
+      <td><p>Baseline value for the monitored quantity to reach.
+Training will stop if the model doesn't show improvement
+over the baseline.</p></td>
+    </tr>
+    <tr>
+      <td>restore_best_weights</td>
+      <td><p>Whether to restore model weights from
+the epoch with the best value of the monitored quantity.
+If <code>FALSE</code>, the model weights obtained at the last step of
+training are used.</p></td>
+    </tr>
+    </table>
+    
+    <h2 id="see-also">See also</h2>
+
+    <div class='dont-index'><p>Other callbacks: <code><a href='callback_csv_logger.html'>callback_csv_logger</a></code>,
+  <code><a href='callback_lambda.html'>callback_lambda</a></code>,
+  <code><a href='callback_learning_rate_scheduler.html'>callback_learning_rate_scheduler</a></code>,
+  <code><a href='callback_model_checkpoint.html'>callback_model_checkpoint</a></code>,
+  <code><a href='callback_progbar_logger.html'>callback_progbar_logger</a></code>,
+  <code><a href='callback_reduce_lr_on_plateau.html'>callback_reduce_lr_on_plateau</a></code>,
+  <code><a href='callback_remote_monitor.html'>callback_remote_monitor</a></code>,
+  <code><a href='callback_tensorboard.html'>callback_tensorboard</a></code>,
+  <code><a href='callback_terminate_on_naan.html'>callback_terminate_on_naan</a></code></p></div>
+    
+
+
+

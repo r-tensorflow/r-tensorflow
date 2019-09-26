@@ -1,0 +1,89 @@
+---
+title: TensorBoard
+type: docs
+menu:
+  main:
+    name: "TensorBoard"
+    identifier: "tools-tensorboard"
+    parent: "tools-top"
+    weight: 60
+---
+
+
+
+<div id="overview" class="section level2">
+<h2>Overview</h2>
+<p>The computations you’ll use TensorFlow for - like training a massive deep neural network - can be complex and confusing. To make it easier to understand, debug, and optimize TensorFlow programs, a suite of visualization tools called TensorBoard is available. You can use TensorBoard to visualize your TensorFlow graph, plot quantitative metrics about the execution of your graph, and show additional data like images that pass through it.</p>
+<p>For example, here’s a TensorBoard display for Keras accuracy and loss metrics:</p>
+<p><img src="http://127.0.0.1:4321/keras/articles/images/tensorboard.png" class="screenshot"></p>
+</div>
+<div id="recording-data" class="section level2">
+<h2>Recording Data</h2>
+<p>The method for recording events for visualization by TensorBoard varies depending upon which TensorFlow interface you are working with:</p>
+<table>
+<colgroup>
+<col width="19%">
+<col width="80%">
+</colgroup>
+<tbody>
+<tr class="odd">
+<td><a href="../keras/index.html">Keras</a></td>
+<td>When using Keras, include the <code>callback_tensorboard()</code> when invoking the <code>fit()</code> function to train a model. See the <a href="http://127.0.0.1:4321/keras/articles/training_visualization.html#recording-data">Keras documentation</a> for additional details.</td>
+</tr>
+<tr class="even">
+<td><a href="../tfestimators/index.html">Estimators</a></td>
+<td>When using TF Estimators, TensorBoard events are automatically written to the <code>model_dir</code> specified when creating the estimator. See the <a href="http://127.0.0.1:4321/tfestimators/articles/tensorboard.html">Estimators documentation</a> for additional details.</td>
+</tr>
+<tr class="odd">
+<td><a href="training_flags.html">Core API</a></td>
+<td>When using the core API, you need to attach <code>tf$summary$scalar</code> operations to the graph for the metrics you want to record for viewing in TensorBoard. See the <a href="http://127.0.0.1:4321/tensorflow/articles/howto_summaries_and_tensorboard.html">core documentation</a> for additional details.</td>
+</tr>
+</tbody>
+</table>
+<p>Note that in all cases it’s important that you use a unique directory to record training events (otherwise events from multiple training runs will be aggregated together).</p>
+<p>You can remove and recreate event log directories between runs, or alternatively use the <a href="tfruns/articles/overview.html">tfruns package</a> to do training, which will automatically create a new directory for each training run.</p>
+</div>
+<div id="viewing-data" class="section level2">
+<h2>Viewing Data</h2>
+<p>To view TensorBoard data for a given set of runs you use the <code>tensorboard()</code> function, pointing it to to a directory which contains TensorBoard logs:</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">tensorboard</span>(<span class="st">"logs/run_a"</span>)</code></pre>
+<p>It’s often useful to run TensorBoard while you are training a model. To do this, simply launch tensorboard within the training directory right before you begin training:</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># launch TensorBoard (data won't show up until after the first epoch)</span>
+<span class="kw">tensorboard</span>(<span class="st">"logs/run_a"</span>)
+
+<span class="co"># fit the model with the TensorBoard callback</span>
+history &lt;-<span class="st"> </span>model <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">fit</span>(
+  x_train, y_train,
+  <span class="dt">batch_size =</span> batch_size,
+  <span class="dt">epochs =</span> epochs,
+  <span class="dt">verbose =</span> <span class="dv">1</span>,
+  <span class="dt">callbacks =</span> <span class="kw">callback_tensorboard</span>(<span class="st">"logs/run_a"</span>),
+  <span class="dt">validation_split =</span> <span class="fl">0.2</span>
+)</code></pre>
+<p>Keras writes TensorBoard data at the end of each epoch so you won’t see any data in TensorBoard until 10-20 seconds after the end of the first epoch (TensorBoard automatically refreshes it’s display every 30 seconds during training).</p>
+<div id="tfruns" class="section level3">
+<h3>tfruns</h3>
+<p>If you are using the <a href="tfruns/articles/overview.html">tfruns package</a> to track and manage training runs then there are some shortcuts available for the <code>tensorboard()</code> function:</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">tensorboard</span>()                                <span class="co"># views the latest run by default</span>
+<span class="kw">tensorboard</span>(<span class="kw">latest_run</span>())                    <span class="co"># view the latest run</span>
+<span class="kw">tensorboard</span>(<span class="kw">ls_runs</span>(<span class="dt">order =</span> eval_acc)[<span class="dv">1</span>,])   <span class="co"># view the run with the best eval_acc</span></code></pre>
+</div>
+</div>
+<div id="comparing-runs" class="section level2">
+<h2>Comparing Runs</h2>
+<p>TensorBoard will automatically include all runs logged within the sub-directories of the specified <code>log_dir</code>, for example, if you logged another run using:</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">callback_tensorboard</span>(<span class="dt">log_dir =</span> <span class="st">"logs/run_b"</span>)</code></pre>
+<p>Then called tensorboard as follows:</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">tensorboard</span>(<span class="st">"logs"</span>)</code></pre>
+<p>The TensorBoard visualization would look like this:</p>
+<p><img src="../keras/articles/images/tensorboard_compare.png" class="screenshot" width="700" height="540"></p>
+<p>You can also pass multiple log directories. For example:</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">tensorboard</span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="st">"logs/run_a"</span>, <span class="st">"logs/run_b"</span>))</code></pre>
+<div id="tfruns-1" class="section level3">
+<h3>tfruns</h3>
+<p>If you are using the <a href="tfruns/articles/overview.html">tfruns package</a> to track and manage training runs then you easily pass multiple runs that match a criteria using the <code>ls_runs()</code> function. For example:</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">tensorboard</span>(<span class="kw">ls_runs</span>(<span class="dt">latest_n =</span> <span class="dv">2</span>))         <span class="co"># last 2 runs</span>
+<span class="kw">tensorboard</span>(<span class="kw">ls_runs</span>(eval_acc <span class="op">&gt;</span><span class="st"> </span><span class="fl">0.98</span>))      <span class="co"># all runs with &gt; 0.98 eval accuracy</span>
+<span class="kw">tensorboard</span>(<span class="kw">ls_runs</span>(<span class="dt">order =</span> eval_acc))[<span class="dv">5</span>,] <span class="co"># top 5 runs w/r/t eval accuracy</span></code></pre>
+</div>
+</div>

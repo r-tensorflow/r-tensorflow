@@ -1,0 +1,63 @@
+---
+title: "Runs CTC loss algorithm on each batch element."
+type: docs
+repo: https://github.com/rstudio/keras
+menu:
+  main:
+    name: "Runs CTC loss algorithm on each batch element. - keras"
+    parent: keras-reference
+---
+    
+    
+    <p>Runs CTC loss algorithm on each batch element.</p>
+    
+
+    <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>k_ctc_batch_cost</span>(<span class='no'>y_true</span>, <span class='no'>y_pred</span>, <span class='no'>input_length</span>, <span class='no'>label_length</span>)</code></pre></div>
+    
+    <h2 id="arguments">Arguments</h2>
+    <table class="ref-arguments">
+    
+    <colgroup>
+      <col class="name" />
+      <col class="desc" />
+    </colgroup>  
+      
+    <tr>
+      <td>y_true</td>
+      <td><p>tensor <code>(samples, max_string_length)</code> containing the truth
+labels.</p></td>
+    </tr>
+    <tr>
+      <td>y_pred</td>
+      <td><p>tensor <code>(samples, time_steps, num_categories)</code> containing the
+prediction, or output of the softmax.</p></td>
+    </tr>
+    <tr>
+      <td>input_length</td>
+      <td><p>tensor <code>(samples, 1)</code> containing the sequence length for
+each batch item in <code>y_pred</code>.</p></td>
+    </tr>
+    <tr>
+      <td>label_length</td>
+      <td><p>tensor <code>(samples, 1)</code> containing the sequence length for
+each batch item in <code>y_true</code>.</p></td>
+    </tr>
+    </table>
+    
+    <h2 id="value">Value</h2>
+
+    <p>Tensor with shape (samples,1) containing the CTC loss of each
+element.</p>
+    
+    <h2 id="keras-backend">Keras Backend</h2>
+
+    
+    <p>This function is part of a set of Keras backend functions that enable
+lower level access to the core operations of the backend tensor engine
+(e.g. TensorFlow, CNTK, Theano, etc.).</p>
+<p>You can see a list of all available backend functions here:
+<a href='https://keras.rstudio.com/articles/backend.html#backend-functions'>https://keras.rstudio.com/articles/backend.html#backend-functions</a>.</p>
+    
+
+
+

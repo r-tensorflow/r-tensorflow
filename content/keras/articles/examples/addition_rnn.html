@@ -1,0 +1,209 @@
+---
+title: addition_rnn
+type: docs
+repo: https://github.com/rstudio/keras
+menu:
+  main:
+    parent: keras-examples
+---
+
+
+
+<div class="source-ref">
+<p><span class="caption">Source: </span><a href="https://github.com/rstudio/keras/blob/master/vignettes/examples/addition_rnn.R" class="uri">https://github.com/rstudio/keras/blob/master/vignettes/examples/addition_rnn.R</a></p>
+</div>
+<p>An implementation of sequence to sequence learning for performing addition</p>
+<p>Input: “535+61”<br>
+Output: “596”</p>
+<p>Padding is handled by using a repeated sentinel character (space)</p>
+<p>Input may optionally be reversed, shown to increase performance in many tasks in:
+“Learning to Execute”
+<a href="http://arxiv.org/abs/1410.4615" class="uri">http://arxiv.org/abs/1410.4615</a>
+and
+“Sequence to Sequence Learning with Neural Networks”
+<a href="http://papers.nips.cc/paper/5346-sequence-to-sequence-learning-with-neural-networks.pdf" class="uri">http://papers.nips.cc/paper/5346-sequence-to-sequence-learning-with-neural-networks.pdf</a>
+Theoretically it introduces shorter term dependencies between source and target.</p>
+<p>Two digits reversed:
+One layer LSTM (128 HN), 5k training examples = 99% train/test accuracy in 55 epochs</p>
+<p>Three digits reversed:
+One layer LSTM (128 HN), 50k training examples = 99% train/test accuracy in 100 epochs</p>
+<p>Four digits reversed:
+One layer LSTM (128 HN), 400k training examples = 99% train/test accuracy in 20 epochs</p>
+<p>Five digits reversed:
+One layer LSTM (128 HN), 550k training examples = 99% train/test accuracy in 30 epochs</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(keras)
+<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(stringi)
+
+<span class="co"># Function Definitions ----------------------------------------------------</span>
+
+<span class="co"># Creates the char table and sorts them.</span>
+learn_encoding &lt;-<span class="st"> </span><span class="cf">function</span>(chars){
+  <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/sort">sort</a></span>(chars)
+}
+
+<span class="co"># Encode from a character sequence to a one hot integer representation.</span>
+<span class="co"># &gt; encode("22+22", char_table)</span>
+<span class="co"># [,1] [,2] [,3] [,4] [,5] [,6] [,7] [,8] [,9] [,10] [,11] [,12]</span>
+<span class="co"># 2    0    0    0    0    1    0    0    0    0     0     0     0</span>
+<span class="co"># 2    0    0    0    0    1    0    0    0    0     0     0     0</span>
+<span class="co"># +    0    1    0    0    0    0    0    0    0     0     0     0</span>
+<span class="co"># 2    0    0    0    0    1    0    0    0    0     0     0     0</span>
+<span class="co"># 2    0    0    0    0    1    0    0    0    0     0     0     0</span>
+encode &lt;-<span class="st"> </span><span class="cf">function</span>(char, char_table){
+  <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/strsplit">strsplit</a></span>(char, <span class="st">""</span>) <span class="op">%&gt;%</span>
+<span class="st">    </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/unlist">unlist</a></span>() <span class="op">%&gt;%</span>
+<span class="st">    </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/lapply">sapply</a></span>(<span class="cf">function</span>(x){
+      <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/numeric">as.numeric</a></span>(x <span class="op">==</span><span class="st"> </span>char_table)
+    }) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">    </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/t">t</a></span>()
+}
+
+<span class="co"># Decode the one hot representation/probabilities representation</span>
+<span class="co"># to their character output.</span>
+decode &lt;-<span class="st"> </span><span class="cf">function</span>(x, char_table){
+  <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/apply">apply</a></span>(x,<span class="dv">1</span>, <span class="cf">function</span>(y){
+    char_table[<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/which.min">which.max</a></span>(y)]
+  }) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/paste">paste0</a></span>(<span class="dt">collapse =</span> <span class="st">""</span>)
+}
+
+<span class="co"># Returns a list of questions and expected answers.</span>
+generate_data &lt;-<span class="st"> </span><span class="cf">function</span>(size, digits, <span class="dt">invert =</span> <span class="ot">TRUE</span>){
+  
+  max_num &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/integer">as.integer</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/paste">paste0</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/rep">rep</a></span>(<span class="dv">9</span>, digits), <span class="dt">collapse =</span> <span class="st">""</span>))
+  
+  <span class="co"># generate integers for both sides of question</span>
+  x &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/sample">sample</a></span>(<span class="dv">1</span><span class="op">:</span>max_num, <span class="dt">size =</span> size, <span class="dt">replace =</span> <span class="ot">TRUE</span>)
+  y &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/sample">sample</a></span>(<span class="dv">1</span><span class="op">:</span>max_num, <span class="dt">size =</span> size, <span class="dt">replace =</span> <span class="ot">TRUE</span>)
+  
+  <span class="co"># make left side always smaller than right side</span>
+  left_side &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/ifelse">ifelse</a></span>(x <span class="op">&lt;=</span><span class="st"> </span>y, x, y)
+  right_side &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/ifelse">ifelse</a></span>(x <span class="op">&gt;=</span><span class="st"> </span>y, x, y)
+  
+  results &lt;-<span class="st"> </span>left_side <span class="op">+</span><span class="st"> </span>right_side
+  
+  <span class="co"># pad with spaces on the right</span>
+  questions &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/paste">paste0</a></span>(left_side, <span class="st">"+"</span>, right_side)
+  questions &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/stringi/topics/stri_pad">stri_pad</a></span>(questions, <span class="dt">width =</span> <span class="dv">2</span><span class="op">*</span>digits<span class="op">+</span><span class="dv">1</span>, 
+                        <span class="dt">side =</span> <span class="st">"right"</span>, <span class="dt">pad =</span> <span class="st">" "</span>)
+  <span class="cf">if</span>(invert){
+    questions &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/stringi/topics/stri_reverse">stri_reverse</a></span>(questions)
+  }
+  <span class="co"># pad with spaces on the left</span>
+  results &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/stringi/topics/stri_pad">stri_pad</a></span>(results, <span class="dt">width =</span> digits <span class="op">+</span><span class="st"> </span><span class="dv">1</span>, 
+                      <span class="dt">side =</span> <span class="st">"left"</span>, <span class="dt">pad =</span> <span class="st">" "</span>)
+  
+  <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/list">list</a></span>(
+    <span class="dt">questions =</span> questions,
+    <span class="dt">results =</span> results
+  )
+}
+
+<span class="co"># Parameters --------------------------------------------------------------</span>
+
+<span class="co"># Parameters for the model and dataset</span>
+TRAINING_SIZE &lt;-<span class="st"> </span><span class="dv">50000</span>
+DIGITS &lt;-<span class="st"> </span><span class="dv">2</span>
+
+<span class="co"># Maximum length of input is 'int + int' (e.g., '345+678'). Maximum length of</span>
+<span class="co"># int is DIGITS</span>
+MAXLEN &lt;-<span class="st"> </span>DIGITS <span class="op">+</span><span class="st"> </span><span class="dv">1</span> <span class="op">+</span><span class="st"> </span>DIGITS
+
+<span class="co"># All the numbers, plus sign and space for padding</span>
+charset &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="dv">0</span><span class="op">:</span><span class="dv">9</span>, <span class="st">"+"</span>, <span class="st">" "</span>)
+char_table &lt;-<span class="st"> </span><span class="kw">learn_encoding</span>(charset)
+
+
+<span class="co"># Data Preparation --------------------------------------------------------</span>
+
+<span class="co"># Generate Data</span>
+examples &lt;-<span class="st"> </span><span class="kw">generate_data</span>(<span class="dt">size =</span> TRAINING_SIZE, <span class="dt">digits =</span> DIGITS)
+
+<span class="co"># Vectorization</span>
+x &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/array">array</a></span>(<span class="dv">0</span>, <span class="dt">dim =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/length">length</a></span>(examples<span class="op">$</span>questions), MAXLEN, <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/length">length</a></span>(char_table)))
+y &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/array">array</a></span>(<span class="dv">0</span>, <span class="dt">dim =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/length">length</a></span>(examples<span class="op">$</span>questions), DIGITS <span class="op">+</span><span class="st"> </span><span class="dv">1</span>, <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/length">length</a></span>(char_table)))
+
+<span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span>TRAINING_SIZE){
+  x[i,,] &lt;-<span class="st"> </span><span class="kw">encode</span>(examples<span class="op">$</span>questions[i], char_table)
+  y[i,,] &lt;-<span class="st"> </span><span class="kw">encode</span>(examples<span class="op">$</span>results[i], char_table)
+}
+
+<span class="co"># Shuffle</span>
+indices &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/sample">sample</a></span>(<span class="dv">1</span><span class="op">:</span>TRAINING_SIZE, <span class="dt">size =</span> TRAINING_SIZE)
+x &lt;-<span class="st"> </span>x[indices,,]
+y &lt;-<span class="st"> </span>y[indices,,]
+
+
+<span class="co"># Explicitly set apart 10% for validation data that we never train over</span>
+split_at &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/Round">trunc</a></span>(TRAINING_SIZE<span class="op">/</span><span class="dv">10</span>)
+x_val &lt;-<span class="st"> </span>x[<span class="dv">1</span><span class="op">:</span>split_at,,]
+y_val &lt;-<span class="st"> </span>y[<span class="dv">1</span><span class="op">:</span>split_at,,]
+x_train &lt;-<span class="st"> </span>x[(split_at <span class="op">+</span><span class="st"> </span><span class="dv">1</span>)<span class="op">:</span>TRAINING_SIZE,,]
+y_train &lt;-<span class="st"> </span>y[(split_at <span class="op">+</span><span class="st"> </span><span class="dv">1</span>)<span class="op">:</span>TRAINING_SIZE,,]
+
+<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/print">print</a></span>(<span class="st">'Training Data:'</span>)
+<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/print">print</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/dim">dim</a></span>(x_train))
+<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/print">print</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/dim">dim</a></span>(y_train))
+
+<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/print">print</a></span>(<span class="st">'Validation Data:'</span>)
+<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/print">print</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/dim">dim</a></span>(x_val))
+<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/print">print</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/dim">dim</a></span>(y_val))
+
+
+<span class="co"># Training ----------------------------------------------------------------</span>
+
+HIDDEN_SIZE &lt;-<span class="st"> </span><span class="dv">128</span>
+BATCH_SIZE &lt;-<span class="st"> </span><span class="dv">128</span>
+LAYERS &lt;-<span class="st"> </span><span class="dv">1</span>
+
+<span class="co"># Initialize sequential model</span>
+model &lt;-<span class="st"> </span><span class="kw"><a href="../../reference/keras_model_sequential.html">keras_model_sequential</a></span>() 
+
+model <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="co"># "Encode" the input sequence using an RNN, producing an output of HIDDEN_SIZE.</span>
+<span class="st">  </span><span class="co"># Note: In a situation where your input sequences have a variable length,</span>
+<span class="st">  </span><span class="co"># use input_shape=(None, num_feature).</span>
+<span class="st">  </span><span class="kw"><a href="../../reference/layer_lstm.html">layer_lstm</a></span>(HIDDEN_SIZE, <span class="dt">input_shape=</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(MAXLEN, <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/length">length</a></span>(char_table))) <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="co"># As the decoder RNN's input, repeatedly provide with the last hidden state of</span>
+<span class="st">  </span><span class="co"># RNN for each time step. Repeat 'DIGITS + 1' times as that's the maximum</span>
+<span class="st">  </span><span class="co"># length of output, e.g., when DIGITS=3, max output is 999+999=1998.</span>
+<span class="st">  </span><span class="kw"><a href="../../reference/layer_repeat_vector.html">layer_repeat_vector</a></span>(DIGITS <span class="op">+</span><span class="st"> </span><span class="dv">1</span>)
+
+<span class="co"># The decoder RNN could be multiple layers stacked or a single layer.</span>
+<span class="co"># By setting return_sequences to True, return not only the last output but</span>
+<span class="co"># all the outputs so far in the form of (num_samples, timesteps,</span>
+<span class="co"># output_dim). This is necessary as TimeDistributed in the below expects</span>
+<span class="co"># the first dimension to be the timesteps.</span>
+<span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span>LAYERS)
+  model <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../../reference/layer_lstm.html">layer_lstm</a></span>(HIDDEN_SIZE, <span class="dt">return_sequences =</span> <span class="ot">TRUE</span>)
+
+model <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="co"># Apply a dense layer to the every temporal slice of an input. For each of step</span>
+<span class="st">  </span><span class="co"># of the output sequence, decide which character should be chosen.</span>
+<span class="st">  </span><span class="kw"><a href="../../reference/time_distributed.html">time_distributed</a></span>(<span class="kw"><a href="../../reference/layer_dense.html">layer_dense</a></span>(<span class="dt">units =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/length">length</a></span>(char_table))) <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw"><a href="../../reference/layer_activation.html">layer_activation</a></span>(<span class="st">"softmax"</span>)
+
+<span class="co"># Compiling the model</span>
+model <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../../reference/reexports.html">compile</a></span>(
+  <span class="dt">loss =</span> <span class="st">"categorical_crossentropy"</span>, 
+  <span class="dt">optimizer =</span> <span class="st">"adam"</span>, 
+  <span class="dt">metrics =</span> <span class="st">"accuracy"</span>
+)
+
+<span class="co"># Get the model summary</span>
+<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/summary">summary</a></span>(model)
+
+<span class="co"># Fitting loop</span>
+model <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../../reference/reexports.html">fit</a></span>( 
+  <span class="dt">x =</span> x_train, 
+  <span class="dt">y =</span> y_train, 
+  <span class="dt">batch_size =</span> BATCH_SIZE, 
+  <span class="dt">epochs =</span> <span class="dv">70</span>,
+  <span class="dt">validation_data =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/list">list</a></span>(x_val, y_val)
+)
+
+<span class="co"># Predict for a new observation</span>
+new_obs &lt;-<span class="st"> </span><span class="kw">encode</span>(<span class="st">"55+22"</span>, char_table) <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/array">array</a></span>(<span class="dt">dim =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="dv">1</span>,<span class="dv">5</span>,<span class="dv">12</span>))
+result &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/stats/topics/predict">predict</a></span>(model, new_obs)
+result &lt;-<span class="st"> </span>result[<span class="dv">1</span>,,]
+<span class="kw">decode</span>(result, char_table)</code></pre>

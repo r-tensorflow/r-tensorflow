@@ -1,0 +1,193 @@
+---
+title: "Training Flags"
+output: html_document
+type: docs
+menu:
+  main:
+    name: "Training Flags"
+    identifier: "tools-training-flags"
+    parent: "tools-top"
+    weight: 40
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(eval = FALSE)
+```
+
+## Defining Flags
+
+Tuning a model often requires exploring the impact of changes to many hyperparameters. The best way to approach this is generally not to progressively change your source code, but rather to define external flags for key parameters which you may want to vary. This allows you to easily try out different combinations of parameters without changing your code, and makes your training script easier to integrate with hyperparameter tuning tools.
+
+Use the `flags()` function to define a set of flags (and default values) for a training script. For example, 
+
+```{r}
+library(keras)
+
+FLAGS <- flags(
+  flag_integer("dense_units1", 128),
+  flag_numeric("dropout1", 0.4),
+  flag_integer("dense_units2", 128),
+  flag_numeric("dropout2", 0.3),
+  flag_integer("epochs", 30),
+  flag_integer("batch_size", 128),
+  flag_numeric("learning_rate", 0.001)
+)
+```
+
+These flags would then used within a script as follows:
+
+```{r}
+input <- layer_input(shape = c(784))
+predictions <- input %>% 
+  layer_dense(units = FLAGS$dense_units1, activation = 'relu') %>%
+  layer_dropout(rate = FLAGS$dropout1) %>%
+  layer_dense(units = FLAGS$dense_units2, activation = 'relu') %>%
+  layer_dropout(rate = FLAGS$dropout2) %>%
+  layer_dense(units = 10, activation = 'softmax')
+
+model <- keras_model(input, predictions) %>% compile(
+  loss = 'categorical_crossentropy',
+  optimizer = optimizer_rmsprop(lr = FLAGS$learning_rate),
+  metrics = c('accuracy')
+)
+
+history <- model %>% fit(
+  x_train, y_train,
+  batch_size = FLAGS$batch_size,
+  epochs = FLAGS$epochs,
+  verbose = 1,
+  validation_split = 0.2
+)
+```
+
+Note that instead of literal values for the various parameters we want to vary we now reference members of the `FLAGS` list returned from the `flags()` function.
+
+## Using Flags
+
+When you execute your training script either interactively or using the `source()` function then the default values defined for your `FLAGS` will be utilized. There are a number of ways to train with alternate flag values, each of which is described below.
+
+### Command Line
+
+If you execute your training script via [Rscript](https://stat.ethz.ch/R-manual/R-devel/library/utils/html/Rscript.html), you can vary the values of `FLAGS` by passing them on the command line. 
+
+For example, to run your training script with alternate dropout values you would do this:
+
+```bash
+$ Rscript mnist_mlp.R --dropout1=0.2 --dropout2==0.1
+```
+
+To run your training script with a different number of epochs and alternate learning rate:
+
+```bash
+$ Rscript mnist_mlp.R --epochs=40 --learning-rate=0.005
+```
+
+Note that for the `learning_rate` flag we used a dash ("-") rather than underscore on the command line. Either is valid (dashes are automatically converted to underscores). This accommodation is made because dashes are not valid R identifiers but are commonly used within command line arguments.
+
+### Config File
+
+You can also create a [YAML](http://www.yaml.org/start.html) configuration file (by default "flags.yml") with alternate flag values. For example:
+
+**flags.yml**
+
+```yaml
+dropout1: 0.2
+dropout2: 0.1
+epochs: 40
+learning_rate: 0.005
+```
+
+If a "flags.yml" file is located within the current working directory when the `flags()` function is called then it's values will be read and used within the training script. 
+
+Note that you can combine the use of a "flags.yml" file and command-line parameters. In that case flags passed as command-line parameters take priority over flags defined in the config file.
+
+You can vary the file used to provide flags using the `file` parameter. For example, to use a file named "alt_flags.yml" you would use this in your training script:
+
+```{r}
+FLAGS <- flags(file = "alt_flags.yml",
+  # flag definitions here               
+)
+```
+
+You can also define a "flags.yml" that has named configurations which inherit from each other, for example:
+
+```yaml
+alt:
+  epochs: 50
+  learning_rate: 0.003
+alt2:
+  inherits: alt1
+  learning_rate; 0.002
+```
+
+You would use the "alt2" config in your training script as follows:
+
+```{r}
+FLAGS <- flags(config = "alt2",
+   # flag definitions here 
+)
+```
+
+See the documentation for the [config package](https://github.com/rstudio/config) for additional details on using named configuration profiles.
+
+### tfruns
+
+The [tfruns package](tfruns/articles/overview.html) provides a suite of tools for tracking, visualizing, and managing TensorFlow training runs. The package includes integrated support for both invoking scripts with flags via the `training_run()` function as well as tracking flag values used within each training run. 
+
+Here are some example uses of `training_run()` that mirror the flag examples from above:
+
+```{r}
+library(tfruns)
+training_run("mnist_mlp.R", flags = c(dropout1 = 0.2, dropout2 = 0.1))
+training_run("mnist_mlp.R", flags = "alt_flags.yml")
+training_run("mnist_mlp.R", config = "alt2")
+```
+
+If you are a frequent user of flags then training with the tfruns package is strongly recommended.
+
+
+## Flag Types
+
+Flags have a data type which is validated when flag values are parsed. Available flag types correspond to the following functions:
+
+| Function  | Description  |
+|---|---|
+| `flag_integer()`  | Integer values (e.g. 1, 2, 3, 4)  |
+| `flag_numeric()`  | Floating point values (e.g. 1.1, 2.2)  |
+| `flag_boolean()`  | Logical values (e.g. true, false, 1, 0)  |
+| `flag_string()`   | Character values (e.g. "train.csv")  |
+
+
+## Flag Descriptions
+
+Flag definitions can include an optional description. For example:
+
+```{r}
+FLAGS <- flags(
+  flag_integer("dense_units1", 128,  "Dense units in first layer"),
+  flag_numeric("dropout1",     0.4,  "Dropout after first layer"),
+  flag_integer("epochs",        30,  "Number of epochs to train for")
+)
+```
+
+This description is used when the `--help` argument is used to invoke your training script. For example:
+
+```bash
+$ Rscript mnist_mlp.R --help
+
+Options:
+  --dense-units1    Dense units in first layer (128)
+  --dropout1        Dropout after first layer (0.4)
+  --epochs          Number of epochs to train for (30)
+
+```
+
+Flag descriptions are a nice way to provide basic documentation on the parameters available within training scripts that you plan on sharing with other users.
+
+
+
+
+
+
+
+

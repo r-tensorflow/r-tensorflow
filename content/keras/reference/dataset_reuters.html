@@ -1,0 +1,91 @@
+---
+title: "Reuters newswire topics classification"
+type: docs
+repo: https://github.com/rstudio/keras
+menu:
+  main:
+    name: "Reuters newswire topics classification - keras"
+    parent: keras-reference
+---
+    
+    
+    <p>Dataset of 11,228 newswires from Reuters, labeled over 46 topics. As with
+<code><a href='dataset_imdb.html'>dataset_imdb()</a></code> , each wire is encoded as a sequence of word indexes (same
+conventions).</p>
+    
+
+    <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>dataset_reuters</span>(<span class='kw'>path</span> <span class='kw'>=</span> <span class='st'>"reuters.npz"</span>, <span class='kw'>num_words</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>skip_top</span> <span class='kw'>=</span> <span class='fl'>0L</span>, <span class='kw'>maxlen</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>test_split</span> <span class='kw'>=</span> <span class='fl'>0.2</span>, <span class='kw'>seed</span> <span class='kw'>=</span> <span class='fl'>113L</span>,
+  <span class='kw'>start_char</span> <span class='kw'>=</span> <span class='fl'>1L</span>, <span class='kw'>oov_char</span> <span class='kw'>=</span> <span class='fl'>2L</span>, <span class='kw'>index_from</span> <span class='kw'>=</span> <span class='fl'>3L</span>)
+
+<span class='fu'>dataset_reuters_word_index</span>(<span class='kw'>path</span> <span class='kw'>=</span> <span class='st'>"reuters_word_index.pkl"</span>)</code></pre></div>
+    
+    <h2 id="arguments">Arguments</h2>
+    <table class="ref-arguments">
+    
+    <colgroup>
+      <col class="name" />
+      <col class="desc" />
+    </colgroup>  
+      
+    <tr>
+      <td>path</td>
+      <td><p>Where to cache the data (relative to <code>~/.keras/dataset</code>).</p></td>
+    </tr>
+    <tr>
+      <td>num_words</td>
+      <td><p>Max number of words to include. Words are ranked by how
+often they occur (in the training set) and only the most frequent words are
+kept</p></td>
+    </tr>
+    <tr>
+      <td>skip_top</td>
+      <td><p>Skip the top N most frequently occuring words (which may not
+be informative).</p></td>
+    </tr>
+    <tr>
+      <td>maxlen</td>
+      <td><p>Truncate sequences after this length.</p></td>
+    </tr>
+    <tr>
+      <td>test_split</td>
+      <td><p>Fraction of the dataset to be used as test data.</p></td>
+    </tr>
+    <tr>
+      <td>seed</td>
+      <td><p>Random seed for sample shuffling.</p></td>
+    </tr>
+    <tr>
+      <td>start_char</td>
+      <td><p>The start of a sequence will be marked with this character.
+Set to 1 because 0 is usually the padding character.</p></td>
+    </tr>
+    <tr>
+      <td>oov_char</td>
+      <td><p>words that were cut out because of the <code>num_words</code> or
+<code>skip_top</code> limit will be replaced with this character.</p></td>
+    </tr>
+    <tr>
+      <td>index_from</td>
+      <td><p>index actual words with this index and higher.</p></td>
+    </tr>
+    </table>
+    
+    <h2 id="value">Value</h2>
+
+    <p>Lists of training and test data: <code>train$x, train$y, test$x, test$y</code>
+with same format as <code><a href='dataset_imdb.html'>dataset_imdb()</a></code>. The <code>dataset_reuters_word_index()</code>
+function returns a list where the names are words and the values are
+integer. e.g. <code>word_index[["giraffe"]]</code> might return <code>1234</code>.</p>
+    
+    <h2 id="see-also">See also</h2>
+
+    <div class='dont-index'><p>Other datasets: <code><a href='dataset_boston_housing.html'>dataset_boston_housing</a></code>,
+  <code><a href='dataset_cifar100.html'>dataset_cifar100</a></code>,
+  <code><a href='dataset_cifar10.html'>dataset_cifar10</a></code>,
+  <code><a href='dataset_fashion_mnist.html'>dataset_fashion_mnist</a></code>,
+  <code><a href='dataset_imdb.html'>dataset_imdb</a></code>, <code><a href='dataset_mnist.html'>dataset_mnist</a></code></p></div>
+    
+
+
+

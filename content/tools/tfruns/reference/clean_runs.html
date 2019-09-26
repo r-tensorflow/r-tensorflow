@@ -1,0 +1,65 @@
+---
+title: "Clean run directories"
+type: docs
+repo: https://github.com/rstudio/tfruns
+menu:
+  main:
+    name: "Clean run directories - tfruns"
+    parent: tfruns-reference
+---
+    
+    
+    <p>Remove run directories from the filesystem.</p>
+    
+
+    <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>clean_runs</span>(<span class='kw'>runs</span> <span class='kw'>=</span> <span class='fu'><a href='ls_runs.html'>ls_runs</a></span>(<span class='kw'>runs_dir</span> <span class='kw'>=</span> <span class='no'>runs_dir</span>),
+  <span class='kw'>runs_dir</span> <span class='kw'>=</span> <span class='fu'>getOption</span>(<span class='st'>"tfruns.runs_dir"</span>, <span class='st'>"runs"</span>), <span class='kw'>confirm</span> <span class='kw'>=</span> <span class='fu'>interactive</span>())
+
+<span class='fu'>purge_runs</span>(<span class='kw'>runs_dir</span> <span class='kw'>=</span> <span class='fu'>getOption</span>(<span class='st'>"tfruns.runs_dir"</span>, <span class='st'>"runs"</span>),
+  <span class='kw'>confirm</span> <span class='kw'>=</span> <span class='fu'>interactive</span>())</code></pre></div>
+    
+    <h2 id="arguments">Arguments</h2>
+    <table class="ref-arguments">
+    
+    <colgroup>
+      <col class="name" />
+      <col class="desc" />
+    </colgroup>  
+      
+    <tr>
+      <td>runs</td>
+      <td><p>Runs to clean. Can be specified as a data frame
+(as returned by <code><a href='ls_runs.html'>ls_runs()</a></code>) or as a character vector of
+run directories.</p></td>
+    </tr>
+    <tr>
+      <td>runs_dir</td>
+      <td><p>Directory containing runs. Defaults to "runs" beneath the
+current working directory (or to the value of the <code>tfruns.runs_dir</code> R
+option if specified).</p></td>
+    </tr>
+    <tr>
+      <td>confirm</td>
+      <td><p><code>TRUE</code> to confirm before performing operation</p></td>
+    </tr>
+    </table>
+    
+    <h2 id="details">Details</h2>
+
+    <p>The <code>clean_runs()</code> function moves the specified runs (by default,
+all runs) into an "archive" subdirectory of the "runs" directory.</p>
+<p>The <code>purge_runs()</code> function permanently deletes the "archive"
+subdirectory.</p>
+    
+    <h2 id="see-also">See also</h2>
+
+    <div class='dont-index'><p>Other run management: <code><a href='copy_run.html'>copy_run</a></code></p></div>
+    
+
+    <h2 id="examples">Examples</h2>
+    <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class='co'># NOT RUN {</span>
+<span class='fu'>clean_runs</span>(<span class='fu'><a href='ls_runs.html'>ls_runs</a></span>(<span class='no'>completed</span> <span class='kw'>==</span> <span class='fl'>FALSE</span>))
+<span class='co'># }</span><div class='input'>
+</div></code></pre></div>
+
+

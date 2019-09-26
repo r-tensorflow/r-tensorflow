@@ -1,0 +1,69 @@
+---
+title: "A dataset consisting of the results from a SQL query"
+type: docs
+repo: https://github.com/rstudio/tfdatasets
+menu:
+  main:
+    name: "A dataset consisting of the results from a SQL query - tfdatasets"
+    parent: tfdatasets-reference
+---
+    
+    
+    <p>A dataset consisting of the results from a SQL query</p>
+    
+
+    <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>sql_record_spec</span>(<span class='no'>names</span>, <span class='no'>types</span>)
+
+<span class='fu'>sql_dataset</span>(<span class='no'>driver_name</span>, <span class='no'>data_source_name</span>, <span class='no'>query</span>, <span class='no'>record_spec</span>)
+
+<span class='fu'>sqlite_dataset</span>(<span class='no'>filename</span>, <span class='no'>query</span>, <span class='no'>record_spec</span>)</code></pre></div>
+    
+    <h2 id="arguments">Arguments</h2>
+    <table class="ref-arguments">
+    
+    <colgroup>
+      <col class="name" />
+      <col class="desc" />
+    </colgroup>  
+      
+    <tr>
+      <td>names</td>
+      <td><p>Names of columns returned from the query</p></td>
+    </tr>
+    <tr>
+      <td>types</td>
+      <td><p>List of <code>tf$DType</code> objects (e.g. <code>tf$int32</code>,
+<code>tf$double</code>, <code>tf$string</code>) representing the types of the columns
+returned by the query.</p></td>
+    </tr>
+    <tr>
+      <td>driver_name</td>
+      <td><p>String containing the database type. Currently, the only
+supported value is 'sqlite'.</p></td>
+    </tr>
+    <tr>
+      <td>data_source_name</td>
+      <td><p>String containing a connection string to connect to
+the database.</p></td>
+    </tr>
+    <tr>
+      <td>query</td>
+      <td><p>String containing the SQL query to execute.</p></td>
+    </tr>
+    <tr>
+      <td>record_spec</td>
+      <td><p>Names and types of database columns</p></td>
+    </tr>
+    <tr>
+      <td>filename</td>
+      <td><p>Filename for the database</p></td>
+    </tr>
+    </table>
+    
+    <h2 id="value">Value</h2>
+
+    <p>A dataset</p>
+    
+
+
+

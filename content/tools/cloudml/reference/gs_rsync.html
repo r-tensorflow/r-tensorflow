@@ -1,0 +1,79 @@
+---
+title: "Synchronize content of two buckets/directories"
+type: docs
+repo: https://github.com/rstudio/cloudml
+menu:
+  main:
+    name: "Synchronize content of two buckets/directories - cloudml"
+    parent: cloudml-reference
+---
+    
+    
+    <p>The <code>gs_rsync</code> function makes the contents under <code>destination</code> the same
+as the contents under <code>source</code>, by copying any missing files/objects (or
+those whose data has changed), and (if the <code>delete</code> option is specified)
+deleting any extra files/objects. <code>source</code> must specify a directory, bucket,
+or bucket subdirectory.</p>
+    
+
+    <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>gs_rsync</span>(<span class='no'>source</span>, <span class='no'>destination</span>, <span class='kw'>delete</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>recursive</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
+  <span class='kw'>parallel</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>dry_run</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>options</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>echo</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</code></pre></div>
+    
+    <h2 id="arguments">Arguments</h2>
+    <table class="ref-arguments">
+    
+    <colgroup>
+      <col class="name" />
+      <col class="desc" />
+    </colgroup>  
+      
+    <tr>
+      <td>source</td>
+      <td><p>The file to be copied. This can be either a path on the local
+filesystem, or a Google Storage URI (e.g. <code>gs://[BUCKET_NAME]/[FILENAME.CSV]</code>).</p></td>
+    </tr>
+    <tr>
+      <td>destination</td>
+      <td><p>The location where the <code>source</code> file should be copied to. This can be
+either a path on the local filesystem, or a Google Storage URI (e.g.
+<code>gs://[BUCKET_NAME]/[FILENAME.CSV]</code>).</p></td>
+    </tr>
+    <tr>
+      <td>delete</td>
+      <td><p>Delete extra files under <code>destination</code> not found under
+<code>source</code> By default extra files are not deleted.</p></td>
+    </tr>
+    <tr>
+      <td>recursive</td>
+      <td><p>Causes directories, buckets, and bucket subdirectories to
+be synchronized recursively. If you neglect to use this option
+<code>gs_rsync()</code> will make only the top-level directory in the source and
+destination URLs match, skipping any sub-directories.</p></td>
+    </tr>
+    <tr>
+      <td>parallel</td>
+      <td><p>Causes synchronization to run in parallel. This can
+significantly improve performance if you are performing operations on a
+large number of files over a reasonably fast network connection.</p></td>
+    </tr>
+    <tr>
+      <td>dry_run</td>
+      <td><p>Causes rsync to run in "dry run" mode, i.e., just outputting
+what would be copied or deleted without actually doing any
+copying/deleting.</p></td>
+    </tr>
+    <tr>
+      <td>options</td>
+      <td><p>Character vector of additional command line options to the
+gsutil rsync command (as specified at
+<a href='https://cloud.google.com/storage/docs/gsutil/commands/rsync'>https://cloud.google.com/storage/docs/gsutil/commands/rsync</a>).</p></td>
+    </tr>
+    <tr>
+      <td>echo</td>
+      <td><p>Echo command output to console.</p></td>
+    </tr>
+    </table>
+    
+
+
+

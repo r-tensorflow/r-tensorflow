@@ -1,0 +1,50 @@
+---
+title: Tools
+type: docs
+menu:
+  main:
+    name: "Overview"
+    identifier: "tools-overview"
+    parent: "tools-top"
+    weight: 10
+---
+
+
+
+<p>The R interface to TensorFlow encompasses several packages each of which provide a different interface to the core TensorFlow engine. Several tools are available which can be used with any of these interfaces:</p>
+<table>
+<colgroup>
+<col width="19%">
+<col width="80%">
+</colgroup>
+<tbody>
+<tr class="odd">
+<td><a href="gpu.html">GPUs<br><img class="nav-image" src="images/gpu-illustration.png" width="64/"></a></td>
+<td>It’s highly recommended, although not strictly necessary, that you run deep-learning code on a modern NVIDIA GPU. Some applications – in particular, image processing with convolutional networks and sequence processing with recurrent neural networks – will be excruciatingly slow on CPU, even a fast multicore CPU. This section describes the various options for using GPUs.</td>
+</tr>
+<tr class="even">
+<td><a href="cloudml/articles/getting_started.html">CloudML<br><img class="nav-image" src="images/cloud-ml-illustration.png" width="64/"></a></td>
+<td>The cloudml package provides an R interface to <a href="https://cloud.google.com/ml-engine/">Google Cloud Machine Learning Engine</a>, a managed service that provides on-demand access to training on GPUs, hyperparameter tuning to optmize key attributes of model architectures, and deployment of trained models to the Google global prediction platform that can support thousands of users and TBs of data.</td>
+</tr>
+<tr class="odd">
+<td><a href="training_flags.html">Training Flags<br><img class="nav-image" src="images/training-flags-illustration.png" width="64/"></a></td>
+<td>Tuning a model often requires exploring the impact of changes to many hyperparameters. The best way to approach this is generally not to progressively change your source code, but rather to define external flags for key parameters which you may want to vary. The <code>flags()</code> function provides a flexible mechanism for defining flags and varying them across training runs.</td>
+</tr>
+<tr class="even">
+<td><a href="tfruns/articles/overview.html">Training Runs<br><img class="nav-image" src="images/training-runs-illustration.png" width="64/"></a></td>
+<td>The tfruns package provides a suite of tools for tracking and managing TensorFlow training runs and experiments from R. Track the hyperparameters, metrics, output, and source code of every training run, visualize the results of individual runs and comparisons between runs.</td>
+</tr>
+<tr class="odd">
+<td><a href="tensorboard.html">TensorBoard<br><img class="nav-image" src="images/tensor-board-illustration.png" width="64/"></a></td>
+<td>The computations you’ll use TensorFlow for - like training a massive deep neural network - can be complex and confusing. To make it easier to understand, debug, and optimize TensorFlow programs, a suite of visualization tools called TensorBoard is available. You can use TensorBoard to visualize your TensorFlow graph, plot quantitative metrics about the execution of your graph, and show additional data like images that pass through it.</td>
+</tr>
+<tr class="even">
+<td><a href="tfdatasets/articles/introduction.html">Datasets API<br><img class="nav-image" src="images/dataset-illustration.png" width="64/"></a></td>
+<td>The TensorFlow Dataset API provides various facilities for creating scalable input pipelines for TensorFlow. Input from text-delimited, fixed-length, and TFRecord files is supported. Reading and transforming data are TensorFlow graph operations, so are executed in C++ and in parallel with model training.</td>
+</tr>
+<tr class="odd">
+<td><a href="tfdeploy/articles/introduction.html">Deployment<br><img class="nav-image" src="images/deploy-illustration.png" width="64/"></a></td>
+<td>While TensorFlow models are typically defined and trained using R or Python code, it is possible to deploy TensorFlow models in a wide variety of environments without any runtime dependency on R or Python. The tfdeploy package includes a variety of tools designed to make exporting and serving TensorFlow models straightforward.</td>
+</tr>
+</tbody>
+</table>

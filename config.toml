@@ -1,0 +1,182 @@
+baseURL = "/"
+languageCode = "en-us"
+title = "TensorFlow for R"
+theme = "rstudio-docs-theme"
+metadataformat = "yaml"
+uglyURLs = true
+ignoreFiles = ["\\.Rmd$", "_files$", "_cache$"]
+preserveTaxonomyNames = true
+
+disqusShortname = "r-tensorflow"
+
+[permalinks]
+  post = "/:year/:month/:day/:slug/"
+
+[params]
+	# General information
+	author = "J.J. Allaire"
+	description = "Documentation for the TensorFlow for R interface"
+	copyright = "Copyright 2017, RStudio, Inc."
+	repo = "https://github.com/rstudio/tensorflow"
+
+[[menu.main]]
+	name   = "Home"
+	url    = "/"
+	identifier = "home-top"
+	weight = 10
+
+# Keras Navigational Menus
+
+[[menu.main]]
+	name   = "Keras"
+	url    = "/keras/"
+	identifier = "keras-top"
+	weight = 20
+
+[[menu.main]]
+  name = "Getting Started"
+  url    = "/keras/"
+  identifier = "keras-getting-started"
+  parent = "keras-top"
+  weight = 10
+
+[[menu.main]]
+  name = "Using Keras"
+  url    = "/keras/articles/guide_keras.html"
+  identifier = "keras-using-keras"
+  parent = "keras-top"
+  weight = 20
+  
+[[menu.main]]
+  name = "Advanced"
+  url    = "/keras/articles/about_keras_models.html"
+  identifier = "keras-advanced"
+  parent = "keras-top"
+  weight = 30
+
+
+# Estimators Navigational Menus
+
+[[menu.main]]
+	name   = "Estimators"
+	url    = "/tfestimators/"
+	identifier = "tfestimators-top"
+	weight = 30
+	
+[[menu.main]]
+  name = "Using Estimators"
+  url    = "/tfestimators/"
+  identifier = "tfestimators-using-tfestimators"
+  parent = "tfestimators-top"
+  weight = 10
+	
+[[menu.main]]
+  name = "Advanced"
+  url    = "/tfestimators/articles/run_hooks.html"
+  identifier = "tfestimators-advanced"
+  parent = "tfestimators-top"
+  weight = 20
+
+
+# Core Navigational Menus
+	
+[[menu.main]]
+	name   = "Core"
+	url    = "/tensorflow/"
+	identifier = "tensorflow-top"
+	weight = 40
+
+[[menu.main]]
+  name = "Using TensorFlow"
+  url    = "/tensorflow/"
+  identifier = "tensorflow-using-tensorflow"
+  parent = "tensorflow-top"
+  weight = 10
+  
+[[menu.main]]
+  name = "Tutorials"
+  url    = "/tensorflow/articles/tutorial_mnist_beginners.html"
+  identifier = "tensorflow-tutorials"
+  parent = "tensorflow-top"
+  weight = 30
+
+[[menu.main]]
+  name = "TensorBoard"
+  url    = "/tensorflow/articles/howto_summaries_and_tensorboard.html"
+  identifier = "tensorflow-tensorboard"
+  parent = "tensorflow-top"
+  weight = 40
+
+# Tools Navigational Menus
+
+[[menu.main]]
+	name   = "Tools"
+	url    = "/tools/"
+	identifier = "tools-top"
+	weight = 50	
+
+[[menu.main]]
+  name = "GPUs"
+  url    = "/tools/gpu.html"
+  identifier = "gpu-top"
+  parent = "tools-top"
+  weight = 20
+
+[[menu.main]]
+  name = "CloudML"
+  url    = "/tools/cloudml/articles/getting_started.html"
+  identifier = "tools-cloudml"
+  parent = "gpu-top"
+  weight = 30
+
+[[menu.main]]
+  name = "CloudML"
+  url    = "/tools/cloudml/articles/getting_started.html"
+  identifier = "cloudml-top"
+  parent = "tools-top"
+  weight = 30
+
+[[menu.main]]
+  name = "Training Runs"
+  url    = "/tools/tfruns/articles/overview.html"
+  identifier = "tfruns-top"
+  parent = "tools-top"
+  weight = 50
+
+[[menu.main]]
+  name = "Datasets API"
+  url    = "/tools/tfdatasets/articles/introduction.html"
+  identifier = "tfdatasets-top"
+  parent = "tools-top"
+  weight = 70
+
+[[menu.main]]
+  name = "Deployment"
+  url    = "/tools/tfdeploy/articles/introduction.html"
+  identifier = "tfdeploy-top"
+  parent = "tools-top"
+  weight = 80
+
+
+  
+
+
+# Learn Navigational Menus
+
+[[menu.main]]
+	name   = "Learn"
+	url    = "/learn/resources.html"
+	identifier = "learn-top"
+	weight = 60	
+
+# Blog Menu
+	
+[[menu.main]]
+  name   = "Blog"
+  url    = "/blog.html"
+  identifier = "blog"
+  weight = 70	
+	
+
+  
+

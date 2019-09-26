@@ -1,0 +1,29 @@
+---
+title: "All dims"
+type: docs
+repo: https://github.com/rstudio/tensorflow
+menu:
+  main:
+    name: "All dims - tensorflow"
+    parent: tensorflow-reference
+---
+    
+    
+    <p>This function returns an object that can be used when subsetting tensors with
+<code>[</code>. If you are familiar with python,, this is equivalent to the python Ellipsis
+<code>...</code>, (not to be confused with <code>...</code> in <code>R</code>).</p>
+    
+
+    <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>all_dims</span>()</code></pre></div>
+        
+
+    <h2 id="examples">Examples</h2>
+    <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class='co'># NOT RUN {</span>
+<span class='co'># in python, if x is a numpy array or tensorflow tensor</span>
+<span class='no'>x</span>[<span class='no'>...</span>, <span class='no'>i</span>]
+<span class='co'># the ellipsis means "expand to match number of dimension of x".</span>
+<span class='co'># to translate the above python expression to R, write:</span>
+<span class='no'>x</span>[<span class='fu'>all_dims</span>(), <span class='no'>i</span>]
+<span class='co'># }</span></code></pre></div>
+
+

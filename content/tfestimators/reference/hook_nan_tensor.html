@@ -1,0 +1,50 @@
+---
+title: "NaN Loss Monitor"
+type: docs
+repo: https://github.com/rstudio/tfestimators
+menu:
+  main:
+    name: "NaN Loss Monitor - tfestimators"
+    parent: tfestimators-reference
+---
+    
+    
+    <p>Monitors loss and stops training if loss is NaN. Can either fail with
+exception or just stop training.</p>
+    
+
+    <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>hook_nan_tensor</span>(<span class='no'>loss_tensor</span>, <span class='kw'>fail_on_nan_loss</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</code></pre></div>
+    
+    <h2 id="arguments">Arguments</h2>
+    <table class="ref-arguments">
+    
+    <colgroup>
+      <col class="name" />
+      <col class="desc" />
+    </colgroup>  
+      
+    <tr>
+      <td>loss_tensor</td>
+      <td><p>The loss tensor.</p></td>
+    </tr>
+    <tr>
+      <td>fail_on_nan_loss</td>
+      <td><p>A boolean indicating whether to raise exception when loss is NaN.</p></td>
+    </tr>
+    </table>
+    
+    <h2 id="see-also">See also</h2>
+
+    <div class='dont-index'><p>Other session_run_hook wrappers: <code><a href='hook_checkpoint_saver.html'>hook_checkpoint_saver</a></code>,
+  <code><a href='hook_global_step_waiter.html'>hook_global_step_waiter</a></code>,
+  <code><a href='hook_history_saver.html'>hook_history_saver</a></code>,
+  <code><a href='hook_logging_tensor.html'>hook_logging_tensor</a></code>,
+  <code><a href='hook_progress_bar.html'>hook_progress_bar</a></code>,
+  <code><a href='hook_step_counter.html'>hook_step_counter</a></code>,
+  <code><a href='hook_stop_at_step.html'>hook_stop_at_step</a></code>,
+  <code><a href='hook_summary_saver.html'>hook_summary_saver</a></code>,
+  <code><a href='session_run_hook.html'>session_run_hook</a></code></p></div>
+    
+
+
+

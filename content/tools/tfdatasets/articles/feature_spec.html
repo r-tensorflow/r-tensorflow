@@ -1,0 +1,203 @@
+---
+title: "Feature Spec interface"
+output: 
+  rmarkdown::html_vignette: default
+vignette: >
+  %\VignetteIndexEntry{Feature Spec Interface}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+type: docs
+repo: https://github.com/rstudio/tfdatasets
+menu:
+  main:
+    name: "Feature Spec interface"
+    identifier: "feature-spec"
+    parent: "tfdatasets-top"
+    weight: 20
+aliases:
+  - /tools/tfdatasets/feature-spec
+---
+
+
+
+<div id="overview" class="section level2">
+<h2>Overview</h2>
+<p>In this document we will demonstrate the basic usage of the <code>feature_spec</code> interface
+in <code>tfdatasets</code>.</p>
+<p>The <code>feature_spec</code> interface is a user friendly interface to <a href="https://www.tensorflow.org/versions/r2.0/api_docs/python/tf/feature_column"><code>feature_columns</code></a>.
+It allows us to specify column transformations and representations when working with
+structured data.</p>
+<p>We will use the <code>hearts</code> dataset and it can be loaded with <code><a href="https://www.rdocumentation.org/packages/utils/topics/data">data(hearts)</a></code>.</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(tfdatasets)
+<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(dplyr)</code></pre>
+<pre><code>## 
+## Attaching package: 'dplyr'</code></pre>
+<pre><code>## The following objects are masked from 'package:stats':
+## 
+##     filter, lag</code></pre>
+<pre><code>## The following objects are masked from 'package:base':
+## 
+##     intersect, setdiff, setequal, union</code></pre>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="https://www.rdocumentation.org/packages/utils/topics/data">data</a></span>(hearts)</code></pre>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="https://www.rdocumentation.org/packages/utils/topics/head">head</a></span>(hearts)</code></pre>
+<pre><code>## # A tibble: 6 x 14
+##     age   sex    cp trestbps  chol   fbs restecg thalach exang oldpeak
+##   &lt;int&gt; &lt;int&gt; &lt;int&gt;    &lt;int&gt; &lt;int&gt; &lt;int&gt;   &lt;int&gt;   &lt;int&gt; &lt;int&gt;   &lt;dbl&gt;
+## 1    63     1     1      145   233     1       2     150     0     2.3
+## 2    67     1     4      160   286     0       2     108     1     1.5
+## 3    67     1     4      120   229     0       2     129     1     2.6
+## 4    37     1     3      130   250     0       0     187     0     3.5
+## 5    41     0     2      130   204     0       2     172     0     1.4
+## 6    56     1     2      120   236     0       0     178     0     0.8
+## # … with 4 more variables: slope &lt;int&gt;, ca &lt;int&gt;, thal &lt;chr&gt;, target &lt;int&gt;</code></pre>
+<p>We want to train a model to predict the <code>target</code> variable using Keras but, before
+that we need to prepare the data. We need to transform the categorical variables
+into some form of dense variable, we usually want to normalize all numeric columns too.</p>
+<p>The feature spec interface works with <code>data.frame</code>s or TensorFlow datasets objects.</p>
+<pre class="sourceCode r"><code class="sourceCode r">ids_train &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/sample">sample.int</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/nrow">nrow</a></span>(hearts), <span class="dt">size =</span> <span class="fl">0.75</span><span class="op">*</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/nrow">nrow</a></span>(hearts))
+hearts_train &lt;-<span class="st"> </span>hearts[ids_train,]
+hearts_test &lt;-<span class="st"> </span>hearts[<span class="op">-</span>ids_train,]</code></pre>
+<p>Now let’s start creating our feature specification:</p>
+<pre class="sourceCode r"><code class="sourceCode r">spec &lt;-<span class="st"> </span><span class="kw"><a href="../../../tools/tfdatasets/reference/feature_spec.html">feature_spec</a></span>(hearts_train, target <span class="op">~</span><span class="st"> </span>.)</code></pre>
+<p>The first thing we need to do after creating the feature_spec is decide on the variables’ types.</p>
+<p>We can do this by adding steps to the <code>spec</code> object.</p>
+<pre class="sourceCode r"><code class="sourceCode r">spec &lt;-<span class="st"> </span>spec <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw"><a href="../../../tools/tfdatasets/reference/step_numeric_column.html">step_numeric_column</a></span>(
+    <span class="kw"><a href="../../../tools/tfdatasets/reference/all_numeric.html">all_numeric</a></span>(), <span class="op">-</span>cp, <span class="op">-</span>restecg, <span class="op">-</span>exang, <span class="op">-</span>sex, <span class="op">-</span>fbs,
+    <span class="dt">normalizer_fn =</span> <span class="kw"><a href="../../../tools/tfdatasets/reference/scaler_standard.html">scaler_standard</a></span>()
+  ) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw"><a href="../../../tools/tfdatasets/reference/step_categorical_column_with_vocabulary_list.html">step_categorical_column_with_vocabulary_list</a></span>(thal)</code></pre>
+<p>The following steps can be used to define the variable type:</p>
+<ul>
+<li>
+<code>step_numeric_column</code> to define numeric variables</li>
+<li>
+<code>step_categorical_with_vocabulary_list</code> for categorical variables with a fixed vocabulary</li>
+<li>
+<code>step_categorical_column_with_hash_bucket</code> for categorical variables using the hash trick</li>
+<li>
+<code>step_categorical_column_with_identity</code> to store categorical variables as integers</li>
+<li>
+<code>step_categorical_column_with_vocabulary_file</code> when you have the possible vocabulary in a file</li>
+</ul>
+<p>When using <code>step_categorical_column_with_vocabulary_list</code> you can also provide a <code>vocabulary</code> argument
+with the fixed vocabulary. The recipe will find all the unique values in the dataset and use it
+as the vocabulary.</p>
+<p>You can also specify a <code>normalizer_fn</code> to the <code>step_numeric_column</code>. In this case the variable will be
+transformed by the feature column. Note that the transformation will occur in the TensorFlow Graph,
+so it must use only TensorFlow ops. Like in the example we offer pre-made normalizers - and they will
+compute the normalizing function during the recipe preparation.</p>
+<p>You can also use selectors like:</p>
+<ul>
+<li>
+<code><a href="../../../tools/tfdatasets/reference/reexports.html">starts_with()</a></code>, <code><a href="../../../tools/tfdatasets/reference/reexports.html">ends_with()</a></code>, <code><a href="../../../tools/tfdatasets/reference/reexports.html">matches()</a></code> etc. (from tidyselect)</li>
+<li>
+<code><a href="../../../tools/tfdatasets/reference/all_numeric.html">all_numeric()</a></code> to select all numeric variables</li>
+<li>
+<code><a href="../../../tools/tfdatasets/reference/all_nominal.html">all_nominal()</a></code> to select all strings</li>
+<li>
+<code><a href="../../../tools/tfdatasets/reference/has_type.html">has_type("float32")</a></code> to select based on TensorFlow variable type.</li>
+</ul>
+<p>Now we can print the recipe:</p>
+<pre class="sourceCode r"><code class="sourceCode r">spec</code></pre>
+<pre><code>## ── Feature Spec ──────────────────────────────────────────────────────────────────────────────────────────── 
+## A feature_spec with 8 steps.
+## Fitted: FALSE 
+## ── Steps ─────────────────────────────────────────────────────────────────────────────────────────────────── 
+## StepCategoricalColumnWithVocabularyList: thal 
+## StepNumericColumn: slope, trestbps, thalach, age, chol, oldpeak, ca 
+## ── Dense features ────────────────────────────────────────────────────────────────────────────────────────── 
+## Feature spec must be fitted before we can detect the dense features.</code></pre>
+<p>After specifying the types of the columns you can add transformation steps.
+For example you may want to bucketize a numeric column:</p>
+<pre class="sourceCode r"><code class="sourceCode r">spec &lt;-<span class="st"> </span>spec <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw"><a href="../../../tools/tfdatasets/reference/step_bucketized_column.html">step_bucketized_column</a></span>(age, <span class="dt">boundaries =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="dv">18</span>, <span class="dv">25</span>, <span class="dv">30</span>, <span class="dv">35</span>, <span class="dv">40</span>, <span class="dv">45</span>, <span class="dv">50</span>, <span class="dv">55</span>, <span class="dv">60</span>, <span class="dv">65</span>))</code></pre>
+<p>You can also specify the kind of numeric representation that you want to use for
+your categorical variables.</p>
+<pre class="sourceCode r"><code class="sourceCode r">spec &lt;-<span class="st"> </span>spec <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw"><a href="../../../tools/tfdatasets/reference/step_indicator_column.html">step_indicator_column</a></span>(thal) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw"><a href="../../../tools/tfdatasets/reference/step_embedding_column.html">step_embedding_column</a></span>(thal, <span class="dt">dimension =</span> <span class="dv">2</span>)</code></pre>
+<p>Another common transformation is to add interactions between variables using crossed
+columns.</p>
+<pre class="sourceCode r"><code class="sourceCode r">spec &lt;-<span class="st"> </span>spec <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw"><a href="../../../tools/tfdatasets/reference/step_crossed_column.html">step_crossed_column</a></span>(<span class="dt">thal_and_age =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(thal, bucketized_age), <span class="dt">hash_bucket_size =</span> <span class="dv">1000</span>) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw"><a href="../../../tools/tfdatasets/reference/step_indicator_column.html">step_indicator_column</a></span>(thal_and_age)</code></pre>
+<p>Note that the <code>crossed_column</code> is a categorical column, so we need to also specify what
+kind of numeric tranformation we want to use. Also note that we can name the transformed
+variables - each step uses a default naming for columns, eg. <code>bucketized_age</code> is the
+default name when you use <code>step_bucketized_column</code> with column called <code>age</code>.</p>
+<p>With the above code we have created our recipe. Note we can also define the
+recipe by chaining a sequence of methods:</p>
+<pre class="sourceCode r"><code class="sourceCode r">spec &lt;-<span class="st"> </span><span class="kw"><a href="../../../tools/tfdatasets/reference/feature_spec.html">feature_spec</a></span>(hearts_train, target <span class="op">~</span><span class="st"> </span>.) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw"><a href="../../../tools/tfdatasets/reference/step_numeric_column.html">step_numeric_column</a></span>(
+    <span class="kw"><a href="../../../tools/tfdatasets/reference/all_numeric.html">all_numeric</a></span>(), <span class="op">-</span>cp, <span class="op">-</span>restecg, <span class="op">-</span>exang, <span class="op">-</span>sex, <span class="op">-</span>fbs,
+    <span class="dt">normalizer_fn =</span> <span class="kw"><a href="../../../tools/tfdatasets/reference/scaler_standard.html">scaler_standard</a></span>()
+  ) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw"><a href="../../../tools/tfdatasets/reference/step_categorical_column_with_vocabulary_list.html">step_categorical_column_with_vocabulary_list</a></span>(thal) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw"><a href="../../../tools/tfdatasets/reference/step_bucketized_column.html">step_bucketized_column</a></span>(age, <span class="dt">boundaries =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="dv">18</span>, <span class="dv">25</span>, <span class="dv">30</span>, <span class="dv">35</span>, <span class="dv">40</span>, <span class="dv">45</span>, <span class="dv">50</span>, <span class="dv">55</span>, <span class="dv">60</span>, <span class="dv">65</span>)) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw"><a href="../../../tools/tfdatasets/reference/step_indicator_column.html">step_indicator_column</a></span>(thal) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw"><a href="../../../tools/tfdatasets/reference/step_embedding_column.html">step_embedding_column</a></span>(thal, <span class="dt">dimension =</span> <span class="dv">2</span>) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw"><a href="../../../tools/tfdatasets/reference/step_crossed_column.html">step_crossed_column</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(thal, bucketized_age), <span class="dt">hash_bucket_size =</span> <span class="dv">10</span>) <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw"><a href="../../../tools/tfdatasets/reference/step_indicator_column.html">step_indicator_column</a></span>(crossed_thal_bucketized_age)</code></pre>
+<p>After defining the recipe we need to <code>fit</code> it. It’s when fitting that we compute the vocabulary
+list for categorical variables or find the mean and standard deviation for the normalizing functions.
+Fitting involves evaluating the full dataset, so if you have provided the vocabulary list and
+your columns are already normalized you can skip the fitting step (TODO).</p>
+<p>In our case, we will fit the feature spec, since we didn’t specify the vocabulary list
+for the categorical variables.</p>
+<pre class="sourceCode r"><code class="sourceCode r">spec_prep &lt;-<span class="st"> </span><span class="kw"><a href="../../../tools/tfdatasets/reference/reexports.html">fit</a></span>(spec)</code></pre>
+<p>After preparing we can see the list of dense features that were defined:</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="https://www.rdocumentation.org/packages/utils/topics/str">str</a></span>(spec_prep<span class="op">$</span><span class="kw"><a href="../../../tools/tfdatasets/reference/dense_features.html">dense_features</a></span>())</code></pre>
+<pre><code>## List of 11
+##  $ slope                                :NumericColumn(key='slope', shape=(1,), default_value=None, dtype=tf.float32, normalizer_fn=&lt;function python_function at 0x13437ca28&gt;)
+##  $ trestbps                             :NumericColumn(key='trestbps', shape=(1,), default_value=None, dtype=tf.float32, normalizer_fn=&lt;function python_function at 0x13437cc08&gt;)
+##  $ thalach                              :NumericColumn(key='thalach', shape=(1,), default_value=None, dtype=tf.float32, normalizer_fn=&lt;function python_function at 0x13437cb18&gt;)
+##  $ age                                  :NumericColumn(key='age', shape=(1,), default_value=None, dtype=tf.float32, normalizer_fn=&lt;function python_function at 0x134444ed8&gt;)
+##  $ chol                                 :NumericColumn(key='chol', shape=(1,), default_value=None, dtype=tf.float32, normalizer_fn=&lt;function python_function at 0x134444e60&gt;)
+##  $ oldpeak                              :NumericColumn(key='oldpeak', shape=(1,), default_value=None, dtype=tf.float32, normalizer_fn=&lt;function python_function at 0x134444de8&gt;)
+##  $ ca                                   :NumericColumn(key='ca', shape=(1,), default_value=None, dtype=tf.float32, normalizer_fn=&lt;function python_function at 0x134444f50&gt;)
+##  $ bucketized_age                       :BucketizedColumn(source_column=NumericColumn(key='age', shape=(1,), default_value=None, dtype=tf.float32, normalizer_fn=&lt;function python_function at 0x134444ed8&gt;), boundaries=(18.0, 25.0, 30.0, 35.0, 40.0, 45.0, 50.0, 55.0, 60.0, 65.0))
+##  $ indicator_thal                       :IndicatorColumn(categorical_column=VocabularyListCategoricalColumn(key='thal', vocabulary_list=('1', '2', 'fixed', 'normal', 'reversible'), dtype=tf.string, default_value=-1, num_oov_buckets=0))
+##  $ embedding_thal                       :EmbeddingColumn(categorical_column=VocabularyListCategoricalColumn(key='thal', vocabulary_list=('1', '2', 'fixed', 'normal', 'reversible'), dtype=tf.string, default_value=-1, num_oov_buckets=0), dimension=2.0, combiner='mean', initializer=&lt;tensorflow.python.ops.init_ops.TruncatedNormal&gt;, ckpt_to_load_from=None, tensor_name_in_ckpt=None, max_norm=None, trainable=True)
+##  $ indicator_crossed_thal_bucketized_age:IndicatorColumn(categorical_column=CrossedColumn(keys=(VocabularyListCategoricalColumn(key='thal', vocabulary_list=('1', '2', 'fixed', 'normal', 'reversible'), dtype=tf.string, default_value=-1, num_oov_buckets=0), BucketizedColumn(source_column=NumericColumn(key='age', shape=(1,), default_value=None, dtype=tf.float32, normalizer_fn=&lt;function python_function at 0x134444ed8&gt;), boundaries=(18.0, 25.0, 30.0, 35.0, 40.0, 45.0, 50.0, 55.0, 60.0, 65.0))), hash_bucket_size=10.0, hash_key=None))</code></pre>
+<p>Now we are ready to define our model in Keras. We will use a specialized <code>layer_dense_features</code> that
+knows what to do with the feature columns specification.</p>
+<p>We also use a new <code>layer_input_from_dataset</code> that is useful to create a Keras input object copying the structure from a <code>data.frame</code> or TensorFlow dataset.</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(keras)
+
+input &lt;-<span class="st"> </span><span class="kw"><a href="../../../tools/tfdatasets/reference/layer_input_from_dataset.html">layer_input_from_dataset</a></span>(hearts_train <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span>(<span class="op">-</span>target))
+
+output &lt;-<span class="st"> </span>input <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw"><a href="../../../keras/reference/layer_dense_features.html">layer_dense_features</a></span>(<span class="kw"><a href="../../../tools/tfdatasets/reference/dense_features.html">dense_features</a></span>(spec_prep)) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw"><a href="../../../keras/reference/layer_dense.html">layer_dense</a></span>(<span class="dt">units =</span> <span class="dv">32</span>, <span class="dt">activation =</span> <span class="st">"relu"</span>) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw"><a href="../../../keras/reference/layer_dense.html">layer_dense</a></span>(<span class="dt">units =</span> <span class="dv">1</span>, <span class="dt">activation =</span> <span class="st">"sigmoid"</span>)
+
+model &lt;-<span class="st"> </span><span class="kw"><a href="../../../keras/reference/keras_model.html">keras_model</a></span>(input, output)
+
+model <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../../../keras/reference/reexports.html">compile</a></span>(
+  <span class="dt">loss =</span> loss_binary_crossentropy, 
+  <span class="dt">optimizer =</span> <span class="st">"adam"</span>, 
+  <span class="dt">metrics =</span> <span class="st">"binary_accuracy"</span>
+)</code></pre>
+<p>We can finally train the model on the dataset:</p>
+<pre class="sourceCode r"><code class="sourceCode r">history &lt;-<span class="st"> </span>model <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw"><a href="../../../keras/reference/reexports.html">fit</a></span>(
+    <span class="dt">x =</span> hearts_train <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span>(<span class="op">-</span>target),
+    <span class="dt">y =</span> hearts_train<span class="op">$</span>target, 
+    <span class="dt">epochs =</span> <span class="dv">15</span>, 
+    <span class="dt">validation_split =</span> <span class="fl">0.2</span>
+  )
+
+<span class="kw"><a href="https://www.rdocumentation.org/packages/graphics/topics/plot">plot</a></span>(history)</code></pre>
+<pre><code>## Registered S3 methods overwritten by 'ggplot2':
+##   method         from 
+##   [.quosures     rlang
+##   c.quosures     rlang
+##   print.quosures rlang</code></pre>
+<p><img src="/tools/tfdatasets/articles/feature_spec_files/figure-html/unnamed-chunk-14-1.png" width="672"></p>
+<p>Finally we can make predictions in the test set and calculate performance
+metrics like the AUC of the ROC curve:</p>
+<pre class="sourceCode r"><code class="sourceCode r">hearts_test<span class="op">$</span>pred &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/stats/topics/predict">predict</a></span>(model, hearts_test)
+Metrics<span class="op">::</span><span class="kw"><a href="https://www.rdocumentation.org/packages/Metrics/topics/auc">auc</a></span>(hearts_test<span class="op">$</span>target, hearts_test<span class="op">$</span>pred)</code></pre>
+<pre><code>## [1] 0.93</code></pre>
+</div>

@@ -1,0 +1,75 @@
+---
+title: imdb_lstm
+type: docs
+repo: https://github.com/rstudio/keras
+menu:
+  main:
+    parent: keras-examples
+---
+
+
+
+<div class="source-ref">
+<p><span class="caption">Source: </span><a href="https://github.com/rstudio/keras/blob/master/vignettes/examples/imdb_lstm.R" class="uri">https://github.com/rstudio/keras/blob/master/vignettes/examples/imdb_lstm.R</a></p>
+</div>
+<p>Trains a LSTM on the IMDB sentiment classification task.</p>
+<p>The dataset is actually too small for LSTM to be of any advantage compared to
+simpler, much faster methods such as TF-IDF + LogReg.</p>
+<p>Notes:
+- RNNs are tricky. Choice of batch size is important, choice of loss and
+optimizer is critical, etc. Some configurations won’t converge.
+- LSTM loss decrease patterns during training can be quite different from
+what you see with CNNs/MLPs/etc.</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(keras)
+
+max_features &lt;-<span class="st"> </span><span class="dv">20000</span>
+batch_size &lt;-<span class="st"> </span><span class="dv">32</span>
+
+<span class="co"># Cut texts after this number of words (among top max_features most common words)</span>
+maxlen &lt;-<span class="st"> </span><span class="dv">80</span>  
+
+<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/cat">cat</a></span>(<span class="st">'Loading data...</span><span class="ch">\n</span><span class="st">'</span>)
+imdb &lt;-<span class="st"> </span><span class="kw"><a href="../../reference/dataset_imdb.html">dataset_imdb</a></span>(<span class="dt">num_words =</span> max_features)
+x_train &lt;-<span class="st"> </span>imdb<span class="op">$</span>train<span class="op">$</span>x
+y_train &lt;-<span class="st"> </span>imdb<span class="op">$</span>train<span class="op">$</span>y
+x_test &lt;-<span class="st"> </span>imdb<span class="op">$</span>test<span class="op">$</span>x
+y_test &lt;-<span class="st"> </span>imdb<span class="op">$</span>test<span class="op">$</span>y
+
+<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/cat">cat</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/length">length</a></span>(x_train), <span class="st">'train sequences</span><span class="ch">\n</span><span class="st">'</span>)
+<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/cat">cat</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/length">length</a></span>(x_test), <span class="st">'test sequences</span><span class="ch">\n</span><span class="st">'</span>)
+
+<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/cat">cat</a></span>(<span class="st">'Pad sequences (samples x time)</span><span class="ch">\n</span><span class="st">'</span>)
+x_train &lt;-<span class="st"> </span><span class="kw"><a href="../../reference/pad_sequences.html">pad_sequences</a></span>(x_train, <span class="dt">maxlen =</span> maxlen)
+x_test &lt;-<span class="st"> </span><span class="kw"><a href="../../reference/pad_sequences.html">pad_sequences</a></span>(x_test, <span class="dt">maxlen =</span> maxlen)
+<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/cat">cat</a></span>(<span class="st">'x_train shape:'</span>, <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/dim">dim</a></span>(x_train), <span class="st">'</span><span class="ch">\n</span><span class="st">'</span>)
+<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/cat">cat</a></span>(<span class="st">'x_test shape:'</span>, <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/dim">dim</a></span>(x_test), <span class="st">'</span><span class="ch">\n</span><span class="st">'</span>)
+
+<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/cat">cat</a></span>(<span class="st">'Build model...</span><span class="ch">\n</span><span class="st">'</span>)
+model &lt;-<span class="st"> </span><span class="kw"><a href="../../reference/keras_model_sequential.html">keras_model_sequential</a></span>()
+model <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw"><a href="../../reference/layer_embedding.html">layer_embedding</a></span>(<span class="dt">input_dim =</span> max_features, <span class="dt">output_dim =</span> <span class="dv">128</span>) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw"><a href="../../reference/layer_lstm.html">layer_lstm</a></span>(<span class="dt">units =</span> <span class="dv">64</span>, <span class="dt">dropout =</span> <span class="fl">0.2</span>, <span class="dt">recurrent_dropout =</span> <span class="fl">0.2</span>) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw"><a href="../../reference/layer_dense.html">layer_dense</a></span>(<span class="dt">units =</span> <span class="dv">1</span>, <span class="dt">activation =</span> <span class="st">'sigmoid'</span>)
+
+<span class="co"># Try using different optimizers and different optimizer configs</span>
+model <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../../reference/reexports.html">compile</a></span>(
+  <span class="dt">loss =</span> <span class="st">'binary_crossentropy'</span>,
+  <span class="dt">optimizer =</span> <span class="st">'adam'</span>,
+  <span class="dt">metrics =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="st">'accuracy'</span>)
+)
+
+<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/cat">cat</a></span>(<span class="st">'Train...</span><span class="ch">\n</span><span class="st">'</span>)
+model <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../../reference/reexports.html">fit</a></span>(
+  x_train, y_train,
+  <span class="dt">batch_size =</span> batch_size,
+  <span class="dt">epochs =</span> <span class="dv">15</span>,
+  <span class="dt">validation_data =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/list">list</a></span>(x_test, y_test)
+)
+
+scores &lt;-<span class="st"> </span>model <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../../reference/reexports.html">evaluate</a></span>(
+  x_test, y_test,
+  <span class="dt">batch_size =</span> batch_size
+)
+
+<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/cat">cat</a></span>(<span class="st">'Test score:'</span>, scores[[<span class="dv">1</span>]])
+<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/cat">cat</a></span>(<span class="st">'Test accuracy'</span>, scores[[<span class="dv">2</span>]])</code></pre>

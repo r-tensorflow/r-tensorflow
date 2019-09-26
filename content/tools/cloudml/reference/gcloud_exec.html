@@ -1,0 +1,49 @@
+---
+title: "Executes a Google Cloud Command"
+type: docs
+repo: https://github.com/rstudio/cloudml
+menu:
+  main:
+    name: "Executes a Google Cloud Command - cloudml"
+    parent: cloudml-reference
+---
+    
+    
+    <p>Executes a Google Cloud command with the given parameters.</p>
+    
+
+    <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>gcloud_exec</span>(<span class='no'>...</span>, <span class='kw'>args</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>echo</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>dry_run</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)</code></pre></div>
+    
+    <h2 id="arguments">Arguments</h2>
+    <table class="ref-arguments">
+    
+    <colgroup>
+      <col class="name" />
+      <col class="desc" />
+    </colgroup>  
+      
+    <tr>
+      <td>...</td>
+      <td><p>Parameters to use specified based on position.</p></td>
+    </tr>
+    <tr>
+      <td>args</td>
+      <td><p>Parameters to use specified as a list.</p></td>
+    </tr>
+    <tr>
+      <td>echo</td>
+      <td><p>Echo command output to console.</p></td>
+    </tr>
+    <tr>
+      <td>dry_run</td>
+      <td><p>Echo but not execute the command?</p></td>
+    </tr>
+    </table>
+    
+
+    <h2 id="examples">Examples</h2>
+    <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class='co'># NOT RUN {</span>
+<span class='fu'>gcloud_exec</span>(<span class='st'>"help"</span>, <span class='st'>"info"</span>)
+<span class='co'># }</span></code></pre></div>
+
+

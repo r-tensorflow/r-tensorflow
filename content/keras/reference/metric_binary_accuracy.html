@@ -1,0 +1,137 @@
+---
+title: "Model performance metrics"
+type: docs
+repo: https://github.com/rstudio/keras
+menu:
+  main:
+    name: "Model performance metrics - keras"
+    parent: keras-reference
+---
+    
+    
+    <p>Model performance metrics</p>
+    
+
+    <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>metric_binary_accuracy</span>(<span class='no'>y_true</span>, <span class='no'>y_pred</span>)
+
+<span class='fu'>metric_binary_crossentropy</span>(<span class='no'>y_true</span>, <span class='no'>y_pred</span>)
+
+<span class='fu'>metric_categorical_accuracy</span>(<span class='no'>y_true</span>, <span class='no'>y_pred</span>)
+
+<span class='fu'>metric_categorical_crossentropy</span>(<span class='no'>y_true</span>, <span class='no'>y_pred</span>)
+
+<span class='fu'>metric_cosine_proximity</span>(<span class='no'>y_true</span>, <span class='no'>y_pred</span>)
+
+<span class='fu'>metric_hinge</span>(<span class='no'>y_true</span>, <span class='no'>y_pred</span>)
+
+<span class='fu'>metric_kullback_leibler_divergence</span>(<span class='no'>y_true</span>, <span class='no'>y_pred</span>)
+
+<span class='fu'>metric_mean_absolute_error</span>(<span class='no'>y_true</span>, <span class='no'>y_pred</span>)
+
+<span class='fu'>metric_mean_absolute_percentage_error</span>(<span class='no'>y_true</span>, <span class='no'>y_pred</span>)
+
+<span class='fu'>metric_mean_squared_error</span>(<span class='no'>y_true</span>, <span class='no'>y_pred</span>)
+
+<span class='fu'>metric_mean_squared_logarithmic_error</span>(<span class='no'>y_true</span>, <span class='no'>y_pred</span>)
+
+<span class='fu'>metric_poisson</span>(<span class='no'>y_true</span>, <span class='no'>y_pred</span>)
+
+<span class='fu'>metric_sparse_categorical_crossentropy</span>(<span class='no'>y_true</span>, <span class='no'>y_pred</span>)
+
+<span class='fu'>metric_squared_hinge</span>(<span class='no'>y_true</span>, <span class='no'>y_pred</span>)
+
+<span class='fu'>metric_top_k_categorical_accuracy</span>(<span class='no'>y_true</span>, <span class='no'>y_pred</span>, <span class='kw'>k</span> <span class='kw'>=</span> <span class='fl'>5</span>)
+
+<span class='fu'>metric_sparse_top_k_categorical_accuracy</span>(<span class='no'>y_true</span>, <span class='no'>y_pred</span>, <span class='kw'>k</span> <span class='kw'>=</span> <span class='fl'>5</span>)
+
+<span class='fu'>custom_metric</span>(<span class='no'>name</span>, <span class='no'>metric_fn</span>)</code></pre></div>
+    
+    <h2 id="arguments">Arguments</h2>
+    <table class="ref-arguments">
+    
+    <colgroup>
+      <col class="name" />
+      <col class="desc" />
+    </colgroup>  
+      
+    <tr>
+      <td>y_true</td>
+      <td><p>True labels (tensor)</p></td>
+    </tr>
+    <tr>
+      <td>y_pred</td>
+      <td><p>Predictions (tensor of the same shape as y_true).</p></td>
+    </tr>
+    <tr>
+      <td>k</td>
+      <td><p>An integer, number of top elements to consider.</p></td>
+    </tr>
+    <tr>
+      <td>name</td>
+      <td><p>Name of custom metric</p></td>
+    </tr>
+    <tr>
+      <td>metric_fn</td>
+      <td><p>Custom metric function</p></td>
+    </tr>
+    </table>
+    
+    <h2 id="note">Note</h2>
+
+    <p>Metric functions are to be supplied in the <code>metrics</code> parameter of the
+<code><a href='compile.keras.engine.training.Model.html'>compile.keras.engine.training.Model()</a></code> function.</p>
+    
+    <h2 id="custom-metrics">Custom Metrics</h2>
+
+    
+    <p>You can provide an arbitrary R function as a custom metric. Note that
+the <code>y_true</code> and <code>y_pred</code> parameters are tensors, so computations on
+them should use backend tensor functions.</p>
+<p>Use the <code>custom_metric()</code> function to define a custom metric.
+Note that a name ('mean_pred') is provided for the custom metric
+function: this name is used within training progress output.
+See below for an example.</p>
+<p>If you want to save and load a model with custom metrics, you should
+also specify the metric in the call the <code><a href='save_model_hdf5.html'>load_model_hdf5()</a></code>. For example:
+<code><a href='save_model_hdf5.html'>load_model_hdf5("my_model.h5", c('mean_pred' = metric_mean_pred))</a></code>.</p>
+<p>Alternatively, you can wrap all of your code in a call to
+<code><a href='with_custom_object_scope.html'>with_custom_object_scope()</a></code> which will allow you to refer to the
+metric by name just like you do with built in keras metrics.</p>
+<p>Documentation on the available backend tensor functions can be
+found at <a href='https://keras.rstudio.com/articles/backend.html#backend-functions'>https://keras.rstudio.com/articles/backend.html#backend-functions</a>.</p>
+    
+    <h2 id="metrics-with-parameters">Metrics with Parameters</h2>
+
+    
+    <p>To use metrics with parameters (e.g. <code>metric_top_k_categorical_accurary()</code>)
+you should create a custom metric that wraps the call with the parameter.
+See below for an example.</p>
+    
+
+    <h2 id="examples">Examples</h2>
+    <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class='co'># NOT RUN {</span>
+<span class='co'># create metric using backend tensor functions</span>
+<span class='no'>metric_mean_pred</span> <span class='kw'>&lt;-</span> <span class='fu'>custom_metric</span>(<span class='st'>"mean_pred"</span>, <span class='kw'>function</span>(<span class='no'>y_true</span>, <span class='no'>y_pred</span>) {
+  <span class='fu'><a href='k_mean.html'>k_mean</a></span>(<span class='no'>y_pred</span>)
+})
+
+<span class='no'>model</span> <span class='kw'>%&gt;%</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/generics/topics/compile'>compile</a></span>(
+  <span class='kw'>optimizer</span> <span class='kw'>=</span> <span class='fu'><a href='optimizer_rmsprop.html'>optimizer_rmsprop</a></span>(),
+  <span class='kw'>loss</span> <span class='kw'>=</span> <span class='no'>loss_binary_crossentropy</span>,
+  <span class='kw'>metrics</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='st'>'accuracy'</span>, <span class='no'>metric_mean_pred</span>)
+)
+
+<span class='co'># create custom metric to wrap metric with parameter</span>
+<span class='no'>metric_top_3_categorical_accuracy</span> <span class='kw'>&lt;-</span>
+  <span class='fu'>custom_metric</span>(<span class='st'>"top_3_categorical_accuracy"</span>, <span class='kw'>function</span>(<span class='no'>y_true</span>, <span class='no'>y_pred</span>) {
+    <span class='fu'>metric_top_k_categorical_accuracy</span>(<span class='no'>y_true</span>, <span class='no'>y_pred</span>, <span class='kw'>k</span> <span class='kw'>=</span> <span class='fl'>3</span>)
+  })
+
+<span class='no'>model</span> <span class='kw'>%&gt;%</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/generics/topics/compile'>compile</a></span>(
+  <span class='kw'>loss</span> <span class='kw'>=</span> <span class='st'>'categorical_crossentropy'</span>,
+  <span class='kw'>optimizer</span> <span class='kw'>=</span> <span class='fu'><a href='optimizer_rmsprop.html'>optimizer_rmsprop</a></span>(),
+  <span class='kw'>metrics</span> <span class='kw'>=</span> <span class='no'>metric_top_3_categorical_accuracy</span>
+)
+<span class='co'># }</span></code></pre></div>
+
+

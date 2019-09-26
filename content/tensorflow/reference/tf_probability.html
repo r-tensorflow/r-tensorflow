@@ -1,0 +1,31 @@
+---
+title: "TensorFlow Probability Module"
+type: docs
+repo: https://github.com/rstudio/tensorflow
+menu:
+  main:
+    name: "TensorFlow Probability Module - tensorflow"
+    parent: tensorflow-reference
+---
+    
+    
+    <p>TensorFlow Probability Module</p>
+    
+
+    <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>tf_probability</span>()</code></pre></div>
+        
+    <h2 id="value">Value</h2>
+
+    <p>Reference to <a href='https://www.tensorflow.org/probability'>TensorFlow Probability</a>
+functions and classes</p>
+    
+
+    <h2 id="examples">Examples</h2>
+    <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class='co'># NOT RUN {</span>
+<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/library'>library</a></span>(<span class='no'>tensorflow</span>)
+<span class='no'>tfp</span> <span class='kw'>&lt;-</span> <span class='fu'>tf_probability</span>()
+<span class='no'>tfp</span>$<span class='no'>distributions</span>$<span class='fu'><a href='https://www.rdocumentation.org/packages/stats/topics/Normal'>Normal</a></span>(<span class='kw'>loc</span><span class='kw'>=</span><span class='fl'>0</span>, <span class='kw'>scale</span><span class='kw'>=</span><span class='fl'>1</span>)
+<span class='co'># }</span><div class='input'>
+</div></code></pre></div>
+
+

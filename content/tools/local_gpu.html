@@ -1,0 +1,160 @@
+---
+title: "Local GPU"
+output: 
+  html_document:
+    toc_depth: 3
+    toc_float:
+        collapsed: false
+type: docs
+menu:
+  main:
+    name: "Local GPU"
+    identifier: "tools-local-gpu"
+    parent: "gpu-top"
+    weight: 20
+aliases:
+  - /installation_gpu.html
+  - /tensorflow/installation_gpu.html
+  - /tensorflow/articles/installation_gpu.html
+  - /tools/installation_gpu.html
+  - /tools/local_gpu
+---
+
+
+
+<div id="overview" class="section level2">
+<h2>Overview</h2>
+<p>TensorFlow can be configured to run on either CPUs or GPUs. The CPU version is much easier to install and configure so is the best starting place especially when you are first learning how to use TensorFlow. Here’s the guidance on CPU vs. GPU versions from the TensorFlow website:</p>
+<ul>
+<li><p><strong>TensorFlow with CPU support only</strong>. If your system does not have a NVIDIA® GPU, you must install this version. Note that this version of TensorFlow is typically much easier to install (typically, in 5 or 10 minutes), so even if you have an NVIDIA GPU, we recommend installing this version first.</p></li>
+<li><p><strong>TensorFlow with GPU support</strong>. TensorFlow programs typically run significantly faster on a GPU than on a CPU. Therefore, if your system has a NVIDIA® GPU meeting the prerequisites shown below and you need to run performance-critical applications, you should ultimately install this version.</p></li>
+</ul>
+<p>So if you are just getting started with TensorFlow you may want to stick with the CPU version to start out, then install the GPU version once your training becomes more computationally demanding.</p>
+<p>The prerequisites for the GPU version of TensorFlow on each platform are covered below. Once you’ve met the prerequisites installing the GPU version in a single-user / desktop environment is as simple as:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(tensorflow)</a>
+<a class="sourceLine" id="cb1-2" data-line-number="2"><span class="kw"><a href="../tensorflow/reference/install_tensorflow.html">install_tensorflow</a></span>(<span class="dt">version =</span> <span class="st">"gpu"</span>)</a></code></pre></div>
+<p>If you are using Keras you can install both Keras and the GPU version of TensorFlow with:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" data-line-number="1"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(keras)</a>
+<a class="sourceLine" id="cb2-2" data-line-number="2"><span class="kw"><a href="../keras/reference/install_keras.html">install_keras</a></span>(<span class="dt">tensorflow =</span> <span class="st">"gpu"</span>)</a></code></pre></div>
+<p>Note that on all platforms you must be running an NVIDIA® GPU with CUDA® Compute Capability 3.5 or higher in order to run the GPU version of TensorFlow. See the list of <a href="https://developer.nvidia.com/cuda-gpus">CUDA-enabled GPU cards</a>.</p>
+</div>
+<div id="prerequisties" class="section level2">
+<h2>Prerequisties</h2>
+<div id="windows" class="section level3">
+<h3>Windows</h3>
+<p>This article describes how to detect whether your graphics card uses an NVIDIA® GPU:</p>
+<p><a href="http://nvidia.custhelp.com/app/answers/detail/a_id/2040/~/identifying-the-graphics-card-model-and-device-id-in-a-pc" class="uri">http://nvidia.custhelp.com/app/answers/detail/a_id/2040/~/identifying-the-graphics-card-model-and-device-id-in-a-pc</a></p>
+<p>Once you’ve confirmed that you have an NVIDIA® GPU, the following article describes how to install required software components including the CUDA Toolkit v10.0, required NVIDIA® drivers, and cuDNN &gt;= v7.4.1:</p>
+<p><a href="https://www.tensorflow.org/install/gpu#hardware_requirements" class="uri">https://www.tensorflow.org/install/gpu#hardware_requirements</a></p>
+<p>Note that the documentation on installation of the last component (cuDNN v7.4.1) is a bit sparse. Once you join the NVIDIA® developer program and download the zip file containing cuDNN you need to extract the zip file and add the location where you extracted it to your system PATH.</p>
+</div>
+<div id="ubuntu" class="section level3">
+<h3>Ubuntu</h3>
+<p>This article describes how to install required software components including the CUDA Toolkit v9.0, required NVIDIA® drivers, and cuDNN &gt;= v7.4.1:</p>
+<p><a href="https://www.tensorflow.org/install/install_linux#nvidia_requirements_to_run_tensorflow_with_gpu_support" class="uri">https://www.tensorflow.org/install/install_linux#nvidia_requirements_to_run_tensorflow_with_gpu_support</a></p>
+<p>The specifics of installing required software differ by Linux version so please review the NVIDIA® documentation carefully to ensure you install everything correctly.</p>
+<p>The following section provides as example of the installation commands you might use on Ubuntu 16.04.</p>
+<div id="ubuntu-16.04-example" class="section level4">
+<h4>Ubuntu 16.04 Example</h4>
+<p>First, install the NVIDIA drivers:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode ini"><code class="sourceCode ini"><a class="sourceLine" id="cb3-1" data-line-number="1"><span class="co"># Add NVIDIA package repositories</span></a>
+<a class="sourceLine" id="cb3-2" data-line-number="2"><span class="co"># Add HTTPS support for apt-key</span></a>
+<a class="sourceLine" id="cb3-3" data-line-number="3"><span class="dt">sudo apt-get install gnupg-curl</span></a>
+<a class="sourceLine" id="cb3-4" data-line-number="4"><span class="dt">wget https://developer.download.nvidia.com/compute/cuda/repos/ubuntu1604/x86_64/cuda-repo-ubuntu1604_10.0.130-1_amd64.deb</span></a>
+<a class="sourceLine" id="cb3-5" data-line-number="5"><span class="dt">sudo dpkg -i cuda-repo-ubuntu1604_10.0.130-1_amd64.deb</span></a>
+<a class="sourceLine" id="cb3-6" data-line-number="6"><span class="dt">sudo apt-key adv --fetch-keys https://developer.download.nvidia.com/compute/cuda/repos/ubuntu1604/x86_64/7fa2af80.pub</span></a>
+<a class="sourceLine" id="cb3-7" data-line-number="7"><span class="dt">sudo apt-get update</span></a>
+<a class="sourceLine" id="cb3-8" data-line-number="8"><span class="dt">wget http://developer.download.nvidia.com/compute/machine-learning/repos/ubuntu1604/x86_64/nvidia-machine-learning-repo-ubuntu1604_1.0.0-1_amd64.deb</span></a>
+<a class="sourceLine" id="cb3-9" data-line-number="9"><span class="dt">sudo apt install ./nvidia-machine-learning-repo-ubuntu1604_1.0.0-1_amd64.deb</span></a>
+<a class="sourceLine" id="cb3-10" data-line-number="10"><span class="dt">sudo apt-get update</span></a>
+<a class="sourceLine" id="cb3-11" data-line-number="11"></a>
+<a class="sourceLine" id="cb3-12" data-line-number="12"><span class="co"># Install NVIDIA driver</span></a>
+<a class="sourceLine" id="cb3-13" data-line-number="13"><span class="co"># Issue with driver install requires creating /usr/lib/nvidia</span></a>
+<a class="sourceLine" id="cb3-14" data-line-number="14"><span class="dt">sudo mkdir /usr/lib/nvidia</span></a>
+<a class="sourceLine" id="cb3-15" data-line-number="15"><span class="dt">sudo apt-get install --no-install-recommends nvidia-410</span></a>
+<a class="sourceLine" id="cb3-16" data-line-number="16"><span class="co"># Reboot. Check that GPUs are visible using the command: nvidia-smi</span></a></code></pre></div>
+<p>Next install CUDA Toolkit v10.0 and cuDNN v7.4.1 with:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode ini"><code class="sourceCode ini"><a class="sourceLine" id="cb4-1" data-line-number="1"><span class="co"># Install development and runtime libraries (~4GB)</span></a>
+<a class="sourceLine" id="cb4-2" data-line-number="2"><span class="dt">sudo apt-get install --no-install-recommends \</span></a>
+<a class="sourceLine" id="cb4-3" data-line-number="3"><span class="dt">    cuda-10-0 \</span></a>
+<a class="sourceLine" id="cb4-4" data-line-number="4"><span class="dt">    libcudnn7</span><span class="ot">=</span><span class="dv">7</span><span class="st">.</span><span class="dv">4</span><span class="st">.</span><span class="fl">1.5</span><span class="dv">-1</span><span class="st">+cuda10</span><span class="fl">.0</span><span class="st">  \</span></a>
+<a class="sourceLine" id="cb4-5" data-line-number="5"><span class="dt">    libcudnn7-dev</span><span class="ot">=</span><span class="dv">7</span><span class="st">.</span><span class="dv">4</span><span class="st">.</span><span class="fl">1.5</span><span class="dv">-1</span><span class="st">+cuda10</span><span class="fl">.0</span></a></code></pre></div>
+<p>Note that it’s important to download <strong>CUDA 10.0</strong> (rather than CUDA 10.1, which may be the choice initially presented) as v10.0 is what TensorFlow is built against.</p>
+<p>You can see more for the installation <a href="https://www.tensorflow.org/install/gpu#linux_setup">here</a>.</p>
+</div>
+<div id="environment-variables" class="section level4">
+<h4>Environment Variables</h4>
+<p>On Linux, part of the setup for CUDA libraries is adding the path to the CUDA binaries to your <code>PATH</code> and <code>LD_LIBRARY_PATH</code> as well as setting the <code>CUDA_HOME</code> environment variable. You will set these variables in distinct ways depending on whether you are installing TensorFlow on a single-user workstation or on a multi-user server. If you are running RStudio Server there is some additional setup required which is also covered below.</p>
+<p>In all cases these are the environment variables that need to be set/modified in order for TensorFlow to find the required CUDA libraries. For example (paths will change depending on your specific installation of CUDA):</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb5-1" data-line-number="1"><span class="bu">export</span> <span class="va">CUDA_HOME=</span>/usr/local/cuda</a>
+<a class="sourceLine" id="cb5-2" data-line-number="2"><span class="bu">export</span> <span class="va">LD_LIBRARY_PATH=${LD_LIBRARY_PATH}</span>:<span class="va">${CUDA_HOME}</span>/lib64 </a>
+<a class="sourceLine" id="cb5-3" data-line-number="3"><span class="va">PATH=${CUDA_HOME}</span>/bin:<span class="va">${PATH}</span> </a>
+<a class="sourceLine" id="cb5-4" data-line-number="4"><span class="bu">export</span> <span class="va">PATH</span></a></code></pre></div>
+</div>
+<div id="single-user-installation" class="section level4">
+<h4>Single-User Installation</h4>
+<p>In a single-user environment (e.g. a desktop system) you should define the environment variables within your <code>~/.profile</code> file. It’s necessary to use <code>~/.profile</code> rather than <code>~/.bashrc</code>, because <code>~/.profile</code> is read by desktop applications (e.g. RStudio) as well as terminal sessions whereas <code>~/.bashrc</code> applies only to terminal sessions.</p>
+<p>Note that you need to restart your system after editing the <code>~/.profile</code> file for the changes to take effect. Note also that the <code>~/.profile</code> file will not be read by bash if you have either a <code>~/.bash_profile</code> or <code>~/.bash_login</code> file.</p>
+<p>To summarize the recommendations above:</p>
+<ul>
+<li><p>Define CUDA related environment variables in <code>~/.profile</code> rather than <code>~/.bashrc</code>;</p></li>
+<li><p>Ensure that you don’t have either a <code>~/.bash_profile</code> or <code>~/.bash_login</code> file (as these will prevent bash from seeing the variables you’ve added into <code>~/.profile</code>);</p></li>
+<li><p>Restart your system after editing <code>~/.profile</code> so that the changes take effect.</p></li>
+</ul>
+</div>
+<div id="multi-user-installation" class="section level4">
+<h4>Multi-User Installation</h4>
+<p>In a multi-user installation (e.g. a server) you should define the environment variables within the system-wide bash startup file (<code>/etc/profile</code>) so all users have access to them.</p>
+<p>If you are running RStudio Server you need to also provide these variable definitions in an R / RStudio specific fashion (as RStudio Server doesn’t execute system profile scripts for R sessions).</p>
+<p>To modify the <code>LD_LIBRARY_PATH</code> you use the <code>rsession-ld-library-path</code> in the /etc/rstudio/rserver.conf configuration file</p>
+<p><em>/etc/rstudio/rserver.conf</em></p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode ini"><code class="sourceCode ini"><a class="sourceLine" id="cb6-1" data-line-number="1"><span class="dt">rsession-ld-library-path</span><span class="ot">=</span><span class="st">/usr/local/cuda/lib64:/usr/local/cuda/extras/CUPTI/lib64</span></a></code></pre></div>
+<p>You should set the <code>CUDA_HOME</code> and <code>PATH</code> variables in the /usr/lib/R/etc/Rprofile.site configuration file:</p>
+<p><em>/usr/lib/R/etc/Rprofile.site</em></p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" data-line-number="1"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/Sys.setenv">Sys.setenv</a></span>(<span class="dt">CUDA_HOME=</span><span class="st">"/usr/local/cuda"</span>)</a>
+<a class="sourceLine" id="cb7-2" data-line-number="2"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/Sys.setenv">Sys.setenv</a></span>(<span class="dt">PATH=</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/paste">paste</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/Sys.getenv">Sys.getenv</a></span>(<span class="st">"PATH"</span>), <span class="st">"/usr/local/cuda/bin"</span>, <span class="dt">sep =</span> <span class="st">":"</span>))</a></code></pre></div>
+<p>In a server environment you might also find it more convenient to install TensorFlow into a system-wide location where all users of the server can share access to it. Details on doing this are covered in the <a href="#multiple-users">multi-user installation</a> section below.</p>
+</div>
+</div>
+<div id="mac-os-x" class="section level3">
+<h3>Mac OS X</h3>
+<p>As of version 1.2 of TensorFlow, GPU support is no longer available on Mac OS X. If you want to use a GPU on Mac OS X you will need to install TensorFlow v1.1 as follows:</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" data-line-number="1"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(tensorflow)</a>
+<a class="sourceLine" id="cb8-2" data-line-number="2"><span class="kw"><a href="../tensorflow/reference/install_tensorflow.html">install_tensorflow</a></span>(<span class="dt">version =</span> <span class="st">"1.1-gpu"</span>)</a></code></pre></div>
+<p>However, before you install you should ensure that you have an NVIDIA® GPU and that you have the required CUDA libraries on your system.</p>
+<p>While some older Macs include NVIDIA® GPU’s, most Macs (especially newer ones) do not, so you should check the type of graphics card you have in your Mac before proceeding.</p>
+<p>Here is a list of Mac systems which include built in NVIDIA GPU’s:</p>
+<p><a href="https://support.apple.com/en-us/HT204349" class="uri">https://support.apple.com/en-us/HT204349</a></p>
+<p>You can check which graphics card your Mac has via the <strong>System Report</strong> button found within the <strong>About This Mac</strong> dialog:</p>
+<p><img src="images/mac-gpu.png" class="tutorial-illustration tutorial-illustration-medium"></p>
+<p>The MacBook Pro system displayed above <em>does not</em> have an NVIDIA® GPU installed (rather it has an Intel Iris Pro).</p>
+<p>If you do have an NVIDIA® GPU, the following article describes how to install the base CUDA libraries:</p>
+<p><a href="http://docs.nvidia.com/cuda/cuda-installation-guide-mac-os-x/index.html" class="uri">http://docs.nvidia.com/cuda/cuda-installation-guide-mac-os-x/index.html</a></p>
+<p>You also need to intall the cuDNN library 5.1 library for OS X from here:</p>
+<p><a href="https://developer.nvidia.com/cudnn" class="uri">https://developer.nvidia.com/cudnn</a></p>
+<p>After installing these components, you need to ensure that both CUDA and cuDNN are available to your R session via the <code>DYLD_LIBRARY_PATH</code>. This typically involves setting environment variables in your <code>.bash_profile</code> as described in the NVIDIA documentation for CUDA and cuDNN.</p>
+<p>Note that environment variables set in .bash_profile will not be available by default to OS X desktop applications like R GUI and RStudio. To use CUDA within those environments you should start the application from a system terminal as follows:</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb9-1" data-line-number="1"><span class="ex">open</span> -a R         # R GUI</a>
+<a class="sourceLine" id="cb9-2" data-line-number="2"><span class="ex">open</span> -a RStudio   # RStudio</a></code></pre></div>
+</div>
+</div>
+<div id="installation" class="section level2">
+<h2>Installation</h2>
+<div id="single-user" class="section level3">
+<h3>Single User</h3>
+<p>In a single-user desktop environment you can install TensorFlow with GPU support via:</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" data-line-number="1"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(tensorflow)</a>
+<a class="sourceLine" id="cb10-2" data-line-number="2"><span class="kw"><a href="../tensorflow/reference/install_tensorflow.html">install_tensorflow</a></span>(<span class="dt">version =</span> <span class="st">"gpu"</span>)</a></code></pre></div>
+<p>If this version doesn’t load successfully you should review the prerequisites above and ensure that you’ve provided definitions of CUDA environment variables as recommended above.</p>
+<p>See the main <a href="installation.html">installation article</a> for details on other available options (e.g. virtualenv vs. conda installation, installing development versions, etc.).</p>
+</div>
+<div id="multiple-users" class="section level3">
+<h3>Multiple Users</h3>
+<p>In a multi-user server environment you may want to install a system-wide version of TensorFlow with GPU support so all users can share the same configuration. To do this, start by following the directions for native pip installation of the GPU version of TensorFlow here:</p>
+<p><a href="https://www.tensorflow.org/install/install_linux#InstallingNativePip" class="uri">https://www.tensorflow.org/install/install_linux#InstallingNativePip</a></p>
+<p>There are some components of TensorFlow (e.g. the <a href="https://github.com/tensorflow/tensorflow/tree/master/tensorflow/contrib/keras">Keras</a> library) which have dependencies on additional Python packages.</p>
+<p>You can install Keras and it’s optional dependencies with the following command (ensuring you have the correct privilege to write to system library locations as required via sudo, etc.):</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb11-1" data-line-number="1"><span class="ex">pip</span> install keras h5py pyyaml requests Pillow scipy</a></code></pre></div>
+<p>If you have any trouble with locating the system-wide version of TensorFlow from within R please see the section on <a href="installation.html#locating-tensorflow">locating TensorFlow</a>.</p>
+</div>
+</div>

@@ -1,0 +1,67 @@
+---
+title: "Plot training history"
+type: docs
+repo: https://github.com/rstudio/keras
+menu:
+  main:
+    name: "Plot training history - keras"
+    parent: keras-reference
+---
+    
+    
+    <p>Plots metrics recorded during training.</p>
+    
+
+    <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class='co'># S3 method for keras_training_history</span>
+<span class='fu'><a href='https://www.rdocumentation.org/packages/graphics/topics/plot'>plot</a></span>(<span class='no'>x</span>, <span class='no'>y</span>, <span class='kw'>metrics</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>method</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='st'>"auto"</span>, <span class='st'>"ggplot2"</span>, <span class='st'>"base"</span>),
+  <span class='kw'>smooth</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/options'>getOption</a></span>(<span class='st'>"keras.plot.history.smooth"</span>, <span class='fl'>TRUE</span>),
+  <span class='kw'>theme_bw</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/options'>getOption</a></span>(<span class='st'>"keras.plot.history.theme_bw"</span>, <span class='fl'>FALSE</span>), <span class='no'>...</span>)</code></pre></div>
+    
+    <h2 id="arguments">Arguments</h2>
+    <table class="ref-arguments">
+    
+    <colgroup>
+      <col class="name" />
+      <col class="desc" />
+    </colgroup>  
+      
+    <tr>
+      <td>x</td>
+      <td><p>Training history object returned from
+<code><a href='fit.keras.engine.training.Model.html'>fit.keras.engine.training.Model()</a></code>.</p></td>
+    </tr>
+    <tr>
+      <td>y</td>
+      <td><p>Unused.</p></td>
+    </tr>
+    <tr>
+      <td>metrics</td>
+      <td><p>One or more metrics to plot (e.g. <code><a href='https://www.rdocumentation.org/packages/base/topics/c'>c('loss', 'accuracy')</a></code>).
+Defaults to plotting all captured metrics.</p></td>
+    </tr>
+    <tr>
+      <td>method</td>
+      <td><p>Method to use for plotting. The default "auto" will use
+<span class="pkg">ggplot2</span> if available, and otherwise will use base graphics.</p></td>
+    </tr>
+    <tr>
+      <td>smooth</td>
+      <td><p>Whether a loess smooth should be added to the plot, only
+available for the <code>ggplot2</code> method. If the number of epochs is smaller
+than ten, it is forced to false.</p></td>
+    </tr>
+    <tr>
+      <td>theme_bw</td>
+      <td><p>Use <code><a href='https://ggplot2.tidyverse.org/reference/ggtheme.html'>ggplot2::theme_bw()</a></code> to plot the history in
+black and white.</p></td>
+    </tr>
+    <tr>
+      <td>...</td>
+      <td><p>Additional parameters to pass to the <code><a href='https://www.rdocumentation.org/packages/graphics/topics/plot'>plot()</a></code> method.</p></td>
+    </tr>
+    </table>
+    
+
+
+

@@ -1,0 +1,86 @@
+---
+title: "TensorBoard Visualization Tool"
+type: docs
+repo: https://github.com/rstudio/tensorflow
+menu:
+  main:
+    name: "TensorBoard Visualization Tool - tensorflow"
+    parent: tensorflow-reference
+---
+    
+    
+    <p>TensorBoard is a tool inspecting and understanding your TensorFlow runs and
+graphs.</p>
+    
+
+    <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>tensorboard</span>(<span class='no'>log_dir</span>, <span class='kw'>action</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='st'>"start"</span>, <span class='st'>"stop"</span>), <span class='kw'>host</span> <span class='kw'>=</span> <span class='st'>"127.0.0.1"</span>,
+  <span class='kw'>port</span> <span class='kw'>=</span> <span class='st'>"auto"</span>,
+  <span class='kw'>launch_browser</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/options'>getOption</a></span>(<span class='st'>"tensorflow.tensorboard.browser"</span>,
+  <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/interactive'>interactive</a></span>()), <span class='kw'>reload_interval</span> <span class='kw'>=</span> <span class='fl'>5</span>, <span class='kw'>purge_orphaned_data</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</code></pre></div>
+    
+    <h2 id="arguments">Arguments</h2>
+    <table class="ref-arguments">
+    
+    <colgroup>
+      <col class="name" />
+      <col class="desc" />
+    </colgroup>  
+      
+    <tr>
+      <td>log_dir</td>
+      <td><p>Directories to scan for training logs. If this is a named
+character vector then the specified names will be used as aliases within
+TensorBoard.</p></td>
+    </tr>
+    <tr>
+      <td>action</td>
+      <td><p>Specify whether to start or stop TensorBoard (TensorBoard will
+be stopped automatically when the R session from which it is launched is
+terminated).</p></td>
+    </tr>
+    <tr>
+      <td>host</td>
+      <td><p>Host for serving TensorBoard</p></td>
+    </tr>
+    <tr>
+      <td>port</td>
+      <td><p>Port for serving TensorBoard. If "auto" is specified (the
+default) then an unused port will be chosen automatically.</p></td>
+    </tr>
+    <tr>
+      <td>launch_browser</td>
+      <td><p>Open a web browser for TensorBoard after launching.
+Defaults to <code>TRUE</code> in interactive sessions. When running under RStudio uses
+an RStudio window by default (pass a function e.g. <code><a href='https://www.rdocumentation.org/packages/utils/topics/browseURL'>utils::browseURL()</a></code> to
+open in an external browser). Use the <code>tensorflow.tensorboard.browser</code>
+option to establish a global default behavior.</p></td>
+    </tr>
+    <tr>
+      <td>reload_interval</td>
+      <td><p>How often the backend should load more data.</p></td>
+    </tr>
+    <tr>
+      <td>purge_orphaned_data</td>
+      <td><p>Whether to purge data that may have been orphaned
+due to TensorBoard restarts. Disabling purge_orphaned_data can be used to
+debug data disappearance.</p></td>
+    </tr>
+    </table>
+    
+    <h2 id="value">Value</h2>
+
+    <p>URL for browsing TensorBoard (invisibly).</p>
+    
+    <h2 id="details">Details</h2>
+
+    <p>When TensorBoard is passed a logdir at startup, it recursively walks
+the directory tree rooted at logdir looking for subdirectories that contain
+tfevents data. Every time it encounters such a subdirectory, it loads it as
+a new run, and the frontend will organize the data accordingly.</p>
+<p>The TensorBoard process will be automatically destroyed when the R session
+in which it is launched exits. You can pass <code>action = "stop"</code> to manually
+terminate TensorBoard.</p>
+    
+
+
+

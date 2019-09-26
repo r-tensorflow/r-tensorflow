@@ -1,0 +1,22 @@
+---
+title: hello_tensorflow
+type: docs
+menu:
+  main:
+    parent: tensorflow-examples
+---
+
+
+
+<p>Simplest possible TensorFlow program illustrating creation a session, evaluating
+constants, and performing basic arithmetic.</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(tensorflow)
+
+sess =<span class="st"> </span>tf<span class="op">$</span><span class="kw">Session</span>()
+
+hello &lt;-<span class="st"> </span>tf<span class="op">$</span><span class="kw">constant</span>(<span class="st">'Hello, TensorFlow!'</span>)
+sess<span class="op">$</span><span class="kw">run</span>(hello)
+
+a &lt;-<span class="st"> </span>tf<span class="op">$</span><span class="kw">constant</span>(<span class="dv">10</span>)
+b &lt;-<span class="st"> </span>tf<span class="op">$</span><span class="kw">constant</span>(<span class="dv">32</span>)
+sess<span class="op">$</span><span class="kw">run</span>(a <span class="op">+</span><span class="st"> </span>b)</code></pre>

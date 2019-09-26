@@ -1,0 +1,145 @@
+---
+title: lstm_text_generation
+type: docs
+repo: https://github.com/rstudio/keras
+menu:
+  main:
+    parent: keras-examples
+---
+
+
+
+<div class="source-ref">
+<p><span class="caption">Source: </span><a href="https://github.com/rstudio/keras/blob/master/vignettes/examples/lstm_text_generation.R" class="uri">https://github.com/rstudio/keras/blob/master/vignettes/examples/lstm_text_generation.R</a></p>
+</div>
+<p>Example script to generate text from Nietzsche’s writings.</p>
+<p>At least 20 epochs are required before the generated text starts sounding
+coherent.</p>
+<p>It is recommended to run this script on GPU, as recurrent networks are quite
+computationally intensive.</p>
+<p>If you try this script on new data, make sure your corpus has at least ~100k
+characters. ~1M is better.</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(keras)
+<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(readr)
+<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(stringr)
+<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(purrr)
+<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(tokenizers)
+
+<span class="co"># Parameters --------------------------------------------------------------</span>
+
+maxlen &lt;-<span class="st"> </span><span class="dv">40</span>
+
+<span class="co"># Data Preparation --------------------------------------------------------</span>
+
+<span class="co"># Retrieve text</span>
+path &lt;-<span class="st"> </span><span class="kw"><a href="../../reference/get_file.html">get_file</a></span>(
+  <span class="st">'nietzsche.txt'</span>, 
+  <span class="dt">origin=</span><span class="st">'https://s3.amazonaws.com/text-datasets/nietzsche.txt'</span>
+  )
+
+<span class="co"># Load, collapse, and tokenize text</span>
+text &lt;-<span class="st"> </span><span class="kw"><a href="https://readr.tidyverse.org/reference/read_lines.html">read_lines</a></span>(path) <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw"><a href="https://stringr.tidyverse.org/reference/case.html">str_to_lower</a></span>() <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw"><a href="https://stringr.tidyverse.org/reference/str_c.html">str_c</a></span>(<span class="dt">collapse =</span> <span class="st">"</span><span class="ch">\n</span><span class="st">"</span>) <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">tokenize_characters</span>(<span class="dt">strip_non_alphanum =</span> <span class="ot">FALSE</span>, <span class="dt">simplify =</span> <span class="ot">TRUE</span>)
+
+<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/print">print</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/sprintf">sprintf</a></span>(<span class="st">"corpus length: %d"</span>, <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/length">length</a></span>(text)))
+
+chars &lt;-<span class="st"> </span>text <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/unique">unique</a></span>() <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/sort">sort</a></span>()
+
+<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/print">print</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/sprintf">sprintf</a></span>(<span class="st">"total chars: %d"</span>, <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/length">length</a></span>(chars)))  
+
+<span class="co"># Cut the text in semi-redundant sequences of maxlen characters</span>
+dataset &lt;-<span class="st"> </span><span class="kw"><a href="https://purrr.tidyverse.org/reference/map.html">map</a></span>(
+  <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/seq">seq</a></span>(<span class="dv">1</span>, <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/length">length</a></span>(text) <span class="op">-</span><span class="st"> </span>maxlen <span class="op">-</span><span class="st"> </span><span class="dv">1</span>, <span class="dt">by =</span> <span class="dv">3</span>), 
+  <span class="op">~</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/list">list</a></span>(<span class="dt">sentece =</span> text[.x<span class="op">:</span>(.x <span class="op">+</span><span class="st"> </span>maxlen <span class="op">-</span><span class="st"> </span><span class="dv">1</span>)], <span class="dt">next_char =</span> text[.x <span class="op">+</span><span class="st"> </span>maxlen])
+  )
+
+dataset &lt;-<span class="st"> </span><span class="kw"><a href="https://purrr.tidyverse.org/reference/transpose.html">transpose</a></span>(dataset)
+
+<span class="co"># Vectorization</span>
+x &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/array">array</a></span>(<span class="dv">0</span>, <span class="dt">dim =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/length">length</a></span>(dataset<span class="op">$</span>sentece), maxlen, <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/length">length</a></span>(chars)))
+y &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/array">array</a></span>(<span class="dv">0</span>, <span class="dt">dim =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/length">length</a></span>(dataset<span class="op">$</span>sentece), <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/length">length</a></span>(chars)))
+
+<span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/length">length</a></span>(dataset<span class="op">$</span>sentece)){
+  
+  x[i,,] &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/lapply">sapply</a></span>(chars, <span class="cf">function</span>(x){
+    <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/integer">as.integer</a></span>(x <span class="op">==</span><span class="st"> </span>dataset<span class="op">$</span>sentece[[i]])
+  })
+  
+  y[i,] &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/integer">as.integer</a></span>(chars <span class="op">==</span><span class="st"> </span>dataset<span class="op">$</span>next_char[[i]])
+  
+}
+
+<span class="co"># Model Definition --------------------------------------------------------</span>
+
+model &lt;-<span class="st"> </span><span class="kw"><a href="../../reference/keras_model_sequential.html">keras_model_sequential</a></span>()
+
+model <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw"><a href="../../reference/layer_lstm.html">layer_lstm</a></span>(<span class="dv">128</span>, <span class="dt">input_shape =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(maxlen, <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/length">length</a></span>(chars))) <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw"><a href="../../reference/layer_dense.html">layer_dense</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/length">length</a></span>(chars)) <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw"><a href="../../reference/layer_activation.html">layer_activation</a></span>(<span class="st">"softmax"</span>)
+
+optimizer &lt;-<span class="st"> </span><span class="kw"><a href="../../reference/optimizer_rmsprop.html">optimizer_rmsprop</a></span>(<span class="dt">lr =</span> <span class="fl">0.01</span>)
+
+model <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../../reference/reexports.html">compile</a></span>(
+  <span class="dt">loss =</span> <span class="st">"categorical_crossentropy"</span>, 
+  <span class="dt">optimizer =</span> optimizer
+)
+
+<span class="co"># Training &amp; Results ----------------------------------------------------</span>
+
+sample_mod &lt;-<span class="st"> </span><span class="cf">function</span>(preds, <span class="dt">temperature =</span> <span class="dv">1</span>){
+  preds &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/Log">log</a></span>(preds)<span class="op">/</span>temperature
+  exp_preds &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/Log">exp</a></span>(preds)
+  preds &lt;-<span class="st"> </span>exp_preds<span class="op">/</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/sum">sum</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/Log">exp</a></span>(preds))
+  
+  <span class="kw"><a href="https://www.rdocumentation.org/packages/stats/topics/Multinom">rmultinom</a></span>(<span class="dv">1</span>, <span class="dv">1</span>, preds) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">    </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/integer">as.integer</a></span>() <span class="op">%&gt;%</span>
+<span class="st">    </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/which.min">which.max</a></span>()
+}
+
+on_epoch_end &lt;-<span class="st"> </span><span class="cf">function</span>(epoch, logs) {
+  
+  <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/cat">cat</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/sprintf">sprintf</a></span>(<span class="st">"epoch: %02d ---------------</span><span class="ch">\n\n</span><span class="st">"</span>, epoch))
+  
+  <span class="cf">for</span>(diversity <span class="cf">in</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="fl">0.2</span>, <span class="fl">0.5</span>, <span class="dv">1</span>, <span class="fl">1.2</span>)){
+    
+    <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/cat">cat</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/sprintf">sprintf</a></span>(<span class="st">"diversity: %f ---------------</span><span class="ch">\n\n</span><span class="st">"</span>, diversity))
+    
+    start_index &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/sample">sample</a></span>(<span class="dv">1</span><span class="op">:</span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/length">length</a></span>(text) <span class="op">-</span><span class="st"> </span>maxlen), <span class="dt">size =</span> <span class="dv">1</span>)
+    sentence &lt;-<span class="st"> </span>text[start_index<span class="op">:</span>(start_index <span class="op">+</span><span class="st"> </span>maxlen <span class="op">-</span><span class="st"> </span><span class="dv">1</span>)]
+    generated &lt;-<span class="st"> ""</span>
+    
+    <span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span><span class="dv">400</span>){
+      
+      x &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/lapply">sapply</a></span>(chars, <span class="cf">function</span>(x){
+        <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/integer">as.integer</a></span>(x <span class="op">==</span><span class="st"> </span>sentence)
+      })
+      x &lt;-<span class="st"> </span><span class="kw"><a href="../../reference/reexports.html">array_reshape</a></span>(x, <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="dv">1</span>, <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/dim">dim</a></span>(x)))
+      
+      preds &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/stats/topics/predict">predict</a></span>(model, x)
+      next_index &lt;-<span class="st"> </span><span class="kw">sample_mod</span>(preds, diversity)
+      next_char &lt;-<span class="st"> </span>chars[next_index]
+      
+      generated &lt;-<span class="st"> </span><span class="kw"><a href="https://stringr.tidyverse.org/reference/str_c.html">str_c</a></span>(generated, next_char, <span class="dt">collapse =</span> <span class="st">""</span>)
+      sentence &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(sentence[<span class="op">-</span><span class="dv">1</span>], next_char)
+      
+    }
+    
+    <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/cat">cat</a></span>(generated)
+    <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/cat">cat</a></span>(<span class="st">"</span><span class="ch">\n\n</span><span class="st">"</span>)
+    
+  }
+}
+
+print_callback &lt;-<span class="st"> </span><span class="kw"><a href="../../reference/callback_lambda.html">callback_lambda</a></span>(<span class="dt">on_epoch_end =</span> on_epoch_end)
+
+model <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../../reference/reexports.html">fit</a></span>(
+  x, y,
+  <span class="dt">batch_size =</span> <span class="dv">128</span>,
+  <span class="dt">epochs =</span> <span class="dv">1</span>,
+  <span class="dt">callbacks =</span> print_callback
+)</code></pre>

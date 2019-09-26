@@ -1,0 +1,80 @@
+---
+title: "Install TensorFlow and its dependencies"
+type: docs
+repo: https://github.com/rstudio/tensorflow
+menu:
+  main:
+    name: "Install TensorFlow and its dependencies - tensorflow"
+    parent: tensorflow-reference
+---
+    
+    
+    <p>Install TensorFlow and its dependencies</p>
+    
+
+    <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>install_tensorflow</span>(<span class='kw'>method</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='st'>"auto"</span>, <span class='st'>"virtualenv"</span>, <span class='st'>"conda"</span>),
+  <span class='kw'>conda</span> <span class='kw'>=</span> <span class='st'>"auto"</span>, <span class='kw'>version</span> <span class='kw'>=</span> <span class='st'>"default"</span>, <span class='kw'>envname</span> <span class='kw'>=</span> <span class='st'>"r-tensorflow"</span>,
+  <span class='kw'>extra_packages</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>restart_session</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='kw'>conda_python_version</span> <span class='kw'>=</span> <span class='st'>"3.6"</span>, <span class='no'>...</span>)</code></pre></div>
+    
+    <h2 id="arguments">Arguments</h2>
+    <table class="ref-arguments">
+    
+    <colgroup>
+      <col class="name" />
+      <col class="desc" />
+    </colgroup>  
+      
+    <tr>
+      <td>method</td>
+      <td><p>Installation method. By default, "auto" automatically finds a
+method that will work in the local environment. Change the default to force
+a specific installation method. Note that the "virtualenv" method is not
+available on Windows (as this isn't supported by TensorFlow). Note also
+that since this command runs without privillege the "system" method is
+available only on Windows.</p></td>
+    </tr>
+    <tr>
+      <td>conda</td>
+      <td><p>Path to conda executable (or "auto" to find conda using the
+PATH and other conventional install locations).</p></td>
+    </tr>
+    <tr>
+      <td>version</td>
+      <td><p>TensorFlow version to install. Specify "default" to install
+the CPU version of the latest release. Specify "gpu" to install the GPU
+version of the latest release.</p>
+<p>You can also provide a full major.minor.patch specification (e.g. "1.1.0"),
+appending "-gpu" if you want the GPU version (e.g. "1.1.0-gpu").</p>
+<p>Alternatively, you can provide the full URL to an installer binary (e.g.
+for a nightly binary).</p></td>
+    </tr>
+    <tr>
+      <td>envname</td>
+      <td><p>Name of Python environment to install within</p></td>
+    </tr>
+    <tr>
+      <td>extra_packages</td>
+      <td><p>Additional Python packages to install along with
+TensorFlow.</p></td>
+    </tr>
+    <tr>
+      <td>restart_session</td>
+      <td><p>Restart R session after installing (note this will
+only occur within RStudio).</p></td>
+    </tr>
+    <tr>
+      <td>conda_python_version</td>
+      <td><p>the python version installed in the created conda
+environment. Python 3.6 is installed by default.</p></td>
+    </tr>
+    <tr>
+      <td>...</td>
+      <td><p>other arguments passed to <code><a href='https://www.rdocumentation.org/packages/reticulate/topics/conda-tools'>reticulate::conda_install()</a></code> or
+<code><a href='https://www.rdocumentation.org/packages/reticulate/topics/virtualenv-tools'>reticulate::virtualenv_install()</a></code>.</p></td>
+    </tr>
+    </table>
+    
+
+
+

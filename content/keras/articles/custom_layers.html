@@ -1,0 +1,94 @@
+---
+title: "Writing Custom Keras Layers"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Writing Custom Keras Layers} 
+  %\VignetteEngine{knitr::rmarkdown} 
+  %\VignetteEncoding{UTF-8}
+type: docs
+repo: https://github.com/rstudio/keras
+menu:
+  main:
+    name: "Custom Layers"
+    identifier: "keras-custom-layers"
+    parent: "keras-advanced"
+    weight: 50
+---
+
+
+
+<p>If the existing Keras layers don’t meet your requirements you can create a custom layer. For simple, stateless custom operations, you are probably better off using <code><a href="../reference/layer_lambda.html">layer_lambda()</a></code> layers. But for any custom operation that has trainable weights, you should implement your own layer.</p>
+<p>The example below illustrates the skeleton of a Keras custom layer. The <a href="https://keras.rstudio.com/articles/examples/mnist_antirectifier.html">mnist_antirectifier</a> example includes another demonstration of creating a custom layer.</p>
+<div id="keraslayer-r6-class" class="section level2">
+<h2>KerasLayer R6 Class</h2>
+<p>To create a custom Keras layer, you create an R6 class derived from <code>KerasLayer</code>. There are three methods to implement (only one of which, <code><a href="https://www.rdocumentation.org/packages/base/topics/call">call()</a></code>, is required for all types of layer):</p>
+<ul>
+<li>
+<code><a href="https://www.rdocumentation.org/packages/utils/topics/PkgUtils">build(input_shape)</a></code>: This is where you will define your weights. Note that if your layer doesn’t define trainable weights then you need not implemented this method.</li>
+<li>
+<code><a href="https://www.rdocumentation.org/packages/base/topics/call">call(x)</a></code>: This is where the layer’s logic lives. Unless you want your layer to support masking, you only have to care about the first argument passed to <code>call</code>: the input tensor.</li>
+<li>
+<code>compute_output_shape(input_shape)</code>: In case your layer modifies the shape of its input, you should specify here the shape transformation logic. This allows Keras to do automatic shape inference. If you don’t modify the shape of the input then you need not implement this method.</li>
+</ul>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(keras)
+
+CustomLayer &lt;-<span class="st"> </span>R6<span class="op">::</span><span class="kw"><a href="https://www.rdocumentation.org/packages/R6/topics/R6Class">R6Class</a></span>(<span class="st">"CustomLayer"</span>,
+                                  
+  <span class="dt">inherit =</span> KerasLayer,
+  
+  <span class="dt">public =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/list">list</a></span>(
+    
+    <span class="dt">output_dim =</span> <span class="ot">NULL</span>,
+    
+    <span class="dt">kernel =</span> <span class="ot">NULL</span>,
+    
+    <span class="dt">initialize =</span> <span class="cf">function</span>(output_dim) {
+      self<span class="op">$</span>output_dim &lt;-<span class="st"> </span>output_dim
+    },
+    
+    <span class="dt">build =</span> <span class="cf">function</span>(input_shape) {
+      self<span class="op">$</span>kernel &lt;-<span class="st"> </span>self<span class="op">$</span><span class="kw">add_weight</span>(
+        <span class="dt">name =</span> <span class="st">'kernel'</span>, 
+        <span class="dt">shape =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/list">list</a></span>(input_shape[[<span class="dv">2</span>]], self<span class="op">$</span>output_dim),
+        <span class="dt">initializer =</span> <span class="kw"><a href="../reference/initializer_random_normal.html">initializer_random_normal</a></span>(),
+        <span class="dt">trainable =</span> <span class="ot">TRUE</span>
+      )
+    },
+    
+    <span class="dt">call =</span> <span class="cf">function</span>(x, <span class="dt">mask =</span> <span class="ot">NULL</span>) {
+      <span class="kw"><a href="../reference/k_dot.html">k_dot</a></span>(x, self<span class="op">$</span>kernel)
+    },
+    
+    <span class="dt">compute_output_shape =</span> <span class="cf">function</span>(input_shape) {
+      <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/list">list</a></span>(input_shape[[<span class="dv">1</span>]], self<span class="op">$</span>output_dim)
+    }
+  )
+)</code></pre>
+<p>Note that tensor operations are executed using the Keras <code><a href="../reference/backend.html">backend()</a></code>. See the <a href="backend.html">Keras Backend</a> article for details on the various functions available from Keras backends.</p>
+</div>
+<div id="layer-wrapper-function" class="section level2">
+<h2>Layer Wrapper Function</h2>
+<p>In order to use the custom layer within a Keras model you also need to create a wrapper function which instantiates the layer using the <code><a href="../reference/create_layer.html">create_layer()</a></code> function. For example:</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># define layer wrapper function</span>
+layer_custom &lt;-<span class="st"> </span><span class="cf">function</span>(object, output_dim, <span class="dt">name =</span> <span class="ot">NULL</span>, <span class="dt">trainable =</span> <span class="ot">TRUE</span>) {
+  <span class="kw"><a href="../reference/create_layer.html">create_layer</a></span>(CustomLayer, object, <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/list">list</a></span>(
+    <span class="dt">output_dim =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/integer">as.integer</a></span>(output_dim),
+    <span class="dt">name =</span> name,
+    <span class="dt">trainable =</span> trainable
+  ))
+}
+
+<span class="co"># use it in a model</span>
+model &lt;-<span class="st"> </span><span class="kw"><a href="../reference/keras_model_sequential.html">keras_model_sequential</a></span>()
+model <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw"><a href="../reference/layer_dense.html">layer_dense</a></span>(<span class="dt">units =</span> <span class="dv">32</span>, <span class="dt">input_shape =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="dv">32</span>,<span class="dv">32</span>)) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">layer_custom</span>(<span class="dt">output_dim =</span> <span class="dv">32</span>)</code></pre>
+<p>Some important things to note about the layer wrapper function:</p>
+<ol style="list-style-type: decimal">
+<li><p>It accepts <code>object</code> as its first parameter (the object will either be a Keras sequential model or another Keras layer). The <code>object</code> parameter enables the layer to be composed with other layers using the magrittr pipe (<code>%&gt;%</code>) operator.</p></li>
+<li><p>It converts it’s <code>output_dim</code> to integer using the <code><a href="https://www.rdocumentation.org/packages/base/topics/integer">as.integer()</a></code> function. This is done as convenience to the user because Keras variables are strongly typed (you can’t pass a float if an integer is expected). This enables users of the function to write <code>output_dim = 32</code> rather than <code>output_dim = 32L</code>.</p></li>
+<li><p>Some additional parameters not used by the layer (<code>name</code> and <code>trainable</code>) are in the function signature. Custom layer functions can include any of the core layer function arguments (<code>input_shape</code>,
+<code>batch_input_shape</code>, <code>batch_size</code>, <code>dtype</code>, <code>name</code>, <code>trainable</code>, and <code>weights</code>) and they will be automatically forwarded to the Layer base class.</p></li>
+</ol>
+<p>See the <a href="https://keras.rstudio.com/articles/examples/mnist_antirectifier.html">mnist_antirectifier</a> example for another demonstration of creating a custom layer.</p>
+</div>
