@@ -55,7 +55,19 @@ disqusShortname = "r-tensorflow"
 	url    = "/tutorials/"
 	identifier = "tutorials-top"
 	weight = 20
+	
+[[menu.main]]
+	name   = "Beginners"
+	parent = "tutorials-top"
+	weight = 21
+	url = ""
 
+[[menu.main]]
+	name   = "Basic ML with Keras"
+	parent = "tutorials-top"
+	identifier = "tutorials-begginers-basic-ml-top"
+	weight = 24
+	url = "/tutorials/begginers/basic-ml/"
 
 # Guides
 
@@ -63,6 +75,14 @@ disqusShortname = "r-tensorflow"
 	name   = "Guide"
 	url    = "/guide/"
 	identifier = "guide-top"
+	weight = 30
+	
+# Deploy
+
+[[menu.main]]
+	name   = "Deploy"
+	url    = "/deploy/"
+	identifier = "deploy-top"
 	weight = 30
 
 

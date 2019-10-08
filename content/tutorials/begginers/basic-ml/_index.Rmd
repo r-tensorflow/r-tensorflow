@@ -4,8 +4,8 @@ type: docs
 menu:
   main:
     name: "Overview"
-    identifier: "tutorials-get-started"
-    parent: "tutorials-top"
+    identifier: "tutorials-begginers-basic-ml-overview"
+    parent: "tutorials-begginers-basic-ml-top"
     weight: 10
 ---
 

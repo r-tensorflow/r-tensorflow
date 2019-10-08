@@ -3,10 +3,10 @@ title: "Overview"
 type: docs
 menu:
   main:
-    name: "Overview"
-    identifier: "tutorials-get-started"
-    parent: "tutorials-top"
-    weight: 10
+    name: "Image classification"
+    identifier: "tutorials-begginers-basic-ml-images"
+    parent: "tutorials-begginers-basic-ml-top"
+    weight: 20
 ---
 
 In this section you will find tutorials that can be used to get started with TensorFlow for R or, for more advanced users, to discover best practices for loading data, building complex models and solving common problems.

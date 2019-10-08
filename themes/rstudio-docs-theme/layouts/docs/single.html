@@ -13,10 +13,20 @@
       {{ range .Children }}
       <li class="side-menu__item{{if $currentNode.HasMenuCurrent "main" . }} active{{end}}{{if $currentNode.IsMenuCurrent "main" . }} active{{end}}">
        
+        {{ if ne .URL  ""}}
+       
         <a href="{{.URL}}" class="side-menu__item__link">
           <img class="side-menu__item__link__icon" src="/images/icons/block-retina.png" alt="">
           <p class="side-menu__item__link__text">{{ .Name }}</p>
         </a>
+        
+        {{ else  }}
+        
+        <span class="side-menu__item__link">
+          <p class="side-menu__item__link__text side-menu__item__link__text__block">{{ .Name }}</p>
+        </span>
+        
+        {{ end }}
 
         {{ if .HasChildren }}
         {{if $currentNode.HasMenuCurrent "main" . }}
