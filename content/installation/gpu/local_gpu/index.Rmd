@@ -67,7 +67,7 @@ Note that the documentation on installation of the last component (cuDNN v7.4.1)
 
 ### Ubuntu
 
-This article describes how to install required software components including the CUDA Toolkit v9.0, required NVIDIA® drivers, and cuDNN >= v7.4.1: 
+This article describes how to install required software components including the CUDA Toolkit v10.0, required NVIDIA® drivers, and cuDNN >= v7.4.1: 
 
 <https://www.tensorflow.org/install/install_linux#nvidia_requirements_to_run_tensorflow_with_gpu_support>
 
@@ -107,7 +107,7 @@ sudo apt-get install --no-install-recommends \
     libcudnn7=7.4.1.5-1+cuda10.0  \
     libcudnn7-dev=7.4.1.5-1+cuda10.0
 ```
-
+ 
 Note that it's important to download **CUDA 10.0** (rather than CUDA 10.1, which may be the choice initially presented) as v10.0 is what TensorFlow is built against.
 
 You can see more for the installation [here](https://www.tensorflow.org/install/gpu#linux_setup).
