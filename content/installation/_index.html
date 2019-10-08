@@ -1,0 +1,89 @@
+---
+title: "Quick start"
+type: docs
+menu:
+  main:
+    name: "Quick start"
+    identifier: "installation-get-started"
+    parent: "installation-overview"
+    weight: 10
+---
+
+
+
+<p>Prior to using the <strong>tensorflow</strong> R package you need to install a version of TensorFlow
+on your system. Below we describe how to install TensorFlow as well the various
+options available for customizing your installation.</p>
+<p>Note that this article principally covers the use of the R <code><a href="../tensorflow/reference/install_tensorflow.html">install_tensorflow()</a></code> function,
+which provides an easy to use wrapper for the various steps required to install
+TensorFlow.</p>
+<p>You can also choose to install TensorFlow manually (as described at <a href="https://www.tensorflow.org/install/" class="uri">https://www.tensorflow.org/install/</a>). In that case the [Custom Installation] section
+covers how to arrange for the tensorflow R package to use the version you installed.</p>
+<p>TensorFlow is tested and supported on the following 64-bit systems:</p>
+<ul>
+<li>Ubuntu 16.04 or later</li>
+<li>Windows 7 or later</li>
+<li>macOS 10.12.6 (Sierra) or later (no GPU support)</li>
+</ul>
+<div id="installation" class="section level2">
+<h2>Installation</h2>
+<p>First, install the tensorflow R package from GitHub as follows:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span>(<span class="st">"tensorflow"</span>)</a></code></pre></div>
+<p>Then, use the <code><a href="../tensorflow/reference/install_tensorflow.html">install_tensorflow()</a></code> function to install TensorFlow. <strong>Note that</strong> on Windows you need a working installation of <a href="https://www.anaconda.com/distribution/">Anaconda</a>.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(tensorflow)</a>
+<a class="sourceLine" id="cb2-2" data-line-number="2"><span class="kw"><a href="../tensorflow/reference/install_tensorflow.html">install_tensorflow</a></span>()</a></code></pre></div>
+<p>You can confirm that the installation succeeded with:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(tensorflow)</a>
+<a class="sourceLine" id="cb3-2" data-line-number="2">tf<span class="op">$</span><span class="kw">constant</span>(<span class="st">"Hellow Tensorflow"</span>)</a></code></pre></div>
+<pre><code>## tf.Tensor(b'Hellow Tensorflow', shape=(), dtype=string)</code></pre>
+<p>This will provide you with a default installation of TensorFlow suitable for use
+with the tensorflow R package. Read on if you want to learn about additional installation options, including installing a version of TensorFlow that takes advantage of Nvidia GPUs if you have the correct CUDA libraries installed.</p>
+</div>
+<div id="installation-methods" class="section level2">
+<h2>Installation methods</h2>
+<p>TensorFlow is distributed as a Python package and so needs to be installed within a Python environment on your system. By default, the <code><a href="../tensorflow/reference/install_tensorflow.html">install_tensorflow()</a></code> function attempts to install TensorFlow within an isolated Python environment (“r-reticulate”).</p>
+<p>These are the available methods and their behavior:</p>
+<table>
+<colgroup>
+<col width="19%">
+<col width="80%">
+</colgroup>
+<thead><tr class="header">
+<th>Method</th>
+<th>Description</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td>auto</td>
+<td>Automatically choose an appropriate default for the current platform.</td>
+</tr>
+<tr class="even">
+<td>virtualenv</td>
+<td>Install into a Python virtual environment at <code>~/.virtualenvs/r-reticulate</code>
+</td>
+</tr>
+<tr class="odd">
+<td>conda</td>
+<td>Install into an Anaconda Python environment named <code>r-reticulate</code>
+</td>
+</tr>
+<tr class="even">
+<td>system</td>
+<td>Install into the system Python environment</td>
+</tr>
+</tbody>
+</table>
+<p>The “virtualenv” and “conda” methods are available on Linux and OS X and only the “conda” method is available on Windows.</p>
+<p><code>install_tensorflow</code> is a wraper around <code><a href="https://rdrr.io/pkg/reticulate/man/py_install.html">reticulate::py_install</a></code>. Please refer to <a href="https://rstudio.github.io/reticulate/articles/python_packages.html">‘Installing Python Packages’</a> for more information.</p>
+</div>
+<div id="alternate-versions" class="section level2">
+<h2>Alternate Versions</h2>
+<p>By default, <code><a href="../tensorflow/reference/install_tensorflow.html">install_tensorflow()</a></code> install the latest release version of TensorFlow. You can override this behavior by specifying the <code>version</code> parameter. For example:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" data-line-number="1"><span class="kw"><a href="../tensorflow/reference/install_tensorflow.html">install_tensorflow</a></span>(<span class="dt">version =</span> <span class="st">"2.0.0"</span>)</a></code></pre></div>
+<p>Note that this should be a full <code>major.minor.patch</code> version specification (rather than just major and minor versions).</p>
+<p>You can install the nightly build of TensorFlow (CPU or GPU version) with:</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" data-line-number="1"><span class="kw"><a href="../tensorflow/reference/install_tensorflow.html">install_tensorflow</a></span>(<span class="dt">version =</span> <span class="st">"nightly"</span>)      <span class="co"># cpu version</span></a>
+<a class="sourceLine" id="cb6-2" data-line-number="2"><span class="kw"><a href="../tensorflow/reference/install_tensorflow.html">install_tensorflow</a></span>(<span class="dt">version =</span> <span class="st">"nightly-gpu"</span>)  <span class="co"># gpu version</span></a></code></pre></div>
+<p>You can install any other build of TensorFlow by specifying a URL to a TensorFlow binary. For example:</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" data-line-number="1"><span class="kw"><a href="../tensorflow/reference/install_tensorflow.html">install_tensorflow</a></span>(<span class="dt">version =</span> <span class="st">"https://files.pythonhosted.org/packages/c2/c1/a035e377cf5a5b90eff27f096448fa5c5a90cbcf13b7eb0673df888f2c2d/tf_nightly-1.12.0.dev20180918-cp36-cp36m-manylinux1_x86_64.whl"</span>)</a></code></pre></div>
+</div>

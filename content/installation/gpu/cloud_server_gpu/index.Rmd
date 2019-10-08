@@ -10,7 +10,7 @@ menu:
   main:
     name: "Cloud Server"
     identifier: "tools-cloud-server-gpu"
-    parent: "gpu-top"
+    parent: "installation-gpu"
     weight: 40
 ---
 
@@ -35,7 +35,7 @@ There are AMIs on the Amazon Cloud Marketplace for both the open-source and Prof
 
 * Professional: <https://aws.amazon.com/marketplace/pp/B07B8G3FZP>
 
-You should launch these AMIs on the `p2.xlarge` instance type. This type includes a single GPU whereas other GPU-based images include up to 16 GPUs (however they are commensurately much more expensive). Note that you may need to select a different region than your default to be able to launch `p2.xlarge` instances (for example, selecting "US East (Ohio)" rather than "US East (N Virginia)").
+You should launch these AMIs on the `p2.xlarge` instance type. This type includes a single GPU whereas other GPU-based images include up to 16 GPUs (however they are commensurately much more expensive). Note that you may need to select a different region than your default to be able to launch `p2.xlarge` instances (for example, selecting "US East (Ohio)" rather than "US East (N Virginia)"). 
 
 ![](images/aws-launch.png){.illustration}
 

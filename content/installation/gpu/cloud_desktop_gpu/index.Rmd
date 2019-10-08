@@ -10,7 +10,7 @@ menu:
   main:
     name: "Cloud Desktop"
     identifier: "tools-cloud-desktop-gpu"
-    parent: "gpu-top"
+    parent: "installation-gpu"
     weight: 50
 ---
 

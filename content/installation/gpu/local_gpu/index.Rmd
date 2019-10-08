@@ -10,7 +10,7 @@ menu:
   main:
     name: "Local GPU"
     identifier: "tools-local-gpu"
-    parent: "gpu-top"
+    parent: "installation-gpu"
     weight: 20
 aliases:
   - /installation_gpu.html

@@ -3,7 +3,6 @@ languageCode = "en-us"
 title = "TensorFlow for R"
 theme = "rstudio-docs-theme"
 metadataformat = "yaml"
-uglyURLs = true
 ignoreFiles = ["\\.Rmd$", "_files$", "_cache$"]
 preserveTaxonomyNames = true
 
@@ -24,7 +23,31 @@ disqusShortname = "r-tensorflow"
 	url    = "/"
 	identifier = "home-top"
 	weight = 10
+	
+	
+# Installation Menu
 
+[[menu.main]]
+	name   = "Installation"
+	url    = "/installation/"
+	identifier = "installation-top"
+	parent = ""
+	weight = 19
+
+[[menu.main]]
+  name = "Installing TensorFlow"
+  url    = "/installation/"
+  identifier = "installation-overview"
+  parent = "installation-top"
+  weight = 10
+  
+[[menu.main]]
+  name = "GPU support"
+  url    = "/installation/gpu"
+  identifier = "installation-gpu"
+  parent = "installation-top"
+  weight = 20
+	
 # Keras Navigational Menus
 
 [[menu.main]]

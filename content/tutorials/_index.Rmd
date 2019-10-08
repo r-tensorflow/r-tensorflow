@@ -1,0 +1,27 @@
+---
+title: "Overview"
+type: docs
+menu:
+  main:
+    name: "Overview"
+    identifier: "tutorials-get-started"
+    parent: "tutorials-overview"
+    weight: 10
+---
+
+The core TensorFlow API is composed of a set of Python modules that enable constructing 
+and executing TensorFlow graphs. The [tensorflow](https://github.com/rstudio/tensorflow) 
+package provides access to the complete TensorFlow API from within R.
+
+The [r-tensorflow](https://github.com/r-tensorflow) project maintains additional R 
+packages providing user-friedly interfaces to TensorFlow for the R users.
+
+1. [keras](https://github.com/rstudio/keras) - TensorFlow’s high-level APIs are based on the Keras API standard for defining and training 
+neural networks. Keras enables fast prototyping, state-of-the-art research, and 
+production—all with user-friendly APIs. The [keras](https://github.com/rstudio/keras) 
+R package wraps the `tf.keras` module in an R usual way.
+
+1. [tfdatasets](https://github.com/rstudio/tfdatasets) - The `tf.data` API enables building 
+complex input pipelines from simple, reusable pieces. The [tfdatasets](https://github.com/rstudio/tfdatasets) package allow R users to build
+data input pipelines directly from R at the same time taking advantage of TensorFlow's 
+performance.
