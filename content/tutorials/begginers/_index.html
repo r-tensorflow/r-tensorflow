@@ -11,25 +11,85 @@ menu:
 
 
 
-<p>In this section you will find tutorials that can be used to get started with TensorFlow for R or, for more advanced users, to discover best practices for loading data, building complex models and solving common problems.</p>
-<p>The best place to get started with TensorFlow is using Keras - a Deep Learning API
-created by François Chollet. Keras is easy to get started, and it allows you to progressively
-build more complex workflows as you need to use advanced models and techniques.</p>
-<div id="for-beginners" class="section level2">
-<h2>For beginners</h2>
-<p>We recommend the following tutorials for you first contact with TensorFlow.
-Feel free to navigate trought the ‘beginner’ section in the sidebar.</p>
-<ul>
-<li>Quickstart: the minimal getting start guide to Keras.</li>
-<li>Basic ML with Keras: use Keras to solve basic Machine Learning tasks.</li>
-<li>Load data: learn to efficiently load data to TensorFlow using <code>tfdatasets</code>.</li>
-</ul>
-</div>
-<div id="for-experts" class="section level2">
-<h2>For experts</h2>
-<ul>
-<li>Advanced Quickstart: learn the subclassing API and how create custom loops.</li>
-<li>Customization: build custom layers and training loops in TensorFlow.</li>
-<li>Distributed Training: distribute your model training acrros multiples GPU’s or machines.</li>
-</ul>
-</div>
+<p>This short introduction uses Keras to:</p>
+<ol style="list-style-type: decimal">
+<li>Build a neural network that classifies images.</li>
+<li>Train this neural network.</li>
+<li>And, finally, evaluate the accuracy of the model.</li>
+<li>Save and restore the created model.</li>
+</ol>
+<p>Before running the quickstart you need to have Keras installed. Please refer to the <a href="/installation/">installation</a> for installation instructions.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(keras)</a></code></pre></div>
+<p>Let’s start by loading and preparing the <a href="http://yann.lecun.com/exdb/mnist/">MNIST dataset</a>. The values of thee pixels are integers between 0 and 255 and we will convert them to floats between 0 and 1.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" data-line-number="1">mnist &lt;-<span class="st"> </span><span class="kw"><a href="../../keras/reference/dataset_mnist.html">dataset_mnist</a></span>()</a>
+<a class="sourceLine" id="cb2-2" data-line-number="2">mnist<span class="op">$</span>train<span class="op">$</span>x &lt;-<span class="st"> </span>mnist<span class="op">$</span>train<span class="op">$</span>x<span class="op">/</span><span class="dv">255</span></a>
+<a class="sourceLine" id="cb2-3" data-line-number="3">mnist<span class="op">$</span>test<span class="op">$</span>x &lt;-<span class="st"> </span>mnist<span class="op">$</span>test<span class="op">$</span>x<span class="op">/</span><span class="dv">255</span></a></code></pre></div>
+<p>Now, let’s define the a Keras model using the sequential API.</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1">model &lt;-<span class="st"> </span><span class="kw"><a href="../../keras/reference/keras_model_sequential.html">keras_model_sequential</a></span>() <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb3-2" data-line-number="2"><span class="st">  </span><span class="kw"><a href="../../keras/reference/layer_flatten.html">layer_flatten</a></span>(<span class="dt">input_shape =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="dv">28</span>, <span class="dv">28</span>)) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb3-3" data-line-number="3"><span class="st">  </span><span class="kw"><a href="../../keras/reference/layer_dense.html">layer_dense</a></span>(<span class="dt">units =</span> <span class="dv">128</span>, <span class="dt">activation =</span> <span class="st">"relu"</span>) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb3-4" data-line-number="4"><span class="st">  </span><span class="kw"><a href="../../keras/reference/layer_dropout.html">layer_dropout</a></span>(<span class="fl">0.2</span>) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb3-5" data-line-number="5"><span class="st">  </span><span class="kw"><a href="../../keras/reference/layer_dense.html">layer_dense</a></span>(<span class="dv">10</span>, <span class="dt">activation =</span> <span class="st">"softmax"</span>)</a></code></pre></div>
+<p><strong>Note</strong> that when using the Sequential API the first layer must specify the <code>input_shape</code> argument which represents the dimensions of the input. In our case, images 28x28.</p>
+<p>After definning the model, you can see information about layers, number of parameters, etc with the <code>summary</code> function:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/base/summary.html">summary</a></span>(model)</a></code></pre></div>
+<pre><code>## Model: "sequential"
+## ___________________________________________________________________________
+## Layer (type)                     Output Shape                  Param #     
+## ===========================================================================
+## flatten (Flatten)                (None, 784)                   0           
+## ___________________________________________________________________________
+## dense (Dense)                    (None, 128)                   100480      
+## ___________________________________________________________________________
+## dropout (Dropout)                (None, 128)                   0           
+## ___________________________________________________________________________
+## dense_1 (Dense)                  (None, 10)                    1290        
+## ===========================================================================
+## Total params: 101,770
+## Trainable params: 101,770
+## Non-trainable params: 0
+## ___________________________________________________________________________</code></pre>
+<p>The next step after buildinng the model is to compile it. It’s at compile time that we define what <strong>loss</strong> will be optimized and what <strong>optimizer</strong> will be used. You can also specify metrics, callbacks and etc that are meant to be run during the model fitting.</p>
+<p>Compiling is done with the <code>compile</code> function:</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" data-line-number="1">model <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb6-2" data-line-number="2"><span class="st">  </span><span class="kw"><a href="../../keras/reference/reexports.html">compile</a></span>(</a>
+<a class="sourceLine" id="cb6-3" data-line-number="3">    <span class="dt">loss =</span> <span class="st">"sparse_categorical_crossentropy"</span>,</a>
+<a class="sourceLine" id="cb6-4" data-line-number="4">    <span class="dt">optimizer =</span> <span class="st">"adam"</span>,</a>
+<a class="sourceLine" id="cb6-5" data-line-number="5">    <span class="dt">metrics =</span> <span class="st">"accuracy"</span></a>
+<a class="sourceLine" id="cb6-6" data-line-number="6">  )</a></code></pre></div>
+<p><strong>Note</strong> that <code>compile</code> and <code>fit</code> (which we are going to see next) modify the <code>model</code> object in place, unlike most R functions.</p>
+<p>Now let’s fit our model:</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" data-line-number="1">model <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb7-2" data-line-number="2"><span class="st">  </span><span class="kw"><a href="../../keras/reference/reexports.html">fit</a></span>(</a>
+<a class="sourceLine" id="cb7-3" data-line-number="3">    <span class="dt">x =</span> mnist<span class="op">$</span>train<span class="op">$</span>x, <span class="dt">y =</span> mnist<span class="op">$</span>train<span class="op">$</span>y,</a>
+<a class="sourceLine" id="cb7-4" data-line-number="4">    <span class="dt">epochs =</span> <span class="dv">5</span>,</a>
+<a class="sourceLine" id="cb7-5" data-line-number="5">    <span class="dt">validation_split =</span> <span class="fl">0.3</span></a>
+<a class="sourceLine" id="cb7-6" data-line-number="6">  )</a></code></pre></div>
+<p>We can now make predictions with our model using the <code>predict</code> function:</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" data-line-number="1">predictions &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/stats/predict.html">predict</a></span>(model, mnist<span class="op">$</span>test<span class="op">$</span>x)</a>
+<a class="sourceLine" id="cb8-2" data-line-number="2"><span class="kw"><a href="https://rdrr.io/r/utils/head.html">head</a></span>(predictions, <span class="dv">2</span>)</a></code></pre></div>
+<pre><code>##              [,1]         [,2]         [,3]        [,4]         [,5]
+## [1,] 4.653342e-07 2.107695e-08 2.089798e-05 0.001567955 6.544617e-10
+## [2,] 1.722116e-07 4.636983e-05 9.997744e-01 0.000163069 4.439695e-13
+##              [,6]         [,7]         [,8]         [,9]        [,10]
+## [1,] 3.530463e-07 1.521453e-11 9.984078e-01 2.955351e-07 2.345232e-06
+## [2,] 6.728756e-06 9.961163e-08 1.160208e-11 9.197497e-06 2.975557e-14</code></pre>
+<p>By default <code>predict</code> will return the output of the last Keras layer.
+In our case this is the probability for each class. You can also use <code>predict_classes</code> and <code>predict_proba</code> to generate <code>class</code> and <code>probability</code> - these functions are slighly different then <code>predict</code> since they will be run in batches.</p>
+<p>You can access the model performance on a different dataset using the <code>evaluate</code> function, for example:</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" data-line-number="1">model <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb10-2" data-line-number="2"><span class="st">  </span><span class="kw"><a href="../../keras/reference/reexports.html">evaluate</a></span>(mnist<span class="op">$</span>test<span class="op">$</span>x, mnist<span class="op">$</span>test<span class="op">$</span>y, <span class="dt">verbose =</span> <span class="dv">0</span>)</a></code></pre></div>
+<pre><code>## $loss
+## [1] 0.07921305
+## 
+## $accuracy
+## [1] 0.9741</code></pre>
+<p>Our model achieved ~90% accuracy on the test set.</p>
+<p>Unlike models built with the <code>lm</code> function, to save Keras models for later prediction, you need to use specialized functions, like <code>save_model_tf</code>:</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb12-1" data-line-number="1"><span class="kw"><a href="../../keras/reference/save_model_tf.html">save_model_tf</a></span>(model, <span class="st">"model"</span>)</a></code></pre></div>
+<p>You can then reload the model and make predictions with:</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb13-1" data-line-number="1">reloaded_model &lt;-<span class="st"> </span><span class="kw"><a href="../../keras/reference/save_model_tf.html">load_model_tf</a></span>(<span class="st">"model"</span>)</a>
+<a class="sourceLine" id="cb13-2" data-line-number="2"><span class="kw"><a href="https://rdrr.io/r/base/all.equal.html">all.equal</a></span>(<span class="kw"><a href="https://rdrr.io/r/stats/predict.html">predict</a></span>(model, mnist<span class="op">$</span>test<span class="op">$</span>x), <span class="kw"><a href="https://rdrr.io/r/stats/predict.html">predict</a></span>(reloaded_model, mnist<span class="op">$</span>test<span class="op">$</span>x))</a></code></pre></div>
+<pre><code>## [1] TRUE</code></pre>
+<p>You can have more information about saving and serializing models in the guides.
+This tutorial is intented as a first introduction to Keras. You cna learn more here.</p>

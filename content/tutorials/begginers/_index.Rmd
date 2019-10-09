@@ -9,24 +9,107 @@ menu:
     weight: 23
 ---
 
-In this section you will find tutorials that can be used to get started with TensorFlow for R or, for more advanced users, to discover best practices for loading data, building complex models and solving common problems.
+This short introduction uses Keras to:
 
-The best place to get started with TensorFlow is using Keras - a Deep Learning API
-created by François Chollet. Keras is easy to get started, and it allows you to progressively 
-build more complex workflows as you need to use advanced models and techniques. 
+1. Build a neural network that classifies images.
+1. Train this neural network.
+1. And, finally, evaluate the accuracy of the model.
+1. Save and restore the created model.
 
-## For beginners
+Before running the quickstart you need to have Keras installed. Please refer to the [installation](/installation/) for installation instructions.
 
-We recommend the following tutorials for you first contact with TensorFlow. 
-Feel free to navigate trought the 'beginner' section in the sidebar.
+```{r}
+library(keras)
+```
 
-* Quickstart: the minimal getting start guide to Keras.
-* Basic ML with Keras: use Keras to solve basic Machine Learning tasks.
-* Load data: learn to efficiently load data to TensorFlow using `tfdatasets`.
+Let's start by loading and preparing the [MNIST dataset](http://yann.lecun.com/exdb/mnist/). The values of thee pixels are integers between 0 and 255 and we will convert them to floats between 0 and 1.
 
-## For experts
+```{r}
+mnist <- dataset_mnist()
+mnist$train$x <- mnist$train$x/255
+mnist$test$x <- mnist$test$x/255
+```
 
-* Advanced Quickstart: learn the subclassing API and how create custom loops.
-* Customization: build custom layers and training loops in TensorFlow.
-* Distributed Training: distribute your model training acrros multiples GPU's or machines.
+Now, let's define the a Keras model using the sequential API.
+
+```{r}
+model <- keras_model_sequential() %>% 
+  layer_flatten(input_shape = c(28, 28)) %>% 
+  layer_dense(units = 128, activation = "relu") %>% 
+  layer_dropout(0.2) %>% 
+  layer_dense(10, activation = "softmax")
+```
+
+**Note** that when using the Sequential API the first layer must specify the `input_shape` argument which represents the dimensions of the input. In our case, images 28x28.
+
+After definning the model, you can see information about layers, number of parameters, etc with the `summary` function:
+
+```{r}
+summary(model)
+```
+
+The next step after buildinng the model is to compile it. It's at compile time that we define what **loss** will be optimized and what **optimizer** will be used. You can also specify metrics, callbacks and etc that are meant to be run during the model fitting.
+
+Compiling is done with the `compile` function:
+
+```{r}
+model %>% 
+  compile(
+    loss = "sparse_categorical_crossentropy",
+    optimizer = "adam",
+    metrics = "accuracy"
+  )
+```
+
+**Note** that `compile` and `fit` (which we are going to see next) modify the `model` object in place, unlike most R functions. 
+
+Now let's fit our model:
+
+```{r}
+model %>% 
+  fit(
+    x = mnist$train$x, y = mnist$train$y,
+    epochs = 5,
+    validation_split = 0.3
+  )
+```
+
+We can now make predictions with our model using the `predict` function:
+
+```{r}
+predictions <- predict(model, mnist$test$x)
+head(predictions, 2)
+```
+
+By default `predict` will return the output of the last Keras layer.
+In our case this is the probability for each class. You can also use `predict_classes` and `predict_proba` to generate `class` and  `probability` - these functions are slighly different then `predict` since they will be run in batches.
+
+You can access the model performance on a different dataset using the `evaluate` function, for example:
+
+```{r}
+model %>% 
+  evaluate(mnist$test$x, mnist$test$y, verbose = 0)
+```
+
+Our model achieved ~90% accuracy on the test set. 
+
+Unlike models built with the `lm` function, to save Keras models for later prediction, you need to use specialized functions, like `save_model_tf`:
+
+```{r}
+save_model_tf(model, "model")
+```
+
+You can then reload the model and make predictions with:
+
+```{r}
+reloaded_model <- load_model_tf("model")
+all.equal(predict(model, mnist$test$x), predict(reloaded_model, mnist$test$x))
+```
+
+You can have more information about saving and serializing models in the guides.
+This tutorial is intented as a first introduction to Keras. You cna learn more here.
+
+```{r include=FALSE}
+system("rm -r model")
+```
 
