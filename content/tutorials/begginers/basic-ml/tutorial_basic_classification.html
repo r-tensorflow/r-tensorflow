@@ -1,5 +1,5 @@
 ---
-title: "Tutorial: Basic Classification"
+title: "Basic Image Classification"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Tutorial: Basic Classification}
@@ -23,7 +23,7 @@ menu:
 <h2>Import the Fashion MNIST dataset</h2>
 <p>This guide uses the <a href="https://github.com/zalandoresearch/fashion-mnist">Fashion MNIST</a> dataset which contains 70,000 grayscale images in 10 categories. The images show individual articles of clothing at low resolution (28 by 28 pixels), as seen here:</p>
 <div class="figure">
-<img src="images/fashion_mnist.png" alt="Figure 1. Fashion-MNIST samples (by Zalando, MIT License)."><p class="caption">Figure 1. Fashion-MNIST samples (by Zalando, MIT License).</p>
+<img src="../images/fashion-mnist-sprite.png" alt="Figure 1. Fashion-MNIST samples (by Zalando, MIT License)."><p class="caption">Figure 1. Fashion-MNIST samples (by Zalando, MIT License).</p>
 </div>
 <p>Fashion MNIST is intended as a drop-in replacement for the classic <a href="http://yann.lecun.com/exdb/mnist/">MNIST</a> dataset—often used as the “Hello, World” of machine learning programs for computer vision. The MNIST dataset contains images of handwritten digits (0, 1, 2, etc) in an identical format to the articles of clothing we’ll use here.</p>
 <p>This guide uses Fashion MNIST for variety, and because it’s a slightly more challenging problem than regular MNIST. Both datasets are relatively small and are used to verify that an algorithm works as expected. They’re good starting points to test and debug code.</p>
@@ -98,57 +98,62 @@ menu:
 <h2>Explore the data</h2>
 <p>Let’s explore the format of the dataset before training the model. The following shows there are 60,000 images in the training set, with each image represented as 28 x 28 pixels:</p>
 <div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/base/dim.html">dim</a></span>(train_images)</a></code></pre></div>
+<pre><code>## [1] 60000    28    28</code></pre>
 <pre><code>[1] 60000    28    28</code></pre>
 <p>Likewise, there are 60,000 labels in the training set:</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/base/dim.html">dim</a></span>(train_labels)</a></code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/base/dim.html">dim</a></span>(train_labels)</a></code></pre></div>
+<pre><code>## [1] 60000</code></pre>
 <pre><code>[1] 60000</code></pre>
 <p>Each label is an integer between 0 and 9:</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" data-line-number="1">train_labels[<span class="dv">1</span><span class="op">:</span><span class="dv">20</span>]</a></code></pre></div>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" data-line-number="1">train_labels[<span class="dv">1</span><span class="op">:</span><span class="dv">20</span>]</a></code></pre></div>
+<pre><code>##  [1] 9 0 0 3 0 2 7 2 5 5 0 9 5 5 7 9 1 0 6 4</code></pre>
 <pre><code>[1] 9 0 0 3 0 2 7 2 5 5 0 9 5 5 7 9 1 0 6 4</code></pre>
 <p>There are 10,000 images in the test set. Again, each image is represented as 28 x 28 pixels:</p>
-<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/base/dim.html">dim</a></span>(test_images)</a></code></pre></div>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb13-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/base/dim.html">dim</a></span>(test_images)</a></code></pre></div>
+<pre><code>## [1] 10000    28    28</code></pre>
 <pre><code>[1] 10000    28    28</code></pre>
 <p>And the test set contains 10,000 images labels:</p>
-<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb12-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/base/dim.html">dim</a></span>(test_labels)</a></code></pre></div>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb16-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/base/dim.html">dim</a></span>(test_labels)</a></code></pre></div>
+<pre><code>## [1] 10000</code></pre>
 <pre><code>[1] 10000</code></pre>
 </div>
 <div id="preprocess-the-data" class="section level2">
 <h2>Preprocess the data</h2>
 <p>The data must be preprocessed before training the network. If you inspect the first image in the training set, you will see that the pixel values fall in the range of 0 to 255:</p>
-<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb14-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(tidyr)</a>
-<a class="sourceLine" id="cb14-2" data-line-number="2"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(ggplot2)</a>
-<a class="sourceLine" id="cb14-3" data-line-number="3"></a>
-<a class="sourceLine" id="cb14-4" data-line-number="4">image_<span class="dv">1</span> &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/as.data.frame.html">as.data.frame</a></span>(train_images[<span class="dv">1</span>, , ])</a>
-<a class="sourceLine" id="cb14-5" data-line-number="5"><span class="kw"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span>(image_<span class="dv">1</span>) &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/seq.html">seq_len</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/nrow.html">ncol</a></span>(image_<span class="dv">1</span>))</a>
-<a class="sourceLine" id="cb14-6" data-line-number="6">image_<span class="dv">1</span><span class="op">$</span>y &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/seq.html">seq_len</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span>(image_<span class="dv">1</span>))</a>
-<a class="sourceLine" id="cb14-7" data-line-number="7">image_<span class="dv">1</span> &lt;-<span class="st"> </span><span class="kw"><a href="https://tidyr.tidyverse.org/reference/gather.html">gather</a></span>(image_<span class="dv">1</span>, <span class="st">"x"</span>, <span class="st">"value"</span>, <span class="op">-</span>y)</a>
-<a class="sourceLine" id="cb14-8" data-line-number="8">image_<span class="dv">1</span><span class="op">$</span>x &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/integer.html">as.integer</a></span>(image_<span class="dv">1</span><span class="op">$</span>x)</a>
-<a class="sourceLine" id="cb14-9" data-line-number="9"></a>
-<a class="sourceLine" id="cb14-10" data-line-number="10"><span class="kw"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span>(image_<span class="dv">1</span>, <span class="kw"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span>(<span class="dt">x =</span> x, <span class="dt">y =</span> y, <span class="dt">fill =</span> value)) <span class="op">+</span></a>
-<a class="sourceLine" id="cb14-11" data-line-number="11"><span class="st">  </span><span class="kw"><a href="https://ggplot2.tidyverse.org/reference/geom_tile.html">geom_tile</a></span>() <span class="op">+</span></a>
-<a class="sourceLine" id="cb14-12" data-line-number="12"><span class="st">  </span><span class="kw"><a href="https://ggplot2.tidyverse.org/reference/scale_gradient.html">scale_fill_gradient</a></span>(<span class="dt">low =</span> <span class="st">"white"</span>, <span class="dt">high =</span> <span class="st">"black"</span>, <span class="dt">na.value =</span> <span class="ot">NA</span>) <span class="op">+</span></a>
-<a class="sourceLine" id="cb14-13" data-line-number="13"><span class="st">  </span><span class="kw"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html">scale_y_reverse</a></span>() <span class="op">+</span></a>
-<a class="sourceLine" id="cb14-14" data-line-number="14"><span class="st">  </span><span class="kw"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_minimal</a></span>() <span class="op">+</span></a>
-<a class="sourceLine" id="cb14-15" data-line-number="15"><span class="st">  </span><span class="kw"><a href="https://ggplot2.tidyverse.org/reference/theme.html">theme</a></span>(<span class="dt">panel.grid =</span> <span class="kw"><a href="https://ggplot2.tidyverse.org/reference/element.html">element_blank</a></span>())   <span class="op">+</span></a>
-<a class="sourceLine" id="cb14-16" data-line-number="16"><span class="st">  </span><span class="kw"><a href="https://ggplot2.tidyverse.org/reference/theme.html">theme</a></span>(<span class="dt">aspect.ratio =</span> <span class="dv">1</span>) <span class="op">+</span></a>
-<a class="sourceLine" id="cb14-17" data-line-number="17"><span class="st">  </span><span class="kw"><a href="https://ggplot2.tidyverse.org/reference/labs.html">xlab</a></span>(<span class="st">""</span>) <span class="op">+</span></a>
-<a class="sourceLine" id="cb14-18" data-line-number="18"><span class="st">  </span><span class="kw"><a href="https://ggplot2.tidyverse.org/reference/labs.html">ylab</a></span>(<span class="st">""</span>)</a></code></pre></div>
-<p><img src="images/fashion_mnist_heatmap.png"></p>
+<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb19-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(tidyr)</a>
+<a class="sourceLine" id="cb19-2" data-line-number="2"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(ggplot2)</a>
+<a class="sourceLine" id="cb19-3" data-line-number="3"></a>
+<a class="sourceLine" id="cb19-4" data-line-number="4">image_<span class="dv">1</span> &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/as.data.frame.html">as.data.frame</a></span>(train_images[<span class="dv">1</span>, , ])</a>
+<a class="sourceLine" id="cb19-5" data-line-number="5"><span class="kw"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span>(image_<span class="dv">1</span>) &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/seq.html">seq_len</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/nrow.html">ncol</a></span>(image_<span class="dv">1</span>))</a>
+<a class="sourceLine" id="cb19-6" data-line-number="6">image_<span class="dv">1</span><span class="op">$</span>y &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/seq.html">seq_len</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span>(image_<span class="dv">1</span>))</a>
+<a class="sourceLine" id="cb19-7" data-line-number="7">image_<span class="dv">1</span> &lt;-<span class="st"> </span><span class="kw"><a href="https://tidyr.tidyverse.org/reference/gather.html">gather</a></span>(image_<span class="dv">1</span>, <span class="st">"x"</span>, <span class="st">"value"</span>, <span class="op">-</span>y)</a>
+<a class="sourceLine" id="cb19-8" data-line-number="8">image_<span class="dv">1</span><span class="op">$</span>x &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/integer.html">as.integer</a></span>(image_<span class="dv">1</span><span class="op">$</span>x)</a>
+<a class="sourceLine" id="cb19-9" data-line-number="9"></a>
+<a class="sourceLine" id="cb19-10" data-line-number="10"><span class="kw"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span>(image_<span class="dv">1</span>, <span class="kw"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span>(<span class="dt">x =</span> x, <span class="dt">y =</span> y, <span class="dt">fill =</span> value)) <span class="op">+</span></a>
+<a class="sourceLine" id="cb19-11" data-line-number="11"><span class="st">  </span><span class="kw"><a href="https://ggplot2.tidyverse.org/reference/geom_tile.html">geom_tile</a></span>() <span class="op">+</span></a>
+<a class="sourceLine" id="cb19-12" data-line-number="12"><span class="st">  </span><span class="kw"><a href="https://ggplot2.tidyverse.org/reference/scale_gradient.html">scale_fill_gradient</a></span>(<span class="dt">low =</span> <span class="st">"white"</span>, <span class="dt">high =</span> <span class="st">"black"</span>, <span class="dt">na.value =</span> <span class="ot">NA</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb19-13" data-line-number="13"><span class="st">  </span><span class="kw"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html">scale_y_reverse</a></span>() <span class="op">+</span></a>
+<a class="sourceLine" id="cb19-14" data-line-number="14"><span class="st">  </span><span class="kw"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_minimal</a></span>() <span class="op">+</span></a>
+<a class="sourceLine" id="cb19-15" data-line-number="15"><span class="st">  </span><span class="kw"><a href="https://ggplot2.tidyverse.org/reference/theme.html">theme</a></span>(<span class="dt">panel.grid =</span> <span class="kw"><a href="https://ggplot2.tidyverse.org/reference/element.html">element_blank</a></span>())   <span class="op">+</span></a>
+<a class="sourceLine" id="cb19-16" data-line-number="16"><span class="st">  </span><span class="kw"><a href="https://ggplot2.tidyverse.org/reference/theme.html">theme</a></span>(<span class="dt">aspect.ratio =</span> <span class="dv">1</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb19-17" data-line-number="17"><span class="st">  </span><span class="kw"><a href="https://ggplot2.tidyverse.org/reference/labs.html">xlab</a></span>(<span class="st">""</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb19-18" data-line-number="18"><span class="st">  </span><span class="kw"><a href="https://ggplot2.tidyverse.org/reference/labs.html">ylab</a></span>(<span class="st">""</span>)</a></code></pre></div>
+<p><img src="/tutorials/begginers/basic-ml/tutorial_basic_classification_files/figure-html/unnamed-chunk-9-1.png" width="672"></p>
 <p>We scale these values to a range of 0 to 1 before feeding to the neural network model. For this, we simply divide by 255.</p>
 <p>It’s important that the training set and the testing set are preprocessed in the same way:</p>
-<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb15-1" data-line-number="1">train_images &lt;-<span class="st"> </span>train_images <span class="op">/</span><span class="st"> </span><span class="dv">255</span></a>
-<a class="sourceLine" id="cb15-2" data-line-number="2">test_images &lt;-<span class="st"> </span>test_images <span class="op">/</span><span class="st"> </span><span class="dv">255</span></a></code></pre></div>
+<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb20-1" data-line-number="1">train_images &lt;-<span class="st"> </span>train_images <span class="op">/</span><span class="st"> </span><span class="dv">255</span></a>
+<a class="sourceLine" id="cb20-2" data-line-number="2">test_images &lt;-<span class="st"> </span>test_images <span class="op">/</span><span class="st"> </span><span class="dv">255</span></a></code></pre></div>
 <p>Display the first 25 images from the training set and display the class name below each image.
 Verify that the data is in the correct format and we’re ready to build and train the network.</p>
-<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb16-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/graphics/par.html">par</a></span>(<span class="dt">mfcol=</span><span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="dv">5</span>,<span class="dv">5</span>))</a>
-<a class="sourceLine" id="cb16-2" data-line-number="2"><span class="kw"><a href="https://rdrr.io/r/graphics/par.html">par</a></span>(<span class="dt">mar=</span><span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="dv">0</span>, <span class="dv">0</span>, <span class="fl">1.5</span>, <span class="dv">0</span>), <span class="dt">xaxs=</span><span class="st">'i'</span>, <span class="dt">yaxs=</span><span class="st">'i'</span>)</a>
-<a class="sourceLine" id="cb16-3" data-line-number="3"><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span><span class="dv">25</span>) { </a>
-<a class="sourceLine" id="cb16-4" data-line-number="4">  img &lt;-<span class="st"> </span>train_images[i, , ]</a>
-<a class="sourceLine" id="cb16-5" data-line-number="5">  img &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/t.html">t</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/apply.html">apply</a></span>(img, <span class="dv">2</span>, rev)) </a>
-<a class="sourceLine" id="cb16-6" data-line-number="6">  <span class="kw"><a href="https://rdrr.io/r/graphics/image.html">image</a></span>(<span class="dv">1</span><span class="op">:</span><span class="dv">28</span>, <span class="dv">1</span><span class="op">:</span><span class="dv">28</span>, img, <span class="dt">col =</span> <span class="kw"><a href="https://rdrr.io/r/grDevices/gray.html">gray</a></span>((<span class="dv">0</span><span class="op">:</span><span class="dv">255</span>)<span class="op">/</span><span class="dv">255</span>), <span class="dt">xaxt =</span> <span class="st">'n'</span>, <span class="dt">yaxt =</span> <span class="st">'n'</span>,</a>
-<a class="sourceLine" id="cb16-7" data-line-number="7">        <span class="dt">main =</span> <span class="kw"><a href="https://rdrr.io/r/base/paste.html">paste</a></span>(class_names[train_labels[i] <span class="op">+</span><span class="st"> </span><span class="dv">1</span>]))</a>
-<a class="sourceLine" id="cb16-8" data-line-number="8">}</a></code></pre></div>
-<p><img src="images/fashion_mnist_classes.png"></p>
+<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb21-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/graphics/par.html">par</a></span>(<span class="dt">mfcol=</span><span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="dv">5</span>,<span class="dv">5</span>))</a>
+<a class="sourceLine" id="cb21-2" data-line-number="2"><span class="kw"><a href="https://rdrr.io/r/graphics/par.html">par</a></span>(<span class="dt">mar=</span><span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="dv">0</span>, <span class="dv">0</span>, <span class="fl">1.5</span>, <span class="dv">0</span>), <span class="dt">xaxs=</span><span class="st">'i'</span>, <span class="dt">yaxs=</span><span class="st">'i'</span>)</a>
+<a class="sourceLine" id="cb21-3" data-line-number="3"><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span><span class="dv">25</span>) { </a>
+<a class="sourceLine" id="cb21-4" data-line-number="4">  img &lt;-<span class="st"> </span>train_images[i, , ]</a>
+<a class="sourceLine" id="cb21-5" data-line-number="5">  img &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/t.html">t</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/apply.html">apply</a></span>(img, <span class="dv">2</span>, rev)) </a>
+<a class="sourceLine" id="cb21-6" data-line-number="6">  <span class="kw"><a href="https://rdrr.io/r/graphics/image.html">image</a></span>(<span class="dv">1</span><span class="op">:</span><span class="dv">28</span>, <span class="dv">1</span><span class="op">:</span><span class="dv">28</span>, img, <span class="dt">col =</span> <span class="kw"><a href="https://rdrr.io/r/grDevices/gray.html">gray</a></span>((<span class="dv">0</span><span class="op">:</span><span class="dv">255</span>)<span class="op">/</span><span class="dv">255</span>), <span class="dt">xaxt =</span> <span class="st">'n'</span>, <span class="dt">yaxt =</span> <span class="st">'n'</span>,</a>
+<a class="sourceLine" id="cb21-7" data-line-number="7">        <span class="dt">main =</span> <span class="kw"><a href="https://rdrr.io/r/base/paste.html">paste</a></span>(class_names[train_labels[i] <span class="op">+</span><span class="st"> </span><span class="dv">1</span>]))</a>
+<a class="sourceLine" id="cb21-8" data-line-number="8">}</a></code></pre></div>
+<p><img src="/tutorials/begginers/basic-ml/tutorial_basic_classification_files/figure-html/unnamed-chunk-11-1.png" width="672"></p>
 </div>
 <div id="build-the-model" class="section level2">
 <h2>Build the model</h2>
@@ -157,11 +162,11 @@ Verify that the data is in the correct format and we’re ready to build and tra
 <h3>Setup the layers</h3>
 <p>The basic building block of a neural network is the layer. Layers extract representations from the data fed into them. And, hopefully, these representations are more meaningful for the problem at hand.</p>
 <p>Most of deep learning consists of chaining together simple layers. Most layers, like <code>layer_dense</code>, have parameters that are learned during training.</p>
-<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb17-1" data-line-number="1">model &lt;-<span class="st"> </span><span class="kw"><a href="../../../keras/reference/keras_model_sequential.html">keras_model_sequential</a></span>()</a>
-<a class="sourceLine" id="cb17-2" data-line-number="2">model <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb17-3" data-line-number="3"><span class="st">  </span><span class="kw"><a href="../../../keras/reference/layer_flatten.html">layer_flatten</a></span>(<span class="dt">input_shape =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="dv">28</span>, <span class="dv">28</span>)) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb17-4" data-line-number="4"><span class="st">  </span><span class="kw"><a href="../../../keras/reference/layer_dense.html">layer_dense</a></span>(<span class="dt">units =</span> <span class="dv">128</span>, <span class="dt">activation =</span> <span class="st">'relu'</span>) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb17-5" data-line-number="5"><span class="st">  </span><span class="kw"><a href="../../../keras/reference/layer_dense.html">layer_dense</a></span>(<span class="dt">units =</span> <span class="dv">10</span>, <span class="dt">activation =</span> <span class="st">'softmax'</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb22-1" data-line-number="1">model &lt;-<span class="st"> </span><span class="kw"><a href="../../../keras/reference/keras_model_sequential.html">keras_model_sequential</a></span>()</a>
+<a class="sourceLine" id="cb22-2" data-line-number="2">model <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb22-3" data-line-number="3"><span class="st">  </span><span class="kw"><a href="../../../keras/reference/layer_flatten.html">layer_flatten</a></span>(<span class="dt">input_shape =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="dv">28</span>, <span class="dv">28</span>)) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb22-4" data-line-number="4"><span class="st">  </span><span class="kw"><a href="../../../keras/reference/layer_dense.html">layer_dense</a></span>(<span class="dt">units =</span> <span class="dv">128</span>, <span class="dt">activation =</span> <span class="st">'relu'</span>) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb22-5" data-line-number="5"><span class="st">  </span><span class="kw"><a href="../../../keras/reference/layer_dense.html">layer_dense</a></span>(<span class="dt">units =</span> <span class="dv">10</span>, <span class="dt">activation =</span> <span class="st">'softmax'</span>)</a></code></pre></div>
 <p>The first layer in this network, <code>layer_flatten</code>, transforms the format of the images from a 2d-array (of 28 by 28 pixels), to a 1d-array of 28 * 28 = 784 pixels. Think of this layer as unstacking rows of pixels in the image and lining them up. This layer has no parameters to learn; it only reformats the data.</p>
 <p>After the pixels are flattened, the network consists of a sequence of two <code>dense</code> layers. These are densely-connected, or fully-connected, neural layers. The first dense layer has 128 nodes (or neurons). The second (and last) layer is a 10-node softmax layer —this returns an array of 10 probability scores that sum to 1. Each node contains a score that indicates the probability that the current image belongs to one of the 10 digit classes.</p>
 </div>
@@ -173,11 +178,11 @@ Verify that the data is in the correct format and we’re ready to build and tra
 <li>Optimizer — This is how the model is updated based on the data it sees and its loss function.</li>
 <li>Metrics —Used to monitor the training and testing steps. The following example uses accuracy, the fraction of the images that are correctly classified.</li>
 </ul>
-<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb18-1" data-line-number="1">model <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../../../keras/reference/reexports.html">compile</a></span>(</a>
-<a class="sourceLine" id="cb18-2" data-line-number="2">  <span class="dt">optimizer =</span> <span class="st">'adam'</span>, </a>
-<a class="sourceLine" id="cb18-3" data-line-number="3">  <span class="dt">loss =</span> <span class="st">'sparse_categorical_crossentropy'</span>,</a>
-<a class="sourceLine" id="cb18-4" data-line-number="4">  <span class="dt">metrics =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">'accuracy'</span>)</a>
-<a class="sourceLine" id="cb18-5" data-line-number="5">)</a></code></pre></div>
+<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb23-1" data-line-number="1">model <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../../../keras/reference/reexports.html">compile</a></span>(</a>
+<a class="sourceLine" id="cb23-2" data-line-number="2">  <span class="dt">optimizer =</span> <span class="st">'adam'</span>, </a>
+<a class="sourceLine" id="cb23-3" data-line-number="3">  <span class="dt">loss =</span> <span class="st">'sparse_categorical_crossentropy'</span>,</a>
+<a class="sourceLine" id="cb23-4" data-line-number="4">  <span class="dt">metrics =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">'accuracy'</span>)</a>
+<a class="sourceLine" id="cb23-5" data-line-number="5">)</a></code></pre></div>
 </div>
 <div id="train-the-model" class="section level3">
 <h3>Train the model</h3>
@@ -188,7 +193,7 @@ Verify that the data is in the correct format and we’re ready to build and tra
 <li>We ask the model to make predictions about a test set — in this example, the test_images array. We verify that the predictions match the labels from the test_labels array.</li>
 </ul>
 <p>To start training, call the <code>fit</code> method — the model is “fit” to the training data:</p>
-<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb19-1" data-line-number="1">model <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../../../keras/reference/reexports.html">fit</a></span>(train_images, train_labels, <span class="dt">epochs =</span> <span class="dv">5</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb24-1" data-line-number="1">model <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../../../keras/reference/reexports.html">fit</a></span>(train_images, train_labels, <span class="dt">epochs =</span> <span class="dv">5</span>)</a></code></pre></div>
 <pre><code>Epoch 1/5
 60000/60000 [==============================] - 7s 118us/step - loss: 0.4980 - acc: 0.8238
 Epoch 2/5
@@ -204,10 +209,12 @@ Epoch 5/5
 <div id="evaluate-accuracy" class="section level3">
 <h3>Evaluate accuracy</h3>
 <p>Next, compare how the model performs on the test dataset:</p>
-<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb21-1" data-line-number="1">score &lt;-<span class="st"> </span>model <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../../../keras/reference/reexports.html">evaluate</a></span>(test_images, test_labels)</a>
-<a class="sourceLine" id="cb21-2" data-line-number="2"></a>
-<a class="sourceLine" id="cb21-3" data-line-number="3"><span class="kw"><a href="https://rdrr.io/r/base/cat.html">cat</a></span>(<span class="st">'Test loss:'</span>, score<span class="op">$</span>loss, <span class="st">"</span><span class="ch">\n</span><span class="st">"</span>)</a>
-<a class="sourceLine" id="cb21-4" data-line-number="4"><span class="kw"><a href="https://rdrr.io/r/base/cat.html">cat</a></span>(<span class="st">'Test accuracy:'</span>, score<span class="op">$</span>acc, <span class="st">"</span><span class="ch">\n</span><span class="st">"</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb26-1" data-line-number="1">score &lt;-<span class="st"> </span>model <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../../../keras/reference/reexports.html">evaluate</a></span>(test_images, test_labels)</a>
+<a class="sourceLine" id="cb26-2" data-line-number="2"></a>
+<a class="sourceLine" id="cb26-3" data-line-number="3"><span class="kw"><a href="https://rdrr.io/r/base/cat.html">cat</a></span>(<span class="st">'Test loss:'</span>, score<span class="op">$</span>loss, <span class="st">"</span><span class="ch">\n</span><span class="st">"</span>)</a></code></pre></div>
+<pre><code>## Test loss: 0.3491942</code></pre>
+<div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb28-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/base/cat.html">cat</a></span>(<span class="st">'Test accuracy:'</span>, score<span class="op">$</span>acc, <span class="st">"</span><span class="ch">\n</span><span class="st">"</span>)</a></code></pre></div>
+<pre><code>## Test accuracy: 0.8691</code></pre>
 <pre><code>10000/10000 [==============================] - 0s 19us/step
 Test loss: 0.3755946 
 Test accuracy: 0.8644 </code></pre>
@@ -216,74 +223,64 @@ Test accuracy: 0.8644 </code></pre>
 <div id="make-predictions" class="section level3">
 <h3>Make predictions</h3>
 <p>With the model trained, we can use it to make predictions about some images.</p>
-<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb23-1" data-line-number="1">predictions &lt;-<span class="st"> </span>model <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/stats/predict.html">predict</a></span>(test_images)</a></code></pre></div>
+<div class="sourceCode" id="cb31"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb31-1" data-line-number="1">predictions &lt;-<span class="st"> </span>model <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/stats/predict.html">predict</a></span>(test_images)</a></code></pre></div>
 <p>Here, the model has predicted the label for each image in the testing set. Let’s take a look at the first prediction:</p>
-<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb24-1" data-line-number="1">predictions[<span class="dv">1</span>, ]</a></code></pre></div>
-<pre><code>[1] 1.247006e-06 8.371295e-08 1.987903e-07 1.078801e-06 2.053094e-07 1.419330e-02 9.533844e-06
-[8] 5.745503e-02 2.694531e-05 9.283124e-01</code></pre>
+<div class="sourceCode" id="cb32"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb32-1" data-line-number="1">predictions[<span class="dv">1</span>, ]</a></code></pre></div>
+<pre><code>##  [1] 1.096448e-05 1.367503e-07 1.112523e-07 1.002720e-07 3.379628e-07
+##  [6] 1.153612e-02 5.269715e-06 3.311449e-02 7.994387e-06 9.553245e-01</code></pre>
 <p>A prediction is an array of 10 numbers. These describe the “confidence” of the model that the image corresponds to each of the 10 different articles of clothing. We can see which label has the highest confidence value:</p>
-<div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb26-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/base/which.min.html">which.max</a></span>(predictions[<span class="dv">1</span>, ])</a></code></pre></div>
-<pre><code>[1] 10</code></pre>
+<div class="sourceCode" id="cb34"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb34-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/base/which.min.html">which.max</a></span>(predictions[<span class="dv">1</span>, ])</a></code></pre></div>
+<pre><code>## [1] 10</code></pre>
 <p>Alternatively, we can also directly get the class prediction:</p>
-<div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb28-1" data-line-number="1">class_pred &lt;-<span class="st"> </span>model <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../../../keras/reference/predict_proba.html">predict_classes</a></span>(test_images)</a>
-<a class="sourceLine" id="cb28-2" data-line-number="2">class_pred[<span class="dv">1</span><span class="op">:</span><span class="dv">20</span>]</a></code></pre></div>
-<pre><code>[1] 9 2 1 1 6 1 4 6 5 7 4 5 5 3 4 1 2 2 8 0</code></pre>
+<div class="sourceCode" id="cb36"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb36-1" data-line-number="1">class_pred &lt;-<span class="st"> </span>model <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../../../keras/reference/predict_proba.html">predict_classes</a></span>(test_images)</a>
+<a class="sourceLine" id="cb36-2" data-line-number="2">class_pred[<span class="dv">1</span><span class="op">:</span><span class="dv">20</span>]</a></code></pre></div>
+<pre><code>##  [1] 9 2 1 1 6 1 4 6 5 7 4 5 5 3 4 1 2 2 8 0</code></pre>
 <p>As the labels are 0-based, this actually means a predicted label of 9 (to be found in class_names[9]). So the model is most confident that this image is an ankle boot.
 And we can check the test label to see this is correct:</p>
-<div class="sourceCode" id="cb30"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb30-1" data-line-number="1">test_labels[<span class="dv">1</span>]</a></code></pre></div>
-<pre><code>[1] 9</code></pre>
+<div class="sourceCode" id="cb38"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb38-1" data-line-number="1">test_labels[<span class="dv">1</span>]</a></code></pre></div>
+<pre><code>## [1] 9</code></pre>
 <p>Let’s plot several images with their predictions. Correct prediction labels are green and incorrect prediction labels are red.</p>
-<div class="sourceCode" id="cb32"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb32-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/graphics/par.html">par</a></span>(<span class="dt">mfcol=</span><span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="dv">5</span>,<span class="dv">5</span>))</a>
-<a class="sourceLine" id="cb32-2" data-line-number="2"><span class="kw"><a href="https://rdrr.io/r/graphics/par.html">par</a></span>(<span class="dt">mar=</span><span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="dv">0</span>, <span class="dv">0</span>, <span class="fl">1.5</span>, <span class="dv">0</span>), <span class="dt">xaxs=</span><span class="st">'i'</span>, <span class="dt">yaxs=</span><span class="st">'i'</span>)</a>
-<a class="sourceLine" id="cb32-3" data-line-number="3"><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span><span class="dv">25</span>) { </a>
-<a class="sourceLine" id="cb32-4" data-line-number="4">  img &lt;-<span class="st"> </span>test_images[i, , ]</a>
-<a class="sourceLine" id="cb32-5" data-line-number="5">  img &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/t.html">t</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/apply.html">apply</a></span>(img, <span class="dv">2</span>, rev)) </a>
-<a class="sourceLine" id="cb32-6" data-line-number="6">  <span class="co"># subtract 1 as labels go from 0 to 9</span></a>
-<a class="sourceLine" id="cb32-7" data-line-number="7">  predicted_label &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/which.min.html">which.max</a></span>(predictions[i, ]) <span class="op">-</span><span class="st"> </span><span class="dv">1</span></a>
-<a class="sourceLine" id="cb32-8" data-line-number="8">  true_label &lt;-<span class="st"> </span>test_labels[i]</a>
-<a class="sourceLine" id="cb32-9" data-line-number="9">  <span class="cf">if</span> (predicted_label <span class="op">==</span><span class="st"> </span>true_label) {</a>
-<a class="sourceLine" id="cb32-10" data-line-number="10">    color &lt;-<span class="st"> '#008800'</span> </a>
-<a class="sourceLine" id="cb32-11" data-line-number="11">  } <span class="cf">else</span> {</a>
-<a class="sourceLine" id="cb32-12" data-line-number="12">    color &lt;-<span class="st"> '#bb0000'</span></a>
-<a class="sourceLine" id="cb32-13" data-line-number="13">  }</a>
-<a class="sourceLine" id="cb32-14" data-line-number="14">  <span class="kw"><a href="https://rdrr.io/r/graphics/image.html">image</a></span>(<span class="dv">1</span><span class="op">:</span><span class="dv">28</span>, <span class="dv">1</span><span class="op">:</span><span class="dv">28</span>, img, <span class="dt">col =</span> <span class="kw"><a href="https://rdrr.io/r/grDevices/gray.html">gray</a></span>((<span class="dv">0</span><span class="op">:</span><span class="dv">255</span>)<span class="op">/</span><span class="dv">255</span>), <span class="dt">xaxt =</span> <span class="st">'n'</span>, <span class="dt">yaxt =</span> <span class="st">'n'</span>,</a>
-<a class="sourceLine" id="cb32-15" data-line-number="15">        <span class="dt">main =</span> <span class="kw"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span>(class_names[predicted_label <span class="op">+</span><span class="st"> </span><span class="dv">1</span>], <span class="st">" ("</span>,</a>
-<a class="sourceLine" id="cb32-16" data-line-number="16">                      class_names[true_label <span class="op">+</span><span class="st"> </span><span class="dv">1</span>], <span class="st">")"</span>),</a>
-<a class="sourceLine" id="cb32-17" data-line-number="17">        <span class="dt">col.main =</span> color)</a>
-<a class="sourceLine" id="cb32-18" data-line-number="18">}</a></code></pre></div>
-<p><img src="images/fashion_mnist_predictions.png"></p>
+<div class="sourceCode" id="cb40"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb40-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/graphics/par.html">par</a></span>(<span class="dt">mfcol=</span><span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="dv">5</span>,<span class="dv">5</span>))</a>
+<a class="sourceLine" id="cb40-2" data-line-number="2"><span class="kw"><a href="https://rdrr.io/r/graphics/par.html">par</a></span>(<span class="dt">mar=</span><span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="dv">0</span>, <span class="dv">0</span>, <span class="fl">1.5</span>, <span class="dv">0</span>), <span class="dt">xaxs=</span><span class="st">'i'</span>, <span class="dt">yaxs=</span><span class="st">'i'</span>)</a>
+<a class="sourceLine" id="cb40-3" data-line-number="3"><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span><span class="dv">25</span>) { </a>
+<a class="sourceLine" id="cb40-4" data-line-number="4">  img &lt;-<span class="st"> </span>test_images[i, , ]</a>
+<a class="sourceLine" id="cb40-5" data-line-number="5">  img &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/t.html">t</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/apply.html">apply</a></span>(img, <span class="dv">2</span>, rev)) </a>
+<a class="sourceLine" id="cb40-6" data-line-number="6">  <span class="co"># subtract 1 as labels go from 0 to 9</span></a>
+<a class="sourceLine" id="cb40-7" data-line-number="7">  predicted_label &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/which.min.html">which.max</a></span>(predictions[i, ]) <span class="op">-</span><span class="st"> </span><span class="dv">1</span></a>
+<a class="sourceLine" id="cb40-8" data-line-number="8">  true_label &lt;-<span class="st"> </span>test_labels[i]</a>
+<a class="sourceLine" id="cb40-9" data-line-number="9">  <span class="cf">if</span> (predicted_label <span class="op">==</span><span class="st"> </span>true_label) {</a>
+<a class="sourceLine" id="cb40-10" data-line-number="10">    color &lt;-<span class="st"> '#008800'</span> </a>
+<a class="sourceLine" id="cb40-11" data-line-number="11">  } <span class="cf">else</span> {</a>
+<a class="sourceLine" id="cb40-12" data-line-number="12">    color &lt;-<span class="st"> '#bb0000'</span></a>
+<a class="sourceLine" id="cb40-13" data-line-number="13">  }</a>
+<a class="sourceLine" id="cb40-14" data-line-number="14">  <span class="kw"><a href="https://rdrr.io/r/graphics/image.html">image</a></span>(<span class="dv">1</span><span class="op">:</span><span class="dv">28</span>, <span class="dv">1</span><span class="op">:</span><span class="dv">28</span>, img, <span class="dt">col =</span> <span class="kw"><a href="https://rdrr.io/r/grDevices/gray.html">gray</a></span>((<span class="dv">0</span><span class="op">:</span><span class="dv">255</span>)<span class="op">/</span><span class="dv">255</span>), <span class="dt">xaxt =</span> <span class="st">'n'</span>, <span class="dt">yaxt =</span> <span class="st">'n'</span>,</a>
+<a class="sourceLine" id="cb40-15" data-line-number="15">        <span class="dt">main =</span> <span class="kw"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span>(class_names[predicted_label <span class="op">+</span><span class="st"> </span><span class="dv">1</span>], <span class="st">" ("</span>,</a>
+<a class="sourceLine" id="cb40-16" data-line-number="16">                      class_names[true_label <span class="op">+</span><span class="st"> </span><span class="dv">1</span>], <span class="st">")"</span>),</a>
+<a class="sourceLine" id="cb40-17" data-line-number="17">        <span class="dt">col.main =</span> color)</a>
+<a class="sourceLine" id="cb40-18" data-line-number="18">}</a></code></pre></div>
+<p><img src="/tutorials/begginers/basic-ml/tutorial_basic_classification_files/figure-html/unnamed-chunk-21-1.png" width="672"></p>
 <p>Finally, use the trained model to make a prediction about a single image.</p>
-<div class="sourceCode" id="cb33"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb33-1" data-line-number="1"><span class="co"># Grab an image from the test dataset</span></a>
-<a class="sourceLine" id="cb33-2" data-line-number="2"><span class="co"># take care to keep the batch dimension, as this is expected by the model</span></a>
-<a class="sourceLine" id="cb33-3" data-line-number="3">img &lt;-<span class="st"> </span>test_images[<span class="dv">1</span>, , , drop =<span class="st"> </span><span class="ot">FALSE</span>]</a>
-<a class="sourceLine" id="cb33-4" data-line-number="4"><span class="kw"><a href="https://rdrr.io/r/base/dim.html">dim</a></span>(img)</a></code></pre></div>
-<pre><code>[1]  1 28 28</code></pre>
+<div class="sourceCode" id="cb41"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb41-1" data-line-number="1"><span class="co"># Grab an image from the test dataset</span></a>
+<a class="sourceLine" id="cb41-2" data-line-number="2"><span class="co"># take care to keep the batch dimension, as this is expected by the model</span></a>
+<a class="sourceLine" id="cb41-3" data-line-number="3">img &lt;-<span class="st"> </span>test_images[<span class="dv">1</span>, , , drop =<span class="st"> </span><span class="ot">FALSE</span>]</a>
+<a class="sourceLine" id="cb41-4" data-line-number="4"><span class="kw"><a href="https://rdrr.io/r/base/dim.html">dim</a></span>(img)</a></code></pre></div>
+<pre><code>## [1]  1 28 28</code></pre>
 <p>Now predict the image:</p>
-<div class="sourceCode" id="cb35"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb35-1" data-line-number="1">predictions &lt;-<span class="st"> </span>model <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/stats/predict.html">predict</a></span>(img)</a>
-<a class="sourceLine" id="cb35-2" data-line-number="2">predictions</a></code></pre></div>
-<pre><code>             [,1]         [,2]         [,3]       [,4]         [,5]       [,6]         [,7]
-[1,] 1.247006e-06 8.371312e-08 1.987903e-07 1.0788e-06 2.053096e-07 0.01419331 9.533853e-06
-           [,8]         [,9]     [,10]
-[1,] 0.05745504 2.694531e-05 0.9283124</code></pre>
+<div class="sourceCode" id="cb43"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb43-1" data-line-number="1">predictions &lt;-<span class="st"> </span>model <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/stats/predict.html">predict</a></span>(img)</a>
+<a class="sourceLine" id="cb43-2" data-line-number="2">predictions</a></code></pre></div>
+<pre><code>##              [,1]         [,2]         [,3]         [,4]         [,5]
+## [1,] 1.096451e-05 1.367503e-07 1.112527e-07 1.002724e-07 3.379635e-07
+##            [,6]         [,7]       [,8]         [,9]     [,10]
+## [1,] 0.01153614 5.269726e-06 0.03311452 7.994387e-06 0.9553245</code></pre>
 <p><code>predict</code> returns a list of lists, one for each image in the batch of data. Grab the predictions for our (only) image in the batch:</p>
-<div class="sourceCode" id="cb37"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb37-1" data-line-number="1"><span class="co"># subtract 1 as labels are 0-based</span></a>
-<a class="sourceLine" id="cb37-2" data-line-number="2">prediction &lt;-<span class="st"> </span>predictions[<span class="dv">1</span>, ] <span class="op">-</span><span class="st"> </span><span class="dv">1</span></a>
-<a class="sourceLine" id="cb37-3" data-line-number="3"><span class="kw"><a href="https://rdrr.io/r/base/which.min.html">which.max</a></span>(prediction)</a></code></pre></div>
-<pre><code>[1] 10</code></pre>
+<div class="sourceCode" id="cb45"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb45-1" data-line-number="1"><span class="co"># subtract 1 as labels are 0-based</span></a>
+<a class="sourceLine" id="cb45-2" data-line-number="2">prediction &lt;-<span class="st"> </span>predictions[<span class="dv">1</span>, ] <span class="op">-</span><span class="st"> </span><span class="dv">1</span></a>
+<a class="sourceLine" id="cb45-3" data-line-number="3"><span class="kw"><a href="https://rdrr.io/r/base/which.min.html">which.max</a></span>(prediction)</a></code></pre></div>
+<pre><code>## [1] 10</code></pre>
 <p>Or, directly getting the class prediction again:</p>
-<div class="sourceCode" id="cb39"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb39-1" data-line-number="1">class_pred &lt;-<span class="st"> </span>model <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../../../keras/reference/predict_proba.html">predict_classes</a></span>(img)</a>
-<a class="sourceLine" id="cb39-2" data-line-number="2">class_pred</a></code></pre></div>
-<pre><code>[1] 9</code></pre>
+<div class="sourceCode" id="cb47"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb47-1" data-line-number="1">class_pred &lt;-<span class="st"> </span>model <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../../../keras/reference/predict_proba.html">predict_classes</a></span>(img)</a>
+<a class="sourceLine" id="cb47-2" data-line-number="2">class_pred</a></code></pre></div>
+<pre><code>## [1] 9</code></pre>
 <p>And, as before, the model predicts a label of 9.</p>
 </div>
-</div>
-<div id="more-tutorials" class="section level2">
-<h2>More Tutorials</h2>
-<p>Check out these additional tutorials to learn more:</p>
-<ul>
-<li><p><a href="tutorial_basic_text_classification.html">Text Classification</a> — This tutorial classifies movie reviews as positive or negative using the text of the review.</p></li>
-<li><p><a href="tutorial_basic_regression.html">Basic Regression</a> — This tutorial builds a model to predict the median price of homes in a Boston suburb during the mid-1970s.</p></li>
-<li><p><a href="tutorial_overfit_underfit.html">Overfitting and Underfitting</a> — In this tutorial, we explore two common regularization techniques (weight regularization and dropout) and use them to improve our movie review classification results.</p></li>
-<li><p><a href="tutorial_save_and_restore.html">Save and Restore Models</a> — This tutorial demonstrates various ways to save and share models (after as well as during training).</p></li>
-</ul>
 </div>

@@ -1,5 +1,5 @@
 ---
-title: "Tutorial: Basic Classification"
+title: "Basic Image Classification"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Tutorial: Basic Classification}
@@ -16,7 +16,7 @@ menu:
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE, eval = FALSE)
+knitr::opts_chunk$set(echo = TRUE, eval = TRUE)
 ```
 
 
@@ -31,7 +31,7 @@ library(keras)
 
 This guide uses the [Fashion MNIST](https://github.com/zalandoresearch/fashion-mnist) dataset which contains 70,000 grayscale images in 10 categories. The images show individual articles of clothing at low resolution (28 by 28 pixels), as seen here:
 
-![Figure 1. Fashion-MNIST samples (by Zalando, MIT License).](images/fashion_mnist.png)
+![Figure 1. Fashion-MNIST samples (by Zalando, MIT License).](../images/fashion-mnist-sprite.png)
 
 
 Fashion MNIST is intended as a drop-in replacement for the classic [MNIST](http://yann.lecun.com/exdb/mnist/) dataset—often used as the "Hello, World" of machine learning programs for computer vision. The MNIST dataset contains images of handwritten digits (0, 1, 2, etc) in an identical format to the articles of clothing we'll use here.
@@ -162,9 +162,6 @@ ggplot(image_1, aes(x = x, y = y, fill = value)) +
   ylab("")
 ```
 
-
-![](images/fashion_mnist_heatmap.png)
-
 We scale these values to a range of 0 to 1 before feeding to the neural network model. For this, we simply divide by 255. 
 
 It's important that the training set and the testing set are preprocessed in the same way:
@@ -189,8 +186,6 @@ for (i in 1:25) {
         main = paste(class_names[train_labels[i] + 1]))
 }
 ```
-
-![](images/fashion_mnist_classes.png)
 
 ## Build the model
 
@@ -298,20 +293,10 @@ Here, the model has predicted the label for each image in the testing set. Let's
 predictions[1, ]
 ```
 
-```
-[1] 1.247006e-06 8.371295e-08 1.987903e-07 1.078801e-06 2.053094e-07 1.419330e-02 9.533844e-06
-[8] 5.745503e-02 2.694531e-05 9.283124e-01
-```
-
-
 A prediction is an array of 10 numbers. These describe the "confidence" of the model that the image corresponds to each of the 10 different articles of clothing. We can see which label has the highest confidence value:
 
 ```{r}
 which.max(predictions[1, ])
-```
-
-```
-[1] 10
 ```
 
 Alternatively, we can also directly get the class prediction:
@@ -321,22 +306,12 @@ class_pred <- model %>% predict_classes(test_images)
 class_pred[1:20]
 ```
 
-```
-[1] 9 2 1 1 6 1 4 6 5 7 4 5 5 3 4 1 2 2 8 0
-```
-
-
 As the labels are 0-based, this actually means a predicted label of 9 (to be found in class_names[9]). So the model is most confident that this image is an ankle boot.
 And we can check the test label to see this is correct:
 
 ```{r}
 test_labels[1]
 ```
-
-```
-[1] 9
-```
-
 
 Let's plot several images with their predictions. Correct prediction labels are green and incorrect prediction labels are red.
 
@@ -361,8 +336,6 @@ for (i in 1:25) {
 }
 ```
 
-![](images/fashion_mnist_predictions.png)
-
 Finally, use the trained model to make a prediction about a single image.
 
 ```{r}
@@ -372,26 +345,12 @@ img <- test_images[1, , , drop = FALSE]
 dim(img)
 ```
 
-```
-[1]  1 28 28
-```
-
-
 Now predict the image:
 
 ```{r}
 predictions <- model %>% predict(img)
 predictions
 ```
-
-```
-             [,1]         [,2]         [,3]       [,4]         [,5]       [,6]         [,7]
-[1,] 1.247006e-06 8.371312e-08 1.987903e-07 1.0788e-06 2.053096e-07 0.01419331 9.533853e-06
-           [,8]         [,9]     [,10]
-[1,] 0.05745504 2.694531e-05 0.9283124
-```
-
-
 
 `predict` returns a list of lists, one for each image in the batch of data. Grab the predictions for our (only) image in the batch:
 
@@ -401,10 +360,6 @@ prediction <- predictions[1, ] - 1
 which.max(prediction)
 ```
 
-```
-[1] 10
-```
-
 Or, directly getting the class prediction again:
 
 ```{r}
@@ -412,22 +367,4 @@ class_pred <- model %>% predict_classes(img)
 class_pred
 ```
 
-```
-[1] 9
-```
-
-
 And, as before, the model predicts a label of 9.
-
-## More Tutorials
-
-Check out these additional tutorials to learn more:
-
-- [Text Classification](tutorial_basic_text_classification.html) --- This tutorial classifies movie reviews as positive or negative using the text of the review. 
-
-- [Basic Regression](tutorial_basic_regression.html) --- This tutorial builds a model to predict the median price of homes in a Boston suburb during the mid-1970s. 
-
-- [Overfitting and Underfitting](tutorial_overfit_underfit.html) --- In this tutorial, we explore two common regularization techniques (weight regularization and dropout) and use them to improve our movie review classification results.
-
-- [Save and Restore Models](tutorial_save_and_restore.html) --- This tutorial demonstrates various ways to save and share models (after as well as during training).
-
