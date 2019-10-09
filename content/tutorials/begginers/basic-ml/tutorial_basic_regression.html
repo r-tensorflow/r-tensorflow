@@ -1,5 +1,5 @@
 ---
-title: "Tutorial: Basic Regression"
+title: "Basic Regression"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Tutorial: Basic Regression}
@@ -19,7 +19,8 @@ menu:
 
 <p>In a regression problem, we aim to predict the output of a continuous value, like a price or a probability. Contrast this with a classification problem, where we aim to predict a discrete label (for example, where a picture contains an apple or an orange).</p>
 <p>This notebook builds a model to predict the median price of homes in a Boston suburb during the mid-1970s. To do this, we’ll provide the model with some data points about the suburb, such as the crime rate and the local property tax rate.</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(keras)</a></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(keras)</a>
+<a class="sourceLine" id="cb1-2" data-line-number="2"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(tfdatasets)</a></code></pre></div>
 <div id="the-boston-housing-prices-dataset" class="section level2">
 <h2>The Boston Housing Prices dataset</h2>
 <p>The <a href="https://www.cs.toronto.edu/~delve/data/boston/bostonDetail.html">Boston Housing Prices dataset</a> is accessible directly from keras.</p>
@@ -31,7 +32,7 @@ menu:
 <h3>Examples and features</h3>
 <p>This dataset is much smaller than the others we’ve worked with so far: it has 506 total examples that are split between 404 training examples and 102 test examples:</p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span>(<span class="st">"Training entries: "</span>, <span class="kw"><a href="https://rdrr.io/r/base/length.html">length</a></span>(train_data), <span class="st">", labels: "</span>, <span class="kw"><a href="https://rdrr.io/r/base/length.html">length</a></span>(train_labels))</a></code></pre></div>
-<pre><code>[1] "Training entries: 5252, labels: 404"</code></pre>
+<pre><code>## [1] "Training entries: 5252, labels: 404"</code></pre>
 <p>The dataset contains 13 different features:</p>
 <ul>
 <li>Per capita crime rate.</li>
@@ -50,165 +51,251 @@ menu:
 </ul>
 <p>Each one of these input data features is stored using a different scale. Some features are represented by a proportion between 0 and 1, other features are ranges between 1 and 12, some are ranges between 0 and 100, and so on.</p>
 <div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" data-line-number="1">train_data[<span class="dv">1</span>, ] <span class="co"># Display sample features, notice the different scales</span></a></code></pre></div>
-<pre><code>[1]   1.23247   0.00000   8.14000   0.00000   0.53800   6.14200  91.70000   3.97690
-[9]   4.00000 307.00000  21.00000 396.90000  18.72000</code></pre>
+<pre><code>##  [1]   1.23247   0.00000   8.14000   0.00000   0.53800   6.14200  91.70000
+##  [8]   3.97690   4.00000 307.00000  21.00000 396.90000  18.72000</code></pre>
 <p>Let’s add column names for better data inspection.</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(tibble)</a>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(dplyr)</a>
 <a class="sourceLine" id="cb7-2" data-line-number="2"></a>
 <a class="sourceLine" id="cb7-3" data-line-number="3">column_names &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">'CRIM'</span>, <span class="st">'ZN'</span>, <span class="st">'INDUS'</span>, <span class="st">'CHAS'</span>, <span class="st">'NOX'</span>, <span class="st">'RM'</span>, <span class="st">'AGE'</span>, </a>
 <a class="sourceLine" id="cb7-4" data-line-number="4">                  <span class="st">'DIS'</span>, <span class="st">'RAD'</span>, <span class="st">'TAX'</span>, <span class="st">'PTRATIO'</span>, <span class="st">'B'</span>, <span class="st">'LSTAT'</span>)</a>
-<a class="sourceLine" id="cb7-5" data-line-number="5">train_df &lt;-<span class="st"> </span><span class="kw"><a href="https://tibble.tidyverse.org/reference/as_tibble.html">as_tibble</a></span>(train_data)</a>
-<a class="sourceLine" id="cb7-6" data-line-number="6"><span class="kw"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span>(train_df) &lt;-<span class="st"> </span>column_names</a>
-<a class="sourceLine" id="cb7-7" data-line-number="7"></a>
-<a class="sourceLine" id="cb7-8" data-line-number="8">train_df</a></code></pre></div>
-<pre><code># A tibble: 404 x 13
-     CRIM    ZN INDUS  CHAS   NOX    RM   AGE   DIS   RAD   TAX PTRATIO     B LSTAT
-    &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;   &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
- 1 1.23     0    8.14     0 0.538  6.14  91.7  3.98     4   307    21    397. 18.7 
- 2 0.0218  82.5  2.03     0 0.415  7.61  15.7  6.27     2   348    14.7  395.  3.11
- 3 4.90     0   18.1      0 0.631  4.97 100    1.33    24   666    20.2  376.  3.26
- 4 0.0396   0    5.19     0 0.515  6.04  34.5  5.99     5   224    20.2  397.  8.01
- 5 3.69     0   18.1      0 0.713  6.38  88.4  2.57    24   666    20.2  391. 14.6 
- 6 0.284    0    7.38     0 0.493  5.71  74.3  4.72     5   287    19.6  391. 11.7 
- 7 9.19     0   18.1      0 0.7    5.54 100    1.58    24   666    20.2  397. 23.6 
- 8 4.10     0   19.6      0 0.871  5.47 100    1.41     5   403    14.7  397. 26.4 
- 9 2.16     0   19.6      0 0.871  5.63 100    1.52     5   403    14.7  169. 16.6 
-10 1.63     0   21.9      0 0.624  5.02 100    1.44     4   437    21.2  397. 34.4 
-# ... with 394 more rows</code></pre>
+<a class="sourceLine" id="cb7-5" data-line-number="5"></a>
+<a class="sourceLine" id="cb7-6" data-line-number="6">train_df &lt;-<span class="st"> </span>train_data <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb7-7" data-line-number="7"><span class="st">  </span><span class="kw"><a href="https://dplyr.tidyverse.org/reference/reexports.html">as_tibble</a></span>(<span class="dt">.name_repair =</span> <span class="st">"minimal"</span>) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb7-8" data-line-number="8"><span class="st">  </span><span class="kw"><a href="https://rdrr.io/r/stats/setNames.html">setNames</a></span>(column_names) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb7-9" data-line-number="9"><span class="st">  </span><span class="kw"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span>(<span class="dt">label =</span> train_labels)</a>
+<a class="sourceLine" id="cb7-10" data-line-number="10"></a>
+<a class="sourceLine" id="cb7-11" data-line-number="11">test_df &lt;-<span class="st"> </span>test_data <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb7-12" data-line-number="12"><span class="st">  </span><span class="kw"><a href="https://dplyr.tidyverse.org/reference/reexports.html">as_tibble</a></span>(<span class="dt">.name_repair =</span> <span class="st">"minimal"</span>) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb7-13" data-line-number="13"><span class="st">  </span><span class="kw"><a href="https://rdrr.io/r/stats/setNames.html">setNames</a></span>(column_names) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb7-14" data-line-number="14"><span class="st">  </span><span class="kw"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span>(<span class="dt">label =</span> test_labels)</a></code></pre></div>
 </div>
 <div id="labels" class="section level3">
 <h3>Labels</h3>
 <p>The labels are the house prices in thousands of dollars. (You may notice the mid-1970s prices.)</p>
-<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" data-line-number="1">train_labels[<span class="dv">1</span><span class="op">:</span><span class="dv">10</span>] <span class="co"># Display first 10 entries</span></a></code></pre></div>
-<pre><code>[1] 15.2 42.3 50.0 21.1 17.7 18.5 11.3 15.6 15.6 14.4</code></pre>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" data-line-number="1">train_labels[<span class="dv">1</span><span class="op">:</span><span class="dv">10</span>] <span class="co"># Display first 10 entries</span></a></code></pre></div>
+<pre><code>##  [1] 15.2 42.3 50.0 21.1 17.7 18.5 11.3 15.6 15.6 14.4</code></pre>
 </div>
 </div>
 <div id="normalize-features" class="section level2">
 <h2>Normalize features</h2>
 <p>It’s recommended to normalize features that use different scales and ranges. Although the model might converge without feature normalization, it makes training more difficult, and it makes the resulting model more dependant on the choice of units used in the input.</p>
-<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb11-1" data-line-number="1"><span class="co"># Test data is *not* used when calculating the mean and std.</span></a>
-<a class="sourceLine" id="cb11-2" data-line-number="2"></a>
-<a class="sourceLine" id="cb11-3" data-line-number="3"><span class="co"># Normalize training data</span></a>
-<a class="sourceLine" id="cb11-4" data-line-number="4">train_data &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/scale.html">scale</a></span>(train_data) </a>
-<a class="sourceLine" id="cb11-5" data-line-number="5"></a>
-<a class="sourceLine" id="cb11-6" data-line-number="6"><span class="co"># Use means and standard deviations from training set to normalize test set</span></a>
-<a class="sourceLine" id="cb11-7" data-line-number="7">col_means_train &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/attr.html">attr</a></span>(train_data, <span class="st">"scaled:center"</span>) </a>
-<a class="sourceLine" id="cb11-8" data-line-number="8">col_stddevs_train &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/attr.html">attr</a></span>(train_data, <span class="st">"scaled:scale"</span>)</a>
-<a class="sourceLine" id="cb11-9" data-line-number="9">test_data &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/scale.html">scale</a></span>(test_data, <span class="dt">center =</span> col_means_train, <span class="dt">scale =</span> col_stddevs_train)</a>
-<a class="sourceLine" id="cb11-10" data-line-number="10"></a>
-<a class="sourceLine" id="cb11-11" data-line-number="11">train_data[<span class="dv">1</span>, ] <span class="co"># First training sample, normalized</span></a></code></pre></div>
-<pre><code>[1] -0.2719092 -0.4830166 -0.4352220 -0.2565147 -0.1650220 -0.1762241  0.8120550  0.1165538 -0.6254735
-[10] -0.5944330  1.1470781  0.4475222  0.8241983</code></pre>
+<p>We are going to use the <code>feature_spec</code> interface implemented in the <code>tfdatasets</code> package for the normalizzation. The <code>feature_columns</code> interface allows for other common pre-processing operations on tabular data.</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" data-line-number="1">spec &lt;-<span class="st"> </span><span class="kw"><a href="../../../tools/tfdatasets/reference/feature_spec.html">feature_spec</a></span>(train_df, label <span class="op">~</span><span class="st"> </span>. ) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb10-2" data-line-number="2"><span class="st">  </span><span class="kw"><a href="../../../tools/tfdatasets/reference/step_numeric_column.html">step_numeric_column</a></span>(<span class="kw"><a href="../../../tools/tfdatasets/reference/all_numeric.html">all_numeric</a></span>(), <span class="dt">normalizer_fn =</span> <span class="kw"><a href="../../../tools/tfdatasets/reference/scaler_standard.html">scaler_standard</a></span>()) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb10-3" data-line-number="3"><span class="st">  </span><span class="kw"><a href="../../../keras/reference/reexports.html">fit</a></span>()</a>
+<a class="sourceLine" id="cb10-4" data-line-number="4"></a>
+<a class="sourceLine" id="cb10-5" data-line-number="5">spec</a></code></pre></div>
+<pre><code>## ── Feature Spec ───────────────────────────────────────────────────────────────────────────────────────── 
+## A feature_spec with 13 steps.
+## Fitted: TRUE 
+## ── Steps ──────────────────────────────────────────────────────────────────────────────────────────────── 
+## The feature_spec has 1 dense features.
+## StepNumericColumn: CRIM, ZN, INDUS, CHAS, NOX, RM, AGE, DIS, RAD, TAX, PTRATIO, B, LSTAT 
+## ── Dense features ───────────────────────────────────────────────────────────────────────────────────────</code></pre>
+<p>The <code>spec</code> created with <code>tfdatasets</code> can be used together with <code>layer_dense_features</code> to make the pre-processing directly in the TensorFlow graph.</p>
+<p>We can take a look at the output of a Dense Feature layer with this <code>spec</code>:</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb12-1" data-line-number="1">layer &lt;-<span class="st"> </span><span class="kw"><a href="../../../keras/reference/layer_dense_features.html">layer_dense_features</a></span>(</a>
+<a class="sourceLine" id="cb12-2" data-line-number="2">  <span class="dt">feature_columns =</span> <span class="kw"><a href="../../../tools/tfdatasets/reference/dense_features.html">dense_features</a></span>(spec), </a>
+<a class="sourceLine" id="cb12-3" data-line-number="3">  <span class="dt">dtype =</span> tf<span class="op">$</span>float32</a>
+<a class="sourceLine" id="cb12-4" data-line-number="4">)</a>
+<a class="sourceLine" id="cb12-5" data-line-number="5"><span class="kw">layer</span>(train_df)</a></code></pre></div>
+<pre><code>## tf.Tensor(
+## [[ 0.81205493  0.44752213 -0.2565147  ... -0.1762239  -0.59443307
+##   -0.48301655]
+##  [-1.9079947   0.43137115 -0.2565147  ...  1.8920003  -0.34800112
+##    2.9880793 ]
+##  [ 1.1091131   0.2203439  -0.2565147  ... -1.8274226   1.563349
+##   -0.48301655]
+##  ...
+##  [-1.6359899   0.07934052 -0.2565147  ... -0.3326088  -0.61246467
+##    0.9895695 ]
+##  [ 1.0554279  -0.98642045 -0.2565147  ... -0.7862657  -0.01742171
+##   -0.48301655]
+##  [-1.7970455   0.23288251 -0.2565147  ...  0.47467488 -0.84687555
+##    2.0414166 ]], shape=(404, 13), dtype=float32)</code></pre>
+<p>Note that this returns a matrix (in the sense it’s a 2-dimensional Tensor) with
+scaled values.</p>
 </div>
 <div id="create-the-model" class="section level2">
 <h2>Create the model</h2>
-<p>Let’s build our model. Here, we’ll use a <code>sequential</code> model with two densely connected hidden layers, and an output layer that returns a single, continuous value. The model building steps are wrapped in a function, <code>build_model</code>, since we’ll create a second model, later on.</p>
-<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb13-1" data-line-number="1">build_model &lt;-<span class="st"> </span><span class="cf">function</span>() {</a>
-<a class="sourceLine" id="cb13-2" data-line-number="2">  </a>
-<a class="sourceLine" id="cb13-3" data-line-number="3">  model &lt;-<span class="st"> </span><span class="kw"><a href="../../../keras/reference/keras_model_sequential.html">keras_model_sequential</a></span>() <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb13-4" data-line-number="4"><span class="st">    </span><span class="kw"><a href="../../../keras/reference/layer_dense.html">layer_dense</a></span>(<span class="dt">units =</span> <span class="dv">64</span>, <span class="dt">activation =</span> <span class="st">"relu"</span>,</a>
-<a class="sourceLine" id="cb13-5" data-line-number="5">                <span class="dt">input_shape =</span> <span class="kw"><a href="https://rdrr.io/r/base/dim.html">dim</a></span>(train_data)[<span class="dv">2</span>]) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb13-6" data-line-number="6"><span class="st">    </span><span class="kw"><a href="../../../keras/reference/layer_dense.html">layer_dense</a></span>(<span class="dt">units =</span> <span class="dv">64</span>, <span class="dt">activation =</span> <span class="st">"relu"</span>) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb13-7" data-line-number="7"><span class="st">    </span><span class="kw"><a href="../../../keras/reference/layer_dense.html">layer_dense</a></span>(<span class="dt">units =</span> <span class="dv">1</span>)</a>
-<a class="sourceLine" id="cb13-8" data-line-number="8">  </a>
-<a class="sourceLine" id="cb13-9" data-line-number="9">  model <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../../../keras/reference/reexports.html">compile</a></span>(</a>
-<a class="sourceLine" id="cb13-10" data-line-number="10">    <span class="dt">loss =</span> <span class="st">"mse"</span>,</a>
-<a class="sourceLine" id="cb13-11" data-line-number="11">    <span class="dt">optimizer =</span> <span class="kw"><a href="../../../keras/reference/optimizer_rmsprop.html">optimizer_rmsprop</a></span>(),</a>
-<a class="sourceLine" id="cb13-12" data-line-number="12">    <span class="dt">metrics =</span> <span class="kw"><a href="https://rdrr.io/r/base/list.html">list</a></span>(<span class="st">"mean_absolute_error"</span>)</a>
-<a class="sourceLine" id="cb13-13" data-line-number="13">  )</a>
-<a class="sourceLine" id="cb13-14" data-line-number="14">  </a>
-<a class="sourceLine" id="cb13-15" data-line-number="15">  model</a>
-<a class="sourceLine" id="cb13-16" data-line-number="16">}</a>
-<a class="sourceLine" id="cb13-17" data-line-number="17"></a>
-<a class="sourceLine" id="cb13-18" data-line-number="18">model &lt;-<span class="st"> </span><span class="kw">build_model</span>()</a>
-<a class="sourceLine" id="cb13-19" data-line-number="19">model <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/summary.html">summary</a></span>()</a></code></pre></div>
-<pre><code>_____________________________________________________________________________________
-Layer (type)                          Output Shape                      Param #      
-=====================================================================================
-dense_5 (Dense)                       (None, 64)                        896          
-_____________________________________________________________________________________
-dense_6 (Dense)                       (None, 64)                        4160         
-_____________________________________________________________________________________
-dense_7 (Dense)                       (None, 1)                         65           
-=====================================================================================
-Total params: 5,121
-Trainable params: 5,121
-Non-trainable params: 0
-_____________________________________________________________________________________</code></pre>
+<p>Let’s build our model. Here we will use the Keras <strong>functional</strong> API - which is the recommend way when using the <code>feature_spec</code> API. Note that we only need to pass the <code>dense_features</code> from the <code>spec</code> we just created.</p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb14-1" data-line-number="1">input &lt;-<span class="st"> </span><span class="kw"><a href="../../../tools/tfdatasets/reference/layer_input_from_dataset.html">layer_input_from_dataset</a></span>(train_df <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span>(<span class="op">-</span>label))</a>
+<a class="sourceLine" id="cb14-2" data-line-number="2"></a>
+<a class="sourceLine" id="cb14-3" data-line-number="3">output &lt;-<span class="st"> </span>input <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb14-4" data-line-number="4"><span class="st">  </span><span class="kw"><a href="../../../keras/reference/layer_dense_features.html">layer_dense_features</a></span>(<span class="kw"><a href="../../../tools/tfdatasets/reference/dense_features.html">dense_features</a></span>(spec)) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb14-5" data-line-number="5"><span class="st">  </span><span class="kw"><a href="../../../keras/reference/layer_dense.html">layer_dense</a></span>(<span class="dt">units =</span> <span class="dv">64</span>, <span class="dt">activation =</span> <span class="st">"relu"</span>) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb14-6" data-line-number="6"><span class="st">  </span><span class="kw"><a href="../../../keras/reference/layer_dense.html">layer_dense</a></span>(<span class="dt">units =</span> <span class="dv">64</span>, <span class="dt">activation =</span> <span class="st">"relu"</span>) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb14-7" data-line-number="7"><span class="st">  </span><span class="kw"><a href="../../../keras/reference/layer_dense.html">layer_dense</a></span>(<span class="dt">units =</span> <span class="dv">1</span>) </a>
+<a class="sourceLine" id="cb14-8" data-line-number="8"></a>
+<a class="sourceLine" id="cb14-9" data-line-number="9">model &lt;-<span class="st"> </span><span class="kw"><a href="../../../keras/reference/keras_model.html">keras_model</a></span>(input, output)</a>
+<a class="sourceLine" id="cb14-10" data-line-number="10"></a>
+<a class="sourceLine" id="cb14-11" data-line-number="11"><span class="kw"><a href="https://rdrr.io/r/base/summary.html">summary</a></span>(model)</a></code></pre></div>
+<pre><code>## Model: "model"
+## ___________________________________________________________________________
+## Layer (type)            Output Shape     Param #  Connected to             
+## ===========================================================================
+## AGE (InputLayer)        [(None,)]        0                                 
+## ___________________________________________________________________________
+## B (InputLayer)          [(None,)]        0                                 
+## ___________________________________________________________________________
+## CHAS (InputLayer)       [(None,)]        0                                 
+## ___________________________________________________________________________
+## CRIM (InputLayer)       [(None,)]        0                                 
+## ___________________________________________________________________________
+## DIS (InputLayer)        [(None,)]        0                                 
+## ___________________________________________________________________________
+## INDUS (InputLayer)      [(None,)]        0                                 
+## ___________________________________________________________________________
+## LSTAT (InputLayer)      [(None,)]        0                                 
+## ___________________________________________________________________________
+## NOX (InputLayer)        [(None,)]        0                                 
+## ___________________________________________________________________________
+## PTRATIO (InputLayer)    [(None,)]        0                                 
+## ___________________________________________________________________________
+## RAD (InputLayer)        [(None,)]        0                                 
+## ___________________________________________________________________________
+## RM (InputLayer)         [(None,)]        0                                 
+## ___________________________________________________________________________
+## TAX (InputLayer)        [(None,)]        0                                 
+## ___________________________________________________________________________
+## ZN (InputLayer)         [(None,)]        0                                 
+## ___________________________________________________________________________
+## dense_features_1 (Dense (None, 13)       0        AGE[0][0]                
+##                                                   B[0][0]                  
+##                                                   CHAS[0][0]               
+##                                                   CRIM[0][0]               
+##                                                   DIS[0][0]                
+##                                                   INDUS[0][0]              
+##                                                   LSTAT[0][0]              
+##                                                   NOX[0][0]                
+##                                                   PTRATIO[0][0]            
+##                                                   RAD[0][0]                
+##                                                   RM[0][0]                 
+##                                                   TAX[0][0]                
+##                                                   ZN[0][0]                 
+## ___________________________________________________________________________
+## dense (Dense)           (None, 64)       896      dense_features_1[0][0]   
+## ___________________________________________________________________________
+## dense_1 (Dense)         (None, 64)       4160     dense[0][0]              
+## ___________________________________________________________________________
+## dense_2 (Dense)         (None, 1)        65       dense_1[0][0]            
+## ===========================================================================
+## Total params: 5,121
+## Trainable params: 5,121
+## Non-trainable params: 0
+## ___________________________________________________________________________</code></pre>
+<p>We then compile the model with:</p>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb16-1" data-line-number="1">model <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb16-2" data-line-number="2"><span class="st">  </span><span class="kw"><a href="../../../keras/reference/reexports.html">compile</a></span>(</a>
+<a class="sourceLine" id="cb16-3" data-line-number="3">    <span class="dt">loss =</span> <span class="st">"mse"</span>,</a>
+<a class="sourceLine" id="cb16-4" data-line-number="4">    <span class="dt">optimizer =</span> <span class="kw"><a href="../../../keras/reference/optimizer_rmsprop.html">optimizer_rmsprop</a></span>(),</a>
+<a class="sourceLine" id="cb16-5" data-line-number="5">    <span class="dt">metrics =</span> <span class="kw"><a href="https://rdrr.io/r/base/list.html">list</a></span>(<span class="st">"mean_absolute_error"</span>)</a>
+<a class="sourceLine" id="cb16-6" data-line-number="6">  )</a></code></pre></div>
+<p>We will wrap the model building code into a functionin order to be able to reuse it for different experiments. Remember that Keras <code>fit</code> modifies the model in-place.</p>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb17-1" data-line-number="1">build_model &lt;-<span class="st"> </span><span class="cf">function</span>() {</a>
+<a class="sourceLine" id="cb17-2" data-line-number="2">  input &lt;-<span class="st"> </span><span class="kw"><a href="../../../tools/tfdatasets/reference/layer_input_from_dataset.html">layer_input_from_dataset</a></span>(train_df <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span>(<span class="op">-</span>label))</a>
+<a class="sourceLine" id="cb17-3" data-line-number="3">  </a>
+<a class="sourceLine" id="cb17-4" data-line-number="4">  output &lt;-<span class="st"> </span>input <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb17-5" data-line-number="5"><span class="st">    </span><span class="kw"><a href="../../../keras/reference/layer_dense_features.html">layer_dense_features</a></span>(<span class="kw"><a href="../../../tools/tfdatasets/reference/dense_features.html">dense_features</a></span>(spec)) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb17-6" data-line-number="6"><span class="st">    </span><span class="kw"><a href="../../../keras/reference/layer_dense.html">layer_dense</a></span>(<span class="dt">units =</span> <span class="dv">64</span>, <span class="dt">activation =</span> <span class="st">"relu"</span>) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb17-7" data-line-number="7"><span class="st">    </span><span class="kw"><a href="../../../keras/reference/layer_dense.html">layer_dense</a></span>(<span class="dt">units =</span> <span class="dv">64</span>, <span class="dt">activation =</span> <span class="st">"relu"</span>) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb17-8" data-line-number="8"><span class="st">    </span><span class="kw"><a href="../../../keras/reference/layer_dense.html">layer_dense</a></span>(<span class="dt">units =</span> <span class="dv">1</span>) </a>
+<a class="sourceLine" id="cb17-9" data-line-number="9">  </a>
+<a class="sourceLine" id="cb17-10" data-line-number="10">  model &lt;-<span class="st"> </span><span class="kw"><a href="../../../keras/reference/keras_model.html">keras_model</a></span>(input, output)</a>
+<a class="sourceLine" id="cb17-11" data-line-number="11">  </a>
+<a class="sourceLine" id="cb17-12" data-line-number="12">  model <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb17-13" data-line-number="13"><span class="st">    </span><span class="kw"><a href="../../../keras/reference/reexports.html">compile</a></span>(</a>
+<a class="sourceLine" id="cb17-14" data-line-number="14">      <span class="dt">loss =</span> <span class="st">"mse"</span>,</a>
+<a class="sourceLine" id="cb17-15" data-line-number="15">      <span class="dt">optimizer =</span> <span class="kw"><a href="../../../keras/reference/optimizer_rmsprop.html">optimizer_rmsprop</a></span>(),</a>
+<a class="sourceLine" id="cb17-16" data-line-number="16">      <span class="dt">metrics =</span> <span class="kw"><a href="https://rdrr.io/r/base/list.html">list</a></span>(<span class="st">"mean_absolute_error"</span>)</a>
+<a class="sourceLine" id="cb17-17" data-line-number="17">    )</a>
+<a class="sourceLine" id="cb17-18" data-line-number="18">  </a>
+<a class="sourceLine" id="cb17-19" data-line-number="19">  model</a>
+<a class="sourceLine" id="cb17-20" data-line-number="20">}</a></code></pre></div>
 </div>
 <div id="train-the-model" class="section level2">
 <h2>Train the model</h2>
 <p>The model is trained for 500 epochs, recording training and validation accuracy in a <code>keras_training_history</code> object.
 We also show how to use a custom callback, replacing the default training output by a single dot per epoch.</p>
-<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb15-1" data-line-number="1"><span class="co"># Display training progress by printing a single dot for each completed epoch.</span></a>
-<a class="sourceLine" id="cb15-2" data-line-number="2">print_dot_callback &lt;-<span class="st"> </span><span class="kw"><a href="../../../keras/reference/callback_lambda.html">callback_lambda</a></span>(</a>
-<a class="sourceLine" id="cb15-3" data-line-number="3">  <span class="dt">on_epoch_end =</span> <span class="cf">function</span>(epoch, logs) {</a>
-<a class="sourceLine" id="cb15-4" data-line-number="4">    <span class="cf">if</span> (epoch <span class="op">%%</span><span class="st"> </span><span class="dv">80</span> <span class="op">==</span><span class="st"> </span><span class="dv">0</span>) <span class="kw"><a href="https://rdrr.io/r/base/cat.html">cat</a></span>(<span class="st">"</span><span class="ch">\n</span><span class="st">"</span>)</a>
-<a class="sourceLine" id="cb15-5" data-line-number="5">    <span class="kw"><a href="https://rdrr.io/r/base/cat.html">cat</a></span>(<span class="st">"."</span>)</a>
-<a class="sourceLine" id="cb15-6" data-line-number="6">  }</a>
-<a class="sourceLine" id="cb15-7" data-line-number="7">)    </a>
-<a class="sourceLine" id="cb15-8" data-line-number="8"></a>
-<a class="sourceLine" id="cb15-9" data-line-number="9">epochs &lt;-<span class="st"> </span><span class="dv">500</span></a>
-<a class="sourceLine" id="cb15-10" data-line-number="10"></a>
-<a class="sourceLine" id="cb15-11" data-line-number="11"><span class="co"># Fit the model and store training stats</span></a>
-<a class="sourceLine" id="cb15-12" data-line-number="12">history &lt;-<span class="st"> </span>model <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../../../keras/reference/reexports.html">fit</a></span>(</a>
-<a class="sourceLine" id="cb15-13" data-line-number="13">  train_data,</a>
-<a class="sourceLine" id="cb15-14" data-line-number="14">  train_labels,</a>
-<a class="sourceLine" id="cb15-15" data-line-number="15">  <span class="dt">epochs =</span> epochs,</a>
-<a class="sourceLine" id="cb15-16" data-line-number="16">  <span class="dt">validation_split =</span> <span class="fl">0.2</span>,</a>
-<a class="sourceLine" id="cb15-17" data-line-number="17">  <span class="dt">verbose =</span> <span class="dv">0</span>,</a>
-<a class="sourceLine" id="cb15-18" data-line-number="18">  <span class="dt">callbacks =</span> <span class="kw"><a href="https://rdrr.io/r/base/list.html">list</a></span>(print_dot_callback)</a>
-<a class="sourceLine" id="cb15-19" data-line-number="19">)</a></code></pre></div>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb18-1" data-line-number="1"><span class="co"># Display training progress by printing a single dot for each completed epoch.</span></a>
+<a class="sourceLine" id="cb18-2" data-line-number="2">print_dot_callback &lt;-<span class="st"> </span><span class="kw"><a href="../../../keras/reference/callback_lambda.html">callback_lambda</a></span>(</a>
+<a class="sourceLine" id="cb18-3" data-line-number="3">  <span class="dt">on_epoch_end =</span> <span class="cf">function</span>(epoch, logs) {</a>
+<a class="sourceLine" id="cb18-4" data-line-number="4">    <span class="cf">if</span> (epoch <span class="op">%%</span><span class="st"> </span><span class="dv">80</span> <span class="op">==</span><span class="st"> </span><span class="dv">0</span>) <span class="kw"><a href="https://rdrr.io/r/base/cat.html">cat</a></span>(<span class="st">"</span><span class="ch">\n</span><span class="st">"</span>)</a>
+<a class="sourceLine" id="cb18-5" data-line-number="5">    <span class="kw"><a href="https://rdrr.io/r/base/cat.html">cat</a></span>(<span class="st">"."</span>)</a>
+<a class="sourceLine" id="cb18-6" data-line-number="6">  }</a>
+<a class="sourceLine" id="cb18-7" data-line-number="7">)    </a>
+<a class="sourceLine" id="cb18-8" data-line-number="8"></a>
+<a class="sourceLine" id="cb18-9" data-line-number="9">model &lt;-<span class="st"> </span><span class="kw">build_model</span>()</a>
+<a class="sourceLine" id="cb18-10" data-line-number="10"></a>
+<a class="sourceLine" id="cb18-11" data-line-number="11">history &lt;-<span class="st"> </span>model <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../../../keras/reference/reexports.html">fit</a></span>(</a>
+<a class="sourceLine" id="cb18-12" data-line-number="12">  <span class="dt">x =</span> train_df <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span>(<span class="op">-</span>label),</a>
+<a class="sourceLine" id="cb18-13" data-line-number="13">  <span class="dt">y =</span> train_df<span class="op">$</span>label,</a>
+<a class="sourceLine" id="cb18-14" data-line-number="14">  <span class="dt">epochs =</span> <span class="dv">500</span>,</a>
+<a class="sourceLine" id="cb18-15" data-line-number="15">  <span class="dt">validation_split =</span> <span class="fl">0.2</span>,</a>
+<a class="sourceLine" id="cb18-16" data-line-number="16">  <span class="dt">verbose =</span> <span class="dv">0</span>,</a>
+<a class="sourceLine" id="cb18-17" data-line-number="17">  <span class="dt">callbacks =</span> <span class="kw"><a href="https://rdrr.io/r/base/list.html">list</a></span>(print_dot_callback)</a>
+<a class="sourceLine" id="cb18-18" data-line-number="18">)</a></code></pre></div>
+<pre><code>## 
+## ................................................................................
+## ................................................................................
+## ................................................................................
+## ................................................................................
+## ................................................................................
+## ................................................................................
+## ....................</code></pre>
 <p>Now, we visualize the model’s training progress using the metrics stored in the <code>history</code> variable. We want to use this data to determine how long to train before the model stops making progress.</p>
-<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb16-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(ggplot2)</a>
-<a class="sourceLine" id="cb16-2" data-line-number="2"></a>
-<a class="sourceLine" id="cb16-3" data-line-number="3"><span class="kw"><a href="https://rdrr.io/r/graphics/plot.html">plot</a></span>(history, <span class="dt">metrics =</span> <span class="st">"mean_absolute_error"</span>, <span class="dt">smooth =</span> <span class="ot">FALSE</span>) <span class="op">+</span></a>
-<a class="sourceLine" id="cb16-4" data-line-number="4"><span class="st">  </span><span class="kw"><a href="https://ggplot2.tidyverse.org/reference/coord_cartesian.html">coord_cartesian</a></span>(<span class="dt">ylim =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="dv">0</span>, <span class="dv">5</span>))</a></code></pre></div>
-<p><img src="images/boston_mae.png"></p>
+<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb20-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(ggplot2)</a></code></pre></div>
+<pre><code>## 
+## Attaching package: 'ggplot2'</code></pre>
+<pre><code>## The following object is masked _by_ '.GlobalEnv':
+## 
+##     layer</code></pre>
+<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb23-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/graphics/plot.html">plot</a></span>(history)</a></code></pre></div>
+<p><img src="/tutorials/begginers/basic-ml/tutorial_basic_regression_files/figure-html/unnamed-chunk-13-1.png" width="672"></p>
 <p>This graph shows little improvement in the model after about 200 epochs. Let’s update the <code>fit</code> method to automatically stop training when the validation score doesn’t improve. We’ll use a <a href="https://keras.rstudio.com/reference/callback_early_stopping.html">callback</a> that tests a training condition for every epoch. If a set amount of epochs elapses without showing improvement, it automatically stops the training.</p>
-<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb17-1" data-line-number="1"><span class="co"># The patience parameter is the amount of epochs to check for improvement.</span></a>
-<a class="sourceLine" id="cb17-2" data-line-number="2">early_stop &lt;-<span class="st"> </span><span class="kw"><a href="../../../keras/reference/callback_early_stopping.html">callback_early_stopping</a></span>(<span class="dt">monitor =</span> <span class="st">"val_loss"</span>, <span class="dt">patience =</span> <span class="dv">20</span>)</a>
-<a class="sourceLine" id="cb17-3" data-line-number="3"></a>
-<a class="sourceLine" id="cb17-4" data-line-number="4">model &lt;-<span class="st"> </span><span class="kw">build_model</span>()</a>
-<a class="sourceLine" id="cb17-5" data-line-number="5">history &lt;-<span class="st"> </span>model <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../../../keras/reference/reexports.html">fit</a></span>(</a>
-<a class="sourceLine" id="cb17-6" data-line-number="6">  train_data,</a>
-<a class="sourceLine" id="cb17-7" data-line-number="7">  train_labels,</a>
-<a class="sourceLine" id="cb17-8" data-line-number="8">  <span class="dt">epochs =</span> epochs,</a>
-<a class="sourceLine" id="cb17-9" data-line-number="9">  <span class="dt">validation_split =</span> <span class="fl">0.2</span>,</a>
-<a class="sourceLine" id="cb17-10" data-line-number="10">  <span class="dt">verbose =</span> <span class="dv">0</span>,</a>
-<a class="sourceLine" id="cb17-11" data-line-number="11">  <span class="dt">callbacks =</span> <span class="kw"><a href="https://rdrr.io/r/base/list.html">list</a></span>(early_stop, print_dot_callback)</a>
-<a class="sourceLine" id="cb17-12" data-line-number="12">)</a>
-<a class="sourceLine" id="cb17-13" data-line-number="13"></a>
-<a class="sourceLine" id="cb17-14" data-line-number="14"><span class="kw"><a href="https://rdrr.io/r/graphics/plot.html">plot</a></span>(history, <span class="dt">metrics =</span> <span class="st">"mean_absolute_error"</span>, <span class="dt">smooth =</span> <span class="ot">FALSE</span>) <span class="op">+</span></a>
-<a class="sourceLine" id="cb17-15" data-line-number="15"><span class="st">  </span><span class="kw"><a href="https://ggplot2.tidyverse.org/reference/coord_cartesian.html">coord_cartesian</a></span>(<span class="dt">xlim =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="dv">0</span>, <span class="dv">150</span>), <span class="dt">ylim =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="dv">0</span>, <span class="dv">5</span>))</a></code></pre></div>
-<p><img src="images/boston_mae_earlystop.png"></p>
+<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb24-1" data-line-number="1"><span class="co"># The patience parameter is the amount of epochs to check for improvement.</span></a>
+<a class="sourceLine" id="cb24-2" data-line-number="2">early_stop &lt;-<span class="st"> </span><span class="kw"><a href="../../../keras/reference/callback_early_stopping.html">callback_early_stopping</a></span>(<span class="dt">monitor =</span> <span class="st">"val_loss"</span>, <span class="dt">patience =</span> <span class="dv">20</span>)</a>
+<a class="sourceLine" id="cb24-3" data-line-number="3"></a>
+<a class="sourceLine" id="cb24-4" data-line-number="4">model &lt;-<span class="st"> </span><span class="kw">build_model</span>()</a>
+<a class="sourceLine" id="cb24-5" data-line-number="5"></a>
+<a class="sourceLine" id="cb24-6" data-line-number="6">history &lt;-<span class="st"> </span>model <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../../../keras/reference/reexports.html">fit</a></span>(</a>
+<a class="sourceLine" id="cb24-7" data-line-number="7">  <span class="dt">x =</span> train_df <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span>(<span class="op">-</span>label),</a>
+<a class="sourceLine" id="cb24-8" data-line-number="8">  <span class="dt">y =</span> train_df<span class="op">$</span>label,</a>
+<a class="sourceLine" id="cb24-9" data-line-number="9">  <span class="dt">epochs =</span> <span class="dv">500</span>,</a>
+<a class="sourceLine" id="cb24-10" data-line-number="10">  <span class="dt">validation_split =</span> <span class="fl">0.2</span>,</a>
+<a class="sourceLine" id="cb24-11" data-line-number="11">  <span class="dt">verbose =</span> <span class="dv">0</span>,</a>
+<a class="sourceLine" id="cb24-12" data-line-number="12">  <span class="dt">callbacks =</span> <span class="kw"><a href="https://rdrr.io/r/base/list.html">list</a></span>(early_stop)</a>
+<a class="sourceLine" id="cb24-13" data-line-number="13">)</a>
+<a class="sourceLine" id="cb24-14" data-line-number="14"></a>
+<a class="sourceLine" id="cb24-15" data-line-number="15"><span class="kw"><a href="https://rdrr.io/r/graphics/plot.html">plot</a></span>(history)</a></code></pre></div>
+<p><img src="/tutorials/begginers/basic-ml/tutorial_basic_regression_files/figure-html/unnamed-chunk-14-1.png" width="672"></p>
 <p>The graph shows the average error is about $2,500 dollars. Is this good? Well, $2,500 is not an insignificant amount when some of the labels are only $15,000.</p>
 <p>Let’s see how did the model performs on the test set:</p>
-<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb18-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(loss, mae) <span class="op">%&lt;-%</span><span class="st"> </span>(model <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../../../keras/reference/reexports.html">evaluate</a></span>(test_data, test_labels, <span class="dt">verbose =</span> <span class="dv">0</span>))</a>
-<a class="sourceLine" id="cb18-2" data-line-number="2"></a>
-<a class="sourceLine" id="cb18-3" data-line-number="3"><span class="kw"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span>(<span class="st">"Mean absolute error on test set: $"</span>, <span class="kw"><a href="https://rdrr.io/r/base/sprintf.html">sprintf</a></span>(<span class="st">"%.2f"</span>, mae <span class="op">*</span><span class="st"> </span><span class="dv">1000</span>))</a></code></pre></div>
-<pre><code>[1] "Mean absolute error on test set: $3297.68"</code></pre>
+<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb25-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(loss, mae) <span class="op">%&lt;-%</span><span class="st"> </span>(model <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../../../keras/reference/reexports.html">evaluate</a></span>(test_df <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span>(<span class="op">-</span>label), test_df<span class="op">$</span>label, <span class="dt">verbose =</span> <span class="dv">0</span>))</a>
+<a class="sourceLine" id="cb25-2" data-line-number="2"></a>
+<a class="sourceLine" id="cb25-3" data-line-number="3"><span class="kw"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span>(<span class="st">"Mean absolute error on test set: $"</span>, <span class="kw"><a href="https://rdrr.io/r/base/sprintf.html">sprintf</a></span>(<span class="st">"%.2f"</span>, mae <span class="op">*</span><span class="st"> </span><span class="dv">1000</span>))</a></code></pre></div>
+<pre><code>## [1] "Mean absolute error on test set: $3094.66"</code></pre>
 </div>
 <div id="predict" class="section level2">
 <h2>Predict</h2>
 <p>Finally, predict some housing prices using data in the testing set:</p>
-<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb20-1" data-line-number="1">test_predictions &lt;-<span class="st"> </span>model <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/stats/predict.html">predict</a></span>(test_data)</a>
-<a class="sourceLine" id="cb20-2" data-line-number="2">test_predictions[ , <span class="dv">1</span>]</a></code></pre></div>
-<pre><code> [1]  9.159314 17.955666 20.573296 31.487156 25.231384 18.803967 27.139153
- [8] 21.052799 18.904579 22.056618 19.140137 17.342262 15.233129 42.001091
-[15] 19.280727 19.559774 27.276485 20.737257 19.391312 38.450863 12.431134
-[22] 16.025173 19.910103 14.362184 20.846870 24.595688 31.234753 30.109112
-[29] 11.271907 21.081585 18.724422 14.542423 33.109241 25.842684 18.071476
-[36]  9.046785 14.701134 17.113651 21.169674 27.008324 29.676132 28.280304
-[43] 15.355518 41.252007 29.731274 24.258526 25.582203 16.032135 24.014944
-[50] 22.071520 35.658638 19.342590 13.662583 15.854269 34.375328 28.051319
-[57] 13.002036 47.801872 33.513954 23.775620 25.214602 17.864346 14.284246
-[64] 17.458893 22.757492 22.424841 13.578171 22.530212 15.667303  7.438343
-[71] 38.318726 29.219141 25.282124 15.476329 24.670732 17.125381 20.079552
-[78] 23.601147 34.540359 12.151771 19.177418 37.980789 15.576267 14.904464
-[85] 17.581717 17.851192 20.480953 19.700697 21.921551 31.415789 19.116734
-[92] 21.192280 24.934101 41.778465 35.113403 19.307007 35.754066 53.983509
-[99] 26.797831 44.472233 32.520882 19.591730</code></pre>
+<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb27-1" data-line-number="1">test_predictions &lt;-<span class="st"> </span>model <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/stats/predict.html">predict</a></span>(test_df <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span>(<span class="op">-</span>label))</a>
+<a class="sourceLine" id="cb27-2" data-line-number="2">test_predictions[ , <span class="dv">1</span>]</a></code></pre></div>
+<pre><code>##   [1]  7.872250 17.654762 20.982258 31.999838 25.556238 18.183039 28.068750
+##   [8] 22.501776 18.747419 21.975569 19.944382 16.710402 14.278819 43.015091
+##  [15] 18.459108 20.919090 28.108675 22.024349 19.440199 35.474987 11.135498
+##  [22] 13.361454 20.482460 15.757608 22.306629 24.747459 31.891994 30.432236
+##  [29] 10.019571 22.869444 18.512568 15.082882 34.344067 26.601068 17.249516
+##  [36]  8.123818 15.009222 18.078821 18.180248 27.342699 29.582993 29.183138
+##  [43] 13.869503 41.202503 30.522724 25.317478 27.194042 16.473742 23.588638
+##  [50] 22.246248 36.427589 20.556616 10.802256 15.709043 35.623066 29.122688
+##  [57] 11.890709 47.440407 34.899525 23.651548 24.857519 16.871044 13.903340
+##  [64] 17.644621 24.048992 23.348415 12.642365 24.027014 13.065259  6.298358
+##  [71] 35.383095 30.361238 25.870253 12.382518 26.554468 18.448397 21.813021
+##  [78] 23.511482 35.870316 10.610422 19.925037 39.295437 15.701004 13.256963
+##  [85] 17.397980 17.942024 19.867788 21.224943 20.837851 32.162971 19.061665
+##  [92] 21.769482 26.392824 42.605759 36.537762 17.882944 37.414028 53.659832
+##  [99] 26.833448 46.714596 33.431038 20.445950</code></pre>
 </div>
 <div id="conclusion" class="section level2">
 <h2>Conclusion</h2>
@@ -219,15 +306,5 @@ We also show how to use a custom callback, replacing the default training output
 <li>When input data features have values with different ranges, each feature should be scaled independently.</li>
 <li>If there is not much training data, prefer a small network with few hidden layers to avoid overfitting.</li>
 <li>Early stopping is a useful technique to prevent overfitting.</li>
-</ul>
-</div>
-<div id="more-tutorials" class="section level2">
-<h2>More Tutorials</h2>
-<p>Check out these additional tutorials to learn more:</p>
-<ul>
-<li><p><a href="tutorial_basic_classification.html">Basic Classification</a> — In this tutorial, we train a neural network model to classify images of clothing, like sneakers and shirts.</p></li>
-<li><p><a href="tutorial_basic_text_classification.html">Text Classification</a> — This tutorial classifies movie reviews as positive or negative using the text of the review.</p></li>
-<li><p><a href="tutorial_overfit_underfit.html">Overfitting and Underfitting</a> — In this tutorial, we explore two common regularization techniques (weight regularization and dropout) and use them to improve our movie review classification results.</p></li>
-<li><p><a href="tutorial_save_and_restore.html">Save and Restore Models</a> — This tutorial demonstrates various ways to save and share models (after as well as during training).</p></li>
 </ul>
 </div>
