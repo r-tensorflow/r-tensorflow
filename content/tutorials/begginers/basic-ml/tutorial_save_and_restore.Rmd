@@ -16,7 +16,7 @@ menu:
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE, eval = FALSE)
+knitr::opts_chunk$set(echo = TRUE, eval = TRUE)
 ```
 
 
@@ -26,6 +26,10 @@ Model progress can be saved after as well as during training. This means a model
 - the trained weights, or parameters, for the model
 
 Sharing this data helps others understand how the model works and try it themselves with new data.
+
+## Options
+
+There are many different ways to save TensorFlow models—depending on the API you're using. This guide uses Keras, a high-level API to build and train models in TensorFlow. For other approaches, see the [TensorFlow Save and Restore guide](todo) or [Saving in eager](todo).
 
 ## Setup
 
@@ -52,8 +56,6 @@ test_images <- test_images[1:1000, , ] %>%
 test_images <- test_images / 255
 ```
 
-
-
 ## Define a model
 
 Let's build a simple model we'll use to demonstrate saving and loading weights.
@@ -75,70 +77,83 @@ create_model <- function() {
 }
 
 model <- create_model()
-model %>% summary()
-
-```
-
-```
-Layer (type)                          Output Shape                      Param #      
-=====================================================================================
-dense_1 (Dense)                       (None, 512)                       401920       
-_____________________________________________________________________________________
-dropout_1 (Dropout)                   (None, 512)                       0            
-_____________________________________________________________________________________
-dense_2 (Dense)                       (None, 10)                        5130         
-=====================================================================================
-Total params: 407,050
-Trainable params: 407,050
-Non-trainable params: 0
-_____________________________________________________________________________________
+summary(model)
 ```
 
 ## Save the entire model
 
-The habitual form of saving a Keras model is saving to the HDF5 format.
+Call `save_model_*` to save the a model's architecture, weights, and training configuration in a single file/folder. This allows you to export a model so it can be used without access to the original code*. Since the optimizer-state is recovered, you can resume training from exactly where you left off.
 
-The resulting file contains the weight values, the model's configuration, and even the optimizer's configuration. This allows you to save a model and resume training later — from the exact same state — without access to the original code.
+Saving a fully-functional model is very useful—you can load them in TensorFlow.js (HDF5, Saved Model) and then train and run them in web browsers, or convert them to run on mobile devices using TensorFlow Lite (HDF5, Saved Model)
+
+*Custom objects (e.g. subclassed models or layers) require special attention when saving and loading. See the Saving custom objects section below
+
+### SavedModel format
+
+The SavedModel format is a way to serialize models. Models saved in this format can be restored using `load_model_tf` and are compatible with TensorFlow Serving. The [SavedModel guide](todo) goes into detail about how to serve/inspect the SavedModel. The section below illustrates the steps to saving and restoring the model.
 
 ```{r}
 model <- create_model()
 
-model %>% fit(train_images, train_labels, epochs = 5)
+model %>% fit(train_images, train_labels, epochs = 5, verbose = 2)
 
-model %>% save_model_hdf5("my_model.h5")
+model %>% save_model_tf("model")
 ```
 
-
-If you only wanted to save the weights, you could replace that last line by 
+The SavedModel format is a directory containing a protobuf binary and a Tensorflow checkpoint. Inspect the saved model directory:
 
 ```{r}
-model %>% save_model_weights_hdf5("my_model_weights.h5")
+list.files("model")
+```
+
+Reload a fresh Keras model from the saved model:
+
+```{r}
+new_model <- load_model_tf("model")
+summary(new_model)
+```
+
+### HDF5 format
+
+Keras provides a basic save format using the HDF5 standard.
+
+```{r}
+model <- create_model()
+
+model %>% fit(train_images, train_labels, epochs = 5, verbose = 2)
+
+model %>% save_model_hdf5("my_model.h5")
 ```
 
 Now recreate the model from that file:
 
 ```{r}
 new_model <- load_model_hdf5("my_model.h5")
-new_model %>% summary()
+summary(new_model)
 ```
 
-```
-_____________________________________________________________________________________
-Layer (type)                          Output Shape                      Param #      
-=====================================================================================
-dense_3 (Dense)                       (None, 512)                       401920       
-_____________________________________________________________________________________
-dropout_2 (Dropout)                   (None, 512)                       0            
-_____________________________________________________________________________________
-dense_4 (Dense)                       (None, 10)                        5130         
-=====================================================================================
-Total params: 407,050
-Trainable params: 407,050
-Non-trainable params: 0
-_____________________________________________________________________________________
-```
+This technique saves everything:
 
+* The weight values
+* The model's configuration(architecture)
+* The optimizer configuration
 
+Keras saves models by inspecting the architecture. Currently, it is not able to save TensorFlow optimizers (from `tf$train`). When using those you will need to re-compile the model after loading, and you will lose the state of the optimizer.
+
+### Saving custom objects
+
+If you are using the SavedModel format, you can skip this section. The key difference between HDF5 and SavedModel is that HDF5 uses object configs to save the model architecture, while SavedModel saves the execution graph. 
+
+Thus, SavedModels are able to save custom objects like subclassed models and custom layers without requiring the orginal code.
+
+To save custom objects to HDF5, you must do the following:
+
+1.  Define a get_config method in your object, and optionally a from_config classmethod.
+    * `get_config()` returns a JSON-serializable dictionary of parameters needed to recreate the object.
+    * `from_config(config)` uses the returned config from get_config to create a new object. By default, this function will use the config as initialization arguments.
+2. Pass the object to the `custom_objects` argument when loading the model. The argument must be a named list mapping the string class name to the class definition. E.g. `load_keras_model_hdf5(path, custom_objects=list("CustomLayer" =  CustomLayer))`
+
+See the [Writing layers and models from scratch tutorial](todo) for examples of `custom_objects` and `get_config`.
 
 ## Save checkpoints during training
 
@@ -150,25 +165,20 @@ The callback takes a couple of arguments to configure checkpointing. By default,
 
 Now here, let's focus on just saving and restoring weights. In the following code snippet, we are setting `save_weights_only` to true, so we will need the model definition on restore.
 
-The `filepath` argument can contain named formatting options, for example: if `filepath` is `weights.{epoch:02d}-{val_loss:.2f}.hdf5`, then the model checkpoints will be saved with the epoch number and the validation loss in the filename. 
-
-The saved model weights again will be in HDF5 format.
 
 
-## Checkpoint callback usage
+### Checkpoint callback usage
 
 Train the model and pass it the `callback_model_checkpoint`:
 
 ```{r}
-checkpoint_dir <- "checkpoints"
-dir.create(checkpoint_dir, showWarnings = FALSE)
-filepath <- file.path(checkpoint_dir, "weights.{epoch:02d}-{val_loss:.2f}.hdf5")
+checkpoint_path <- "checkpoints/cp.ckpt"
 
 # Create checkpoint callback
 cp_callback <- callback_model_checkpoint(
-  filepath = filepath,
+  filepath = checkpoint_path,
   save_weights_only = TRUE,
-  verbose = 1
+  verbose = 0
 )
 
 model <- create_model()
@@ -178,7 +188,8 @@ model %>% fit(
   train_labels,
   epochs = 10, 
   validation_data = list(test_images, test_labels),
-  callbacks = list(cp_callback)  # pass callback to training
+  callbacks = list(cp_callback),  # pass callback to training
+  verbose = 2
 )
 ```
 
@@ -186,17 +197,8 @@ model %>% fit(
 Inspect the files that were created:
 
 ```{r}
-list.files(checkpoint_dir)
+list.files(dirname(checkpoint_path))
 ```
-
-```
- [1] "weights.01-0.72.hdf5" "weights.02-0.51.hdf5" "weights.03-0.47.hdf5"
- [4] "weights.04-0.45.hdf5" "weights.05-0.42.hdf5" "weights.06-0.44.hdf5"
- [7] "weights.07-0.42.hdf5" "weights.08-0.40.hdf5" "weights.09-0.42.hdf5"
-[10] "weights.10-0.42.hdf5"
- ```
- 
-
 
 Create a new, untrained model. When restoring a model from only weights, you must have a model with the same architecture as the original model. Since it's the same model architecture, we can share weights despite that it's a different instance of the model.
 
@@ -204,81 +206,27 @@ Now rebuild a fresh, untrained model, and evaluate it on the test set. An untrai
 
 ```{r}
 fresh_model <- create_model()
-score <- fresh_model %>% evaluate(test_images, test_labels)
-
-cat('Test loss:', score$loss, '\n')
-cat('Test accuracy:', score$acc, '\n')
-```
-
-```
-1000/1000 [==============================] - 0s 170us/step
-Test loss: 2.411125 
-Test accuracy: 0.088 
+fresh_model %>% evaluate(test_images, test_labels, verbose = 0)
 ```
 
 Then load the weights from the latest checkpoint (epoch 10), and re-evaluate:
 
 ```{r}
-fresh_model %>% load_model_weights_hdf5(
-  file.path(checkpoint_dir, "weights.10-0.42.hdf5")
-)
-score <- fresh_model %>% evaluate(test_images, test_labels)
-
-cat('Test loss:', score$loss, '\n')
-cat('Test accuracy:', score$acc, '\n')
+fresh_model %>% load_model_weights_tf(filepath = checkpoint_path)
+fresh_model %>% evaluate(test_images, test_labels, verbose = 0)
 ```
 
-```
-1000/1000 [==============================] - 0s 34us/step
-[1] "Test loss: 0.394947263240814"
-[1] "Test accuracy: 0.873"
-```
+### Checkpoint callback options
 
-To reduce the number of files, you can also save model weights only once every $n$th epoch. E.g.,
-
-```{r}
-checkpoint_dir <- "checkpoints"
-unlink(checkpoint_dir, recursive = TRUE)
-dir.create(checkpoint_dir)
-filepath <- file.path(checkpoint_dir, "weights.{epoch:02d}-{val_loss:.2f}.hdf5")
-
-# Create checkpoint callback
-cp_callback <- callback_model_checkpoint(
-  filepath = filepath,
-  save_weights_only = TRUE,
-  period = 5,
-  verbose = 1
-)
-
-model <- create_model()
-
-model %>% fit(
-  train_images,
-  train_labels,
-  epochs = 10, 
-  validation_data = list(test_images, test_labels),
-  callbacks = list(cp_callback)  # pass callback to training
-)
-
-list.files(checkpoint_dir)
-```
-
-```
-[1] "weights.05-0.41.hdf5" "weights.10-0.41.hdf5"
-```
-
-Alternatively, you can also decide to save only the best model, where best by default is defined as validation loss.
+Alternatively, you can decide to save only the best model, where best by default is defined as validation loss.
 See the [documentation for callback_model_checkpoint](https://tensorflow.rstudio.com/keras/reference/callback_model_checkpoint.html) for further information.
 
 ```{r}
-checkpoint_dir <- "checkpoints"
-unlink(checkpoint_dir, recursive = TRUE)
-dir.create(checkpoint_dir)
-filepath <- file.path(checkpoint_dir, "weights.{epoch:02d}-{val_loss:.2f}.hdf5")
+checkpoint_path <- "checkpoints/cp.ckpt"
 
 # Create checkpoint callback
 cp_callback <- callback_model_checkpoint(
-  filepath = filepath,
+  filepath = checkpoint_path,
   save_weights_only = TRUE,
   save_best_only = TRUE,
   verbose = 1
@@ -291,29 +239,51 @@ model %>% fit(
   train_labels,
   epochs = 10, 
   validation_data = list(test_images, test_labels),
-  callbacks = list(cp_callback)  # pass callback to training
+  callbacks = list(cp_callback), # pass callback to training,
+  verbose = 2
 )
 
-list.files(checkpoint_dir)
+list.files(dirname(checkpoint_path))
 ```
 
-```
-[1] "weights.01-0.72.hdf5" "weights.02-0.54.hdf5" "weights.03-0.46.hdf5"
-[4] "weights.04-0.45.hdf5" "weights.05-0.43.hdf5" "weights.06-0.42.hdf5"
-[7] "weights.09-0.41.hdf5"
+```{r include=FALSE}
+unlink(dirname(checkpoint_path), recursive = TRUE)
 ```
 
-In this case, weights were saved on all epochs but the 6th and 7th, where validation loss did not improve.
 
-## More Tutorials
+### What are these files?
 
-Check out these additional tutorials to learn more:
+The above code stores the weights to a collection of [checkpoint-formatted](https://www.tensorflow.org/guide/saved_model#save_and_restore_variables) files that contain only the trained weights in a binary format. Checkpoints contain: 
 
-- [Basic Classification](tutorial_basic_classification.html) --- In this tutorial, we train a neural network model to classify images of clothing, like sneakers and shirts. 
+* One or more shards that contain your model's weights. 
+* An index file that indicates which weights are stored in a which shard.
 
-- [Text Classification](tutorial_basic_text_classification.html) --- This tutorial classifies movie reviews as positive or negative using the text of the review. 
+If you are only training a model on a single machine, you'll have one shard with the suffix: `.data-00000-of-00001`
 
-- [Basic Regression](tutorial_basic_regression.html) --- This tutorial builds a model to predict the median price of homes in a Boston suburb during the mid-1970s. 
+```{r include=FALSE}
+unlink("model", recursive = TRUE)
+file.remove("my_model.h5")
+```
 
-- [Overfitting and Underfitting](tutorial_overfit_underfit.html) --- In this tutorial, we explore two common regularization techniques (weight regularization and dropout) and use them to improve our movie review classification results.
+## Manually save the weights
+
+You saw how to load the weights into a model. Manually saving them is just as simple with the `save_model_weights_tf` function.
+
+```{r}
+# Save the weights
+model %>% save_model_weights_tf("checkpoints/cp.ckpt")
+
+# Create a new model instance
+new_model <- create_model()
+
+# Restore the weights
+new_model %>% load_model_weights_tf('checkpoints/cp.ckpt')
+
+# Evaluate the model
+new_model %>% evaluate(test_images, test_labels, verbose = 0)
+```
+
+```{r include=FALSE}
+unlink("checkpoints", recursive = TRUE)
+```
 

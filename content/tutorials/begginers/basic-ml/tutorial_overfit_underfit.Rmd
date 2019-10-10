@@ -16,7 +16,7 @@ menu:
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE, eval = FALSE)
+knitr::opts_chunk$set(echo = TRUE, eval = TRUE)
 ```
 
 
@@ -72,7 +72,6 @@ test_data <- multi_hot_sequences(test_data, num_words)
 ```
 
 
-
 Let's look at one of the resulting multi-hot vectors. The word indices are sorted by frequency, so it is expected that there are more 1-values near index zero, as we can see in this plot:
 
 ```{r}
@@ -83,8 +82,6 @@ ggplot(first_text, aes(x = word, y = value)) +
         axis.text.y = element_blank(),
         axis.ticks.y = element_blank())
 ```
-
-![](images/multi-hot.png)
 
 ## Demonstrate overfitting
 
@@ -116,23 +113,9 @@ baseline_model %>% compile(
   metrics = list("accuracy")
 )
 
-baseline_model %>% summary()
+summary(baseline_model)
 ```
 
-```
-Layer (type)                          Output Shape                      Param #      
-=====================================================================================
-dense_17 (Dense)                      (None, 16)                        160016       
-_____________________________________________________________________________________
-dense_18 (Dense)                      (None, 16)                        272          
-_____________________________________________________________________________________
-dense_19 (Dense)                      (None, 1)                         17           
-=====================================================================================
-Total params: 160,305
-Trainable params: 160,305
-Non-trainable params: 0
-_____________________________________________________________________________________
-```
 
 ```{r}
 baseline_history <- baseline_model %>% fit(
@@ -163,23 +146,9 @@ smaller_model %>% compile(
   metrics = list("accuracy")
 )
 
-smaller_model %>% summary()
+summary(smaller_model)
 ```
 
-```
-Layer (type)                          Output Shape                      Param #      
-=====================================================================================
-dense_7 (Dense)                       (None, 4)                         40004        
-_____________________________________________________________________________________
-dense_8 (Dense)                       (None, 4)                         20           
-_____________________________________________________________________________________
-dense_9 (Dense)                       (None, 1)                         5            
-=====================================================================================
-Total params: 40,029
-Trainable params: 40,029
-Non-trainable params: 0
-_____________________________________________________________________________________
-```
 
 And train the model using the same data:
 
@@ -212,23 +181,7 @@ bigger_model %>% compile(
   metrics = list("accuracy")
 )
 
-bigger_model %>% summary()
-```
-
-```
-_____________________________________________________________________________________
-Layer (type)                          Output Shape                      Param #      
-=====================================================================================
-dense_10 (Dense)                      (None, 512)                       5120512      
-_____________________________________________________________________________________
-dense_11 (Dense)                      (None, 512)                       262656       
-_____________________________________________________________________________________
-dense_12 (Dense)                      (None, 1)                         513          
-=====================================================================================
-Total params: 5,383,681
-Trainable params: 5,383,681
-Non-trainable params: 0
-_____________________________________________________________________________________
+summary(bigger_model)
 ```
 
 And, again, train the model using the same data:
@@ -270,9 +223,6 @@ ggplot(compare_cx, aes(x = rowname, y = value, color = type)) +
   xlab("epoch") +
   ylab("loss")
 ```
-
-![](images/losscurves_overfitting.png)
-
 
 ## Strategies
 
@@ -337,8 +287,6 @@ ggplot(compare_cx, aes(x = rowname, y = value, color = type)) +
   ylab("loss")
 ```
 
-![](images/losscurves_l2.png)
-
 As you can see, the L2 regularized model has become much more resistant to overfitting than the baseline model, even though both models have the same number of parameters.
 
 ### Add dropout
@@ -393,8 +341,6 @@ ggplot(compare_cx, aes(x = rowname, y = value, color = type)) +
   ylab("loss")
 ```
 
-![](images/losscurves_dropout.png)
-
 Adding dropout is a clear improvement over the baseline model.
 
 To recap: here the most common ways to prevent overfitting in neural networks:
@@ -405,18 +351,4 @@ To recap: here the most common ways to prevent overfitting in neural networks:
  - Add dropout.
 
 And two important approaches not covered in this guide are data augmentation and batch normalization.
-
-## More Tutorials
-
-Check out these additional tutorials to learn more:
-
-- [Basic Classification](tutorial_basic_classification.html) --- In this tutorial, we train a neural network model to classify images of clothing, like sneakers and shirts. 
-
-- [Text Classification](tutorial_basic_text_classification.html) --- This tutorial classifies movie reviews as positive or negative using the text of the review. 
-
-- [Basic Regression](tutorial_basic_regression.html) --- This tutorial builds a model to predict the median price of homes in a Boston suburb during the mid-1970s. 
-
-- [Save and Restore Models](tutorial_save_and_restore.html) --- This tutorial demonstrates various ways to save and share models (after as well as during training).
-
-
 

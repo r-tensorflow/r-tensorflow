@@ -12,7 +12,7 @@ menu:
     name: "Regression"
     identifier: "keras-tutorial-basic-regression"
     parent: "tutorials-begginers-basic-ml-top"
-    weight: 40
+    weight: 25
 ---
 
 ```{r setup, include=FALSE}

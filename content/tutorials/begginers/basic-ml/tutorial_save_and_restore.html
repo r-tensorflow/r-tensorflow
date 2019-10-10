@@ -23,6 +23,10 @@ menu:
 <li>the trained weights, or parameters, for the model</li>
 </ul>
 <p>Sharing this data helps others understand how the model works and try it themselves with new data.</p>
+<div id="options" class="section level2">
+<h2>Options</h2>
+<p>There are many different ways to save TensorFlow models—depending on the API you’re using. This guide uses Keras, a high-level API to build and train models in TensorFlow. For other approaches, see the <a href="todo">TensorFlow Save and Restore guide</a> or <a href="todo">Saving in eager</a>.</p>
+</div>
 <div id="setup" class="section level2">
 <h2>Setup</h2>
 <p>We’ll use the <a href="http://yann.lecun.com/exdb/mnist/">MNIST</a> dataset to train our model to demonstrate saving weights. To speed up these demonstration runs, only use the first 1000 examples:</p>
@@ -62,47 +66,128 @@ menu:
 <a class="sourceLine" id="cb2-13" data-line-number="13">}</a>
 <a class="sourceLine" id="cb2-14" data-line-number="14"></a>
 <a class="sourceLine" id="cb2-15" data-line-number="15">model &lt;-<span class="st"> </span><span class="kw">create_model</span>()</a>
-<a class="sourceLine" id="cb2-16" data-line-number="16">model <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/summary.html">summary</a></span>()</a></code></pre></div>
-<pre><code>Layer (type)                          Output Shape                      Param #      
-=====================================================================================
-dense_1 (Dense)                       (None, 512)                       401920       
-_____________________________________________________________________________________
-dropout_1 (Dropout)                   (None, 512)                       0            
-_____________________________________________________________________________________
-dense_2 (Dense)                       (None, 10)                        5130         
-=====================================================================================
-Total params: 407,050
-Trainable params: 407,050
-Non-trainable params: 0
-_____________________________________________________________________________________</code></pre>
+<a class="sourceLine" id="cb2-16" data-line-number="16"><span class="kw"><a href="https://rdrr.io/r/base/summary.html">summary</a></span>(model)</a></code></pre></div>
+<pre><code>## Model: "sequential"
+## ___________________________________________________________________________
+## Layer (type)                     Output Shape                  Param #     
+## ===========================================================================
+## dense (Dense)                    (None, 512)                   401920      
+## ___________________________________________________________________________
+## dropout (Dropout)                (None, 512)                   0           
+## ___________________________________________________________________________
+## dense_1 (Dense)                  (None, 10)                    5130        
+## ===========================================================================
+## Total params: 407,050
+## Trainable params: 407,050
+## Non-trainable params: 0
+## ___________________________________________________________________________</code></pre>
 </div>
 <div id="save-the-entire-model" class="section level2">
 <h2>Save the entire model</h2>
-<p>The habitual form of saving a Keras model is saving to the HDF5 format.</p>
-<p>The resulting file contains the weight values, the model’s configuration, and even the optimizer’s configuration. This allows you to save a model and resume training later — from the exact same state — without access to the original code.</p>
+<p>Call <code>save_model_*</code> to save the a model’s architecture, weights, and training configuration in a single file/folder. This allows you to export a model so it can be used without access to the original code*. Since the optimizer-state is recovered, you can resume training from exactly where you left off.</p>
+<p>Saving a fully-functional model is very useful—you can load them in TensorFlow.js (HDF5, Saved Model) and then train and run them in web browsers, or convert them to run on mobile devices using TensorFlow Lite (HDF5, Saved Model)</p>
+<p>*Custom objects (e.g. subclassed models or layers) require special attention when saving and loading. See the Saving custom objects section below</p>
+<div id="savedmodel-format" class="section level3">
+<h3>SavedModel format</h3>
+<p>The SavedModel format is a way to serialize models. Models saved in this format can be restored using <code>load_model_tf</code> and are compatible with TensorFlow Serving. The <a href="todo">SavedModel guide</a> goes into detail about how to serve/inspect the SavedModel. The section below illustrates the steps to saving and restoring the model.</p>
 <div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" data-line-number="1">model &lt;-<span class="st"> </span><span class="kw">create_model</span>()</a>
 <a class="sourceLine" id="cb4-2" data-line-number="2"></a>
-<a class="sourceLine" id="cb4-3" data-line-number="3">model <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../../../keras/reference/reexports.html">fit</a></span>(train_images, train_labels, <span class="dt">epochs =</span> <span class="dv">5</span>)</a>
-<a class="sourceLine" id="cb4-4" data-line-number="4"></a>
-<a class="sourceLine" id="cb4-5" data-line-number="5">model <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../../../keras/reference/save_model_hdf5.html">save_model_hdf5</a></span>(<span class="st">"my_model.h5"</span>)</a></code></pre></div>
-<p>If you only wanted to save the weights, you could replace that last line by</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" data-line-number="1">model <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../../../keras/reference/save_model_weights_hdf5.html">save_model_weights_hdf5</a></span>(<span class="st">"my_model_weights.h5"</span>)</a></code></pre></div>
+<a class="sourceLine" id="cb4-3" data-line-number="3">model <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../../../keras/reference/reexports.html">fit</a></span>(train_images, train_labels, <span class="dt">epochs =</span> <span class="dv">5</span>, <span class="dt">verbose =</span> <span class="dv">2</span>)</a></code></pre></div>
+<pre><code>## Train on 1000 samples
+## Epoch 1/5
+## 1000/1000 - 0s - loss: 1.1819 - accuracy: 0.6570
+## Epoch 2/5
+## 1000/1000 - 0s - loss: 0.4142 - accuracy: 0.8850
+## Epoch 3/5
+## 1000/1000 - 0s - loss: 0.2915 - accuracy: 0.9240
+## Epoch 4/5
+## 1000/1000 - 0s - loss: 0.2132 - accuracy: 0.9480
+## Epoch 5/5
+## 1000/1000 - 0s - loss: 0.1522 - accuracy: 0.9720</code></pre>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" data-line-number="1">model <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../../../keras/reference/save_model_tf.html">save_model_tf</a></span>(<span class="st">"model"</span>)</a></code></pre></div>
+<p>The SavedModel format is a directory containing a protobuf binary and a Tensorflow checkpoint. Inspect the saved model directory:</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/base/list.files.html">list.files</a></span>(<span class="st">"model"</span>)</a></code></pre></div>
+<pre><code>## [1] "assets"         "saved_model.pb" "variables"</code></pre>
+<p>Reload a fresh Keras model from the saved model:</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" data-line-number="1">new_model &lt;-<span class="st"> </span><span class="kw"><a href="../../../keras/reference/save_model_tf.html">load_model_tf</a></span>(<span class="st">"model"</span>)</a>
+<a class="sourceLine" id="cb9-2" data-line-number="2"><span class="kw"><a href="https://rdrr.io/r/base/summary.html">summary</a></span>(new_model)</a></code></pre></div>
+<pre><code>## Model: "sequential_1"
+## ___________________________________________________________________________
+## Layer (type)                     Output Shape                  Param #     
+## ===========================================================================
+## dense_2 (Dense)                  (None, 512)                   401920      
+## ___________________________________________________________________________
+## dropout_1 (Dropout)              (None, 512)                   0           
+## ___________________________________________________________________________
+## dense_3 (Dense)                  (None, 10)                    5130        
+## ===========================================================================
+## Total params: 407,050
+## Trainable params: 407,050
+## Non-trainable params: 0
+## ___________________________________________________________________________</code></pre>
+</div>
+<div id="hdf5-format" class="section level3">
+<h3>HDF5 format</h3>
+<p>Keras provides a basic save format using the HDF5 standard.</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb11-1" data-line-number="1">model &lt;-<span class="st"> </span><span class="kw">create_model</span>()</a>
+<a class="sourceLine" id="cb11-2" data-line-number="2"></a>
+<a class="sourceLine" id="cb11-3" data-line-number="3">model <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../../../keras/reference/reexports.html">fit</a></span>(train_images, train_labels, <span class="dt">epochs =</span> <span class="dv">5</span>, <span class="dt">verbose =</span> <span class="dv">2</span>)</a></code></pre></div>
+<pre><code>## Train on 1000 samples
+## Epoch 1/5
+## 1000/1000 - 0s - loss: 1.1617 - accuracy: 0.6750
+## Epoch 2/5
+## 1000/1000 - 0s - loss: 0.4311 - accuracy: 0.8720
+## Epoch 3/5
+## 1000/1000 - 0s - loss: 0.2900 - accuracy: 0.9260
+## Epoch 4/5
+## 1000/1000 - 0s - loss: 0.2043 - accuracy: 0.9440
+## Epoch 5/5
+## 1000/1000 - 0s - loss: 0.1561 - accuracy: 0.9640</code></pre>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb13-1" data-line-number="1">model <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../../../keras/reference/save_model_hdf5.html">save_model_hdf5</a></span>(<span class="st">"my_model.h5"</span>)</a></code></pre></div>
 <p>Now recreate the model from that file:</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" data-line-number="1">new_model &lt;-<span class="st"> </span><span class="kw"><a href="../../../keras/reference/save_model_hdf5.html">load_model_hdf5</a></span>(<span class="st">"my_model.h5"</span>)</a>
-<a class="sourceLine" id="cb6-2" data-line-number="2">new_model <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/summary.html">summary</a></span>()</a></code></pre></div>
-<pre><code>_____________________________________________________________________________________
-Layer (type)                          Output Shape                      Param #      
-=====================================================================================
-dense_3 (Dense)                       (None, 512)                       401920       
-_____________________________________________________________________________________
-dropout_2 (Dropout)                   (None, 512)                       0            
-_____________________________________________________________________________________
-dense_4 (Dense)                       (None, 10)                        5130         
-=====================================================================================
-Total params: 407,050
-Trainable params: 407,050
-Non-trainable params: 0
-_____________________________________________________________________________________</code></pre>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb14-1" data-line-number="1">new_model &lt;-<span class="st"> </span><span class="kw"><a href="../../../keras/reference/save_model_hdf5.html">load_model_hdf5</a></span>(<span class="st">"my_model.h5"</span>)</a>
+<a class="sourceLine" id="cb14-2" data-line-number="2"><span class="kw"><a href="https://rdrr.io/r/base/summary.html">summary</a></span>(new_model)</a></code></pre></div>
+<pre><code>## Model: "sequential_2"
+## ___________________________________________________________________________
+## Layer (type)                     Output Shape                  Param #     
+## ===========================================================================
+## dense_4 (Dense)                  (None, 512)                   401920      
+## ___________________________________________________________________________
+## dropout_2 (Dropout)              (None, 512)                   0           
+## ___________________________________________________________________________
+## dense_5 (Dense)                  (None, 10)                    5130        
+## ===========================================================================
+## Total params: 407,050
+## Trainable params: 407,050
+## Non-trainable params: 0
+## ___________________________________________________________________________</code></pre>
+<p>This technique saves everything:</p>
+<ul>
+<li>The weight values</li>
+<li>The model’s configuration(architecture)</li>
+<li>The optimizer configuration</li>
+</ul>
+<p>Keras saves models by inspecting the architecture. Currently, it is not able to save TensorFlow optimizers (from <code>tf$train</code>). When using those you will need to re-compile the model after loading, and you will lose the state of the optimizer.</p>
+</div>
+<div id="saving-custom-objects" class="section level3">
+<h3>Saving custom objects</h3>
+<p>If you are using the SavedModel format, you can skip this section. The key difference between HDF5 and SavedModel is that HDF5 uses object configs to save the model architecture, while SavedModel saves the execution graph.</p>
+<p>Thus, SavedModels are able to save custom objects like subclassed models and custom layers without requiring the orginal code.</p>
+<p>To save custom objects to HDF5, you must do the following:</p>
+<ol style="list-style-type: decimal">
+<li>Define a get_config method in your object, and optionally a from_config classmethod.
+<ul>
+<li>
+<code><a href="../../../keras/reference/get_config.html">get_config()</a></code> returns a JSON-serializable dictionary of parameters needed to recreate the object.</li>
+<li>
+<code><a href="../../../keras/reference/get_config.html">from_config(config)</a></code> uses the returned config from get_config to create a new object. By default, this function will use the config as initialization arguments.</li>
+</ul>
+</li>
+<li>Pass the object to the <code>custom_objects</code> argument when loading the model. The argument must be a named list mapping the string class name to the class definition. E.g. <code>load_keras_model_hdf5(path, custom_objects=list("CustomLayer" =  CustomLayer))</code>
+</li>
+</ol>
+<p>See the <a href="todo">Writing layers and models from scratch tutorial</a> for examples of <code>custom_objects</code> and <code>get_config</code>.</p>
+</div>
 </div>
 <div id="save-checkpoints-during-training" class="section level2">
 <h2>Save checkpoints during training</h2>
@@ -110,123 +195,167 @@ ________________________________________________________________________________
 <p><code>callback_model_checkpoint</code> is a callback that performs this task.</p>
 <p>The callback takes a couple of arguments to configure checkpointing. By default, <code>save_weights_only</code> is set to false, which means the complete model is being saved - including architecture and configuration. You can then restore the model as outlined in the previous paragraph.</p>
 <p>Now here, let’s focus on just saving and restoring weights. In the following code snippet, we are setting <code>save_weights_only</code> to true, so we will need the model definition on restore.</p>
-<p>The <code>filepath</code> argument can contain named formatting options, for example: if <code>filepath</code> is <code>weights.{epoch:02d}-{val_loss:.2f}.hdf5</code>, then the model checkpoints will be saved with the epoch number and the validation loss in the filename.</p>
-<p>The saved model weights again will be in HDF5 format.</p>
-</div>
-<div id="checkpoint-callback-usage" class="section level2">
-<h2>Checkpoint callback usage</h2>
+<div id="checkpoint-callback-usage" class="section level3">
+<h3>Checkpoint callback usage</h3>
 <p>Train the model and pass it the <code>callback_model_checkpoint</code>:</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" data-line-number="1">checkpoint_dir &lt;-<span class="st"> "checkpoints"</span></a>
-<a class="sourceLine" id="cb8-2" data-line-number="2"><span class="kw"><a href="https://rdrr.io/r/base/files2.html">dir.create</a></span>(checkpoint_dir, <span class="dt">showWarnings =</span> <span class="ot">FALSE</span>)</a>
-<a class="sourceLine" id="cb8-3" data-line-number="3">filepath &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/file.path.html">file.path</a></span>(checkpoint_dir, <span class="st">"weights.{epoch:02d}-{val_loss:.2f}.hdf5"</span>)</a>
-<a class="sourceLine" id="cb8-4" data-line-number="4"></a>
-<a class="sourceLine" id="cb8-5" data-line-number="5"><span class="co"># Create checkpoint callback</span></a>
-<a class="sourceLine" id="cb8-6" data-line-number="6">cp_callback &lt;-<span class="st"> </span><span class="kw"><a href="../../../keras/reference/callback_model_checkpoint.html">callback_model_checkpoint</a></span>(</a>
-<a class="sourceLine" id="cb8-7" data-line-number="7">  <span class="dt">filepath =</span> filepath,</a>
-<a class="sourceLine" id="cb8-8" data-line-number="8">  <span class="dt">save_weights_only =</span> <span class="ot">TRUE</span>,</a>
-<a class="sourceLine" id="cb8-9" data-line-number="9">  <span class="dt">verbose =</span> <span class="dv">1</span></a>
-<a class="sourceLine" id="cb8-10" data-line-number="10">)</a>
-<a class="sourceLine" id="cb8-11" data-line-number="11"></a>
-<a class="sourceLine" id="cb8-12" data-line-number="12">model &lt;-<span class="st"> </span><span class="kw">create_model</span>()</a>
-<a class="sourceLine" id="cb8-13" data-line-number="13"></a>
-<a class="sourceLine" id="cb8-14" data-line-number="14">model <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../../../keras/reference/reexports.html">fit</a></span>(</a>
-<a class="sourceLine" id="cb8-15" data-line-number="15">  train_images,</a>
-<a class="sourceLine" id="cb8-16" data-line-number="16">  train_labels,</a>
-<a class="sourceLine" id="cb8-17" data-line-number="17">  <span class="dt">epochs =</span> <span class="dv">10</span>, </a>
-<a class="sourceLine" id="cb8-18" data-line-number="18">  <span class="dt">validation_data =</span> <span class="kw"><a href="https://rdrr.io/r/base/list.html">list</a></span>(test_images, test_labels),</a>
-<a class="sourceLine" id="cb8-19" data-line-number="19">  <span class="dt">callbacks =</span> <span class="kw"><a href="https://rdrr.io/r/base/list.html">list</a></span>(cp_callback)  <span class="co"># pass callback to training</span></a>
-<a class="sourceLine" id="cb8-20" data-line-number="20">)</a></code></pre></div>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb16-1" data-line-number="1">checkpoint_path &lt;-<span class="st"> "checkpoints/cp.ckpt"</span></a>
+<a class="sourceLine" id="cb16-2" data-line-number="2"></a>
+<a class="sourceLine" id="cb16-3" data-line-number="3"><span class="co"># Create checkpoint callback</span></a>
+<a class="sourceLine" id="cb16-4" data-line-number="4">cp_callback &lt;-<span class="st"> </span><span class="kw"><a href="../../../keras/reference/callback_model_checkpoint.html">callback_model_checkpoint</a></span>(</a>
+<a class="sourceLine" id="cb16-5" data-line-number="5">  <span class="dt">filepath =</span> checkpoint_path,</a>
+<a class="sourceLine" id="cb16-6" data-line-number="6">  <span class="dt">save_weights_only =</span> <span class="ot">TRUE</span>,</a>
+<a class="sourceLine" id="cb16-7" data-line-number="7">  <span class="dt">verbose =</span> <span class="dv">0</span></a>
+<a class="sourceLine" id="cb16-8" data-line-number="8">)</a>
+<a class="sourceLine" id="cb16-9" data-line-number="9"></a>
+<a class="sourceLine" id="cb16-10" data-line-number="10">model &lt;-<span class="st"> </span><span class="kw">create_model</span>()</a>
+<a class="sourceLine" id="cb16-11" data-line-number="11"></a>
+<a class="sourceLine" id="cb16-12" data-line-number="12">model <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../../../keras/reference/reexports.html">fit</a></span>(</a>
+<a class="sourceLine" id="cb16-13" data-line-number="13">  train_images,</a>
+<a class="sourceLine" id="cb16-14" data-line-number="14">  train_labels,</a>
+<a class="sourceLine" id="cb16-15" data-line-number="15">  <span class="dt">epochs =</span> <span class="dv">10</span>, </a>
+<a class="sourceLine" id="cb16-16" data-line-number="16">  <span class="dt">validation_data =</span> <span class="kw"><a href="https://rdrr.io/r/base/list.html">list</a></span>(test_images, test_labels),</a>
+<a class="sourceLine" id="cb16-17" data-line-number="17">  <span class="dt">callbacks =</span> <span class="kw"><a href="https://rdrr.io/r/base/list.html">list</a></span>(cp_callback),  <span class="co"># pass callback to training</span></a>
+<a class="sourceLine" id="cb16-18" data-line-number="18">  <span class="dt">verbose =</span> <span class="dv">2</span></a>
+<a class="sourceLine" id="cb16-19" data-line-number="19">)</a></code></pre></div>
+<pre><code>## Train on 1000 samples, validate on 1000 samples
+## Epoch 1/10
+## 1000/1000 - 1s - loss: 1.1869 - accuracy: 0.6630 - val_loss: 0.7350 - val_accuracy: 0.7840
+## Epoch 2/10
+## 1000/1000 - 0s - loss: 0.4254 - accuracy: 0.8830 - val_loss: 0.5553 - val_accuracy: 0.8230
+## Epoch 3/10
+## 1000/1000 - 0s - loss: 0.2862 - accuracy: 0.9200 - val_loss: 0.4779 - val_accuracy: 0.8560
+## Epoch 4/10
+## 1000/1000 - 0s - loss: 0.2100 - accuracy: 0.9490 - val_loss: 0.4402 - val_accuracy: 0.8620
+## Epoch 5/10
+## 1000/1000 - 0s - loss: 0.1537 - accuracy: 0.9640 - val_loss: 0.4239 - val_accuracy: 0.8660
+## Epoch 6/10
+## 1000/1000 - 0s - loss: 0.1251 - accuracy: 0.9780 - val_loss: 0.4111 - val_accuracy: 0.8650
+## Epoch 7/10
+## 1000/1000 - 0s - loss: 0.0937 - accuracy: 0.9830 - val_loss: 0.4412 - val_accuracy: 0.8500
+## Epoch 8/10
+## 1000/1000 - 0s - loss: 0.0757 - accuracy: 0.9870 - val_loss: 0.4285 - val_accuracy: 0.8680
+## Epoch 9/10
+## 1000/1000 - 0s - loss: 0.0533 - accuracy: 0.9960 - val_loss: 0.4019 - val_accuracy: 0.8700
+## Epoch 10/10
+## 1000/1000 - 0s - loss: 0.0375 - accuracy: 0.9990 - val_loss: 0.4098 - val_accuracy: 0.8740</code></pre>
 <p>Inspect the files that were created:</p>
-<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/base/list.files.html">list.files</a></span>(checkpoint_dir)</a></code></pre></div>
-<pre><code> [1] "weights.01-0.72.hdf5" "weights.02-0.51.hdf5" "weights.03-0.47.hdf5"
- [4] "weights.04-0.45.hdf5" "weights.05-0.42.hdf5" "weights.06-0.44.hdf5"
- [7] "weights.07-0.42.hdf5" "weights.08-0.40.hdf5" "weights.09-0.42.hdf5"
-[10] "weights.10-0.42.hdf5"</code></pre>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb18-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/base/list.files.html">list.files</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/basename.html">dirname</a></span>(checkpoint_path))</a></code></pre></div>
+<pre><code>## [1] "checkpoint"                  "cp.ckpt.data-00000-of-00001"
+## [3] "cp.ckpt.index"</code></pre>
 <p>Create a new, untrained model. When restoring a model from only weights, you must have a model with the same architecture as the original model. Since it’s the same model architecture, we can share weights despite that it’s a different instance of the model.</p>
 <p>Now rebuild a fresh, untrained model, and evaluate it on the test set. An untrained model will perform at chance levels (~10% accuracy):</p>
-<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb11-1" data-line-number="1">fresh_model &lt;-<span class="st"> </span><span class="kw">create_model</span>()</a>
-<a class="sourceLine" id="cb11-2" data-line-number="2">score &lt;-<span class="st"> </span>fresh_model <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../../../keras/reference/reexports.html">evaluate</a></span>(test_images, test_labels)</a>
-<a class="sourceLine" id="cb11-3" data-line-number="3"></a>
-<a class="sourceLine" id="cb11-4" data-line-number="4"><span class="kw"><a href="https://rdrr.io/r/base/cat.html">cat</a></span>(<span class="st">'Test loss:'</span>, score<span class="op">$</span>loss, <span class="st">'</span><span class="ch">\n</span><span class="st">'</span>)</a>
-<a class="sourceLine" id="cb11-5" data-line-number="5"><span class="kw"><a href="https://rdrr.io/r/base/cat.html">cat</a></span>(<span class="st">'Test accuracy:'</span>, score<span class="op">$</span>acc, <span class="st">'</span><span class="ch">\n</span><span class="st">'</span>)</a></code></pre></div>
-<pre><code>1000/1000 [==============================] - 0s 170us/step
-Test loss: 2.411125 
-Test accuracy: 0.088 </code></pre>
+<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb20-1" data-line-number="1">fresh_model &lt;-<span class="st"> </span><span class="kw">create_model</span>()</a>
+<a class="sourceLine" id="cb20-2" data-line-number="2">fresh_model <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../../../keras/reference/reexports.html">evaluate</a></span>(test_images, test_labels, <span class="dt">verbose =</span> <span class="dv">0</span>)</a></code></pre></div>
+<pre><code>## $loss
+## [1] 2.36945
+## 
+## $accuracy
+## [1] 0.075</code></pre>
 <p>Then load the weights from the latest checkpoint (epoch 10), and re-evaluate:</p>
-<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb13-1" data-line-number="1">fresh_model <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../../../keras/reference/save_model_weights_hdf5.html">load_model_weights_hdf5</a></span>(</a>
-<a class="sourceLine" id="cb13-2" data-line-number="2">  <span class="kw"><a href="https://rdrr.io/r/base/file.path.html">file.path</a></span>(checkpoint_dir, <span class="st">"weights.10-0.42.hdf5"</span>)</a>
-<a class="sourceLine" id="cb13-3" data-line-number="3">)</a>
-<a class="sourceLine" id="cb13-4" data-line-number="4">score &lt;-<span class="st"> </span>fresh_model <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../../../keras/reference/reexports.html">evaluate</a></span>(test_images, test_labels)</a>
-<a class="sourceLine" id="cb13-5" data-line-number="5"></a>
-<a class="sourceLine" id="cb13-6" data-line-number="6"><span class="kw"><a href="https://rdrr.io/r/base/cat.html">cat</a></span>(<span class="st">'Test loss:'</span>, score<span class="op">$</span>loss, <span class="st">'</span><span class="ch">\n</span><span class="st">'</span>)</a>
-<a class="sourceLine" id="cb13-7" data-line-number="7"><span class="kw"><a href="https://rdrr.io/r/base/cat.html">cat</a></span>(<span class="st">'Test accuracy:'</span>, score<span class="op">$</span>acc, <span class="st">'</span><span class="ch">\n</span><span class="st">'</span>)</a></code></pre></div>
-<pre><code>1000/1000 [==============================] - 0s 34us/step
-[1] "Test loss: 0.394947263240814"
-[1] "Test accuracy: 0.873"</code></pre>
-<p>To reduce the number of files, you can also save model weights only once every <span class="math inline">\(n\)</span>th epoch. E.g.,</p>
-<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb15-1" data-line-number="1">checkpoint_dir &lt;-<span class="st"> "checkpoints"</span></a>
-<a class="sourceLine" id="cb15-2" data-line-number="2"><span class="kw"><a href="https://rdrr.io/r/base/unlink.html">unlink</a></span>(checkpoint_dir, <span class="dt">recursive =</span> <span class="ot">TRUE</span>)</a>
-<a class="sourceLine" id="cb15-3" data-line-number="3"><span class="kw"><a href="https://rdrr.io/r/base/files2.html">dir.create</a></span>(checkpoint_dir)</a>
-<a class="sourceLine" id="cb15-4" data-line-number="4">filepath &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/file.path.html">file.path</a></span>(checkpoint_dir, <span class="st">"weights.{epoch:02d}-{val_loss:.2f}.hdf5"</span>)</a>
-<a class="sourceLine" id="cb15-5" data-line-number="5"></a>
-<a class="sourceLine" id="cb15-6" data-line-number="6"><span class="co"># Create checkpoint callback</span></a>
-<a class="sourceLine" id="cb15-7" data-line-number="7">cp_callback &lt;-<span class="st"> </span><span class="kw"><a href="../../../keras/reference/callback_model_checkpoint.html">callback_model_checkpoint</a></span>(</a>
-<a class="sourceLine" id="cb15-8" data-line-number="8">  <span class="dt">filepath =</span> filepath,</a>
-<a class="sourceLine" id="cb15-9" data-line-number="9">  <span class="dt">save_weights_only =</span> <span class="ot">TRUE</span>,</a>
-<a class="sourceLine" id="cb15-10" data-line-number="10">  <span class="dt">period =</span> <span class="dv">5</span>,</a>
-<a class="sourceLine" id="cb15-11" data-line-number="11">  <span class="dt">verbose =</span> <span class="dv">1</span></a>
-<a class="sourceLine" id="cb15-12" data-line-number="12">)</a>
-<a class="sourceLine" id="cb15-13" data-line-number="13"></a>
-<a class="sourceLine" id="cb15-14" data-line-number="14">model &lt;-<span class="st"> </span><span class="kw">create_model</span>()</a>
-<a class="sourceLine" id="cb15-15" data-line-number="15"></a>
-<a class="sourceLine" id="cb15-16" data-line-number="16">model <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../../../keras/reference/reexports.html">fit</a></span>(</a>
-<a class="sourceLine" id="cb15-17" data-line-number="17">  train_images,</a>
-<a class="sourceLine" id="cb15-18" data-line-number="18">  train_labels,</a>
-<a class="sourceLine" id="cb15-19" data-line-number="19">  <span class="dt">epochs =</span> <span class="dv">10</span>, </a>
-<a class="sourceLine" id="cb15-20" data-line-number="20">  <span class="dt">validation_data =</span> <span class="kw"><a href="https://rdrr.io/r/base/list.html">list</a></span>(test_images, test_labels),</a>
-<a class="sourceLine" id="cb15-21" data-line-number="21">  <span class="dt">callbacks =</span> <span class="kw"><a href="https://rdrr.io/r/base/list.html">list</a></span>(cp_callback)  <span class="co"># pass callback to training</span></a>
-<a class="sourceLine" id="cb15-22" data-line-number="22">)</a>
-<a class="sourceLine" id="cb15-23" data-line-number="23"></a>
-<a class="sourceLine" id="cb15-24" data-line-number="24"><span class="kw"><a href="https://rdrr.io/r/base/list.files.html">list.files</a></span>(checkpoint_dir)</a></code></pre></div>
-<pre><code>[1] "weights.05-0.41.hdf5" "weights.10-0.41.hdf5"</code></pre>
-<p>Alternatively, you can also decide to save only the best model, where best by default is defined as validation loss.
-See the <a href="https://tensorflow.rstudio.com/keras/reference/callback_model_checkpoint.html">documentation for callback_model_checkpoint</a> for further information.</p>
-<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb17-1" data-line-number="1">checkpoint_dir &lt;-<span class="st"> "checkpoints"</span></a>
-<a class="sourceLine" id="cb17-2" data-line-number="2"><span class="kw"><a href="https://rdrr.io/r/base/unlink.html">unlink</a></span>(checkpoint_dir, <span class="dt">recursive =</span> <span class="ot">TRUE</span>)</a>
-<a class="sourceLine" id="cb17-3" data-line-number="3"><span class="kw"><a href="https://rdrr.io/r/base/files2.html">dir.create</a></span>(checkpoint_dir)</a>
-<a class="sourceLine" id="cb17-4" data-line-number="4">filepath &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/file.path.html">file.path</a></span>(checkpoint_dir, <span class="st">"weights.{epoch:02d}-{val_loss:.2f}.hdf5"</span>)</a>
-<a class="sourceLine" id="cb17-5" data-line-number="5"></a>
-<a class="sourceLine" id="cb17-6" data-line-number="6"><span class="co"># Create checkpoint callback</span></a>
-<a class="sourceLine" id="cb17-7" data-line-number="7">cp_callback &lt;-<span class="st"> </span><span class="kw"><a href="../../../keras/reference/callback_model_checkpoint.html">callback_model_checkpoint</a></span>(</a>
-<a class="sourceLine" id="cb17-8" data-line-number="8">  <span class="dt">filepath =</span> filepath,</a>
-<a class="sourceLine" id="cb17-9" data-line-number="9">  <span class="dt">save_weights_only =</span> <span class="ot">TRUE</span>,</a>
-<a class="sourceLine" id="cb17-10" data-line-number="10">  <span class="dt">save_best_only =</span> <span class="ot">TRUE</span>,</a>
-<a class="sourceLine" id="cb17-11" data-line-number="11">  <span class="dt">verbose =</span> <span class="dv">1</span></a>
-<a class="sourceLine" id="cb17-12" data-line-number="12">)</a>
-<a class="sourceLine" id="cb17-13" data-line-number="13"></a>
-<a class="sourceLine" id="cb17-14" data-line-number="14">model &lt;-<span class="st"> </span><span class="kw">create_model</span>()</a>
-<a class="sourceLine" id="cb17-15" data-line-number="15"></a>
-<a class="sourceLine" id="cb17-16" data-line-number="16">model <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../../../keras/reference/reexports.html">fit</a></span>(</a>
-<a class="sourceLine" id="cb17-17" data-line-number="17">  train_images,</a>
-<a class="sourceLine" id="cb17-18" data-line-number="18">  train_labels,</a>
-<a class="sourceLine" id="cb17-19" data-line-number="19">  <span class="dt">epochs =</span> <span class="dv">10</span>, </a>
-<a class="sourceLine" id="cb17-20" data-line-number="20">  <span class="dt">validation_data =</span> <span class="kw"><a href="https://rdrr.io/r/base/list.html">list</a></span>(test_images, test_labels),</a>
-<a class="sourceLine" id="cb17-21" data-line-number="21">  <span class="dt">callbacks =</span> <span class="kw"><a href="https://rdrr.io/r/base/list.html">list</a></span>(cp_callback)  <span class="co"># pass callback to training</span></a>
-<a class="sourceLine" id="cb17-22" data-line-number="22">)</a>
-<a class="sourceLine" id="cb17-23" data-line-number="23"></a>
-<a class="sourceLine" id="cb17-24" data-line-number="24"><span class="kw"><a href="https://rdrr.io/r/base/list.files.html">list.files</a></span>(checkpoint_dir)</a></code></pre></div>
-<pre><code>[1] "weights.01-0.72.hdf5" "weights.02-0.54.hdf5" "weights.03-0.46.hdf5"
-[4] "weights.04-0.45.hdf5" "weights.05-0.43.hdf5" "weights.06-0.42.hdf5"
-[7] "weights.09-0.41.hdf5"</code></pre>
-<p>In this case, weights were saved on all epochs but the 6th and 7th, where validation loss did not improve.</p>
+<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb22-1" data-line-number="1">fresh_model <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../../../keras/reference/save_model_weights_tf.html">load_model_weights_tf</a></span>(<span class="dt">filepath =</span> checkpoint_path)</a>
+<a class="sourceLine" id="cb22-2" data-line-number="2">fresh_model <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../../../keras/reference/reexports.html">evaluate</a></span>(test_images, test_labels, <span class="dt">verbose =</span> <span class="dv">0</span>)</a></code></pre></div>
+<pre><code>## $loss
+## [1] 0.4098075
+## 
+## $accuracy
+## [1] 0.874</code></pre>
 </div>
-<div id="more-tutorials" class="section level2">
-<h2>More Tutorials</h2>
-<p>Check out these additional tutorials to learn more:</p>
+<div id="checkpoint-callback-options" class="section level3">
+<h3>Checkpoint callback options</h3>
+<p>Alternatively, you can decide to save only the best model, where best by default is defined as validation loss.
+See the <a href="https://tensorflow.rstudio.com/keras/reference/callback_model_checkpoint.html">documentation for callback_model_checkpoint</a> for further information.</p>
+<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb24-1" data-line-number="1">checkpoint_path &lt;-<span class="st"> "checkpoints/cp.ckpt"</span></a>
+<a class="sourceLine" id="cb24-2" data-line-number="2"></a>
+<a class="sourceLine" id="cb24-3" data-line-number="3"><span class="co"># Create checkpoint callback</span></a>
+<a class="sourceLine" id="cb24-4" data-line-number="4">cp_callback &lt;-<span class="st"> </span><span class="kw"><a href="../../../keras/reference/callback_model_checkpoint.html">callback_model_checkpoint</a></span>(</a>
+<a class="sourceLine" id="cb24-5" data-line-number="5">  <span class="dt">filepath =</span> checkpoint_path,</a>
+<a class="sourceLine" id="cb24-6" data-line-number="6">  <span class="dt">save_weights_only =</span> <span class="ot">TRUE</span>,</a>
+<a class="sourceLine" id="cb24-7" data-line-number="7">  <span class="dt">save_best_only =</span> <span class="ot">TRUE</span>,</a>
+<a class="sourceLine" id="cb24-8" data-line-number="8">  <span class="dt">verbose =</span> <span class="dv">1</span></a>
+<a class="sourceLine" id="cb24-9" data-line-number="9">)</a>
+<a class="sourceLine" id="cb24-10" data-line-number="10"></a>
+<a class="sourceLine" id="cb24-11" data-line-number="11">model &lt;-<span class="st"> </span><span class="kw">create_model</span>()</a>
+<a class="sourceLine" id="cb24-12" data-line-number="12"></a>
+<a class="sourceLine" id="cb24-13" data-line-number="13">model <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../../../keras/reference/reexports.html">fit</a></span>(</a>
+<a class="sourceLine" id="cb24-14" data-line-number="14">  train_images,</a>
+<a class="sourceLine" id="cb24-15" data-line-number="15">  train_labels,</a>
+<a class="sourceLine" id="cb24-16" data-line-number="16">  <span class="dt">epochs =</span> <span class="dv">10</span>, </a>
+<a class="sourceLine" id="cb24-17" data-line-number="17">  <span class="dt">validation_data =</span> <span class="kw"><a href="https://rdrr.io/r/base/list.html">list</a></span>(test_images, test_labels),</a>
+<a class="sourceLine" id="cb24-18" data-line-number="18">  <span class="dt">callbacks =</span> <span class="kw"><a href="https://rdrr.io/r/base/list.html">list</a></span>(cp_callback), <span class="co"># pass callback to training,</span></a>
+<a class="sourceLine" id="cb24-19" data-line-number="19">  <span class="dt">verbose =</span> <span class="dv">2</span></a>
+<a class="sourceLine" id="cb24-20" data-line-number="20">)</a></code></pre></div>
+<pre><code>## Train on 1000 samples, validate on 1000 samples
+## Epoch 1/10
+## 
+## Epoch 00001: val_loss improved from inf to 0.70171, saving model to checkpoints/cp.ckpt
+## 1000/1000 - 0s - loss: 1.1414 - accuracy: 0.6850 - val_loss: 0.7017 - val_accuracy: 0.7830
+## Epoch 2/10
+## 
+## Epoch 00002: val_loss improved from 0.70171 to 0.54408, saving model to checkpoints/cp.ckpt
+## 1000/1000 - 0s - loss: 0.4256 - accuracy: 0.8780 - val_loss: 0.5441 - val_accuracy: 0.8240
+## Epoch 3/10
+## 
+## Epoch 00003: val_loss improved from 0.54408 to 0.49332, saving model to checkpoints/cp.ckpt
+## 1000/1000 - 0s - loss: 0.2871 - accuracy: 0.9150 - val_loss: 0.4933 - val_accuracy: 0.8520
+## Epoch 4/10
+## 
+## Epoch 00004: val_loss improved from 0.49332 to 0.44724, saving model to checkpoints/cp.ckpt
+## 1000/1000 - 0s - loss: 0.2039 - accuracy: 0.9550 - val_loss: 0.4472 - val_accuracy: 0.8620
+## Epoch 5/10
+## 
+## Epoch 00005: val_loss did not improve from 0.44724
+## 1000/1000 - 0s - loss: 0.1433 - accuracy: 0.9750 - val_loss: 0.4577 - val_accuracy: 0.8430
+## Epoch 6/10
+## 
+## Epoch 00006: val_loss did not improve from 0.44724
+## 1000/1000 - 0s - loss: 0.1226 - accuracy: 0.9750 - val_loss: 0.4860 - val_accuracy: 0.8460
+## Epoch 7/10
+## 
+## Epoch 00007: val_loss did not improve from 0.44724
+## 1000/1000 - 0s - loss: 0.0904 - accuracy: 0.9810 - val_loss: 0.4474 - val_accuracy: 0.8510
+## Epoch 8/10
+## 
+## Epoch 00008: val_loss improved from 0.44724 to 0.42222, saving model to checkpoints/cp.ckpt
+## 1000/1000 - 0s - loss: 0.0639 - accuracy: 0.9950 - val_loss: 0.4222 - val_accuracy: 0.8690
+## Epoch 9/10
+## 
+## Epoch 00009: val_loss did not improve from 0.42222
+## 1000/1000 - 0s - loss: 0.0481 - accuracy: 0.9950 - val_loss: 0.4313 - val_accuracy: 0.8670
+## Epoch 10/10
+## 
+## Epoch 00010: val_loss did not improve from 0.42222
+## 1000/1000 - 0s - loss: 0.0376 - accuracy: 0.9970 - val_loss: 0.4274 - val_accuracy: 0.8580</code></pre>
+<div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb26-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/base/list.files.html">list.files</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/basename.html">dirname</a></span>(checkpoint_path))</a></code></pre></div>
+<pre><code>## [1] "checkpoint"                  "cp.ckpt.data-00000-of-00001"
+## [3] "cp.ckpt.index"</code></pre>
+</div>
+<div id="what-are-these-files" class="section level3">
+<h3>What are these files?</h3>
+<p>The above code stores the weights to a collection of <a href="https://www.tensorflow.org/guide/saved_model#save_and_restore_variables">checkpoint-formatted</a> files that contain only the trained weights in a binary format. Checkpoints contain:</p>
 <ul>
-<li><p><a href="tutorial_basic_classification.html">Basic Classification</a> — In this tutorial, we train a neural network model to classify images of clothing, like sneakers and shirts.</p></li>
-<li><p><a href="tutorial_basic_text_classification.html">Text Classification</a> — This tutorial classifies movie reviews as positive or negative using the text of the review.</p></li>
-<li><p><a href="tutorial_basic_regression.html">Basic Regression</a> — This tutorial builds a model to predict the median price of homes in a Boston suburb during the mid-1970s.</p></li>
-<li><p><a href="tutorial_overfit_underfit.html">Overfitting and Underfitting</a> — In this tutorial, we explore two common regularization techniques (weight regularization and dropout) and use them to improve our movie review classification results.</p></li>
+<li>One or more shards that contain your model’s weights.</li>
+<li>An index file that indicates which weights are stored in a which shard.</li>
 </ul>
+<p>If you are only training a model on a single machine, you’ll have one shard with the suffix: <code>.data-00000-of-00001</code></p>
+</div>
+</div>
+<div id="manually-save-the-weights" class="section level2">
+<h2>Manually save the weights</h2>
+<p>You saw how to load the weights into a model. Manually saving them is just as simple with the <code>save_model_weights_tf</code> function.</p>
+<div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb28-1" data-line-number="1"><span class="co"># Save the weights</span></a>
+<a class="sourceLine" id="cb28-2" data-line-number="2">model <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../../../keras/reference/save_model_weights_tf.html">save_model_weights_tf</a></span>(<span class="st">"checkpoints/cp.ckpt"</span>)</a>
+<a class="sourceLine" id="cb28-3" data-line-number="3"></a>
+<a class="sourceLine" id="cb28-4" data-line-number="4"><span class="co"># Create a new model instance</span></a>
+<a class="sourceLine" id="cb28-5" data-line-number="5">new_model &lt;-<span class="st"> </span><span class="kw">create_model</span>()</a>
+<a class="sourceLine" id="cb28-6" data-line-number="6"></a>
+<a class="sourceLine" id="cb28-7" data-line-number="7"><span class="co"># Restore the weights</span></a>
+<a class="sourceLine" id="cb28-8" data-line-number="8">new_model <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../../../keras/reference/save_model_weights_tf.html">load_model_weights_tf</a></span>(<span class="st">'checkpoints/cp.ckpt'</span>)</a>
+<a class="sourceLine" id="cb28-9" data-line-number="9"></a>
+<a class="sourceLine" id="cb28-10" data-line-number="10"><span class="co"># Evaluate the model</span></a>
+<a class="sourceLine" id="cb28-11" data-line-number="11">new_model <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../../../keras/reference/reexports.html">evaluate</a></span>(test_images, test_labels, <span class="dt">verbose =</span> <span class="dv">0</span>)</a></code></pre></div>
+<pre><code>## $loss
+## [1] 0.427415
+## 
+## $accuracy
+## [1] 0.858</code></pre>
 </div>
