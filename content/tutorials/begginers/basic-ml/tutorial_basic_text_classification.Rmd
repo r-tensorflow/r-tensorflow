@@ -243,7 +243,7 @@ history <- model %>% fit(
   epochs = 40,
   batch_size = 512,
   validation_data = list(x_val, y_val),
-  verbose=1
+  verbose=2
 )
 ```
 
@@ -253,7 +253,7 @@ history <- model %>% fit(
 And let's see how the model performs. Two values will be returned. Loss (a number which represents our error, lower values are better), and accuracy.
 
 ```{r}
-results <- model %>% evaluate(test_data, test_labels)
+results <- model %>% evaluate(test_data, test_labels, verbose = 0)
 results
 ```
 

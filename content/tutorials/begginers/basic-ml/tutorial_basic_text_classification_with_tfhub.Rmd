@@ -144,7 +144,8 @@ model %>%
   fit(
     imdb[[1]] %>% dataset_shuffle(10000) %>% dataset_batch(512),
     epochs = 20,
-    validation_data = imdb[[2]] %>% dataset_batch(512)
+    validation_data = imdb[[2]] %>% dataset_batch(512),
+    verbose = 2
   )
 ```
 
@@ -154,7 +155,7 @@ And let's see how the model performs. Two values will be returned. Loss (a numbe
 
 ```{r}
 model %>% 
-  evaluate(imdb[[3]] %>% dataset_batch(512))
+  evaluate(imdb[[3]] %>% dataset_batch(512), verbose = 0)
 ```
 
 This fairly naive approach achieves an accuracy of about 87%. With more advanced approaches, the model should get closer to 95%.

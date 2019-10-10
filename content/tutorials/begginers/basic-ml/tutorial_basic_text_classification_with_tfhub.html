@@ -37,7 +37,7 @@ and <a href="https://github.com/rstudio/tfhub">tfhub</a> for Transfer Learning. 
 <a class="sourceLine" id="cb2-5" data-line-number="5">)</a>
 <a class="sourceLine" id="cb2-6" data-line-number="6"><span class="kw"><a href="https://rdrr.io/r/base/summary.html">summary</a></span>(imdb)</a></code></pre></div>
 <pre><code>## ── Large Movie Review Dataset.
-## This is a dataset for binary sentiment classification containing substantially more dat
+## This is a dataset for binary sentiment classification containing
 ## ❯ Name: imdb_reviews
 ## ❯ Version: 1.0.0
 ## ❯ URLs: http://ai.stanford.edu/~amaas/data/sentiment/</code></pre>
@@ -147,405 +147,59 @@ automatically making it a much more memory efficient alterantive than loading th
 <a class="sourceLine" id="cb13-2" data-line-number="2"><span class="st">  </span><span class="kw"><a href="../../../keras/reference/reexports.html">fit</a></span>(</a>
 <a class="sourceLine" id="cb13-3" data-line-number="3">    imdb[[<span class="dv">1</span>]] <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../../../tools/tfdatasets/reference/dataset_shuffle.html">dataset_shuffle</a></span>(<span class="dv">10000</span>) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../../../tools/tfdatasets/reference/dataset_batch.html">dataset_batch</a></span>(<span class="dv">512</span>),</a>
 <a class="sourceLine" id="cb13-4" data-line-number="4">    <span class="dt">epochs =</span> <span class="dv">20</span>,</a>
-<a class="sourceLine" id="cb13-5" data-line-number="5">    <span class="dt">validation_data =</span> imdb[[<span class="dv">2</span>]] <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../../../tools/tfdatasets/reference/dataset_batch.html">dataset_batch</a></span>(<span class="dv">512</span>)</a>
-<a class="sourceLine" id="cb13-6" data-line-number="6">  )</a></code></pre></div>
+<a class="sourceLine" id="cb13-5" data-line-number="5">    <span class="dt">validation_data =</span> imdb[[<span class="dv">2</span>]] <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../../../tools/tfdatasets/reference/dataset_batch.html">dataset_batch</a></span>(<span class="dv">512</span>),</a>
+<a class="sourceLine" id="cb13-6" data-line-number="6">    <span class="dt">verbose =</span> <span class="dv">2</span></a>
+<a class="sourceLine" id="cb13-7" data-line-number="7">  )</a></code></pre></div>
 <pre><code>## Epoch 1/20
-## 
-      1/Unknown - 1s 1s/step - loss: 2.0620 - accuracy: 0.4258
-      2/Unknown - 1s 664ms/step - loss: 1.8542 - accuracy: 0.4717
-      3/Unknown - 1s 461ms/step - loss: 1.7584 - accuracy: 0.4707
-      4/Unknown - 1s 360ms/step - loss: 1.7036 - accuracy: 0.4751
-      5/Unknown - 2s 301ms/step - loss: 1.6488 - accuracy: 0.4793
-      6/Unknown - 2s 260ms/step - loss: 1.5873 - accuracy: 0.4805
-      7/Unknown - 2s 231ms/step - loss: 1.5416 - accuracy: 0.4827
-      8/Unknown - 2s 209ms/step - loss: 1.4903 - accuracy: 0.4836
-      9/Unknown - 2s 190ms/step - loss: 1.4387 - accuracy: 0.4855
-     10/Unknown - 2s 174ms/step - loss: 1.3916 - accuracy: 0.4859
-     11/Unknown - 2s 161ms/step - loss: 1.3535 - accuracy: 0.4814
-     12/Unknown - 2s 150ms/step - loss: 1.3143 - accuracy: 0.4800
-     13/Unknown - 2s 141ms/step - loss: 1.2800 - accuracy: 0.4766
-     14/Unknown - 2s 133ms/step - loss: 1.2492 - accuracy: 0.4731
-     15/Unknown - 2s 127ms/step - loss: 1.2229 - accuracy: 0.4669
-     16/Unknown - 2s 121ms/step - loss: 1.1967 - accuracy: 0.4640
-     17/Unknown - 2s 116ms/step - loss: 1.1736 - accuracy: 0.4627
-     18/Unknown - 2s 111ms/step - loss: 1.1525 - accuracy: 0.4626
-     19/Unknown - 2s 107ms/step - loss: 1.1362 - accuracy: 0.4599
-     20/Unknown - 2s 103ms/step - loss: 1.1178 - accuracy: 0.4613
-     21/Unknown - 2s 99ms/step - loss: 1.1030 - accuracy: 0.4614 
-     22/Unknown - 2s 96ms/step - loss: 1.0891 - accuracy: 0.4632
-     23/Unknown - 2s 93ms/step - loss: 1.0779 - accuracy: 0.4628
-     24/Unknown - 2s 91ms/step - loss: 1.0678 - accuracy: 0.4628
-     25/Unknown - 2s 88ms/step - loss: 1.0578 - accuracy: 0.4633
-     26/Unknown - 2s 86ms/step - loss: 1.0473 - accuracy: 0.4648
-     27/Unknown - 2s 84ms/step - loss: 1.0380 - accuracy: 0.4654
-     28/Unknown - 2s 82ms/step - loss: 1.0282 - accuracy: 0.4671
-     29/Unknown - 2s 80ms/step - loss: 1.0197 - accuracy: 0.4682
-     30/Unknown - 2s 78ms/step - loss: 1.0106 - accuracy: 0.4681
-30/30 [==============================] - 3s 109ms/step - loss: 1.0106 - accuracy: 0.4681 - val_loss: 0.0000e+00 - val_accuracy: 0.0000e+00
+## 30/30 - 3s - loss: 0.8245 - accuracy: 0.5371 - val_loss: 0.0000e+00 - val_accuracy: 0.0000e+00
 ## Epoch 2/20
-## 
- 1/20 [&gt;.............................] - ETA: 10s - loss: 0.7687 - accuracy: 0.4863
- 2/20 [==&gt;...........................] - ETA: 5s - loss: 0.7553 - accuracy: 0.5088 
- 3/20 [===&gt;..........................] - ETA: 3s - loss: 0.7520 - accuracy: 0.5091
- 4/20 [=====&gt;........................] - ETA: 2s - loss: 0.7451 - accuracy: 0.5107
- 5/20 [======&gt;.......................] - ETA: 2s - loss: 0.7408 - accuracy: 0.5098
- 6/20 [========&gt;.....................] - ETA: 1s - loss: 0.7382 - accuracy: 0.5124
- 8/20 [===========&gt;..................] - ETA: 1s - loss: 0.7294 - accuracy: 0.5166
-10/20 [==============&gt;...............] - ETA: 0s - loss: 0.7259 - accuracy: 0.5160
-12/20 [=================&gt;............] - ETA: 0s - loss: 0.7226 - accuracy: 0.5143
-14/20 [====================&gt;.........] - ETA: 0s - loss: 0.7207 - accuracy: 0.5152
-16/20 [=======================&gt;......] - ETA: 0s - loss: 0.7156 - accuracy: 0.5225
-18/20 [==========================&gt;...] - ETA: 0s - loss: 0.7115 - accuracy: 0.5288
-30/30 [==============================] - 2s 81ms/step - loss: 0.7028 - accuracy: 0.5574 - val_loss: 0.6474 - val_accuracy: 0.6231
+## 30/30 - 2s - loss: 0.6803 - accuracy: 0.5983 - val_loss: 0.6597 - val_accuracy: 0.6131
 ## Epoch 3/20
-## 
- 1/20 [&gt;.............................] - ETA: 12s - loss: 0.6285 - accuracy: 0.6660
- 2/20 [==&gt;...........................] - ETA: 6s - loss: 0.6326 - accuracy: 0.6582 
- 3/20 [===&gt;..........................] - ETA: 4s - loss: 0.6350 - accuracy: 0.6556
- 4/20 [=====&gt;........................] - ETA: 3s - loss: 0.6390 - accuracy: 0.6514
- 5/20 [======&gt;.......................] - ETA: 2s - loss: 0.6383 - accuracy: 0.6500
- 6/20 [========&gt;.....................] - ETA: 2s - loss: 0.6365 - accuracy: 0.6491
- 7/20 [=========&gt;....................] - ETA: 1s - loss: 0.6339 - accuracy: 0.6487
- 8/20 [===========&gt;..................] - ETA: 1s - loss: 0.6334 - accuracy: 0.6479
-10/20 [==============&gt;...............] - ETA: 1s - loss: 0.6321 - accuracy: 0.6467
-12/20 [=================&gt;............] - ETA: 0s - loss: 0.6280 - accuracy: 0.6509
-14/20 [====================&gt;.........] - ETA: 0s - loss: 0.6226 - accuracy: 0.6565
-16/20 [=======================&gt;......] - ETA: 0s - loss: 0.6215 - accuracy: 0.6572
-18/20 [==========================&gt;...] - ETA: 0s - loss: 0.6210 - accuracy: 0.6583
-30/30 [==============================] - 3s 97ms/step - loss: 0.6173 - accuracy: 0.6666 - val_loss: 0.5991 - val_accuracy: 0.6821
+## 30/30 - 2s - loss: 0.6277 - accuracy: 0.6553 - val_loss: 0.6107 - val_accuracy: 0.6708
 ## Epoch 4/20
-## 
- 1/20 [&gt;.............................] - ETA: 15s - loss: 0.5858 - accuracy: 0.7207
- 2/20 [==&gt;...........................] - ETA: 8s - loss: 0.5987 - accuracy: 0.6895 
- 3/20 [===&gt;..........................] - ETA: 5s - loss: 0.5957 - accuracy: 0.6901
- 4/20 [=====&gt;........................] - ETA: 4s - loss: 0.5969 - accuracy: 0.6899
- 5/20 [======&gt;.......................] - ETA: 3s - loss: 0.5945 - accuracy: 0.6914
- 6/20 [========&gt;.....................] - ETA: 2s - loss: 0.5912 - accuracy: 0.6895
- 7/20 [=========&gt;....................] - ETA: 2s - loss: 0.5867 - accuracy: 0.6922
- 8/20 [===========&gt;..................] - ETA: 2s - loss: 0.5849 - accuracy: 0.6938
- 9/20 [============&gt;.................] - ETA: 1s - loss: 0.5815 - accuracy: 0.6979
-11/20 [===============&gt;..............] - ETA: 1s - loss: 0.5814 - accuracy: 0.6966
-13/20 [==================&gt;...........] - ETA: 0s - loss: 0.5806 - accuracy: 0.6983
-15/20 [=====================&gt;........] - ETA: 0s - loss: 0.5774 - accuracy: 0.7034
-17/20 [========================&gt;.....] - ETA: 0s - loss: 0.5788 - accuracy: 0.7008
-19/20 [===========================&gt;..] - ETA: 0s - loss: 0.5771 - accuracy: 0.7032
-30/30 [==============================] - 4s 119ms/step - loss: 0.5748 - accuracy: 0.7096 - val_loss: 0.5663 - val_accuracy: 0.7147
+## 30/30 - 3s - loss: 0.5771 - accuracy: 0.7061 - val_loss: 0.5655 - val_accuracy: 0.7175
 ## Epoch 5/20
-## 
- 1/20 [&gt;.............................] - ETA: 18s - loss: 0.5492 - accuracy: 0.7188
- 2/20 [==&gt;...........................] - ETA: 9s - loss: 0.5530 - accuracy: 0.7207 
- 3/20 [===&gt;..........................] - ETA: 6s - loss: 0.5573 - accuracy: 0.7246
- 4/20 [=====&gt;........................] - ETA: 4s - loss: 0.5566 - accuracy: 0.7290
- 5/20 [======&gt;.......................] - ETA: 3s - loss: 0.5565 - accuracy: 0.7270
- 6/20 [========&gt;.....................] - ETA: 3s - loss: 0.5545 - accuracy: 0.7275
- 7/20 [=========&gt;....................] - ETA: 2s - loss: 0.5532 - accuracy: 0.7291
- 8/20 [===========&gt;..................] - ETA: 2s - loss: 0.5532 - accuracy: 0.7271
- 9/20 [============&gt;.................] - ETA: 1s - loss: 0.5513 - accuracy: 0.7279
-11/20 [===============&gt;..............] - ETA: 1s - loss: 0.5467 - accuracy: 0.7319
-13/20 [==================&gt;...........] - ETA: 0s - loss: 0.5451 - accuracy: 0.7345
-15/20 [=====================&gt;........] - ETA: 0s - loss: 0.5432 - accuracy: 0.7363
-17/20 [========================&gt;.....] - ETA: 0s - loss: 0.5438 - accuracy: 0.7351
-19/20 [===========================&gt;..] - ETA: 0s - loss: 0.5426 - accuracy: 0.7374
-30/30 [==============================] - 4s 126ms/step - loss: 0.5403 - accuracy: 0.7423 - val_loss: 0.5367 - val_accuracy: 0.7443
+## 30/30 - 3s - loss: 0.5298 - accuracy: 0.7503 - val_loss: 0.5250 - val_accuracy: 0.7506
 ## Epoch 6/20
-## 
- 1/20 [&gt;.............................] - ETA: 17s - loss: 0.5085 - accuracy: 0.7793
- 2/20 [==&gt;...........................] - ETA: 9s - loss: 0.5239 - accuracy: 0.7627 
- 3/20 [===&gt;..........................] - ETA: 6s - loss: 0.5175 - accuracy: 0.7682
- 4/20 [=====&gt;........................] - ETA: 4s - loss: 0.5201 - accuracy: 0.7612
- 5/20 [======&gt;.......................] - ETA: 3s - loss: 0.5203 - accuracy: 0.7551
- 6/20 [========&gt;.....................] - ETA: 3s - loss: 0.5210 - accuracy: 0.7555
- 7/20 [=========&gt;....................] - ETA: 2s - loss: 0.5203 - accuracy: 0.7564
- 8/20 [===========&gt;..................] - ETA: 2s - loss: 0.5170 - accuracy: 0.7578
- 9/20 [============&gt;.................] - ETA: 1s - loss: 0.5171 - accuracy: 0.7569
-11/20 [===============&gt;..............] - ETA: 1s - loss: 0.5115 - accuracy: 0.7628
-13/20 [==================&gt;...........] - ETA: 0s - loss: 0.5101 - accuracy: 0.7647
-15/20 [=====================&gt;........] - ETA: 0s - loss: 0.5083 - accuracy: 0.7651
-17/20 [========================&gt;.....] - ETA: 0s - loss: 0.5086 - accuracy: 0.7653
-19/20 [===========================&gt;..] - ETA: 0s - loss: 0.5076 - accuracy: 0.7675
-30/30 [==============================] - 4s 118ms/step - loss: 0.5061 - accuracy: 0.7707 - val_loss: 0.5086 - val_accuracy: 0.7669
+## 30/30 - 3s - loss: 0.4901 - accuracy: 0.7849 - val_loss: 0.4887 - val_accuracy: 0.7748
 ## Epoch 7/20
-## 
- 1/20 [&gt;.............................] - ETA: 14s - loss: 0.4523 - accuracy: 0.8184
- 2/20 [==&gt;...........................] - ETA: 7s - loss: 0.4646 - accuracy: 0.7979 
- 3/20 [===&gt;..........................] - ETA: 5s - loss: 0.4703 - accuracy: 0.7956
- 4/20 [=====&gt;........................] - ETA: 4s - loss: 0.4775 - accuracy: 0.7900
- 5/20 [======&gt;.......................] - ETA: 3s - loss: 0.4842 - accuracy: 0.7902
- 6/20 [========&gt;.....................] - ETA: 2s - loss: 0.4883 - accuracy: 0.7861
- 7/20 [=========&gt;....................] - ETA: 2s - loss: 0.4844 - accuracy: 0.7930
- 8/20 [===========&gt;..................] - ETA: 1s - loss: 0.4843 - accuracy: 0.7915
-10/20 [==============&gt;...............] - ETA: 1s - loss: 0.4826 - accuracy: 0.7900
-12/20 [=================&gt;............] - ETA: 0s - loss: 0.4818 - accuracy: 0.7897
-14/20 [====================&gt;.........] - ETA: 0s - loss: 0.4789 - accuracy: 0.7919
-16/20 [=======================&gt;......] - ETA: 0s - loss: 0.4767 - accuracy: 0.7941
-18/20 [==========================&gt;...] - ETA: 0s - loss: 0.4759 - accuracy: 0.7935
-30/30 [==============================] - 3s 102ms/step - loss: 0.4733 - accuracy: 0.7959 - val_loss: 0.4804 - val_accuracy: 0.7858
+## 30/30 - 3s - loss: 0.4484 - accuracy: 0.8079 - val_loss: 0.4583 - val_accuracy: 0.7945
 ## Epoch 8/20
-## 
- 1/20 [&gt;.............................] - ETA: 13s - loss: 0.4720 - accuracy: 0.8008
- 2/20 [==&gt;...........................] - ETA: 7s - loss: 0.4488 - accuracy: 0.8115 
- 3/20 [===&gt;..........................] - ETA: 4s - loss: 0.4521 - accuracy: 0.8086
- 4/20 [=====&gt;........................] - ETA: 3s - loss: 0.4553 - accuracy: 0.8081
- 5/20 [======&gt;.......................] - ETA: 2s - loss: 0.4512 - accuracy: 0.8117
- 6/20 [========&gt;.....................] - ETA: 2s - loss: 0.4471 - accuracy: 0.8148
- 7/20 [=========&gt;....................] - ETA: 2s - loss: 0.4465 - accuracy: 0.8164
- 9/20 [============&gt;.................] - ETA: 1s - loss: 0.4472 - accuracy: 0.8145
-11/20 [===============&gt;..............] - ETA: 1s - loss: 0.4449 - accuracy: 0.8148
-13/20 [==================&gt;...........] - ETA: 0s - loss: 0.4417 - accuracy: 0.8175
-15/20 [=====================&gt;........] - ETA: 0s - loss: 0.4405 - accuracy: 0.8160
-17/20 [========================&gt;.....] - ETA: 0s - loss: 0.4406 - accuracy: 0.8158
-19/20 [===========================&gt;..] - ETA: 0s - loss: 0.4385 - accuracy: 0.8177
-30/30 [==============================] - 3s 93ms/step - loss: 0.4385 - accuracy: 0.8165 - val_loss: 0.4543 - val_accuracy: 0.8039
+## 30/30 - 4s - loss: 0.4121 - accuracy: 0.8288 - val_loss: 0.4290 - val_accuracy: 0.8144
 ## Epoch 9/20
-## 
- 1/20 [&gt;.............................] - ETA: 12s - loss: 0.4450 - accuracy: 0.8086
- 2/20 [==&gt;...........................] - ETA: 6s - loss: 0.4216 - accuracy: 0.8203 
- 3/20 [===&gt;..........................] - ETA: 4s - loss: 0.4158 - accuracy: 0.8281
- 4/20 [=====&gt;........................] - ETA: 3s - loss: 0.4175 - accuracy: 0.8267
- 5/20 [======&gt;.......................] - ETA: 2s - loss: 0.4149 - accuracy: 0.8313
- 6/20 [========&gt;.....................] - ETA: 2s - loss: 0.4127 - accuracy: 0.8340
- 7/20 [=========&gt;....................] - ETA: 1s - loss: 0.4113 - accuracy: 0.8334
- 8/20 [===========&gt;..................] - ETA: 1s - loss: 0.4138 - accuracy: 0.8315
-10/20 [==============&gt;...............] - ETA: 1s - loss: 0.4134 - accuracy: 0.8334
-12/20 [=================&gt;............] - ETA: 0s - loss: 0.4126 - accuracy: 0.8343
-14/20 [====================&gt;.........] - ETA: 0s - loss: 0.4117 - accuracy: 0.8338
-16/20 [=======================&gt;......] - ETA: 0s - loss: 0.4113 - accuracy: 0.8345
-18/20 [==========================&gt;...] - ETA: 0s - loss: 0.4124 - accuracy: 0.8325
-30/30 [==============================] - 3s 89ms/step - loss: 0.4103 - accuracy: 0.8357 - val_loss: 0.4292 - val_accuracy: 0.8199
+## 30/30 - 3s - loss: 0.3824 - accuracy: 0.8455 - val_loss: 0.4071 - val_accuracy: 0.8246
 ## Epoch 10/20
-## 
- 1/20 [&gt;.............................] - ETA: 13s - loss: 0.4111 - accuracy: 0.8398
- 2/20 [==&gt;...........................] - ETA: 6s - loss: 0.4041 - accuracy: 0.8457 
- 3/20 [===&gt;..........................] - ETA: 4s - loss: 0.4017 - accuracy: 0.8444
- 4/20 [=====&gt;........................] - ETA: 3s - loss: 0.3957 - accuracy: 0.8486
- 5/20 [======&gt;.......................] - ETA: 2s - loss: 0.3959 - accuracy: 0.8445
- 7/20 [=========&gt;....................] - ETA: 1s - loss: 0.3891 - accuracy: 0.8479
- 9/20 [============&gt;.................] - ETA: 1s - loss: 0.3857 - accuracy: 0.8496
-11/20 [===============&gt;..............] - ETA: 0s - loss: 0.3863 - accuracy: 0.8484
-13/20 [==================&gt;...........] - ETA: 0s - loss: 0.3858 - accuracy: 0.8501
-15/20 [=====================&gt;........] - ETA: 0s - loss: 0.3856 - accuracy: 0.8490
-17/20 [========================&gt;.....] - ETA: 0s - loss: 0.3831 - accuracy: 0.8501
-19/20 [===========================&gt;..] - ETA: 0s - loss: 0.3815 - accuracy: 0.8517
-30/30 [==============================] - 3s 85ms/step - loss: 0.3800 - accuracy: 0.8516 - val_loss: 0.4089 - val_accuracy: 0.8288
+## 30/30 - 3s - loss: 0.3523 - accuracy: 0.8587 - val_loss: 0.3852 - val_accuracy: 0.8376
 ## Epoch 11/20
-## 
- 1/20 [&gt;.............................] - ETA: 11s - loss: 0.3872 - accuracy: 0.8223
- 2/20 [==&gt;...........................] - ETA: 6s - loss: 0.3763 - accuracy: 0.8389 
- 3/20 [===&gt;..........................] - ETA: 4s - loss: 0.3716 - accuracy: 0.8464
- 4/20 [=====&gt;........................] - ETA: 3s - loss: 0.3648 - accuracy: 0.8525
- 5/20 [======&gt;.......................] - ETA: 2s - loss: 0.3620 - accuracy: 0.8574
- 6/20 [========&gt;.....................] - ETA: 2s - loss: 0.3602 - accuracy: 0.8574
- 7/20 [=========&gt;....................] - ETA: 1s - loss: 0.3591 - accuracy: 0.8591
- 9/20 [============&gt;.................] - ETA: 1s - loss: 0.3581 - accuracy: 0.8594
-11/20 [===============&gt;..............] - ETA: 0s - loss: 0.3565 - accuracy: 0.8583
-13/20 [==================&gt;...........] - ETA: 0s - loss: 0.3574 - accuracy: 0.8583
-15/20 [=====================&gt;........] - ETA: 0s - loss: 0.3557 - accuracy: 0.8608
-17/20 [========================&gt;.....] - ETA: 0s - loss: 0.3570 - accuracy: 0.8599
-19/20 [===========================&gt;..] - ETA: 0s - loss: 0.3567 - accuracy: 0.8607
-30/30 [==============================] - 3s 87ms/step - loss: 0.3544 - accuracy: 0.8635 - val_loss: 0.3867 - val_accuracy: 0.8417
+## 30/30 - 3s - loss: 0.3263 - accuracy: 0.8709 - val_loss: 0.3682 - val_accuracy: 0.8442
 ## Epoch 12/20
-## 
- 1/20 [&gt;.............................] - ETA: 12s - loss: 0.3415 - accuracy: 0.8516
- 2/20 [==&gt;...........................] - ETA: 6s - loss: 0.3400 - accuracy: 0.8633 
- 3/20 [===&gt;..........................] - ETA: 4s - loss: 0.3390 - accuracy: 0.8581
- 4/20 [=====&gt;........................] - ETA: 3s - loss: 0.3364 - accuracy: 0.8589
- 5/20 [======&gt;.......................] - ETA: 2s - loss: 0.3331 - accuracy: 0.8656
- 6/20 [========&gt;.....................] - ETA: 2s - loss: 0.3331 - accuracy: 0.8649
- 7/20 [=========&gt;....................] - ETA: 1s - loss: 0.3341 - accuracy: 0.8658
- 9/20 [============&gt;.................] - ETA: 1s - loss: 0.3354 - accuracy: 0.8652
-11/20 [===============&gt;..............] - ETA: 0s - loss: 0.3365 - accuracy: 0.8636
-13/20 [==================&gt;...........] - ETA: 0s - loss: 0.3350 - accuracy: 0.8636
-15/20 [=====================&gt;........] - ETA: 0s - loss: 0.3316 - accuracy: 0.8672
-17/20 [========================&gt;.....] - ETA: 0s - loss: 0.3297 - accuracy: 0.8685
-19/20 [===========================&gt;..] - ETA: 0s - loss: 0.3287 - accuracy: 0.8713
-30/30 [==============================] - 3s 89ms/step - loss: 0.3273 - accuracy: 0.8748 - val_loss: 0.3695 - val_accuracy: 0.8482
+## 30/30 - 3s - loss: 0.3019 - accuracy: 0.8829 - val_loss: 0.3539 - val_accuracy: 0.8496
 ## Epoch 13/20
-## 
- 1/20 [&gt;.............................] - ETA: 12s - loss: 0.2877 - accuracy: 0.8965
- 2/20 [==&gt;...........................] - ETA: 6s - loss: 0.3006 - accuracy: 0.8838 
- 3/20 [===&gt;..........................] - ETA: 4s - loss: 0.2950 - accuracy: 0.8906
- 4/20 [=====&gt;........................] - ETA: 3s - loss: 0.2964 - accuracy: 0.8911
- 5/20 [======&gt;.......................] - ETA: 2s - loss: 0.2968 - accuracy: 0.8891
- 6/20 [========&gt;.....................] - ETA: 2s - loss: 0.2939 - accuracy: 0.8903
- 7/20 [=========&gt;....................] - ETA: 1s - loss: 0.3021 - accuracy: 0.8834
- 8/20 [===========&gt;..................] - ETA: 1s - loss: 0.3068 - accuracy: 0.8787
-10/20 [==============&gt;...............] - ETA: 1s - loss: 0.3094 - accuracy: 0.8789
-12/20 [=================&gt;............] - ETA: 0s - loss: 0.3077 - accuracy: 0.8809
-14/20 [====================&gt;.........] - ETA: 0s - loss: 0.3075 - accuracy: 0.8816
-16/20 [=======================&gt;......] - ETA: 0s - loss: 0.3076 - accuracy: 0.8812
-18/20 [==========================&gt;...] - ETA: 0s - loss: 0.3084 - accuracy: 0.8809
-30/30 [==============================] - 3s 89ms/step - loss: 0.3068 - accuracy: 0.8869 - val_loss: 0.3561 - val_accuracy: 0.8538
+## 30/30 - 3s - loss: 0.2847 - accuracy: 0.8923 - val_loss: 0.3458 - val_accuracy: 0.8512
 ## Epoch 14/20
-## 
- 1/20 [&gt;.............................] - ETA: 12s - loss: 0.2685 - accuracy: 0.9102
- 2/20 [==&gt;...........................] - ETA: 6s - loss: 0.2930 - accuracy: 0.8857 
- 3/20 [===&gt;..........................] - ETA: 4s - loss: 0.2845 - accuracy: 0.8945
- 4/20 [=====&gt;........................] - ETA: 3s - loss: 0.2878 - accuracy: 0.8926
- 5/20 [======&gt;.......................] - ETA: 2s - loss: 0.2856 - accuracy: 0.8926
- 6/20 [========&gt;.....................] - ETA: 2s - loss: 0.2826 - accuracy: 0.8949
- 7/20 [=========&gt;....................] - ETA: 1s - loss: 0.2846 - accuracy: 0.8951
- 9/20 [============&gt;.................] - ETA: 1s - loss: 0.2866 - accuracy: 0.8932
-11/20 [===============&gt;..............] - ETA: 0s - loss: 0.2857 - accuracy: 0.8922
-13/20 [==================&gt;...........] - ETA: 0s - loss: 0.2861 - accuracy: 0.8921
-15/20 [=====================&gt;........] - ETA: 0s - loss: 0.2851 - accuracy: 0.8936
-17/20 [========================&gt;.....] - ETA: 0s - loss: 0.2876 - accuracy: 0.8922
-19/20 [===========================&gt;..] - ETA: 0s - loss: 0.2866 - accuracy: 0.8928
-30/30 [==============================] - 3s 87ms/step - loss: 0.2850 - accuracy: 0.8957 - val_loss: 0.3431 - val_accuracy: 0.8603
+## 30/30 - 3s - loss: 0.2622 - accuracy: 0.9007 - val_loss: 0.3320 - val_accuracy: 0.8591
 ## Epoch 15/20
-## 
- 1/20 [&gt;.............................] - ETA: 12s - loss: 0.2640 - accuracy: 0.9023
- 2/20 [==&gt;...........................] - ETA: 6s - loss: 0.2709 - accuracy: 0.8994 
- 3/20 [===&gt;..........................] - ETA: 4s - loss: 0.2715 - accuracy: 0.8978
- 4/20 [=====&gt;........................] - ETA: 3s - loss: 0.2657 - accuracy: 0.9014
- 5/20 [======&gt;.......................] - ETA: 2s - loss: 0.2648 - accuracy: 0.9031
- 6/20 [========&gt;.....................] - ETA: 2s - loss: 0.2656 - accuracy: 0.9033
- 8/20 [===========&gt;..................] - ETA: 1s - loss: 0.2665 - accuracy: 0.9019
-10/20 [==============&gt;...............] - ETA: 1s - loss: 0.2669 - accuracy: 0.9027
-12/20 [=================&gt;............] - ETA: 0s - loss: 0.2701 - accuracy: 0.8994
-14/20 [====================&gt;.........] - ETA: 0s - loss: 0.2675 - accuracy: 0.9005
-16/20 [=======================&gt;......] - ETA: 0s - loss: 0.2683 - accuracy: 0.9001
-18/20 [==========================&gt;...] - ETA: 0s - loss: 0.2663 - accuracy: 0.9014
-30/30 [==============================] - 3s 88ms/step - loss: 0.2646 - accuracy: 0.9047 - val_loss: 0.3333 - val_accuracy: 0.8644
+## 30/30 - 3s - loss: 0.2476 - accuracy: 0.9111 - val_loss: 0.3236 - val_accuracy: 0.8625
 ## Epoch 16/20
-## 
- 1/20 [&gt;.............................] - ETA: 11s - loss: 0.2610 - accuracy: 0.8945
- 2/20 [==&gt;...........................] - ETA: 6s - loss: 0.2538 - accuracy: 0.9043 
- 3/20 [===&gt;..........................] - ETA: 4s - loss: 0.2557 - accuracy: 0.9043
- 4/20 [=====&gt;........................] - ETA: 3s - loss: 0.2619 - accuracy: 0.8994
- 5/20 [======&gt;.......................] - ETA: 2s - loss: 0.2631 - accuracy: 0.8988
- 6/20 [========&gt;.....................] - ETA: 2s - loss: 0.2596 - accuracy: 0.9014
- 7/20 [=========&gt;....................] - ETA: 1s - loss: 0.2586 - accuracy: 0.9015
- 9/20 [============&gt;.................] - ETA: 1s - loss: 0.2567 - accuracy: 0.9041
-11/20 [===============&gt;..............] - ETA: 0s - loss: 0.2544 - accuracy: 0.9070
-13/20 [==================&gt;...........] - ETA: 0s - loss: 0.2510 - accuracy: 0.9073
-15/20 [=====================&gt;........] - ETA: 0s - loss: 0.2498 - accuracy: 0.9092
-17/20 [========================&gt;.....] - ETA: 0s - loss: 0.2486 - accuracy: 0.9106
-19/20 [===========================&gt;..] - ETA: 0s - loss: 0.2484 - accuracy: 0.9108
-30/30 [==============================] - 3s 88ms/step - loss: 0.2475 - accuracy: 0.9117 - val_loss: 0.3250 - val_accuracy: 0.8675
+## 30/30 - 3s - loss: 0.2309 - accuracy: 0.9167 - val_loss: 0.3175 - val_accuracy: 0.8663
 ## Epoch 17/20
-## 
- 1/20 [&gt;.............................] - ETA: 12s - loss: 0.2403 - accuracy: 0.9199
- 2/20 [==&gt;...........................] - ETA: 6s - loss: 0.2209 - accuracy: 0.9326 
- 3/20 [===&gt;..........................] - ETA: 4s - loss: 0.2329 - accuracy: 0.9219
- 4/20 [=====&gt;........................] - ETA: 3s - loss: 0.2314 - accuracy: 0.9214
- 5/20 [======&gt;.......................] - ETA: 2s - loss: 0.2400 - accuracy: 0.9156
- 6/20 [========&gt;.....................] - ETA: 2s - loss: 0.2373 - accuracy: 0.9199
- 7/20 [=========&gt;....................] - ETA: 1s - loss: 0.2347 - accuracy: 0.9202
- 8/20 [===========&gt;..................] - ETA: 1s - loss: 0.2320 - accuracy: 0.9221
-10/20 [==============&gt;...............] - ETA: 1s - loss: 0.2293 - accuracy: 0.9229
-12/20 [=================&gt;............] - ETA: 0s - loss: 0.2296 - accuracy: 0.9224
-14/20 [====================&gt;.........] - ETA: 0s - loss: 0.2318 - accuracy: 0.9205
-16/20 [=======================&gt;......] - ETA: 0s - loss: 0.2319 - accuracy: 0.9199
-18/20 [==========================&gt;...] - ETA: 0s - loss: 0.2299 - accuracy: 0.9208
-30/30 [==============================] - 3s 88ms/step - loss: 0.2307 - accuracy: 0.9189 - val_loss: 0.3197 - val_accuracy: 0.8685
+## 30/30 - 3s - loss: 0.2145 - accuracy: 0.9230 - val_loss: 0.3130 - val_accuracy: 0.8677
 ## Epoch 18/20
-## 
- 1/20 [&gt;.............................] - ETA: 11s - loss: 0.2259 - accuracy: 0.9316
- 2/20 [==&gt;...........................] - ETA: 6s - loss: 0.2197 - accuracy: 0.9336 
- 3/20 [===&gt;..........................] - ETA: 4s - loss: 0.2228 - accuracy: 0.9264
- 4/20 [=====&gt;........................] - ETA: 3s - loss: 0.2227 - accuracy: 0.9243
- 5/20 [======&gt;.......................] - ETA: 2s - loss: 0.2238 - accuracy: 0.9227
- 6/20 [========&gt;.....................] - ETA: 2s - loss: 0.2230 - accuracy: 0.9245
- 8/20 [===========&gt;..................] - ETA: 1s - loss: 0.2212 - accuracy: 0.9250
-10/20 [==============&gt;...............] - ETA: 1s - loss: 0.2199 - accuracy: 0.9252
-12/20 [=================&gt;............] - ETA: 0s - loss: 0.2187 - accuracy: 0.9256
-14/20 [====================&gt;.........] - ETA: 0s - loss: 0.2187 - accuracy: 0.9245
-16/20 [=======================&gt;......] - ETA: 0s - loss: 0.2195 - accuracy: 0.9225
-18/20 [==========================&gt;...] - ETA: 0s - loss: 0.2202 - accuracy: 0.9229
-30/30 [==============================] - 3s 86ms/step - loss: 0.2189 - accuracy: 0.9236 - val_loss: 0.3129 - val_accuracy: 0.8725
+## 30/30 - 3s - loss: 0.2023 - accuracy: 0.9288 - val_loss: 0.3086 - val_accuracy: 0.8698
 ## Epoch 19/20
-## 
- 1/20 [&gt;.............................] - ETA: 12s - loss: 0.2018 - accuracy: 0.9375
- 2/20 [==&gt;...........................] - ETA: 6s - loss: 0.1954 - accuracy: 0.9385 
- 3/20 [===&gt;..........................] - ETA: 4s - loss: 0.1949 - accuracy: 0.9382
- 4/20 [=====&gt;........................] - ETA: 3s - loss: 0.2031 - accuracy: 0.9321
- 5/20 [======&gt;.......................] - ETA: 2s - loss: 0.2018 - accuracy: 0.9336
- 6/20 [========&gt;.....................] - ETA: 2s - loss: 0.2024 - accuracy: 0.9323
- 7/20 [=========&gt;....................] - ETA: 1s - loss: 0.2029 - accuracy: 0.9322
- 8/20 [===========&gt;..................] - ETA: 1s - loss: 0.2040 - accuracy: 0.9314
-10/20 [==============&gt;...............] - ETA: 1s - loss: 0.2028 - accuracy: 0.9312
-12/20 [=================&gt;............] - ETA: 0s - loss: 0.2018 - accuracy: 0.9321
-14/20 [====================&gt;.........] - ETA: 0s - loss: 0.2030 - accuracy: 0.9309
-16/20 [=======================&gt;......] - ETA: 0s - loss: 0.2039 - accuracy: 0.9304
-18/20 [==========================&gt;...] - ETA: 0s - loss: 0.2077 - accuracy: 0.9293
-30/30 [==============================] - 3s 88ms/step - loss: 0.2067 - accuracy: 0.9300 - val_loss: 0.3113 - val_accuracy: 0.8729
+## 30/30 - 3s - loss: 0.1894 - accuracy: 0.9349 - val_loss: 0.3057 - val_accuracy: 0.8711
 ## Epoch 20/20
-## 
- 1/20 [&gt;.............................] - ETA: 13s - loss: 0.2057 - accuracy: 0.9434
- 2/20 [==&gt;...........................] - ETA: 7s - loss: 0.2068 - accuracy: 0.9326 
- 3/20 [===&gt;..........................] - ETA: 4s - loss: 0.2085 - accuracy: 0.9245
- 4/20 [=====&gt;........................] - ETA: 3s - loss: 0.2012 - accuracy: 0.9312
- 5/20 [======&gt;.......................] - ETA: 2s - loss: 0.1989 - accuracy: 0.9320
- 6/20 [========&gt;.....................] - ETA: 2s - loss: 0.2032 - accuracy: 0.9287
- 7/20 [=========&gt;....................] - ETA: 2s - loss: 0.2014 - accuracy: 0.9294
- 8/20 [===========&gt;..................] - ETA: 1s - loss: 0.2022 - accuracy: 0.9292
-10/20 [==============&gt;...............] - ETA: 1s - loss: 0.2021 - accuracy: 0.9309
-12/20 [=================&gt;............] - ETA: 0s - loss: 0.1989 - accuracy: 0.9326
-14/20 [====================&gt;.........] - ETA: 0s - loss: 0.1988 - accuracy: 0.9329
-16/20 [=======================&gt;......] - ETA: 0s - loss: 0.1987 - accuracy: 0.9325
-18/20 [==========================&gt;...] - ETA: 0s - loss: 0.2002 - accuracy: 0.9312
-30/30 [==============================] - 3s 99ms/step - loss: 0.1968 - accuracy: 0.9338 - val_loss: 0.3103 - val_accuracy: 0.8718</code></pre>
+## 30/30 - 3s - loss: 0.1804 - accuracy: 0.9382 - val_loss: 0.3037 - val_accuracy: 0.8724</code></pre>
 </div>
 <div id="evaluate-the-model" class="section level2">
 <h2>Evaluate the model</h2>
 <p>And let’s see how the model performs. Two values will be returned. Loss (a number which represents our error, lower values are better), and accuracy.</p>
 <div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb15-1" data-line-number="1">model <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb15-2" data-line-number="2"><span class="st">  </span><span class="kw"><a href="../../../keras/reference/reexports.html">evaluate</a></span>(imdb[[<span class="dv">3</span>]] <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../../../tools/tfdatasets/reference/dataset_batch.html">dataset_batch</a></span>(<span class="dv">512</span>))</a></code></pre></div>
-<pre><code>## 
-      1/Unknown - 0s 73ms/step - loss: 0.3727 - accuracy: 0.8398
-      2/Unknown - 0s 69ms/step - loss: 0.3701 - accuracy: 0.8418
-      3/Unknown - 0s 67ms/step - loss: 0.3513 - accuracy: 0.8522
-      4/Unknown - 0s 65ms/step - loss: 0.3422 - accuracy: 0.8569
-      5/Unknown - 0s 63ms/step - loss: 0.3293 - accuracy: 0.8617
-      6/Unknown - 0s 61ms/step - loss: 0.3283 - accuracy: 0.8610
-      7/Unknown - 0s 60ms/step - loss: 0.3239 - accuracy: 0.8627
-      8/Unknown - 0s 58ms/step - loss: 0.3244 - accuracy: 0.8618
-      9/Unknown - 0s 56ms/step - loss: 0.3256 - accuracy: 0.8613
-     10/Unknown - 1s 53ms/step - loss: 0.3212 - accuracy: 0.8648
-     11/Unknown - 1s 52ms/step - loss: 0.3207 - accuracy: 0.8636
-     12/Unknown - 1s 51ms/step - loss: 0.3222 - accuracy: 0.8620
-     13/Unknown - 1s 50ms/step - loss: 0.3211 - accuracy: 0.8639
-     14/Unknown - 1s 49ms/step - loss: 0.3244 - accuracy: 0.8627
-     15/Unknown - 1s 48ms/step - loss: 0.3235 - accuracy: 0.8632
-     16/Unknown - 1s 47ms/step - loss: 0.3249 - accuracy: 0.8640
-     17/Unknown - 1s 46ms/step - loss: 0.3229 - accuracy: 0.8642
-     18/Unknown - 1s 45ms/step - loss: 0.3235 - accuracy: 0.8639
-     19/Unknown - 1s 45ms/step - loss: 0.3216 - accuracy: 0.8643
-     20/Unknown - 1s 44ms/step - loss: 0.3212 - accuracy: 0.8632
-     21/Unknown - 1s 44ms/step - loss: 0.3212 - accuracy: 0.8632
-     22/Unknown - 1s 43ms/step - loss: 0.3212 - accuracy: 0.8624
-     23/Unknown - 1s 43ms/step - loss: 0.3230 - accuracy: 0.8619
-     24/Unknown - 1s 42ms/step - loss: 0.3230 - accuracy: 0.8617
-     25/Unknown - 1s 42ms/step - loss: 0.3223 - accuracy: 0.8616
-     26/Unknown - 1s 42ms/step - loss: 0.3231 - accuracy: 0.8617
-     27/Unknown - 1s 42ms/step - loss: 0.3211 - accuracy: 0.8629
-     28/Unknown - 1s 41ms/step - loss: 0.3217 - accuracy: 0.8622
-     29/Unknown - 1s 41ms/step - loss: 0.3200 - accuracy: 0.8633
-     30/Unknown - 1s 41ms/step - loss: 0.3199 - accuracy: 0.8636
-     31/Unknown - 1s 41ms/step - loss: 0.3198 - accuracy: 0.8630
-     32/Unknown - 1s 41ms/step - loss: 0.3201 - accuracy: 0.8632
-     33/Unknown - 1s 40ms/step - loss: 0.3199 - accuracy: 0.8630
-     34/Unknown - 1s 40ms/step - loss: 0.3200 - accuracy: 0.8627
-     35/Unknown - 1s 40ms/step - loss: 0.3196 - accuracy: 0.8628
-     36/Unknown - 1s 40ms/step - loss: 0.3205 - accuracy: 0.8623
-     37/Unknown - 1s 41ms/step - loss: 0.3190 - accuracy: 0.8630
-     38/Unknown - 2s 41ms/step - loss: 0.3184 - accuracy: 0.8634
-     39/Unknown - 2s 41ms/step - loss: 0.3186 - accuracy: 0.8636
-     40/Unknown - 2s 41ms/step - loss: 0.3192 - accuracy: 0.8636
-     41/Unknown - 2s 41ms/step - loss: 0.3187 - accuracy: 0.8640
-     42/Unknown - 2s 41ms/step - loss: 0.3180 - accuracy: 0.8644
-     43/Unknown - 2s 41ms/step - loss: 0.3186 - accuracy: 0.8641
-     44/Unknown - 2s 41ms/step - loss: 0.3192 - accuracy: 0.8637
-     45/Unknown - 2s 41ms/step - loss: 0.3198 - accuracy: 0.8632
-     46/Unknown - 2s 41ms/step - loss: 0.3198 - accuracy: 0.8632
-     47/Unknown - 2s 41ms/step - loss: 0.3202 - accuracy: 0.8627
-     48/Unknown - 2s 41ms/step - loss: 0.3205 - accuracy: 0.8623
-     49/Unknown - 2s 41ms/step - loss: 0.3208 - accuracy: 0.8622
-49/49 [==============================] - 2s 41ms/step - loss: 0.3208 - accuracy: 0.8622</code></pre>
+<a class="sourceLine" id="cb15-2" data-line-number="2"><span class="st">  </span><span class="kw"><a href="../../../keras/reference/reexports.html">evaluate</a></span>(imdb[[<span class="dv">3</span>]] <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../../../tools/tfdatasets/reference/dataset_batch.html">dataset_batch</a></span>(<span class="dv">512</span>), <span class="dt">verbose =</span> <span class="dv">0</span>)</a></code></pre></div>
 <pre><code>## $loss
-## [1] 0.3207564
+## [1] 0.3144187
 ## 
 ## $accuracy
-## [1] 0.8622</code></pre>
+## [1] 0.86488</code></pre>
 <p>This fairly naive approach achieves an accuracy of about 87%. With more advanced approaches, the model should get closer to 95%.</p>
 </div>

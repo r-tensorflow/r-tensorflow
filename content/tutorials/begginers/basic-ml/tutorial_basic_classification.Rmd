@@ -239,20 +239,7 @@ Training the neural network model requires the following steps:
 To start training, call the `fit` method — the model is "fit" to the training data:
 
 ```{r}
-model %>% fit(train_images, train_labels, epochs = 5)
-```
-
-```
-Epoch 1/5
-60000/60000 [==============================] - 7s 118us/step - loss: 0.4980 - acc: 0.8238
-Epoch 2/5
-60000/60000 [==============================] - 6s 101us/step - loss: 0.3783 - acc: 0.8634
-Epoch 3/5
-60000/60000 [==============================] - 9s 156us/step - loss: 0.3378 - acc: 0.8767
-Epoch 4/5
-60000/60000 [==============================] - 7s 123us/step - loss: 0.3124 - acc: 0.8848
-Epoch 5/5
-60000/60000 [==============================] - 7s 111us/step - loss: 0.2959 - acc: 0.8911
+model %>% fit(train_images, train_labels, epochs = 5, verbose = 2)
 ```
 
 
@@ -263,7 +250,7 @@ As the model trains, the loss and accuracy metrics are displayed. This model rea
 Next, compare how the model performs on the test dataset:
 
 ```{r}
-score <- model %>% evaluate(test_images, test_labels)
+score <- model %>% evaluate(test_images, test_labels, verbose = 0)
 
 cat('Test loss:', score$loss, "\n")
 cat('Test accuracy:', score$acc, "\n")
