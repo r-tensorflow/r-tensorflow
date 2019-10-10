@@ -70,7 +70,8 @@ model %>%
   fit(
     x = mnist$train$x, y = mnist$train$y,
     epochs = 5,
-    validation_split = 0.3
+    validation_split = 0.3,
+    verbose = 2
   )
 ```
 
@@ -96,7 +97,7 @@ Our model achieved ~90% accuracy on the test set.
 Unlike models built with the `lm` function, to save Keras models for later prediction, you need to use specialized functions, like `save_model_tf`:
 
 ```{r}
-save_model_tf(model, "model")
+save_model_tf(object = model, filepath = "model")
 ```
 
 You can then reload the model and make predictions with:
