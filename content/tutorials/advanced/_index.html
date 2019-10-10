@@ -1,0 +1,144 @@
+---
+title: "Overview"
+type: docs
+menu:
+  main:
+    name: "Quickstart"
+    identifier: "tutorials-advanced-quickstart-quickstart"
+    parent: "tutorials-top"
+    weight: 55
+---
+
+
+
+<p>This is a short introduction to Keras advanced features. It uses:</p>
+<ol style="list-style-type: decimal">
+<li>
+<code>tfdataset</code> to manage input data.</li>
+<li>Subclassing API for to define the model</li>
+<li>
+<code>tfautograph</code> for building a custom training loop</li>
+</ol>
+<p>Before running the quickstart you need to have Keras installed. Please refer to the <a href="/installation/">installation</a> for installation instructions.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(keras)</a>
+<a class="sourceLine" id="cb1-2" data-line-number="2"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(tfdatasets)</a>
+<a class="sourceLine" id="cb1-3" data-line-number="3"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(tfautograph)</a>
+<a class="sourceLine" id="cb1-4" data-line-number="4"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(reticulate)</a>
+<a class="sourceLine" id="cb1-5" data-line-number="5"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(purrr)</a></code></pre></div>
+<p>Let’s start by loading and preparing the <a href="http://yann.lecun.com/exdb/mnist/">MNIST dataset</a>. The values of thee pixels are integers between 0 and 255 and we will convert them to floats between 0 and 1.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" data-line-number="1">mnist &lt;-<span class="st"> </span><span class="kw"><a href="../../keras/reference/dataset_mnist.html">dataset_mnist</a></span>()</a>
+<a class="sourceLine" id="cb2-2" data-line-number="2">mnist<span class="op">$</span>train<span class="op">$</span>x &lt;-<span class="st"> </span>mnist<span class="op">$</span>train<span class="op">$</span>x<span class="op">/</span><span class="dv">255</span></a>
+<a class="sourceLine" id="cb2-3" data-line-number="3">mnist<span class="op">$</span>test<span class="op">$</span>x &lt;-<span class="st"> </span>mnist<span class="op">$</span>test<span class="op">$</span>x<span class="op">/</span><span class="dv">255</span></a>
+<a class="sourceLine" id="cb2-4" data-line-number="4"></a>
+<a class="sourceLine" id="cb2-5" data-line-number="5"><span class="kw"><a href="https://rdrr.io/r/base/dim.html">dim</a></span>(mnist<span class="op">$</span>train<span class="op">$</span>x) &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/dim.html">dim</a></span>(mnist<span class="op">$</span>train<span class="op">$</span>x), <span class="dv">1</span>)</a>
+<a class="sourceLine" id="cb2-6" data-line-number="6"><span class="kw"><a href="https://rdrr.io/r/base/dim.html">dim</a></span>(mnist<span class="op">$</span>test<span class="op">$</span>x) &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/dim.html">dim</a></span>(mnist<span class="op">$</span>test<span class="op">$</span>x), <span class="dv">1</span>)</a></code></pre></div>
+<p>Now let’s use <code>tfdatasets</code> to batch and shuffle the dataset.</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1">train_ds &lt;-<span class="st"> </span>mnist<span class="op">$</span>train <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb3-2" data-line-number="2"><span class="st">  </span><span class="kw"><a href="../../tools/tfdatasets/reference/tensor_slices_dataset.html">tensor_slices_dataset</a></span>() <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb3-3" data-line-number="3"><span class="st">  </span><span class="kw"><a href="../../tools/tfdatasets/reference/dataset_take.html">dataset_take</a></span>(<span class="dv">20000</span>) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb3-4" data-line-number="4"><span class="st">  </span><span class="kw"><a href="../../tools/tfdatasets/reference/dataset_map.html">dataset_map</a></span>(<span class="op">~</span><span class="kw"><a href="https://purrr.tidyverse.org/reference/modify.html">modify_at</a></span>(.x, <span class="st">"x"</span>, tf<span class="op">$</span>cast, <span class="dt">dtype =</span> tf<span class="op">$</span>float32)) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb3-5" data-line-number="5"><span class="st">  </span><span class="kw"><a href="../../tools/tfdatasets/reference/dataset_map.html">dataset_map</a></span>(<span class="op">~</span><span class="kw"><a href="https://purrr.tidyverse.org/reference/modify.html">modify_at</a></span>(.x, <span class="st">"y"</span>, tf<span class="op">$</span>cast, <span class="dt">dtype =</span> tf<span class="op">$</span>int64)) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb3-6" data-line-number="6"><span class="st">  </span><span class="kw"><a href="../../tools/tfdatasets/reference/dataset_shuffle.html">dataset_shuffle</a></span>(<span class="dv">10000</span>) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb3-7" data-line-number="7"><span class="st">  </span><span class="kw"><a href="../../tools/tfdatasets/reference/dataset_batch.html">dataset_batch</a></span>(<span class="dv">32</span>)</a>
+<a class="sourceLine" id="cb3-8" data-line-number="8"></a>
+<a class="sourceLine" id="cb3-9" data-line-number="9">test_ds &lt;-<span class="st"> </span>mnist<span class="op">$</span>test <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb3-10" data-line-number="10"><span class="st">  </span><span class="kw"><a href="../../tools/tfdatasets/reference/tensor_slices_dataset.html">tensor_slices_dataset</a></span>() <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb3-11" data-line-number="11"><span class="st">  </span><span class="kw"><a href="../../tools/tfdatasets/reference/dataset_take.html">dataset_take</a></span>(<span class="dv">2000</span>) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb3-12" data-line-number="12"><span class="st">  </span><span class="kw"><a href="../../tools/tfdatasets/reference/dataset_map.html">dataset_map</a></span>(<span class="op">~</span><span class="kw"><a href="https://purrr.tidyverse.org/reference/modify.html">modify_at</a></span>(.x, <span class="st">"x"</span>, tf<span class="op">$</span>cast, <span class="dt">dtype =</span> tf<span class="op">$</span>float32)) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb3-13" data-line-number="13"><span class="st">  </span><span class="kw"><a href="../../tools/tfdatasets/reference/dataset_map.html">dataset_map</a></span>(<span class="op">~</span><span class="kw"><a href="https://purrr.tidyverse.org/reference/modify.html">modify_at</a></span>(.x, <span class="st">"y"</span>, tf<span class="op">$</span>cast, <span class="dt">dtype =</span> tf<span class="op">$</span>int64)) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb3-14" data-line-number="14"><span class="st">  </span><span class="kw"><a href="../../tools/tfdatasets/reference/dataset_batch.html">dataset_batch</a></span>(<span class="dv">32</span>)</a></code></pre></div>
+<p>We will now define a Keras model using the subclassing API.</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" data-line-number="1">simple_conv_nn &lt;-<span class="st"> </span><span class="cf">function</span>(filters, kernel_size) {</a>
+<a class="sourceLine" id="cb4-2" data-line-number="2">  <span class="kw"><a href="../../keras/reference/keras_model_custom.html">keras_model_custom</a></span>(<span class="dt">name =</span> <span class="st">"MyModel"</span>, <span class="cf">function</span>(self) {</a>
+<a class="sourceLine" id="cb4-3" data-line-number="3">    </a>
+<a class="sourceLine" id="cb4-4" data-line-number="4">    self<span class="op">$</span>conv1 &lt;-<span class="st"> </span><span class="kw"><a href="../../keras/reference/layer_conv_2d.html">layer_conv_2d</a></span>(</a>
+<a class="sourceLine" id="cb4-5" data-line-number="5">      <span class="dt">filters =</span> filters, </a>
+<a class="sourceLine" id="cb4-6" data-line-number="6">      <span class="dt">kernel_size =</span> <span class="kw"><a href="https://rdrr.io/r/base/rep.html">rep</a></span>(kernel_size, <span class="dv">2</span>),</a>
+<a class="sourceLine" id="cb4-7" data-line-number="7">      <span class="dt">activation =</span> <span class="st">"relu"</span></a>
+<a class="sourceLine" id="cb4-8" data-line-number="8">    )</a>
+<a class="sourceLine" id="cb4-9" data-line-number="9">    </a>
+<a class="sourceLine" id="cb4-10" data-line-number="10">    self<span class="op">$</span>flatten &lt;-<span class="st"> </span><span class="kw"><a href="../../keras/reference/layer_flatten.html">layer_flatten</a></span>()</a>
+<a class="sourceLine" id="cb4-11" data-line-number="11">    </a>
+<a class="sourceLine" id="cb4-12" data-line-number="12">    self<span class="op">$</span>d1 &lt;-<span class="st"> </span><span class="kw"><a href="../../keras/reference/layer_dense.html">layer_dense</a></span>(<span class="dt">units =</span> <span class="dv">128</span>, <span class="dt">activation =</span> <span class="st">"relu"</span>)</a>
+<a class="sourceLine" id="cb4-13" data-line-number="13">    self<span class="op">$</span>d2 &lt;-<span class="st"> </span><span class="kw"><a href="../../keras/reference/layer_dense.html">layer_dense</a></span>(<span class="dt">units =</span> <span class="dv">10</span>, <span class="dt">activation =</span> <span class="st">"softmax"</span>)</a>
+<a class="sourceLine" id="cb4-14" data-line-number="14">    </a>
+<a class="sourceLine" id="cb4-15" data-line-number="15">    </a>
+<a class="sourceLine" id="cb4-16" data-line-number="16">    <span class="cf">function</span>(inputs, <span class="dt">mask =</span> <span class="ot">NULL</span>) {</a>
+<a class="sourceLine" id="cb4-17" data-line-number="17">      inputs <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb4-18" data-line-number="18"><span class="st">        </span>self<span class="op">$</span><span class="kw">conv1</span>() <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb4-19" data-line-number="19"><span class="st">        </span>self<span class="op">$</span><span class="kw"><a href="https://purrr.tidyverse.org/reference/flatten.html">flatten</a></span>() <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb4-20" data-line-number="20"><span class="st">        </span>self<span class="op">$</span><span class="kw">d1</span>() <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb4-21" data-line-number="21"><span class="st">        </span>self<span class="op">$</span><span class="kw">d2</span>()</a>
+<a class="sourceLine" id="cb4-22" data-line-number="22">    }</a>
+<a class="sourceLine" id="cb4-23" data-line-number="23">  })</a>
+<a class="sourceLine" id="cb4-24" data-line-number="24">}</a>
+<a class="sourceLine" id="cb4-25" data-line-number="25"></a>
+<a class="sourceLine" id="cb4-26" data-line-number="26">model &lt;-<span class="st"> </span><span class="kw">simple_conv_nn</span>(<span class="dt">filters =</span> <span class="dv">32</span>, <span class="dt">kernel_size =</span> <span class="dv">3</span>)</a></code></pre></div>
+<p>We can then choose an optimizer and loss function for training:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" data-line-number="1">loss &lt;-<span class="st"> </span>loss_sparse_categorical_crossentropy</a>
+<a class="sourceLine" id="cb5-2" data-line-number="2">optimizer &lt;-<span class="st"> </span><span class="kw"><a href="../../keras/reference/optimizer_adam.html">optimizer_adam</a></span>()</a></code></pre></div>
+<p>Select metrics to measure the loss and the accuracy of the model. These metrics accumulate the values over epochs and then print the overall result.</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" data-line-number="1">train_loss &lt;-<span class="st"> </span>tf<span class="op">$</span>keras<span class="op">$</span>metrics<span class="op">$</span><span class="kw">Mean</span>(<span class="dt">name=</span><span class="st">'train_loss'</span>)</a>
+<a class="sourceLine" id="cb6-2" data-line-number="2">train_accuracy &lt;-<span class="st">  </span>tf<span class="op">$</span>keras<span class="op">$</span>metrics<span class="op">$</span><span class="kw">SparseCategoricalAccuracy</span>(<span class="dt">name=</span><span class="st">'train_accuracy'</span>)</a>
+<a class="sourceLine" id="cb6-3" data-line-number="3"></a>
+<a class="sourceLine" id="cb6-4" data-line-number="4">test_loss &lt;-<span class="st"> </span>tf<span class="op">$</span>keras<span class="op">$</span>metrics<span class="op">$</span><span class="kw">Mean</span>(<span class="dt">name=</span><span class="st">'test_loss'</span>)</a>
+<a class="sourceLine" id="cb6-5" data-line-number="5">test_accuracy &lt;-<span class="st"> </span>tf<span class="op">$</span>keras<span class="op">$</span>metrics<span class="op">$</span><span class="kw">SparseCategoricalAccuracy</span>(<span class="dt">name=</span><span class="st">'test_accuracy'</span>)</a></code></pre></div>
+<p>We then define a function that is able to make one training step:</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" data-line-number="1">train_step &lt;-<span class="st"> </span><span class="cf">function</span>(images, labels) {</a>
+<a class="sourceLine" id="cb7-2" data-line-number="2">  </a>
+<a class="sourceLine" id="cb7-3" data-line-number="3">  <span class="kw"><a href="https://rdrr.io/r/base/with.html">with</a></span> (tf<span class="op">$</span><span class="kw">GradientTape</span>() <span class="op">%as%</span><span class="st"> </span>tape, {</a>
+<a class="sourceLine" id="cb7-4" data-line-number="4">    predictions &lt;-<span class="st"> </span><span class="kw">model</span>(images)</a>
+<a class="sourceLine" id="cb7-5" data-line-number="5">    l &lt;-<span class="st"> </span><span class="kw">loss</span>(labels, predictions)</a>
+<a class="sourceLine" id="cb7-6" data-line-number="6">  })</a>
+<a class="sourceLine" id="cb7-7" data-line-number="7">  </a>
+<a class="sourceLine" id="cb7-8" data-line-number="8">  gradients &lt;-<span class="st"> </span>tape<span class="op">$</span><span class="kw">gradient</span>(l, model<span class="op">$</span>trainable_variables)</a>
+<a class="sourceLine" id="cb7-9" data-line-number="9">  optimizer<span class="op">$</span><span class="kw">apply_gradients</span>(purrr<span class="op">::</span><span class="kw"><a href="https://purrr.tidyverse.org/reference/transpose.html">transpose</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/list.html">list</a></span>(</a>
+<a class="sourceLine" id="cb7-10" data-line-number="10">    gradients, model<span class="op">$</span>trainable_variables</a>
+<a class="sourceLine" id="cb7-11" data-line-number="11">  )))</a>
+<a class="sourceLine" id="cb7-12" data-line-number="12">  </a>
+<a class="sourceLine" id="cb7-13" data-line-number="13">  <span class="kw">train_loss</span>(l)</a>
+<a class="sourceLine" id="cb7-14" data-line-number="14">  <span class="kw">train_accuracy</span>(labels, predictions)</a>
+<a class="sourceLine" id="cb7-15" data-line-number="15">  </a>
+<a class="sourceLine" id="cb7-16" data-line-number="16">}</a></code></pre></div>
+<p>We then provide a function that is able to test the model:</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" data-line-number="1">test_step &lt;-<span class="st"> </span><span class="cf">function</span>(images, labels) {</a>
+<a class="sourceLine" id="cb8-2" data-line-number="2">  predictions &lt;-<span class="st"> </span><span class="kw">model</span>(images)</a>
+<a class="sourceLine" id="cb8-3" data-line-number="3">  l &lt;-<span class="st"> </span><span class="kw">loss</span>(labels, predictions)</a>
+<a class="sourceLine" id="cb8-4" data-line-number="4">  </a>
+<a class="sourceLine" id="cb8-5" data-line-number="5">  <span class="kw">test_loss</span>(l)</a>
+<a class="sourceLine" id="cb8-6" data-line-number="6">  <span class="kw">test_accuracy</span>(labels, predictions)</a>
+<a class="sourceLine" id="cb8-7" data-line-number="7">}</a></code></pre></div>
+<p>We can then write our training loop function:</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" data-line-number="1">training_loop &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/pkg/tfautograph/man/reexports.html">tf_function</a></span>(<span class="kw"><a href="https://rdrr.io/pkg/tfautograph/man/autograph.html">autograph</a></span>(<span class="cf">function</span>(train_ds, test_ds) {</a>
+<a class="sourceLine" id="cb9-2" data-line-number="2">  </a>
+<a class="sourceLine" id="cb9-3" data-line-number="3">  <span class="cf">for</span> (b1 <span class="cf">in</span> train_ds) {</a>
+<a class="sourceLine" id="cb9-4" data-line-number="4">    <span class="kw">train_step</span>(b1<span class="op">$</span>x, b1<span class="op">$</span>y)</a>
+<a class="sourceLine" id="cb9-5" data-line-number="5">  }</a>
+<a class="sourceLine" id="cb9-6" data-line-number="6">  </a>
+<a class="sourceLine" id="cb9-7" data-line-number="7">  <span class="cf">for</span> (b2 <span class="cf">in</span> test_ds) {</a>
+<a class="sourceLine" id="cb9-8" data-line-number="8">    <span class="kw">test_step</span>(b2<span class="op">$</span>x, b2<span class="op">$</span>y)</a>
+<a class="sourceLine" id="cb9-9" data-line-number="9">  }</a>
+<a class="sourceLine" id="cb9-10" data-line-number="10">  </a>
+<a class="sourceLine" id="cb9-11" data-line-number="11">  tf<span class="op">$</span><span class="kw"><a href="https://rdrr.io/r/base/print.html">print</a></span>(<span class="st">"Acc"</span>, train_accuracy<span class="op">$</span><span class="kw">result</span>(), <span class="st">"Test Acc"</span>, test_accuracy<span class="op">$</span><span class="kw">result</span>())</a>
+<a class="sourceLine" id="cb9-12" data-line-number="12">  </a>
+<a class="sourceLine" id="cb9-13" data-line-number="13">  train_loss<span class="op">$</span><span class="kw"><a href="../../keras/reference/reset_states.html">reset_states</a></span>()</a>
+<a class="sourceLine" id="cb9-14" data-line-number="14">  train_accuracy<span class="op">$</span><span class="kw"><a href="../../keras/reference/reset_states.html">reset_states</a></span>()</a>
+<a class="sourceLine" id="cb9-15" data-line-number="15">  test_loss<span class="op">$</span><span class="kw"><a href="../../keras/reference/reset_states.html">reset_states</a></span>()</a>
+<a class="sourceLine" id="cb9-16" data-line-number="16">  test_accuracy<span class="op">$</span><span class="kw"><a href="../../keras/reference/reset_states.html">reset_states</a></span>()</a>
+<a class="sourceLine" id="cb9-17" data-line-number="17">  </a>
+<a class="sourceLine" id="cb9-18" data-line-number="18">}))</a></code></pre></div>
+<p>Finally let’s run our training loop for 5 epochs:</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" data-line-number="1"><span class="cf">for</span> (epoch <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span><span class="dv">5</span>) {</a>
+<a class="sourceLine" id="cb10-2" data-line-number="2">  <span class="kw"><a href="https://rdrr.io/r/base/cat.html">cat</a></span>(<span class="st">"Epoch: "</span>, epoch, <span class="st">" -----------</span><span class="ch">\n</span><span class="st">"</span>)</a>
+<a class="sourceLine" id="cb10-3" data-line-number="3">  <span class="kw">training_loop</span>(train_ds, test_ds)  </a>
+<a class="sourceLine" id="cb10-4" data-line-number="4">}</a></code></pre></div>
+<pre><code>## Epoch:  1  -----------
+Acc 0.93095 Test Acc 0.954
+## Epoch:  2  -----------
+Acc 0.956525 Test Acc 0.95825
+## Epoch:  3  -----------
+Acc 0.968066692 Test Acc 0.9575
+## Epoch:  4  -----------
+Acc 0.9752 Test Acc 0.960125
+## Epoch:  5  -----------
+Acc 0.9796 Test Acc 0.9617</code></pre>

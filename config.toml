@@ -69,6 +69,12 @@ disqusShortname = "r-tensorflow"
 	weight = 24
 	url = "/tutorials/begginers/basic-ml/"
 
+[[menu.main]]
+	name   = "Advanced"
+	parent = "tutorials-top"
+	weight = 50
+	url = ""
+
 # Guides
 
 [[menu.main]]
