@@ -13,9 +13,8 @@ jobs:
     steps:
     # This step uses GitHub's hello-world-javascript-action: https://github.com/actions/hello-world-javascript-action
       - name: Install Blogdown
-        uses: actions/hello-world-javascript-action@v1
-        run: |
-            Rscript -e "install.packages('blogdown', repos = 'https://demo.rstudiopm.com/all/__linux__/bionic/latest')"
-            Rscript -e "blogdown::install_hugo()"
+        run: Rscript -e "install.packages('blogdown', repos = 'https://demo.rstudiopm.com/all/__linux__/bionic/latest')"
+      - name: Install Hugo
+        run: Rscript -e "blogdown::install_hugo()"
       - name: Build the site
         run: Rscript -e "blogdown::build_site()"
