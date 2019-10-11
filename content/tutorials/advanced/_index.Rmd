@@ -11,9 +11,9 @@ menu:
 
 This is a short introduction to Keras advanced features. It uses:
 
-1. `tfdataset` to manage input data.
-1. Subclassing API for to define the model
-1. `tfautograph` for building a custom training loop
+1. `tfdatasets` to manage input data.
+1. A custom model.
+1. `tfautograph` for building a custom training loop.
 
 Before running the quickstart you need to have Keras installed. Please refer to the [installation](/installation/) for installation instructions.
 
@@ -25,7 +25,7 @@ library(reticulate)
 library(purrr)
 ```
 
-Let's start by loading and preparing the [MNIST dataset](http://yann.lecun.com/exdb/mnist/). The values of thee pixels are integers between 0 and 255 and we will convert them to floats between 0 and 1.
+Let's start by loading and preparing the [MNIST dataset](http://yann.lecun.com/exdb/mnist/). The values of the pixels are integers between 0 and 255, and we will convert them to floats between 0 and 1.
 
 ```{r}
 mnist <- dataset_mnist()
@@ -55,7 +55,7 @@ test_ds <- mnist$test %>%
   dataset_batch(32)
 ```
 
-We will now define a Keras model using the subclassing API.
+We will now define a Keras custom model.
 
 ```{r}
 simple_conv_nn <- function(filters, kernel_size) {

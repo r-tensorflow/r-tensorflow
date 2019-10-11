@@ -65,9 +65,9 @@ disqusShortname = "r-tensorflow"
 [[menu.main]]
 	name   = "Basic ML with Keras"
 	parent = "tutorials-top"
-	identifier = "tutorials-begginers-basic-ml-top"
+	identifier = "tutorials-beginners-basic-ml-top"
 	weight = 24
-	url = "/tutorials/begginers/basic-ml/"
+	url = "/tutorials/beginners/basic-ml/"
 
 [[menu.main]]
 	name   = "Advanced"

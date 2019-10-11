@@ -11,7 +11,7 @@ menu:
   main:
     name: "Regression"
     identifier: "keras-tutorial-basic-regression"
-    parent: "tutorials-begginers-basic-ml-top"
+    parent: "tutorials-beginners-basic-ml-top"
     weight: 25
 ---
 
@@ -106,9 +106,9 @@ train_labels[1:10] # Display first 10 entries
 
 ## Normalize features
 
-It's recommended to normalize features that use different scales and ranges. Although the model might converge without feature normalization, it makes training more difficult, and it makes the resulting model more dependant on the choice of units used in the input.
+It's recommended to normalize features that use different scales and ranges. Although the model might converge without feature normalization, it makes training more difficult, and it makes the resulting model more dependent on the choice of units used in the input.
 
-We are going to use the `feature_spec` interface implemented in the `tfdatasets` package for the normalizzation. The `feature_columns` interface allows for other common pre-processing operations on tabular data.
+We are going to use the `feature_spec` interface implemented in the `tfdatasets` package for normalization. The `feature_columns` interface allows for other common pre-processing operations on tabular data.
 
 ```{r}
 spec <- feature_spec(train_df, label ~ . ) %>% 
@@ -118,9 +118,9 @@ spec <- feature_spec(train_df, label ~ . ) %>%
 spec
 ```
 
-The `spec` created with `tfdatasets` can be used together with `layer_dense_features` to make the pre-processing directly in the TensorFlow graph.
+The `spec` created with `tfdatasets` can be used together with `layer_dense_features` to perform  pre-processing directly in the TensorFlow graph.
 
-We can take a look at the output of a Dense Feature layer with this `spec`:
+We can take a look at the output of a dense-features layer created by this `spec`:
 
 ```{r}
 layer <- layer_dense_features(
@@ -130,12 +130,12 @@ layer <- layer_dense_features(
 layer(train_df)
 ```
 
-Note that this returns a matrix (in the sense it's a 2-dimensional Tensor) with
+Note that this returns a matrix (in the sense that it's a 2-dimensional Tensor) with
 scaled values.
 
 ## Create the model
 
-Let's build our model. Here we will use the Keras **functional** API - which is the recommend way when using the `feature_spec` API. Note that we only need to pass the `dense_features` from the `spec` we just created.
+Let's build our model. Here we will use the Keras **functional** API - which is the recommended way when using the `feature_spec` API. Note that we only need to pass the `dense_features` from the `spec` we just created.
 
 ```{r}
 input <- layer_input_from_dataset(train_df %>% select(-label))
@@ -162,7 +162,7 @@ model %>%
   )
 ```
 
-We will wrap the model building code into a functionin order to be able to reuse it for different experiments. Remember that Keras `fit` modifies the model in-place.
+We will wrap the model building code into a function in order to be able to reuse it for different experiments. Remember that Keras `fit` modifies the model in-place.
 
 ```{r}
 build_model <- function() {

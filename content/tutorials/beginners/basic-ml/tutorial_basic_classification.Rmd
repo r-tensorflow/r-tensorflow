@@ -11,7 +11,7 @@ menu:
   main:
     name: "Image Classification"
     identifier: "keras-tutorial-basic-classification"
-    parent: "tutorials-begginers-basic-ml-top"
+    parent: "tutorials-beginners-basic-ml-top"
     weight: 20
 ---
 

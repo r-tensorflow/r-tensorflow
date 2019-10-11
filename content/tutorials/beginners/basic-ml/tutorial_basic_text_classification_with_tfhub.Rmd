@@ -11,7 +11,7 @@ menu:
   main:
     name: "Transfer learning with tfhub"
     identifier: "keras-tutorial-text-classification-tfhub"
-    parent: "tutorials-begginers-basic-ml-top"
+    parent: "tutorials-beginners-basic-ml-top"
     weight: 35
 ---
 
@@ -52,7 +52,7 @@ summary(imdb)
 
 `tfds_load` returns a TensorFlow Dataset, an abstraction that represents a sequence of elements, in which each element consists of one or more components. 
 
-To access individual elements, of a Dataset you can use:
+To access individual elements of a dataset you can use:
 
 ```{r}
 first <- imdb[[1]] %>% 
@@ -63,11 +63,11 @@ str(first)
 ```
 
 We will see next that Keras knows how to extract elements from TensorFlow Datasets
-automatically making it a much more memory efficient alterantive than loading the entire dataset to RAM before passing to Keras.
+automatically, making it a much more memory efficient alternative than loading the entire dataset into RAM before passing it to Keras.
 
 ## Build the model
 
-The neural network is created by stacking layers—this requires three main architectural decisions:
+The neural network is created by stacking layers — this requires three main architectural decisions:
 
 1. How to represent the text?
 1. How many layers to use in the model?
@@ -75,13 +75,13 @@ The neural network is created by stacking layers—this requires three main arch
 
 In this example, the input data consists of sentences. The labels to predict are either 0 or 1.
 
-One way to represent the text is to convert sentences into embeddings vectors. We can use a pre-trained text embedding as the first layer, which will have three advantages: * we don't have to worry about text preprocessing, * we can benefit from transfer learning, * the embedding has a fixed size, so it's simpler to process.
+One way to represent the text is to convert sentences into embedding vectors. We can use a pre-trained text embedding as the first layer, which will have three advantages: * we don't have to worry about text preprocessing, * we can benefit from transfer learning, * the embedding has a fixed size, so it's simpler to process.
 
 For this example we will use a pre-trained text embedding model from [TensorFlow Hub](https://github.com/rstudio/tfhub) called [google/tf2-preview/gnews-swivel-20dim/1](https://tfhub.dev/google/tf2-preview/gnews-swivel-20dim/1).
 
 There are three other pre-trained models to test for the sake of this tutorial:
 
-* [google/tf2-preview/gnews-swivel-20dim-with-oov/1](https://tfhub.dev/google/tf2-preview/gnews-swivel-20dim-with-oov/1) - same as google/tf2-preview/gnews-swivel-20dim/1, but with 2.5% vocabulary converted to OOV buckets. This can help if vocabulary of the task and vocabulary of the model don't fully overlap.
+* [google/tf2-preview/gnews-swivel-20dim-with-oov/1](https://tfhub.dev/google/tf2-preview/gnews-swivel-20dim-with-oov/1) - same as google/tf2-preview/gnews-swivel-20dim/1, but with 2.5% vocabulary converted to OOV buckets. This can help if the vocabulary of the task and the vocabulary of the model don't fully overlap.
 * [google/tf2-preview/nnlm-en-dim50/1](https://tfhub.dev/google/tf2-preview/nnlm-en-dim50/1) - A much larger model with ~1M vocabulary size and 50 dimensions.
 * [google/tf2-preview/nnlm-en-dim128/1](https://tfhub.dev/google/tf2-preview/nnlm-en-dim128/1) - Even larger model with ~1M vocabulary size and 128 dimensions.
 
@@ -111,7 +111,7 @@ summary(model)
 The layers are stacked sequentially to build the classifier:
 
 1. The first layer is a TensorFlow Hub layer. This layer uses a pre-trained Saved Model to map a sentence into its embedding vector. The pre-trained text embedding model that we are using ([google/tf2-preview/gnews-swivel-20dim/1](https://tfhub.dev/google/tf2-preview/gnews-swivel-20dim/1)) splits the sentence into tokens, embeds each token and then combines the embedding. The resulting dimensions are: (num_examples, embedding_dimension).
-1. This fixed-length output vector is piped through a fully-connected (Dense) layer with 16 hidden units.
+1. This fixed-length output vector is piped through a fully-connected (dense) layer with 16 hidden units.
 1. The last layer is densely connected with a single output node. Using the sigmoid activation function, this value is a float between 0 and 1, representing a probability, or confidence level.
 
 Let's compile the model.
@@ -120,9 +120,7 @@ Let's compile the model.
 
 A model needs a loss function and an optimizer for training. Since this is a binary classification problem and the model outputs a probability (a single-unit layer with a sigmoid activation), we'll use the `binary_crossentropy` loss function.
 
-This isn't the only choice for a loss function, you could, for instance, choose mean_squared_error. But, generally, `binary_crossentropy` is better for dealing with probabilities—it measures the "distance" between probability distributions, or in our case, between the ground-truth distribution and the predictions.
-
-Later, when we are exploring regression problems (say, to predict the price of a house), we will see how to use another loss function called mean squared error.
+This isn't the only choice for a loss function, you could, for instance, choose mean_squared_error. But, generally, `binary_crossentropy` is better for dealing with probabilities — it measures the "distance" between probability distributions, or in our case, between the ground-truth distribution and the predictions.
 
 Now, configure the model to use an optimizer and a loss function:
 
