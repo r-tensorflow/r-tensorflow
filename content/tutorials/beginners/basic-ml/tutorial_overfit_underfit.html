@@ -11,7 +11,7 @@ menu:
   main:
     name: "Overfitting and Underfitting"
     identifier: "keras-tutorial-overfitting-and-underfitting"
-    parent: "tutorials-begginers-basic-ml-top"
+    parent: "tutorials-beginners-basic-ml-top"
     weight: 50
 ---
 
@@ -62,7 +62,7 @@ menu:
 <a class="sourceLine" id="cb8-4" data-line-number="4"><span class="st">  </span><span class="kw"><a href="https://ggplot2.tidyverse.org/reference/theme.html">theme</a></span>(<span class="dt">axis.title.y =</span> <span class="kw"><a href="https://ggplot2.tidyverse.org/reference/element.html">element_blank</a></span>(),</a>
 <a class="sourceLine" id="cb8-5" data-line-number="5">        <span class="dt">axis.text.y =</span> <span class="kw"><a href="https://ggplot2.tidyverse.org/reference/element.html">element_blank</a></span>(),</a>
 <a class="sourceLine" id="cb8-6" data-line-number="6">        <span class="dt">axis.ticks.y =</span> <span class="kw"><a href="https://ggplot2.tidyverse.org/reference/element.html">element_blank</a></span>())</a></code></pre></div>
-<p><img src="/tutorials/begginers/basic-ml/tutorial_overfit_underfit_files/figure-html/unnamed-chunk-4-1.png" width="672"></p>
+<p><img src="/tutorials/beginners/basic-ml/tutorial_overfit_underfit_files/figure-html/unnamed-chunk-4-1.png" width="672"></p>
 </div>
 <div id="demonstrate-overfitting" class="section level2">
 <h2>Demonstrate overfitting</h2>
@@ -333,7 +333,7 @@ The smaller network begins overfitting a litle later than the baseline model and
 <a class="sourceLine" id="cb21-14" data-line-number="14"><span class="st">  </span><span class="kw"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html">geom_line</a></span>() <span class="op">+</span></a>
 <a class="sourceLine" id="cb21-15" data-line-number="15"><span class="st">  </span><span class="kw"><a href="https://ggplot2.tidyverse.org/reference/labs.html">xlab</a></span>(<span class="st">"epoch"</span>) <span class="op">+</span></a>
 <a class="sourceLine" id="cb21-16" data-line-number="16"><span class="st">  </span><span class="kw"><a href="https://ggplot2.tidyverse.org/reference/labs.html">ylab</a></span>(<span class="st">"loss"</span>)</a></code></pre></div>
-<p><img src="/tutorials/begginers/basic-ml/tutorial_overfit_underfit_files/figure-html/unnamed-chunk-11-1.png" width="672"></p>
+<p><img src="/tutorials/beginners/basic-ml/tutorial_overfit_underfit_files/figure-html/unnamed-chunk-11-1.png" width="672"></p>
 </div>
 </div>
 <div id="strategies" class="section level2">
@@ -426,7 +426,7 @@ The smaller network begins overfitting a litle later than the baseline model and
 <a class="sourceLine" id="cb24-12" data-line-number="12"><span class="st">  </span><span class="kw"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html">geom_line</a></span>() <span class="op">+</span></a>
 <a class="sourceLine" id="cb24-13" data-line-number="13"><span class="st">  </span><span class="kw"><a href="https://ggplot2.tidyverse.org/reference/labs.html">xlab</a></span>(<span class="st">"epoch"</span>) <span class="op">+</span></a>
 <a class="sourceLine" id="cb24-14" data-line-number="14"><span class="st">  </span><span class="kw"><a href="https://ggplot2.tidyverse.org/reference/labs.html">ylab</a></span>(<span class="st">"loss"</span>)</a></code></pre></div>
-<p><img src="/tutorials/begginers/basic-ml/tutorial_overfit_underfit_files/figure-html/unnamed-chunk-13-1.png" width="672"></p>
+<p><img src="/tutorials/beginners/basic-ml/tutorial_overfit_underfit_files/figure-html/unnamed-chunk-13-1.png" width="672"></p>
 <p>As you can see, the L2 regularized model has become much more resistant to overfitting than the baseline model, even though both models have the same number of parameters.</p>
 </div>
 <div id="add-dropout" class="section level3">
@@ -512,7 +512,7 @@ The smaller network begins overfitting a litle later than the baseline model and
 <a class="sourceLine" id="cb27-12" data-line-number="12"><span class="st">  </span><span class="kw"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html">geom_line</a></span>() <span class="op">+</span></a>
 <a class="sourceLine" id="cb27-13" data-line-number="13"><span class="st">  </span><span class="kw"><a href="https://ggplot2.tidyverse.org/reference/labs.html">xlab</a></span>(<span class="st">"epoch"</span>) <span class="op">+</span></a>
 <a class="sourceLine" id="cb27-14" data-line-number="14"><span class="st">  </span><span class="kw"><a href="https://ggplot2.tidyverse.org/reference/labs.html">ylab</a></span>(<span class="st">"loss"</span>)</a></code></pre></div>
-<p><img src="/tutorials/begginers/basic-ml/tutorial_overfit_underfit_files/figure-html/unnamed-chunk-15-1.png" width="672"></p>
+<p><img src="/tutorials/beginners/basic-ml/tutorial_overfit_underfit_files/figure-html/unnamed-chunk-15-1.png" width="672"></p>
 <p>Adding dropout is a clear improvement over the baseline model.</p>
 <p>To recap: here the most common ways to prevent overfitting in neural networks:</p>
 <ul>

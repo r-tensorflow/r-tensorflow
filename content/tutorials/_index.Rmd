@@ -12,21 +12,21 @@ menu:
 In this section you will find tutorials that can be used to get started with TensorFlow for R or, for more advanced users, to discover best practices for loading data, building complex models and solving common problems.
 
 The best place to get started with TensorFlow is using Keras - a Deep Learning API
-created by François Chollet. Keras is easy to get started, and it allows you to progressively 
+created by François Chollet and ported to R by JJ Allaire. Keras makes it easy to get started, and it allows you to progressively 
 build more complex workflows as you need to use advanced models and techniques. 
 
 ## For beginners
 
-We recommend the following tutorials for you first contact with TensorFlow. 
-Feel free to navigate trought the 'beginner' section in the sidebar.
+We recommend the following tutorials for your first contact with TensorFlow. 
+Feel free to navigate through the 'beginners' section in the sidebar.
 
-* Quickstart: the minimal getting start guide to Keras.
+* Quickstart: the minimal getting started guide to Keras.
 * Basic ML with Keras: use Keras to solve basic Machine Learning tasks.
 * Load data: learn to efficiently load data to TensorFlow using `tfdatasets`.
 
 ## For experts
 
-* Advanced Quickstart: learn the subclassing API and how create custom loops.
+* Advanced Quickstart: learn the subclassing API and how to create custom loops.
 * Customization: build custom layers and training loops in TensorFlow.
-* Distributed Training: distribute your model training acrros multiples GPU's or machines.
+* Distributed Training: distribute your model training across multiple GPU's or machines.
 

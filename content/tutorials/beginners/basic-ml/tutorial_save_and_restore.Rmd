@@ -11,7 +11,7 @@ menu:
   main:
     name: "Save and Restore Models"
     identifier: "keras-tutorial-save-and-restore"
-    parent: "tutorials-begginers-basic-ml-top"
+    parent: "tutorials-beginners-basic-ml-top"
     weight: 60
 ---
 
@@ -86,7 +86,7 @@ Call `save_model_*` to save the a model's architecture, weights, and training co
 
 Saving a fully-functional model is very useful—you can load them in TensorFlow.js (HDF5, Saved Model) and then train and run them in web browsers, or convert them to run on mobile devices using TensorFlow Lite (HDF5, Saved Model)
 
-*Custom objects (e.g. subclassed models or layers) require special attention when saving and loading. See the Saving custom objects section below
+*Custom objects (e.g. subclassed models or layers) require special attention when saving and loading. See the "Saving custom objects" section below.
 
 ### SavedModel format
 
@@ -115,7 +115,7 @@ summary(new_model)
 
 ### HDF5 format
 
-Keras provides a basic save format using the HDF5 standard.
+Keras provides a basic saving format using the HDF5 standard.
 
 ```{r}
 model <- create_model()

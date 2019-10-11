@@ -11,7 +11,7 @@ menu:
   main:
     name: "Overfitting and Underfitting"
     identifier: "keras-tutorial-overfitting-and-underfitting"
-    parent: "tutorials-begginers-basic-ml-top"
+    parent: "tutorials-beginners-basic-ml-top"
     weight: 50
 ---
 

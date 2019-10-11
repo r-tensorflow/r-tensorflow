@@ -11,7 +11,7 @@ menu:
   main:
     name: "Text Classification"
     identifier: "keras-tutorial-text-classification"
-    parent: "tutorials-begginers-basic-ml-top"
+    parent: "tutorials-beginners-basic-ml-top"
     weight: 30
 ---
 
@@ -324,7 +324,7 @@ We already have the <code>word_index</code> we downloaded above — a list with 
 <p><code>fit</code> returns a <code>keras_training_history</code> object whose <code>metrics</code> slot contains loss and metrics values recorded during training.
 You can conveniently plot the loss and metrics curves like so:</p>
 <div class="sourceCode" id="cb30"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb30-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/graphics/plot.html">plot</a></span>(history)</a></code></pre></div>
-<p><img src="/tutorials/begginers/basic-ml/tutorial_basic_text_classification_files/figure-html/unnamed-chunk-17-1.png" width="672"></p>
+<p><img src="/tutorials/beginners/basic-ml/tutorial_basic_text_classification_files/figure-html/unnamed-chunk-17-1.png" width="672"></p>
 <p>The evolution of loss and metrics can also be seen during training in the RStudio Viewer pane.</p>
 <p>Notice the training loss decreases with each epoch and the training accuracy increases with each epoch. This is expected when using gradient descent optimization — it should minimize the desired quantity on every iteration.</p>
 <p>This isn’t the case for the validation loss and accuracy — they seem to peak after about twenty epochs. This is an example of overfitting: the model performs better on the training data than it does on data it has never seen before. After this point, the model over-optimizes and learns representations specific to the training data that do not generalize to test data.</p>
