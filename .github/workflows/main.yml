@@ -17,6 +17,7 @@ jobs:
       - name: Install Hugo
         run: |
           wget https://github.com/gohugoio/hugo/releases/download/v0.58.3/hugo_0.58.3_Linux-64bit.tar.gz -O /usr/local/bin/hugo.tar.gz
-           tar -xzvf /usr/local/bin/hugo.tar.gz -C /usr/local/bin/
+          tar -xzvf /usr/local/bin/hugo.tar.gz -C /usr/local/bin/
       - name: Build the site
-        run: Rscript -e "options(blogdown.hugo.dir = '.'); blogdown::build_site()"
+        run: | 
+          Rscript -e "blogdown::build_site()"
