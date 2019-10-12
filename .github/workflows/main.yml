@@ -20,4 +20,5 @@ jobs:
           tar -xzvf /usr/local/bin/hugo.tar.gz -C /usr/local/bin/
       - name: Build the site
         run: | 
+          ls
           Rscript -e "blogdown::build_site()"
