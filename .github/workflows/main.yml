@@ -22,4 +22,5 @@ jobs:
         uses: actions/checkout@master
       - name: Build the site
         run: | 
+          whoami
           Rscript -e "blogdown::build_site()"
