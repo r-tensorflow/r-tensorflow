@@ -20,6 +20,6 @@ Rscript -e 'tensorflow::install_tensorflow(
 
 # Download/cache used datasets
 # a workaround to download the dataset and avoid C stack usage errors
-Rscript -e 'Sys.setenv(RETICULATE_REMAP_OUTPUT_STREAMS=""); tfds::tfds_load("imdb_reviews:1.0.0")'
+Rscript -e 'Sys.setenv("RETICULATE_REMAP_OUTPUT_STREAMS"=""); Sys.getenv("RETICULATE_REMAP_OUTPUT_STREAMS"); tfds::tfds_load("imdb_reviews:1.0.0")'
 
 
