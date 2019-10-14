@@ -22,5 +22,6 @@ jobs:
         uses: actions/checkout@master
       - name: Build the site
         run: | 
+          cd ${GITHUB_WORKSPACE}/r-tensorflow/r-tensorflow/
           ls
           Rscript -e "blogdown::build_site()"
