@@ -14,6 +14,8 @@ jobs:
     # This step uses GitHub's hello-world-javascript-action: https://github.com/actions/hello-world-javascript-action
       - name: Get repository content
         uses: actions/checkout@master
+      - name: Install pandoc
+        run: apt-get install pandoc
       - name: Install R packages and dependencies
         run: |
           chmod +x install.sh
