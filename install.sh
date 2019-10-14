@@ -12,18 +12,14 @@ Rscript -e 'remotes::install_github(c("rstudio/keras",
 
 # Install Python dependencies
 
-Rscript -e 'tensorflow::install_tensorflow()'
-Rscript -e 'tfhub::install_tfhub()'
-Rscript -e 'keras::install_keras()'
-Rscript -e 'tfds::install_tfds()'
+Rscript -e 'tensorflow::install_tensorflow(
+  extra_packages = c("tensorflow_hub", "tensorflow_datasets", "h5py", "pyyaml" 
+                     "requests", "Pillow" , "scipy"))'
+
+
 
 # Download/cache used datasets
-
-Rscript -e 'tfds::tfds_load(
-  "imdb_reviews:1.0.0", 
-  split = list("train[:60%]", "train[-40%:]", "test"), 
-  as_supervised = TRUE,
-  data_dir = "tensorflow_datasets"
-)'
+# a workaround to download the dataset and avoid C stack usage errors
+Rscript -e 'Sys.setenv(RETICULATE_REMAP_OUTPUT_STREAMS=""); tfds::tfds_load("imdb_reviews:1.0.0")'
 
 
