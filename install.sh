@@ -1,4 +1,4 @@
-Rscript -e 'install.packages(c("remotes", "blogdown"),  
+Rscript -e 'install.packages(c("remotes", "blogdown", "rprojroot"),  
                              repos = "https://cran.rstudio.com")'
 Rscript -e 'remotes::install_github(c("rstudio/keras",
                                       "rstudio/tensorflow",
