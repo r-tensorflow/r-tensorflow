@@ -13,9 +13,9 @@ Rscript -e 'remotes::install_github(c("rstudio/keras",
 # Install Python dependencies
 
 Rscript -e 'tensorflow::install_tensorflow()'
-Rscript -e 'tensorflow::install_tfhub()'
-Rscript -e 'tensorflow::install_keras()'
-Rscript -e 'tensorflow::install_tfds()'
+Rscript -e 'tfhub::install_tfhub()'
+Rscript -e 'keras::install_keras()'
+Rscript -e 'tfds::install_tfds()'
 
 # Download/cache used datasets
 
