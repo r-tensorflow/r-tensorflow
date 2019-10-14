@@ -13,7 +13,7 @@ Rscript -e 'remotes::install_github(c("rstudio/keras",
 # Install Python dependencies
 
 Rscript -e 'tensorflow::install_tensorflow(
-  extra_packages = c("tensorflow_hub", "tensorflow_datasets", "h5py", "pyyaml" 
+  extra_packages = c("tensorflow_hub", "tensorflow_datasets", "h5py", "pyyaml", 
                      "requests", "Pillow" , "scipy"))'
 
 
