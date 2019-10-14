@@ -5,5 +5,6 @@ Rscript -e 'remotes::install_github(c("rstudio/keras",
                                       "rstudio/reticulate",
                                       "rstudio/tfdatasets",
                                       "rstudio/tfhub",
-                                      "rstudio/tfds"))'
+                                      "rstudio/tfds",
+                                      "t-kalinowski/tfautograph"))'
 Rscript -e 'tensorflow::install_tensorflow()'
