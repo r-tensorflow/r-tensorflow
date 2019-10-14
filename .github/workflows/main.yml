@@ -15,7 +15,7 @@ jobs:
       - name: Get repository content
         uses: actions/checkout@master
       - name: Install pandoc
-        run: apt-get install pandoc
+        run: apt-get -y install pandoc
       - name: Install R packages and dependencies
         run: |
           chmod +x install.sh
