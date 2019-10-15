@@ -47,7 +47,7 @@ library(tibble)
 ## Download the IMDB dataset
 
 ```{r}
-num_words <- 10000
+num_words <- 1000
 imdb <- dataset_imdb(num_words = num_words)
 
 c(train_data, train_labels) %<-% imdb$train
@@ -75,7 +75,7 @@ test_data <- multi_hot_sequences(test_data, num_words)
 Let's look at one of the resulting multi-hot vectors. The word indices are sorted by frequency, so it is expected that there are more 1-values near index zero, as we can see in this plot:
 
 ```{r}
-first_text <- data.frame(word = 1:10000, value = train_data[1, ])
+first_text <- data.frame(word = 1:num_words, value = train_data[1, ])
 ggplot(first_text, aes(x = word, y = value)) +
   geom_line() +
   theme(axis.title.y = element_blank(),
@@ -103,7 +103,7 @@ We'll create a simple model using only dense layers, then well a smaller version
 ```{r}
 baseline_model <- 
   keras_model_sequential() %>%
-  layer_dense(units = 16, activation = "relu", input_shape = 10000) %>%
+  layer_dense(units = 16, activation = "relu", input_shape = num_words) %>%
   layer_dense(units = 16, activation = "relu") %>%
   layer_dense(units = 1, activation = "sigmoid")
 
@@ -136,7 +136,7 @@ Let's create a model with less hidden units to compare against the baseline mode
 ```{r}
 smaller_model <- 
   keras_model_sequential() %>%
-  layer_dense(units = 4, activation = "relu", input_shape = 10000) %>%
+  layer_dense(units = 4, activation = "relu", input_shape = num_words) %>%
   layer_dense(units = 4, activation = "relu") %>%
   layer_dense(units = 1, activation = "sigmoid")
 
@@ -171,7 +171,7 @@ Next, let's add to this benchmark a network that has much more capacity, far mor
 ```{r}
 bigger_model <- 
   keras_model_sequential() %>%
-  layer_dense(units = 512, activation = "relu", input_shape = 10000) %>%
+  layer_dense(units = 512, activation = "relu", input_shape = num_words) %>%
   layer_dense(units = 512, activation = "relu") %>%
   layer_dense(units = 1, activation = "sigmoid")
 
@@ -242,7 +242,7 @@ In Keras, weight regularization is added by passing weight regularizer instances
 ```{r}
 l2_model <- 
   keras_model_sequential() %>%
-  layer_dense(units = 16, activation = "relu", input_shape = 10000,
+  layer_dense(units = 16, activation = "relu", input_shape = num_words,
               kernel_regularizer = regularizer_l2(l = 0.001)) %>%
   layer_dense(units = 16, activation = "relu",
               kernel_regularizer = regularizer_l2(l = 0.001)) %>%
@@ -300,7 +300,7 @@ Let's add two dropout layers in our IMDB network to see how well they do at redu
 ```{r}
 dropout_model <- 
   keras_model_sequential() %>%
-  layer_dense(units = 16, activation = "relu", input_shape = 10000) %>%
+  layer_dense(units = 16, activation = "relu", input_shape = num_words) %>%
   layer_dropout(0.6) %>%
   layer_dense(units = 16, activation = "relu") %>%
   layer_dropout(0.6) %>%

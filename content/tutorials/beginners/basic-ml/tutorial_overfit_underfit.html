@@ -38,7 +38,7 @@ menu:
 <a class="sourceLine" id="cb5-3" data-line-number="3"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(tibble)</a></code></pre></div>
 <div id="download-the-imdb-dataset" class="section level2">
 <h2>Download the IMDB dataset</h2>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" data-line-number="1">num_words &lt;-<span class="st"> </span><span class="dv">10000</span></a>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" data-line-number="1">num_words &lt;-<span class="st"> </span><span class="dv">1000</span></a>
 <a class="sourceLine" id="cb6-2" data-line-number="2">imdb &lt;-<span class="st"> </span><span class="kw"><a href="../../../keras/reference/dataset_imdb.html">dataset_imdb</a></span>(<span class="dt">num_words =</span> num_words)</a>
 <a class="sourceLine" id="cb6-3" data-line-number="3"></a>
 <a class="sourceLine" id="cb6-4" data-line-number="4"><span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(train_data, train_labels) <span class="op">%&lt;-%</span><span class="st"> </span>imdb<span class="op">$</span>train</a>
@@ -56,12 +56,12 @@ menu:
 <a class="sourceLine" id="cb7-9" data-line-number="9">train_data &lt;-<span class="st"> </span><span class="kw">multi_hot_sequences</span>(train_data, num_words)</a>
 <a class="sourceLine" id="cb7-10" data-line-number="10">test_data &lt;-<span class="st"> </span><span class="kw">multi_hot_sequences</span>(test_data, num_words)</a></code></pre></div>
 <p>Let’s look at one of the resulting multi-hot vectors. The word indices are sorted by frequency, so it is expected that there are more 1-values near index zero, as we can see in this plot:</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" data-line-number="1">first_text &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span>(<span class="dt">word =</span> <span class="dv">1</span><span class="op">:</span><span class="dv">10000</span>, <span class="dt">value =</span> train_data[<span class="dv">1</span>, ])</a>
-<a class="sourceLine" id="cb8-2" data-line-number="2"><span class="kw"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span>(first_text, <span class="kw"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span>(<span class="dt">x =</span> word, <span class="dt">y =</span> value)) <span class="op">+</span></a>
-<a class="sourceLine" id="cb8-3" data-line-number="3"><span class="st">  </span><span class="kw"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html">geom_line</a></span>() <span class="op">+</span></a>
-<a class="sourceLine" id="cb8-4" data-line-number="4"><span class="st">  </span><span class="kw"><a href="https://ggplot2.tidyverse.org/reference/theme.html">theme</a></span>(<span class="dt">axis.title.y =</span> <span class="kw"><a href="https://ggplot2.tidyverse.org/reference/element.html">element_blank</a></span>(),</a>
-<a class="sourceLine" id="cb8-5" data-line-number="5">        <span class="dt">axis.text.y =</span> <span class="kw"><a href="https://ggplot2.tidyverse.org/reference/element.html">element_blank</a></span>(),</a>
-<a class="sourceLine" id="cb8-6" data-line-number="6">        <span class="dt">axis.ticks.y =</span> <span class="kw"><a href="https://ggplot2.tidyverse.org/reference/element.html">element_blank</a></span>())</a></code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" data-line-number="1">first_text &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span>(<span class="dt">word =</span> <span class="dv">1</span><span class="op">:</span>num_words, <span class="dt">value =</span> train_data[<span class="dv">1</span>, ])</a>
+<a class="sourceLine" id="cb8-2" data-line-number="2"><span class="kw"><a href="https://rdrr.io/pkg/ggplot2/man/ggplot.html">ggplot</a></span>(first_text, <span class="kw"><a href="https://rdrr.io/pkg/ggplot2/man/aes.html">aes</a></span>(<span class="dt">x =</span> word, <span class="dt">y =</span> value)) <span class="op">+</span></a>
+<a class="sourceLine" id="cb8-3" data-line-number="3"><span class="st">  </span><span class="kw"><a href="https://rdrr.io/pkg/ggplot2/man/geom_path.html">geom_line</a></span>() <span class="op">+</span></a>
+<a class="sourceLine" id="cb8-4" data-line-number="4"><span class="st">  </span><span class="kw"><a href="https://rdrr.io/pkg/ggplot2/man/theme.html">theme</a></span>(<span class="dt">axis.title.y =</span> <span class="kw"><a href="https://rdrr.io/pkg/ggplot2/man/element.html">element_blank</a></span>(),</a>
+<a class="sourceLine" id="cb8-5" data-line-number="5">        <span class="dt">axis.text.y =</span> <span class="kw"><a href="https://rdrr.io/pkg/ggplot2/man/element.html">element_blank</a></span>(),</a>
+<a class="sourceLine" id="cb8-6" data-line-number="6">        <span class="dt">axis.ticks.y =</span> <span class="kw"><a href="https://rdrr.io/pkg/ggplot2/man/element.html">element_blank</a></span>())</a></code></pre></div>
 <p><img src="/tutorials/beginners/basic-ml/tutorial_overfit_underfit_files/figure-html/unnamed-chunk-4-1.png" width="672"></p>
 </div>
 <div id="demonstrate-overfitting" class="section level2">
@@ -76,7 +76,7 @@ menu:
 <h3>Create a baseline model</h3>
 <div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" data-line-number="1">baseline_model &lt;-<span class="st"> </span></a>
 <a class="sourceLine" id="cb9-2" data-line-number="2"><span class="st">  </span><span class="kw"><a href="../../../keras/reference/keras_model_sequential.html">keras_model_sequential</a></span>() <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb9-3" data-line-number="3"><span class="st">  </span><span class="kw"><a href="../../../keras/reference/layer_dense.html">layer_dense</a></span>(<span class="dt">units =</span> <span class="dv">16</span>, <span class="dt">activation =</span> <span class="st">"relu"</span>, <span class="dt">input_shape =</span> <span class="dv">10000</span>) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb9-3" data-line-number="3"><span class="st">  </span><span class="kw"><a href="../../../keras/reference/layer_dense.html">layer_dense</a></span>(<span class="dt">units =</span> <span class="dv">16</span>, <span class="dt">activation =</span> <span class="st">"relu"</span>, <span class="dt">input_shape =</span> num_words) <span class="op">%&gt;%</span></a>
 <a class="sourceLine" id="cb9-4" data-line-number="4"><span class="st">  </span><span class="kw"><a href="../../../keras/reference/layer_dense.html">layer_dense</a></span>(<span class="dt">units =</span> <span class="dv">16</span>, <span class="dt">activation =</span> <span class="st">"relu"</span>) <span class="op">%&gt;%</span></a>
 <a class="sourceLine" id="cb9-5" data-line-number="5"><span class="st">  </span><span class="kw"><a href="../../../keras/reference/layer_dense.html">layer_dense</a></span>(<span class="dt">units =</span> <span class="dv">1</span>, <span class="dt">activation =</span> <span class="st">"sigmoid"</span>)</a>
 <a class="sourceLine" id="cb9-6" data-line-number="6"></a>
@@ -91,14 +91,14 @@ menu:
 ## ___________________________________________________________________________
 ## Layer (type)                     Output Shape                  Param #     
 ## ===========================================================================
-## dense (Dense)                    (None, 16)                    160016      
+## dense (Dense)                    (None, 16)                    16016       
 ## ___________________________________________________________________________
 ## dense_1 (Dense)                  (None, 16)                    272         
 ## ___________________________________________________________________________
 ## dense_2 (Dense)                  (None, 1)                     17          
 ## ===========================================================================
-## Total params: 160,305
-## Trainable params: 160,305
+## Total params: 16,305
+## Trainable params: 16,305
 ## Non-trainable params: 0
 ## ___________________________________________________________________________</code></pre>
 <div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb11-1" data-line-number="1">baseline_history &lt;-<span class="st"> </span>baseline_model <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../../../keras/reference/reexports.html">fit</a></span>(</a>
@@ -111,52 +111,52 @@ menu:
 <a class="sourceLine" id="cb11-8" data-line-number="8">)</a></code></pre></div>
 <pre><code>## Train on 25000 samples, validate on 25000 samples
 ## Epoch 1/20
-## 25000/25000 - 2s - loss: 0.4984 - accuracy: 0.8122 - val_loss: 0.3507 - val_accuracy: 0.8750
+## 25000/25000 - 1s - loss: 0.5638 - accuracy: 0.7214 - val_loss: 0.4267 - val_accuracy: 0.8227
 ## Epoch 2/20
-## 25000/25000 - 1s - loss: 0.2588 - accuracy: 0.9098 - val_loss: 0.2911 - val_accuracy: 0.8842
+## 25000/25000 - 0s - loss: 0.3687 - accuracy: 0.8458 - val_loss: 0.3452 - val_accuracy: 0.8537
 ## Epoch 3/20
-## 25000/25000 - 1s - loss: 0.1880 - accuracy: 0.9346 - val_loss: 0.2864 - val_accuracy: 0.8866
+## 25000/25000 - 0s - loss: 0.3226 - accuracy: 0.8659 - val_loss: 0.3300 - val_accuracy: 0.8600
 ## Epoch 4/20
-## 25000/25000 - 1s - loss: 0.1512 - accuracy: 0.9485 - val_loss: 0.3045 - val_accuracy: 0.8812
+## 25000/25000 - 0s - loss: 0.3076 - accuracy: 0.8722 - val_loss: 0.3284 - val_accuracy: 0.8610
 ## Epoch 5/20
-## 25000/25000 - 1s - loss: 0.1253 - accuracy: 0.9591 - val_loss: 0.3360 - val_accuracy: 0.8765
+## 25000/25000 - 0s - loss: 0.3020 - accuracy: 0.8756 - val_loss: 0.3282 - val_accuracy: 0.8616
 ## Epoch 6/20
-## 25000/25000 - 1s - loss: 0.1059 - accuracy: 0.9666 - val_loss: 0.3622 - val_accuracy: 0.8700
+## 25000/25000 - 0s - loss: 0.2962 - accuracy: 0.8784 - val_loss: 0.3284 - val_accuracy: 0.8596
 ## Epoch 7/20
-## 25000/25000 - 1s - loss: 0.0886 - accuracy: 0.9736 - val_loss: 0.3920 - val_accuracy: 0.8678
+## 25000/25000 - 0s - loss: 0.2915 - accuracy: 0.8793 - val_loss: 0.3307 - val_accuracy: 0.8588
 ## Epoch 8/20
-## 25000/25000 - 1s - loss: 0.0750 - accuracy: 0.9794 - val_loss: 0.4292 - val_accuracy: 0.8647
+## 25000/25000 - 0s - loss: 0.2864 - accuracy: 0.8813 - val_loss: 0.3434 - val_accuracy: 0.8543
 ## Epoch 9/20
-## 25000/25000 - 1s - loss: 0.0635 - accuracy: 0.9840 - val_loss: 0.4664 - val_accuracy: 0.8618
+## 25000/25000 - 0s - loss: 0.2829 - accuracy: 0.8841 - val_loss: 0.3347 - val_accuracy: 0.8579
 ## Epoch 10/20
-## 25000/25000 - 1s - loss: 0.0532 - accuracy: 0.9880 - val_loss: 0.5111 - val_accuracy: 0.8578
+## 25000/25000 - 0s - loss: 0.2770 - accuracy: 0.8863 - val_loss: 0.3334 - val_accuracy: 0.8575
 ## Epoch 11/20
-## 25000/25000 - 1s - loss: 0.0455 - accuracy: 0.9909 - val_loss: 0.5485 - val_accuracy: 0.8570
+## 25000/25000 - 0s - loss: 0.2702 - accuracy: 0.8900 - val_loss: 0.3379 - val_accuracy: 0.8566
 ## Epoch 12/20
-## 25000/25000 - 1s - loss: 0.0382 - accuracy: 0.9931 - val_loss: 0.5886 - val_accuracy: 0.8548
+## 25000/25000 - 0s - loss: 0.2654 - accuracy: 0.8921 - val_loss: 0.3396 - val_accuracy: 0.8562
 ## Epoch 13/20
-## 25000/25000 - 1s - loss: 0.0314 - accuracy: 0.9946 - val_loss: 0.6344 - val_accuracy: 0.8537
+## 25000/25000 - 0s - loss: 0.2580 - accuracy: 0.8954 - val_loss: 0.3412 - val_accuracy: 0.8548
 ## Epoch 14/20
-## 25000/25000 - 1s - loss: 0.0258 - accuracy: 0.9963 - val_loss: 0.6716 - val_accuracy: 0.8521
+## 25000/25000 - 0s - loss: 0.2526 - accuracy: 0.8982 - val_loss: 0.3472 - val_accuracy: 0.8550
 ## Epoch 15/20
-## 25000/25000 - 1s - loss: 0.0208 - accuracy: 0.9975 - val_loss: 0.7069 - val_accuracy: 0.8514
+## 25000/25000 - 0s - loss: 0.2441 - accuracy: 0.9020 - val_loss: 0.3498 - val_accuracy: 0.8524
 ## Epoch 16/20
-## 25000/25000 - 1s - loss: 0.0174 - accuracy: 0.9982 - val_loss: 0.7458 - val_accuracy: 0.8506
+## 25000/25000 - 0s - loss: 0.2373 - accuracy: 0.9052 - val_loss: 0.3567 - val_accuracy: 0.8498
 ## Epoch 17/20
-## 25000/25000 - 1s - loss: 0.0130 - accuracy: 0.9990 - val_loss: 0.7856 - val_accuracy: 0.8489
+## 25000/25000 - 0s - loss: 0.2303 - accuracy: 0.9094 - val_loss: 0.3618 - val_accuracy: 0.8496
 ## Epoch 18/20
-## 25000/25000 - 1s - loss: 0.0098 - accuracy: 0.9993 - val_loss: 0.8178 - val_accuracy: 0.8492
+## 25000/25000 - 0s - loss: 0.2224 - accuracy: 0.9116 - val_loss: 0.3697 - val_accuracy: 0.8495
 ## Epoch 19/20
-## 25000/25000 - 1s - loss: 0.0078 - accuracy: 0.9994 - val_loss: 0.8473 - val_accuracy: 0.8483
+## 25000/25000 - 0s - loss: 0.2156 - accuracy: 0.9162 - val_loss: 0.3765 - val_accuracy: 0.8461
 ## Epoch 20/20
-## 25000/25000 - 1s - loss: 0.0062 - accuracy: 0.9995 - val_loss: 0.8760 - val_accuracy: 0.8484</code></pre>
+## 25000/25000 - 0s - loss: 0.2073 - accuracy: 0.9197 - val_loss: 0.3844 - val_accuracy: 0.8472</code></pre>
 </div>
 <div id="create-a-smaller-model" class="section level3">
 <h3>Create a smaller model</h3>
 <p>Let’s create a model with less hidden units to compare against the baseline model that we just created:</p>
 <div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb13-1" data-line-number="1">smaller_model &lt;-<span class="st"> </span></a>
 <a class="sourceLine" id="cb13-2" data-line-number="2"><span class="st">  </span><span class="kw"><a href="../../../keras/reference/keras_model_sequential.html">keras_model_sequential</a></span>() <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb13-3" data-line-number="3"><span class="st">  </span><span class="kw"><a href="../../../keras/reference/layer_dense.html">layer_dense</a></span>(<span class="dt">units =</span> <span class="dv">4</span>, <span class="dt">activation =</span> <span class="st">"relu"</span>, <span class="dt">input_shape =</span> <span class="dv">10000</span>) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb13-3" data-line-number="3"><span class="st">  </span><span class="kw"><a href="../../../keras/reference/layer_dense.html">layer_dense</a></span>(<span class="dt">units =</span> <span class="dv">4</span>, <span class="dt">activation =</span> <span class="st">"relu"</span>, <span class="dt">input_shape =</span> num_words) <span class="op">%&gt;%</span></a>
 <a class="sourceLine" id="cb13-4" data-line-number="4"><span class="st">  </span><span class="kw"><a href="../../../keras/reference/layer_dense.html">layer_dense</a></span>(<span class="dt">units =</span> <span class="dv">4</span>, <span class="dt">activation =</span> <span class="st">"relu"</span>) <span class="op">%&gt;%</span></a>
 <a class="sourceLine" id="cb13-5" data-line-number="5"><span class="st">  </span><span class="kw"><a href="../../../keras/reference/layer_dense.html">layer_dense</a></span>(<span class="dt">units =</span> <span class="dv">1</span>, <span class="dt">activation =</span> <span class="st">"sigmoid"</span>)</a>
 <a class="sourceLine" id="cb13-6" data-line-number="6"></a>
@@ -171,14 +171,14 @@ menu:
 ## ___________________________________________________________________________
 ## Layer (type)                     Output Shape                  Param #     
 ## ===========================================================================
-## dense_3 (Dense)                  (None, 4)                     40004       
+## dense_3 (Dense)                  (None, 4)                     4004        
 ## ___________________________________________________________________________
 ## dense_4 (Dense)                  (None, 4)                     20          
 ## ___________________________________________________________________________
 ## dense_5 (Dense)                  (None, 1)                     5           
 ## ===========================================================================
-## Total params: 40,029
-## Trainable params: 40,029
+## Total params: 4,029
+## Trainable params: 4,029
 ## Non-trainable params: 0
 ## ___________________________________________________________________________</code></pre>
 <p>And train the model using the same data:</p>
@@ -192,52 +192,52 @@ menu:
 <a class="sourceLine" id="cb15-8" data-line-number="8">)</a></code></pre></div>
 <pre><code>## Train on 25000 samples, validate on 25000 samples
 ## Epoch 1/20
-## 25000/25000 - 2s - loss: 0.6348 - accuracy: 0.6977 - val_loss: 0.5703 - val_accuracy: 0.8078
+## 25000/25000 - 1s - loss: 0.5998 - accuracy: 0.6938 - val_loss: 0.4877 - val_accuracy: 0.8007
 ## Epoch 2/20
-## 25000/25000 - 1s - loss: 0.4840 - accuracy: 0.8559 - val_loss: 0.4365 - val_accuracy: 0.8645
+## 25000/25000 - 0s - loss: 0.4245 - accuracy: 0.8296 - val_loss: 0.3876 - val_accuracy: 0.8445
 ## Epoch 3/20
-## 25000/25000 - 1s - loss: 0.3525 - accuracy: 0.8973 - val_loss: 0.3481 - val_accuracy: 0.8803
+## 25000/25000 - 0s - loss: 0.3587 - accuracy: 0.8571 - val_loss: 0.3536 - val_accuracy: 0.8544
 ## Epoch 4/20
-## 25000/25000 - 1s - loss: 0.2716 - accuracy: 0.9153 - val_loss: 0.3076 - val_accuracy: 0.8854
+## 25000/25000 - 0s - loss: 0.3317 - accuracy: 0.8655 - val_loss: 0.3398 - val_accuracy: 0.8587
 ## Epoch 5/20
-## 25000/25000 - 1s - loss: 0.2246 - accuracy: 0.9267 - val_loss: 0.2898 - val_accuracy: 0.8872
+## 25000/25000 - 0s - loss: 0.3178 - accuracy: 0.8699 - val_loss: 0.3327 - val_accuracy: 0.8590
 ## Epoch 6/20
-## 25000/25000 - 1s - loss: 0.1940 - accuracy: 0.9371 - val_loss: 0.2847 - val_accuracy: 0.8870
+## 25000/25000 - 0s - loss: 0.3100 - accuracy: 0.8733 - val_loss: 0.3317 - val_accuracy: 0.8593
 ## Epoch 7/20
-## 25000/25000 - 1s - loss: 0.1720 - accuracy: 0.9444 - val_loss: 0.2852 - val_accuracy: 0.8880
+## 25000/25000 - 0s - loss: 0.3052 - accuracy: 0.8745 - val_loss: 0.3286 - val_accuracy: 0.8608
 ## Epoch 8/20
-## 25000/25000 - 1s - loss: 0.1547 - accuracy: 0.9497 - val_loss: 0.2904 - val_accuracy: 0.8854
+## 25000/25000 - 0s - loss: 0.3026 - accuracy: 0.8752 - val_loss: 0.3285 - val_accuracy: 0.8603
 ## Epoch 9/20
-## 25000/25000 - 1s - loss: 0.1402 - accuracy: 0.9557 - val_loss: 0.2982 - val_accuracy: 0.8845
+## 25000/25000 - 0s - loss: 0.3003 - accuracy: 0.8791 - val_loss: 0.3290 - val_accuracy: 0.8599
 ## Epoch 10/20
-## 25000/25000 - 1s - loss: 0.1282 - accuracy: 0.9598 - val_loss: 0.3084 - val_accuracy: 0.8827
+## 25000/25000 - 0s - loss: 0.2996 - accuracy: 0.8771 - val_loss: 0.3291 - val_accuracy: 0.8600
 ## Epoch 11/20
-## 25000/25000 - 1s - loss: 0.1172 - accuracy: 0.9643 - val_loss: 0.3190 - val_accuracy: 0.8798
+## 25000/25000 - 0s - loss: 0.2986 - accuracy: 0.8782 - val_loss: 0.3318 - val_accuracy: 0.8583
 ## Epoch 12/20
-## 25000/25000 - 1s - loss: 0.1079 - accuracy: 0.9677 - val_loss: 0.3319 - val_accuracy: 0.8772
+## 25000/25000 - 0s - loss: 0.2985 - accuracy: 0.8774 - val_loss: 0.3299 - val_accuracy: 0.8590
 ## Epoch 13/20
-## 25000/25000 - 1s - loss: 0.0992 - accuracy: 0.9718 - val_loss: 0.3454 - val_accuracy: 0.8752
+## 25000/25000 - 0s - loss: 0.2976 - accuracy: 0.8775 - val_loss: 0.3325 - val_accuracy: 0.8578
 ## Epoch 14/20
-## 25000/25000 - 1s - loss: 0.0916 - accuracy: 0.9749 - val_loss: 0.3602 - val_accuracy: 0.8734
+## 25000/25000 - 0s - loss: 0.2987 - accuracy: 0.8777 - val_loss: 0.3303 - val_accuracy: 0.8594
 ## Epoch 15/20
-## 25000/25000 - 1s - loss: 0.0853 - accuracy: 0.9768 - val_loss: 0.3743 - val_accuracy: 0.8720
+## 25000/25000 - 0s - loss: 0.2970 - accuracy: 0.8785 - val_loss: 0.3308 - val_accuracy: 0.8591
 ## Epoch 16/20
-## 25000/25000 - 1s - loss: 0.0785 - accuracy: 0.9796 - val_loss: 0.3913 - val_accuracy: 0.8693
+## 25000/25000 - 0s - loss: 0.2966 - accuracy: 0.8794 - val_loss: 0.3328 - val_accuracy: 0.8586
 ## Epoch 17/20
-## 25000/25000 - 1s - loss: 0.0721 - accuracy: 0.9826 - val_loss: 0.4062 - val_accuracy: 0.8688
+## 25000/25000 - 0s - loss: 0.2970 - accuracy: 0.8787 - val_loss: 0.3319 - val_accuracy: 0.8590
 ## Epoch 18/20
-## 25000/25000 - 1s - loss: 0.0666 - accuracy: 0.9847 - val_loss: 0.4238 - val_accuracy: 0.8661
+## 25000/25000 - 0s - loss: 0.2971 - accuracy: 0.8774 - val_loss: 0.3320 - val_accuracy: 0.8585
 ## Epoch 19/20
-## 25000/25000 - 1s - loss: 0.0615 - accuracy: 0.9870 - val_loss: 0.4423 - val_accuracy: 0.8642
+## 25000/25000 - 0s - loss: 0.2970 - accuracy: 0.8777 - val_loss: 0.3327 - val_accuracy: 0.8580
 ## Epoch 20/20
-## 25000/25000 - 1s - loss: 0.0570 - accuracy: 0.9886 - val_loss: 0.4585 - val_accuracy: 0.8634</code></pre>
+## 25000/25000 - 0s - loss: 0.2967 - accuracy: 0.8782 - val_loss: 0.3327 - val_accuracy: 0.8578</code></pre>
 </div>
 <div id="create-a-bigger-model" class="section level3">
 <h3>Create a bigger model</h3>
 <p>Next, let’s add to this benchmark a network that has much more capacity, far more than the problem would warrant:</p>
 <div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb17-1" data-line-number="1">bigger_model &lt;-<span class="st"> </span></a>
 <a class="sourceLine" id="cb17-2" data-line-number="2"><span class="st">  </span><span class="kw"><a href="../../../keras/reference/keras_model_sequential.html">keras_model_sequential</a></span>() <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb17-3" data-line-number="3"><span class="st">  </span><span class="kw"><a href="../../../keras/reference/layer_dense.html">layer_dense</a></span>(<span class="dt">units =</span> <span class="dv">512</span>, <span class="dt">activation =</span> <span class="st">"relu"</span>, <span class="dt">input_shape =</span> <span class="dv">10000</span>) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb17-3" data-line-number="3"><span class="st">  </span><span class="kw"><a href="../../../keras/reference/layer_dense.html">layer_dense</a></span>(<span class="dt">units =</span> <span class="dv">512</span>, <span class="dt">activation =</span> <span class="st">"relu"</span>, <span class="dt">input_shape =</span> num_words) <span class="op">%&gt;%</span></a>
 <a class="sourceLine" id="cb17-4" data-line-number="4"><span class="st">  </span><span class="kw"><a href="../../../keras/reference/layer_dense.html">layer_dense</a></span>(<span class="dt">units =</span> <span class="dv">512</span>, <span class="dt">activation =</span> <span class="st">"relu"</span>) <span class="op">%&gt;%</span></a>
 <a class="sourceLine" id="cb17-5" data-line-number="5"><span class="st">  </span><span class="kw"><a href="../../../keras/reference/layer_dense.html">layer_dense</a></span>(<span class="dt">units =</span> <span class="dv">1</span>, <span class="dt">activation =</span> <span class="st">"sigmoid"</span>)</a>
 <a class="sourceLine" id="cb17-6" data-line-number="6"></a>
@@ -252,14 +252,14 @@ menu:
 ## ___________________________________________________________________________
 ## Layer (type)                     Output Shape                  Param #     
 ## ===========================================================================
-## dense_6 (Dense)                  (None, 512)                   5120512     
+## dense_6 (Dense)                  (None, 512)                   512512      
 ## ___________________________________________________________________________
 ## dense_7 (Dense)                  (None, 512)                   262656      
 ## ___________________________________________________________________________
 ## dense_8 (Dense)                  (None, 1)                     513         
 ## ===========================================================================
-## Total params: 5,383,681
-## Trainable params: 5,383,681
+## Total params: 775,681
+## Trainable params: 775,681
 ## Non-trainable params: 0
 ## ___________________________________________________________________________</code></pre>
 <p>And, again, train the model using the same data:</p>
@@ -273,45 +273,45 @@ menu:
 <a class="sourceLine" id="cb19-8" data-line-number="8">)</a></code></pre></div>
 <pre><code>## Train on 25000 samples, validate on 25000 samples
 ## Epoch 1/20
-## 25000/25000 - 8s - loss: 0.3475 - accuracy: 0.8476 - val_loss: 0.2969 - val_accuracy: 0.8788
+## 25000/25000 - 1s - loss: 0.4221 - accuracy: 0.8059 - val_loss: 0.3326 - val_accuracy: 0.8576
 ## Epoch 2/20
-## 25000/25000 - 13s - loss: 0.1494 - accuracy: 0.9464 - val_loss: 0.3255 - val_accuracy: 0.8750
+## 25000/25000 - 1s - loss: 0.2912 - accuracy: 0.8794 - val_loss: 0.3247 - val_accuracy: 0.8583
 ## Epoch 3/20
-## 25000/25000 - 8s - loss: 0.0525 - accuracy: 0.9844 - val_loss: 0.4329 - val_accuracy: 0.8682
+## 25000/25000 - 1s - loss: 0.2273 - accuracy: 0.9099 - val_loss: 0.3391 - val_accuracy: 0.8573
 ## Epoch 4/20
-## 25000/25000 - 5s - loss: 0.0081 - accuracy: 0.9990 - val_loss: 0.5896 - val_accuracy: 0.8663
+## 25000/25000 - 1s - loss: 0.1112 - accuracy: 0.9655 - val_loss: 0.4152 - val_accuracy: 0.8520
 ## Epoch 5/20
-## 25000/25000 - 6s - loss: 0.0011 - accuracy: 1.0000 - val_loss: 0.6770 - val_accuracy: 0.8699
+## 25000/25000 - 1s - loss: 0.0257 - accuracy: 0.9953 - val_loss: 0.5339 - val_accuracy: 0.8483
 ## Epoch 6/20
-## 25000/25000 - 6s - loss: 2.5368e-04 - accuracy: 1.0000 - val_loss: 0.7254 - val_accuracy: 0.8697
+## 25000/25000 - 1s - loss: 0.0065 - accuracy: 0.9995 - val_loss: 0.6121 - val_accuracy: 0.8518
 ## Epoch 7/20
-## 25000/25000 - 6s - loss: 1.5010e-04 - accuracy: 1.0000 - val_loss: 0.7573 - val_accuracy: 0.8694
+## 25000/25000 - 1s - loss: 0.0015 - accuracy: 1.0000 - val_loss: 0.6539 - val_accuracy: 0.8532
 ## Epoch 8/20
-## 25000/25000 - 6s - loss: 1.0565e-04 - accuracy: 1.0000 - val_loss: 0.7823 - val_accuracy: 0.8694
+## 25000/25000 - 1s - loss: 6.4431e-04 - accuracy: 1.0000 - val_loss: 0.6855 - val_accuracy: 0.8538
 ## Epoch 9/20
-## 25000/25000 - 6s - loss: 7.9126e-05 - accuracy: 1.0000 - val_loss: 0.8033 - val_accuracy: 0.8695
+## 25000/25000 - 1s - loss: 4.4559e-04 - accuracy: 1.0000 - val_loss: 0.7098 - val_accuracy: 0.8544
 ## Epoch 10/20
-## 25000/25000 - 6s - loss: 6.1555e-05 - accuracy: 1.0000 - val_loss: 0.8215 - val_accuracy: 0.8701
+## 25000/25000 - 1s - loss: 3.4013e-04 - accuracy: 1.0000 - val_loss: 0.7277 - val_accuracy: 0.8546
 ## Epoch 11/20
-## 25000/25000 - 6s - loss: 4.9158e-05 - accuracy: 1.0000 - val_loss: 0.8392 - val_accuracy: 0.8696
+## 25000/25000 - 1s - loss: 2.7061e-04 - accuracy: 1.0000 - val_loss: 0.7426 - val_accuracy: 0.8544
 ## Epoch 12/20
-## 25000/25000 - 6s - loss: 4.0122e-05 - accuracy: 1.0000 - val_loss: 0.8546 - val_accuracy: 0.8698
+## 25000/25000 - 1s - loss: 2.1980e-04 - accuracy: 1.0000 - val_loss: 0.7567 - val_accuracy: 0.8545
 ## Epoch 13/20
-## 25000/25000 - 5s - loss: 3.3298e-05 - accuracy: 1.0000 - val_loss: 0.8685 - val_accuracy: 0.8701
+## 25000/25000 - 1s - loss: 1.8250e-04 - accuracy: 1.0000 - val_loss: 0.7702 - val_accuracy: 0.8547
 ## Epoch 14/20
-## 25000/25000 - 5s - loss: 2.8022e-05 - accuracy: 1.0000 - val_loss: 0.8825 - val_accuracy: 0.8701
+## 25000/25000 - 1s - loss: 1.5297e-04 - accuracy: 1.0000 - val_loss: 0.7829 - val_accuracy: 0.8550
 ## Epoch 15/20
-## 25000/25000 - 5s - loss: 2.3808e-05 - accuracy: 1.0000 - val_loss: 0.8948 - val_accuracy: 0.8700
+## 25000/25000 - 1s - loss: 1.2979e-04 - accuracy: 1.0000 - val_loss: 0.7949 - val_accuracy: 0.8546
 ## Epoch 16/20
-## 25000/25000 - 5s - loss: 2.0451e-05 - accuracy: 1.0000 - val_loss: 0.9070 - val_accuracy: 0.8699
+## 25000/25000 - 1s - loss: 1.1137e-04 - accuracy: 1.0000 - val_loss: 0.8063 - val_accuracy: 0.8548
 ## Epoch 17/20
-## 25000/25000 - 5s - loss: 1.7727e-05 - accuracy: 1.0000 - val_loss: 0.9184 - val_accuracy: 0.8700
+## 25000/25000 - 1s - loss: 9.5803e-05 - accuracy: 1.0000 - val_loss: 0.8175 - val_accuracy: 0.8544
 ## Epoch 18/20
-## 25000/25000 - 6s - loss: 1.5494e-05 - accuracy: 1.0000 - val_loss: 0.9290 - val_accuracy: 0.8702
+## 25000/25000 - 1s - loss: 8.3181e-05 - accuracy: 1.0000 - val_loss: 0.8283 - val_accuracy: 0.8542
 ## Epoch 19/20
-## 25000/25000 - 6s - loss: 1.3627e-05 - accuracy: 1.0000 - val_loss: 0.9392 - val_accuracy: 0.8701
+## 25000/25000 - 1s - loss: 7.2507e-05 - accuracy: 1.0000 - val_loss: 0.8388 - val_accuracy: 0.8544
 ## Epoch 20/20
-## 25000/25000 - 6s - loss: 1.2042e-05 - accuracy: 1.0000 - val_loss: 0.9492 - val_accuracy: 0.8703</code></pre>
+## 25000/25000 - 1s - loss: 6.3577e-05 - accuracy: 1.0000 - val_loss: 0.8491 - val_accuracy: 0.8545</code></pre>
 </div>
 <div id="plot-the-training-and-validation-loss" class="section level3">
 <h3>Plot the training and validation loss</h3>
@@ -329,10 +329,10 @@ The smaller network begins overfitting a litle later than the baseline model and
 <a class="sourceLine" id="cb21-10" data-line-number="10"><span class="st">  </span><span class="kw"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span>(<span class="dt">rowname =</span> <span class="kw"><a href="https://rdrr.io/r/base/integer.html">as.integer</a></span>(rowname)) <span class="op">%&gt;%</span></a>
 <a class="sourceLine" id="cb21-11" data-line-number="11"><span class="st">  </span><span class="kw"><a href="https://tidyr.tidyverse.org/reference/gather.html">gather</a></span>(<span class="dt">key =</span> <span class="st">"type"</span>, <span class="dt">value =</span> <span class="st">"value"</span>, <span class="op">-</span>rowname)</a>
 <a class="sourceLine" id="cb21-12" data-line-number="12">  </a>
-<a class="sourceLine" id="cb21-13" data-line-number="13"><span class="kw"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span>(compare_cx, <span class="kw"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span>(<span class="dt">x =</span> rowname, <span class="dt">y =</span> value, <span class="dt">color =</span> type)) <span class="op">+</span></a>
-<a class="sourceLine" id="cb21-14" data-line-number="14"><span class="st">  </span><span class="kw"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html">geom_line</a></span>() <span class="op">+</span></a>
-<a class="sourceLine" id="cb21-15" data-line-number="15"><span class="st">  </span><span class="kw"><a href="https://ggplot2.tidyverse.org/reference/labs.html">xlab</a></span>(<span class="st">"epoch"</span>) <span class="op">+</span></a>
-<a class="sourceLine" id="cb21-16" data-line-number="16"><span class="st">  </span><span class="kw"><a href="https://ggplot2.tidyverse.org/reference/labs.html">ylab</a></span>(<span class="st">"loss"</span>)</a></code></pre></div>
+<a class="sourceLine" id="cb21-13" data-line-number="13"><span class="kw"><a href="https://rdrr.io/pkg/ggplot2/man/ggplot.html">ggplot</a></span>(compare_cx, <span class="kw"><a href="https://rdrr.io/pkg/ggplot2/man/aes.html">aes</a></span>(<span class="dt">x =</span> rowname, <span class="dt">y =</span> value, <span class="dt">color =</span> type)) <span class="op">+</span></a>
+<a class="sourceLine" id="cb21-14" data-line-number="14"><span class="st">  </span><span class="kw"><a href="https://rdrr.io/pkg/ggplot2/man/geom_path.html">geom_line</a></span>() <span class="op">+</span></a>
+<a class="sourceLine" id="cb21-15" data-line-number="15"><span class="st">  </span><span class="kw"><a href="https://rdrr.io/pkg/ggplot2/man/labs.html">xlab</a></span>(<span class="st">"epoch"</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb21-16" data-line-number="16"><span class="st">  </span><span class="kw"><a href="https://rdrr.io/pkg/ggplot2/man/labs.html">ylab</a></span>(<span class="st">"loss"</span>)</a></code></pre></div>
 <p><img src="/tutorials/beginners/basic-ml/tutorial_overfit_underfit_files/figure-html/unnamed-chunk-11-1.png" width="672"></p>
 </div>
 </div>
@@ -349,7 +349,7 @@ The smaller network begins overfitting a litle later than the baseline model and
 <p>In Keras, weight regularization is added by passing weight regularizer instances to layers. Let’s add L2 weight regularization to the baseline model now.</p>
 <div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb22-1" data-line-number="1">l2_model &lt;-<span class="st"> </span></a>
 <a class="sourceLine" id="cb22-2" data-line-number="2"><span class="st">  </span><span class="kw"><a href="../../../keras/reference/keras_model_sequential.html">keras_model_sequential</a></span>() <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb22-3" data-line-number="3"><span class="st">  </span><span class="kw"><a href="../../../keras/reference/layer_dense.html">layer_dense</a></span>(<span class="dt">units =</span> <span class="dv">16</span>, <span class="dt">activation =</span> <span class="st">"relu"</span>, <span class="dt">input_shape =</span> <span class="dv">10000</span>,</a>
+<a class="sourceLine" id="cb22-3" data-line-number="3"><span class="st">  </span><span class="kw"><a href="../../../keras/reference/layer_dense.html">layer_dense</a></span>(<span class="dt">units =</span> <span class="dv">16</span>, <span class="dt">activation =</span> <span class="st">"relu"</span>, <span class="dt">input_shape =</span> num_words,</a>
 <a class="sourceLine" id="cb22-4" data-line-number="4">              <span class="dt">kernel_regularizer =</span> <span class="kw"><a href="../../../keras/reference/regularizer_l1.html">regularizer_l2</a></span>(<span class="dt">l =</span> <span class="fl">0.001</span>)) <span class="op">%&gt;%</span></a>
 <a class="sourceLine" id="cb22-5" data-line-number="5"><span class="st">  </span><span class="kw"><a href="../../../keras/reference/layer_dense.html">layer_dense</a></span>(<span class="dt">units =</span> <span class="dv">16</span>, <span class="dt">activation =</span> <span class="st">"relu"</span>,</a>
 <a class="sourceLine" id="cb22-6" data-line-number="6">              <span class="dt">kernel_regularizer =</span> <span class="kw"><a href="../../../keras/reference/regularizer_l1.html">regularizer_l2</a></span>(<span class="dt">l =</span> <span class="fl">0.001</span>)) <span class="op">%&gt;%</span></a>
@@ -371,45 +371,45 @@ The smaller network begins overfitting a litle later than the baseline model and
 <a class="sourceLine" id="cb22-22" data-line-number="22">)</a></code></pre></div>
 <pre><code>## Train on 25000 samples, validate on 25000 samples
 ## Epoch 1/20
-## 25000/25000 - 2s - loss: 0.5090 - accuracy: 0.8174 - val_loss: 0.3749 - val_accuracy: 0.8760
+## 25000/25000 - 1s - loss: 0.6001 - accuracy: 0.7384 - val_loss: 0.4705 - val_accuracy: 0.8252
 ## Epoch 2/20
-## 25000/25000 - 1s - loss: 0.3006 - accuracy: 0.9096 - val_loss: 0.3352 - val_accuracy: 0.8868
+## 25000/25000 - 0s - loss: 0.4124 - accuracy: 0.8475 - val_loss: 0.3867 - val_accuracy: 0.8556
 ## Epoch 3/20
-## 25000/25000 - 1s - loss: 0.2519 - accuracy: 0.9315 - val_loss: 0.3383 - val_accuracy: 0.8856
+## 25000/25000 - 0s - loss: 0.3659 - accuracy: 0.8667 - val_loss: 0.3746 - val_accuracy: 0.8584
 ## Epoch 4/20
-## 25000/25000 - 1s - loss: 0.2295 - accuracy: 0.9401 - val_loss: 0.3507 - val_accuracy: 0.8813
+## 25000/25000 - 0s - loss: 0.3513 - accuracy: 0.8722 - val_loss: 0.3711 - val_accuracy: 0.8591
 ## Epoch 5/20
-## 25000/25000 - 1s - loss: 0.2151 - accuracy: 0.9470 - val_loss: 0.3671 - val_accuracy: 0.8772
+## 25000/25000 - 0s - loss: 0.3437 - accuracy: 0.8743 - val_loss: 0.3658 - val_accuracy: 0.8599
 ## Epoch 6/20
-## 25000/25000 - 1s - loss: 0.2047 - accuracy: 0.9512 - val_loss: 0.3792 - val_accuracy: 0.8750
+## 25000/25000 - 0s - loss: 0.3385 - accuracy: 0.8769 - val_loss: 0.3640 - val_accuracy: 0.8610
 ## Epoch 7/20
-## 25000/25000 - 1s - loss: 0.1960 - accuracy: 0.9546 - val_loss: 0.3927 - val_accuracy: 0.8724
+## 25000/25000 - 0s - loss: 0.3355 - accuracy: 0.8770 - val_loss: 0.3626 - val_accuracy: 0.8599
 ## Epoch 8/20
-## 25000/25000 - 1s - loss: 0.1909 - accuracy: 0.9555 - val_loss: 0.4108 - val_accuracy: 0.8703
+## 25000/25000 - 0s - loss: 0.3339 - accuracy: 0.8769 - val_loss: 0.3671 - val_accuracy: 0.8572
 ## Epoch 9/20
-## 25000/25000 - 1s - loss: 0.1859 - accuracy: 0.9578 - val_loss: 0.4244 - val_accuracy: 0.8669
+## 25000/25000 - 0s - loss: 0.3312 - accuracy: 0.8787 - val_loss: 0.3630 - val_accuracy: 0.8594
 ## Epoch 10/20
-## 25000/25000 - 1s - loss: 0.1789 - accuracy: 0.9621 - val_loss: 0.4470 - val_accuracy: 0.8632
+## 25000/25000 - 0s - loss: 0.3264 - accuracy: 0.8809 - val_loss: 0.3671 - val_accuracy: 0.8558
 ## Epoch 11/20
-## 25000/25000 - 1s - loss: 0.1754 - accuracy: 0.9633 - val_loss: 0.4487 - val_accuracy: 0.8642
+## 25000/25000 - 0s - loss: 0.3256 - accuracy: 0.8793 - val_loss: 0.3596 - val_accuracy: 0.8602
 ## Epoch 12/20
-## 25000/25000 - 1s - loss: 0.1700 - accuracy: 0.9647 - val_loss: 0.4590 - val_accuracy: 0.8626
+## 25000/25000 - 0s - loss: 0.3195 - accuracy: 0.8811 - val_loss: 0.3593 - val_accuracy: 0.8587
 ## Epoch 13/20
-## 25000/25000 - 1s - loss: 0.1688 - accuracy: 0.9663 - val_loss: 0.4725 - val_accuracy: 0.8623
+## 25000/25000 - 0s - loss: 0.3153 - accuracy: 0.8838 - val_loss: 0.3610 - val_accuracy: 0.8582
 ## Epoch 14/20
-## 25000/25000 - 1s - loss: 0.1672 - accuracy: 0.9649 - val_loss: 0.4846 - val_accuracy: 0.8608
+## 25000/25000 - 0s - loss: 0.3128 - accuracy: 0.8856 - val_loss: 0.3592 - val_accuracy: 0.8596
 ## Epoch 15/20
-## 25000/25000 - 1s - loss: 0.1624 - accuracy: 0.9680 - val_loss: 0.5064 - val_accuracy: 0.8578
+## 25000/25000 - 0s - loss: 0.3079 - accuracy: 0.8869 - val_loss: 0.3601 - val_accuracy: 0.8595
 ## Epoch 16/20
-## 25000/25000 - 1s - loss: 0.1612 - accuracy: 0.9686 - val_loss: 0.5127 - val_accuracy: 0.8571
+## 25000/25000 - 0s - loss: 0.3053 - accuracy: 0.8885 - val_loss: 0.3631 - val_accuracy: 0.8579
 ## Epoch 17/20
-## 25000/25000 - 1s - loss: 0.1582 - accuracy: 0.9695 - val_loss: 0.5200 - val_accuracy: 0.8584
+## 25000/25000 - 0s - loss: 0.3004 - accuracy: 0.8896 - val_loss: 0.3657 - val_accuracy: 0.8564
 ## Epoch 18/20
-## 25000/25000 - 1s - loss: 0.1542 - accuracy: 0.9715 - val_loss: 0.5316 - val_accuracy: 0.8571
+## 25000/25000 - 0s - loss: 0.2982 - accuracy: 0.8908 - val_loss: 0.3651 - val_accuracy: 0.8574
 ## Epoch 19/20
-## 25000/25000 - 1s - loss: 0.1521 - accuracy: 0.9732 - val_loss: 0.5488 - val_accuracy: 0.8551
+## 25000/25000 - 0s - loss: 0.2927 - accuracy: 0.8940 - val_loss: 0.3664 - val_accuracy: 0.8562
 ## Epoch 20/20
-## 25000/25000 - 1s - loss: 0.1492 - accuracy: 0.9739 - val_loss: 0.5566 - val_accuracy: 0.8550</code></pre>
+## 25000/25000 - 0s - loss: 0.2911 - accuracy: 0.8950 - val_loss: 0.3756 - val_accuracy: 0.8539</code></pre>
 <p><code>l2(0.001)</code> means that every coefficient in the weight matrix of the layer will add 0.001 * <code>weight_coefficient_value</code> to the total loss of the network. Note that because this penalty is only added at training time, the loss for this network will be much higher at training than at test time.</p>
 <p>Here’s the impact of our L2 regularization penalty:</p>
 <div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb24-1" data-line-number="1">compare_cx &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span>(</a>
@@ -422,10 +422,10 @@ The smaller network begins overfitting a litle later than the baseline model and
 <a class="sourceLine" id="cb24-8" data-line-number="8"><span class="st">  </span><span class="kw"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span>(<span class="dt">rowname =</span> <span class="kw"><a href="https://rdrr.io/r/base/integer.html">as.integer</a></span>(rowname)) <span class="op">%&gt;%</span></a>
 <a class="sourceLine" id="cb24-9" data-line-number="9"><span class="st">  </span><span class="kw"><a href="https://tidyr.tidyverse.org/reference/gather.html">gather</a></span>(<span class="dt">key =</span> <span class="st">"type"</span>, <span class="dt">value =</span> <span class="st">"value"</span>, <span class="op">-</span>rowname)</a>
 <a class="sourceLine" id="cb24-10" data-line-number="10">  </a>
-<a class="sourceLine" id="cb24-11" data-line-number="11"><span class="kw"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span>(compare_cx, <span class="kw"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span>(<span class="dt">x =</span> rowname, <span class="dt">y =</span> value, <span class="dt">color =</span> type)) <span class="op">+</span></a>
-<a class="sourceLine" id="cb24-12" data-line-number="12"><span class="st">  </span><span class="kw"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html">geom_line</a></span>() <span class="op">+</span></a>
-<a class="sourceLine" id="cb24-13" data-line-number="13"><span class="st">  </span><span class="kw"><a href="https://ggplot2.tidyverse.org/reference/labs.html">xlab</a></span>(<span class="st">"epoch"</span>) <span class="op">+</span></a>
-<a class="sourceLine" id="cb24-14" data-line-number="14"><span class="st">  </span><span class="kw"><a href="https://ggplot2.tidyverse.org/reference/labs.html">ylab</a></span>(<span class="st">"loss"</span>)</a></code></pre></div>
+<a class="sourceLine" id="cb24-11" data-line-number="11"><span class="kw"><a href="https://rdrr.io/pkg/ggplot2/man/ggplot.html">ggplot</a></span>(compare_cx, <span class="kw"><a href="https://rdrr.io/pkg/ggplot2/man/aes.html">aes</a></span>(<span class="dt">x =</span> rowname, <span class="dt">y =</span> value, <span class="dt">color =</span> type)) <span class="op">+</span></a>
+<a class="sourceLine" id="cb24-12" data-line-number="12"><span class="st">  </span><span class="kw"><a href="https://rdrr.io/pkg/ggplot2/man/geom_path.html">geom_line</a></span>() <span class="op">+</span></a>
+<a class="sourceLine" id="cb24-13" data-line-number="13"><span class="st">  </span><span class="kw"><a href="https://rdrr.io/pkg/ggplot2/man/labs.html">xlab</a></span>(<span class="st">"epoch"</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb24-14" data-line-number="14"><span class="st">  </span><span class="kw"><a href="https://rdrr.io/pkg/ggplot2/man/labs.html">ylab</a></span>(<span class="st">"loss"</span>)</a></code></pre></div>
 <p><img src="/tutorials/beginners/basic-ml/tutorial_overfit_underfit_files/figure-html/unnamed-chunk-13-1.png" width="672"></p>
 <p>As you can see, the L2 regularized model has become much more resistant to overfitting than the baseline model, even though both models have the same number of parameters.</p>
 </div>
@@ -436,7 +436,7 @@ The smaller network begins overfitting a litle later than the baseline model and
 <p>Let’s add two dropout layers in our IMDB network to see how well they do at reducing overfitting:</p>
 <div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb25-1" data-line-number="1">dropout_model &lt;-<span class="st"> </span></a>
 <a class="sourceLine" id="cb25-2" data-line-number="2"><span class="st">  </span><span class="kw"><a href="../../../keras/reference/keras_model_sequential.html">keras_model_sequential</a></span>() <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb25-3" data-line-number="3"><span class="st">  </span><span class="kw"><a href="../../../keras/reference/layer_dense.html">layer_dense</a></span>(<span class="dt">units =</span> <span class="dv">16</span>, <span class="dt">activation =</span> <span class="st">"relu"</span>, <span class="dt">input_shape =</span> <span class="dv">10000</span>) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb25-3" data-line-number="3"><span class="st">  </span><span class="kw"><a href="../../../keras/reference/layer_dense.html">layer_dense</a></span>(<span class="dt">units =</span> <span class="dv">16</span>, <span class="dt">activation =</span> <span class="st">"relu"</span>, <span class="dt">input_shape =</span> num_words) <span class="op">%&gt;%</span></a>
 <a class="sourceLine" id="cb25-4" data-line-number="4"><span class="st">  </span><span class="kw"><a href="../../../keras/reference/layer_dropout.html">layer_dropout</a></span>(<span class="fl">0.6</span>) <span class="op">%&gt;%</span></a>
 <a class="sourceLine" id="cb25-5" data-line-number="5"><span class="st">  </span><span class="kw"><a href="../../../keras/reference/layer_dense.html">layer_dense</a></span>(<span class="dt">units =</span> <span class="dv">16</span>, <span class="dt">activation =</span> <span class="st">"relu"</span>) <span class="op">%&gt;%</span></a>
 <a class="sourceLine" id="cb25-6" data-line-number="6"><span class="st">  </span><span class="kw"><a href="../../../keras/reference/layer_dropout.html">layer_dropout</a></span>(<span class="fl">0.6</span>) <span class="op">%&gt;%</span></a>
@@ -458,45 +458,45 @@ The smaller network begins overfitting a litle later than the baseline model and
 <a class="sourceLine" id="cb25-22" data-line-number="22">)</a></code></pre></div>
 <pre><code>## Train on 25000 samples, validate on 25000 samples
 ## Epoch 1/20
-## 25000/25000 - 2s - loss: 0.6528 - accuracy: 0.5925 - val_loss: 0.5568 - val_accuracy: 0.8385
+## 25000/25000 - 1s - loss: 0.6918 - accuracy: 0.5286 - val_loss: 0.6619 - val_accuracy: 0.6799
 ## Epoch 2/20
-## 25000/25000 - 1s - loss: 0.5180 - accuracy: 0.7533 - val_loss: 0.3874 - val_accuracy: 0.8746
+## 25000/25000 - 0s - loss: 0.6382 - accuracy: 0.6246 - val_loss: 0.5595 - val_accuracy: 0.8045
 ## Epoch 3/20
-## 25000/25000 - 1s - loss: 0.4224 - accuracy: 0.8270 - val_loss: 0.3180 - val_accuracy: 0.8848
+## 25000/25000 - 0s - loss: 0.5659 - accuracy: 0.6966 - val_loss: 0.4541 - val_accuracy: 0.8354
 ## Epoch 4/20
-## 25000/25000 - 1s - loss: 0.3588 - accuracy: 0.8625 - val_loss: 0.2841 - val_accuracy: 0.8856
+## 25000/25000 - 0s - loss: 0.5221 - accuracy: 0.7331 - val_loss: 0.4089 - val_accuracy: 0.8465
 ## Epoch 5/20
-## 25000/25000 - 1s - loss: 0.3126 - accuracy: 0.8828 - val_loss: 0.2767 - val_accuracy: 0.8880
+## 25000/25000 - 0s - loss: 0.4847 - accuracy: 0.7568 - val_loss: 0.3726 - val_accuracy: 0.8534
 ## Epoch 6/20
-## 25000/25000 - 1s - loss: 0.2758 - accuracy: 0.8975 - val_loss: 0.2797 - val_accuracy: 0.8879
+## 25000/25000 - 0s - loss: 0.4584 - accuracy: 0.7793 - val_loss: 0.3539 - val_accuracy: 0.8549
 ## Epoch 7/20
-## 25000/25000 - 1s - loss: 0.2569 - accuracy: 0.9054 - val_loss: 0.2906 - val_accuracy: 0.8859
+## 25000/25000 - 0s - loss: 0.4371 - accuracy: 0.7982 - val_loss: 0.3470 - val_accuracy: 0.8548
 ## Epoch 8/20
-## 25000/25000 - 1s - loss: 0.2375 - accuracy: 0.9148 - val_loss: 0.3003 - val_accuracy: 0.8859
+## 25000/25000 - 0s - loss: 0.4227 - accuracy: 0.8085 - val_loss: 0.3312 - val_accuracy: 0.8593
 ## Epoch 9/20
-## 25000/25000 - 1s - loss: 0.2184 - accuracy: 0.9220 - val_loss: 0.2999 - val_accuracy: 0.8809
+## 25000/25000 - 0s - loss: 0.4084 - accuracy: 0.8240 - val_loss: 0.3303 - val_accuracy: 0.8595
 ## Epoch 10/20
-## 25000/25000 - 1s - loss: 0.2072 - accuracy: 0.9258 - val_loss: 0.3177 - val_accuracy: 0.8826
+## 25000/25000 - 0s - loss: 0.3979 - accuracy: 0.8314 - val_loss: 0.3259 - val_accuracy: 0.8588
 ## Epoch 11/20
-## 25000/25000 - 1s - loss: 0.1948 - accuracy: 0.9286 - val_loss: 0.3333 - val_accuracy: 0.8816
+## 25000/25000 - 0s - loss: 0.3870 - accuracy: 0.8369 - val_loss: 0.3243 - val_accuracy: 0.8594
 ## Epoch 12/20
-## 25000/25000 - 1s - loss: 0.1862 - accuracy: 0.9330 - val_loss: 0.3606 - val_accuracy: 0.8812
+## 25000/25000 - 0s - loss: 0.3846 - accuracy: 0.8417 - val_loss: 0.3235 - val_accuracy: 0.8596
 ## Epoch 13/20
-## 25000/25000 - 1s - loss: 0.1755 - accuracy: 0.9371 - val_loss: 0.3597 - val_accuracy: 0.8802
+## 25000/25000 - 0s - loss: 0.3783 - accuracy: 0.8399 - val_loss: 0.3231 - val_accuracy: 0.8590
 ## Epoch 14/20
-## 25000/25000 - 1s - loss: 0.1684 - accuracy: 0.9385 - val_loss: 0.3879 - val_accuracy: 0.8760
+## 25000/25000 - 0s - loss: 0.3734 - accuracy: 0.8450 - val_loss: 0.3233 - val_accuracy: 0.8619
 ## Epoch 15/20
-## 25000/25000 - 1s - loss: 0.1599 - accuracy: 0.9404 - val_loss: 0.4106 - val_accuracy: 0.8806
+## 25000/25000 - 0s - loss: 0.3724 - accuracy: 0.8455 - val_loss: 0.3273 - val_accuracy: 0.8599
 ## Epoch 16/20
-## 25000/25000 - 1s - loss: 0.1569 - accuracy: 0.9430 - val_loss: 0.3985 - val_accuracy: 0.8781
+## 25000/25000 - 0s - loss: 0.3640 - accuracy: 0.8478 - val_loss: 0.3242 - val_accuracy: 0.8601
 ## Epoch 17/20
-## 25000/25000 - 1s - loss: 0.1506 - accuracy: 0.9448 - val_loss: 0.4384 - val_accuracy: 0.8798
+## 25000/25000 - 0s - loss: 0.3561 - accuracy: 0.8534 - val_loss: 0.3262 - val_accuracy: 0.8613
 ## Epoch 18/20
-## 25000/25000 - 1s - loss: 0.1438 - accuracy: 0.9470 - val_loss: 0.4312 - val_accuracy: 0.8784
+## 25000/25000 - 0s - loss: 0.3606 - accuracy: 0.8508 - val_loss: 0.3270 - val_accuracy: 0.8603
 ## Epoch 19/20
-## 25000/25000 - 1s - loss: 0.1401 - accuracy: 0.9473 - val_loss: 0.4650 - val_accuracy: 0.8780
+## 25000/25000 - 0s - loss: 0.3542 - accuracy: 0.8561 - val_loss: 0.3288 - val_accuracy: 0.8573
 ## Epoch 20/20
-## 25000/25000 - 1s - loss: 0.1354 - accuracy: 0.9502 - val_loss: 0.4788 - val_accuracy: 0.8785</code></pre>
+## 25000/25000 - 0s - loss: 0.3504 - accuracy: 0.8560 - val_loss: 0.3300 - val_accuracy: 0.8606</code></pre>
 <p>How well did it work?</p>
 <div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb27-1" data-line-number="1">compare_cx &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span>(</a>
 <a class="sourceLine" id="cb27-2" data-line-number="2">  <span class="dt">baseline_train =</span> baseline_history<span class="op">$</span>metrics<span class="op">$</span>loss,</a>
@@ -508,10 +508,10 @@ The smaller network begins overfitting a litle later than the baseline model and
 <a class="sourceLine" id="cb27-8" data-line-number="8"><span class="st">  </span><span class="kw"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span>(<span class="dt">rowname =</span> <span class="kw"><a href="https://rdrr.io/r/base/integer.html">as.integer</a></span>(rowname)) <span class="op">%&gt;%</span></a>
 <a class="sourceLine" id="cb27-9" data-line-number="9"><span class="st">  </span><span class="kw"><a href="https://tidyr.tidyverse.org/reference/gather.html">gather</a></span>(<span class="dt">key =</span> <span class="st">"type"</span>, <span class="dt">value =</span> <span class="st">"value"</span>, <span class="op">-</span>rowname)</a>
 <a class="sourceLine" id="cb27-10" data-line-number="10">  </a>
-<a class="sourceLine" id="cb27-11" data-line-number="11"><span class="kw"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span>(compare_cx, <span class="kw"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span>(<span class="dt">x =</span> rowname, <span class="dt">y =</span> value, <span class="dt">color =</span> type)) <span class="op">+</span></a>
-<a class="sourceLine" id="cb27-12" data-line-number="12"><span class="st">  </span><span class="kw"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html">geom_line</a></span>() <span class="op">+</span></a>
-<a class="sourceLine" id="cb27-13" data-line-number="13"><span class="st">  </span><span class="kw"><a href="https://ggplot2.tidyverse.org/reference/labs.html">xlab</a></span>(<span class="st">"epoch"</span>) <span class="op">+</span></a>
-<a class="sourceLine" id="cb27-14" data-line-number="14"><span class="st">  </span><span class="kw"><a href="https://ggplot2.tidyverse.org/reference/labs.html">ylab</a></span>(<span class="st">"loss"</span>)</a></code></pre></div>
+<a class="sourceLine" id="cb27-11" data-line-number="11"><span class="kw"><a href="https://rdrr.io/pkg/ggplot2/man/ggplot.html">ggplot</a></span>(compare_cx, <span class="kw"><a href="https://rdrr.io/pkg/ggplot2/man/aes.html">aes</a></span>(<span class="dt">x =</span> rowname, <span class="dt">y =</span> value, <span class="dt">color =</span> type)) <span class="op">+</span></a>
+<a class="sourceLine" id="cb27-12" data-line-number="12"><span class="st">  </span><span class="kw"><a href="https://rdrr.io/pkg/ggplot2/man/geom_path.html">geom_line</a></span>() <span class="op">+</span></a>
+<a class="sourceLine" id="cb27-13" data-line-number="13"><span class="st">  </span><span class="kw"><a href="https://rdrr.io/pkg/ggplot2/man/labs.html">xlab</a></span>(<span class="st">"epoch"</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb27-14" data-line-number="14"><span class="st">  </span><span class="kw"><a href="https://rdrr.io/pkg/ggplot2/man/labs.html">ylab</a></span>(<span class="st">"loss"</span>)</a></code></pre></div>
 <p><img src="/tutorials/beginners/basic-ml/tutorial_overfit_underfit_files/figure-html/unnamed-chunk-15-1.png" width="672"></p>
 <p>Adding dropout is a clear improvement over the baseline model.</p>
 <p>To recap: here the most common ways to prevent overfitting in neural networks:</p>
