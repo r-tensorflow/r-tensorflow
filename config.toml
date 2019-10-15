@@ -68,6 +68,13 @@ disqusShortname = "r-tensorflow"
 	identifier = "tutorials-beginners-basic-ml-top"
 	weight = 24
 	url = "/tutorials/beginners/basic-ml/"
+	
+[[menu.main]]
+	name   = "Load and preprocess data"
+	parent = "tutorials-top"
+	identifier = "tutorials-beginners-load-top"
+	weight = 25
+	url = "/tutorials/beginners/load/load_csv/"
 
 [[menu.main]]
 	name   = "Advanced"
