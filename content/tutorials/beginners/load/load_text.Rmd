@@ -1,0 +1,204 @@
+---
+title: "Loading text data"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Tutorial: Basic Classification}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+type: docs
+repo: https://github.com/rstudio/keras
+menu:
+  main:
+    name: "Load text data"
+    identifier: "keras-tutorial-basic-load-text"
+    parent: "tutorials-beginners-load-top"
+    weight: 30
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, eval = TRUE)
+reticulate::use_virtualenv("nightly")
+reticulate::use_condaenv("nightly") # locally
+```
+
+> **Note**: this is the R version of [this tutorial](https://www.tensorflow.org/tutorials/load_data/text) in the TensorFlow oficial webiste.
+
+This tutorial provides an example of how to use `text_line_dataset` to load examples from text files. `text_line_dataset` is designed to create a dataset from a text file, in which each example is a line of text from the original file. This is potentially useful for any text data that is primarily line-based (for example, poetry or error logs).
+
+In this tutorial, we'll use three different English translations of the same work, Homer's Illiad, and train a model to identify the translator given a single line of text.
+
+## Setup
+
+```{r}
+library(keras)
+library(tfdatasets)
+library(tfds)
+library(purrr)
+library(pins)
+```
+
+The texts of the three translations are by:
+
+* [William Cowper](https://en.wikipedia.org/wiki/William_Cowper) — [text](https://storage.googleapis.com/download.tensorflow.org/data/illiad/cowper.txt)
+* [Edward, Earl of Derby](https://en.wikipedia.org/wiki/Edward_Smith-Stanley,_14th_Earl_of_Derby) — [text](https://storage.googleapis.com/download.tensorflow.org/data/illiad/derby.txt)
+* [Samuel Butler](https://en.wikipedia.org/wiki/Samuel_Butler_%28novelist%29) — [text](https://storage.googleapis.com/download.tensorflow.org/data/illiad/butler.txt)
+
+The text files used in this tutorial have undergone some typical preprocessing tasks, mostly removing stuff — document header and footer, line numbers, chapter titles. Download these lightly munged files locally.
+
+```{r}
+DIRECTORY_URL <- "https://storage.googleapis.com/download.tensorflow.org/data/illiad/"
+
+FILE_NAMES <- c("cowper.txt", "derby.txt", "butler.txt")
+
+file_paths <- paste0(DIRECTORY_URL, FILE_NAMES) %>% 
+  pin(name = "texts")
+```
+
+## Load text into datasets
+
+Iterate through the files, loading each one into its own dataset.
+
+Each example needs to be individually labeled, so use `dataset_map` to apply a labeler function to each one. This will iterate over every example in the dataset, returning (example, label) pairs.
+
+```{r}
+labeler <- function(example, index) {
+  list(
+    text = example %>% tf$expand_dims(0L),
+    label = tf$cast(index, tf$int64)
+  )
+}
+
+dataset <- file_paths %>% 
+  imap(function(fpath, index) {
+    text_line_dataset(fpath) %>% 
+      dataset_map(~labeler(.x, index - 1))
+  }) %>% 
+  reduce(dataset_concatenate) %>% 
+  dataset_shuffle(buffer_size = 50000, reshuffle_each_iteration = FALSE)
+```
+
+You can use `dataset_take` and print to see what the (example, label) pairs look like. The numpy property shows each Tensor's value.
+
+```{r}
+dataset %>% 
+  dataset_take(1) %>% 
+  reticulate::as_iterator() %>% 
+  reticulate::iter_next()
+```
+
+It's also recommended to split the dataset into test and train batches:
+
+```{r}
+take_for_test <- 5000
+
+test_dataset <- dataset %>% 
+  dataset_take(take_for_test) %>% 
+  dataset_shuffle(10000) %>% 
+  dataset_batch(32)
+
+train_dataset <- dataset %>% 
+  dataset_skip(take_for_test) %>% 
+  dataset_shuffle(10000) %>% 
+  dataset_batch(32)
+```
+
+
+## Encode text lines as numbers
+
+Machine learning models work on numbers, not words, so the string values need to be converted into lists of numbers. To do that, map each unique word to a unique integer.
+
+First, build a vocabulary by tokenizing the text into a collection of individual unique words. There are a few ways to do this in both 
+TensorFlow and R. For this tutorial we will use the Keras TextVectorization 
+layer.
+
+```{r}
+text_vectorization <- layer_text_vectorization(
+  max_tokens = 1000, 
+  output_mode = "int",
+  split = "whitespace",
+  standardize = "lower_and_strip_punctuation", 
+  output_sequence_length = 15
+)
+```
+
+Next, we run `adapt` which will standardize all text and split it into tokens by 
+whitespace. It will assign an integer value for each token.
+
+```{r}
+# We take a sample of 20 batches of 32 examples to build the vocabulary and 
+# materialize it in order to pass to `adapt`:
+sample_dataset <- train_dataset %>% 
+  dataset_map(~.x$text) %>% 
+  dataset_take(20) %>% 
+  reticulate::iterate() %>% 
+  tf$concat(axis = 0L)
+
+text_vectorization %>% 
+  adapt(data = sample_dataset)
+```
+
+We can then look at the vocabulary, for example:
+
+```{r}
+get_vocabulary(text_vectorization) %>% head()
+```
+
+We can also see the output of this layer:
+
+```{r}
+train_dataset %>% 
+  dataset_map(~.x$text) %>% 
+  reticulate::as_iterator() %>% 
+  reticulate::iter_next() %>% 
+  text_vectorization()
+```
+
+## Build the model
+
+The first layer converts integer representations to dense vector embeddings. 
+
+The next layer is a Long Short-Term Memory layer, which lets the model understand 
+words in their context with other words. A bidirectional wrapper on the LSTM helps 
+it to learn about the datapoints in relationship to the datapoints that came 
+before it and after it.
+
+Finally we'll have a series of one or more densely connected layers, with the last 
+one being the output layer. The output layer produces a probability for all the
+labels. The one with the highest probability is the models prediction of an example's label.
+
+```{r}
+model <- keras_model_sequential(list(
+  text_vectorization, 
+  layer_embedding(input_dim = 1000, output_dim = 64),
+  bidirectional(layer = layer_lstm(units = 64)),
+  layer_dense(units = 64, activation = "relu"),
+  layer_dense(units = 64, activation = "relu"),
+  layer_dense(units = 3, activation = "softmax")
+))
+```
+
+Finally, compile the model. For a softmax categorization model, use sparse_categorical_crossentropy as the loss function. You can try other optimizers, but adam is very common.
+
+
+```{r}
+model %>% compile(
+  loss = "sparse_categorical_crossentropy",
+  optimizer = "adam",
+  metrics = "accuracy"
+)
+```
+
+## Train the model
+
+
+```{r}
+model %>% fit(
+  train_dataset %>% dataset_map(unname), 
+  epochs = 3, 
+  #validation_data = test_dataset %>% dataset_map(unname), 
+  verbose = 1
+)
+```
+
+
+
