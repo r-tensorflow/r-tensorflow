@@ -15,7 +15,13 @@ Rscript -e 'remotes::install_github(c("rstudio/keras",
 Rscript -e 'tensorflow::install_tensorflow(
   extra_packages = c("tensorflow_hub", "tensorflow_datasets", "h5py", "pyyaml", 
                      "requests", "Pillow" , "scipy"))'
-
+                     
+Rscript -e 'tensorflow::install_tensorflow(
+              version = "nightly",
+              extra_packages = c("tf-hub-nightly", "tfds-nightly", "h5py", 
+                                 "pyyaml", "requests", "Pillow" , "scipy"),
+              envname = "nightly"
+            )'
 
 
 # Download/cache used datasets
