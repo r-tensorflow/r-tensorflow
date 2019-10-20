@@ -1,0 +1,101 @@
+---
+title: "Tensors and operations"
+type: docs
+menu:
+  main:
+    name: "Tensors and operations"
+    identifier: "tutorials-advanced-customization-tensors"
+    parent: "tutorials-advanced-customization-top"
+    weight: 60
+---
+
+
+
+<p>This is an introductory TensorFlow tutorial shows how to:</p>
+<ul>
+<li>Import the required package</li>
+<li>Create and use tensors</li>
+<li>Use GPU acceleration</li>
+</ul>
+<div id="import-tensorflow" class="section level2">
+<h2>Import TensorFlow</h2>
+<p>To get started, import the tensorflow module. As of TensorFlow 2.0, eager execution is turned on by default. This enables a more interactive frontend to TensorFlow, the details of which we will discuss much later.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(tensorflow)</a></code></pre></div>
+</div>
+<div id="tensors" class="section level2">
+<h2>Tensors</h2>
+<p>A Tensor is a multi-dimensional array. Similar to <code>array</code> objects in R, <code>tf$Tensor</code> objects have a data type and a shape. Additionally, <code>tf$Tensors</code> can reside in accelerator memory (like a GPU). TensorFlow offers a rich library of operations (<code>tf$add</code>, <code>tf$matmul</code>, <code>tf$linalg$inv</code> etc.) that consume and produce <code>tf.Tensors</code>. These operations automatically convert native R types, for example:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" data-line-number="1">tf<span class="op">$</span><span class="kw">add</span>(<span class="dv">1</span>, <span class="dv">2</span>)</a></code></pre></div>
+<pre><code>## tf.Tensor(3.0, shape=(), dtype=float32)</code></pre>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" data-line-number="1">tf<span class="op">$</span><span class="kw">add</span>(<span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="dv">1</span>, <span class="dv">2</span>), <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="dv">3</span>, <span class="dv">4</span>))</a></code></pre></div>
+<pre><code>## tf.Tensor([4. 6.], shape=(2,), dtype=float32)</code></pre>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" data-line-number="1">tf<span class="op">$</span><span class="kw">square</span>(<span class="dv">5</span>)</a></code></pre></div>
+<pre><code>## tf.Tensor(25.0, shape=(), dtype=float32)</code></pre>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" data-line-number="1">tf<span class="op">$</span><span class="kw">reduce_sum</span>(<span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>))</a></code></pre></div>
+<pre><code>## tf.Tensor(6.0, shape=(), dtype=float32)</code></pre>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" data-line-number="1"><span class="co"># Operator overloading is also supported</span></a>
+<a class="sourceLine" id="cb10-2" data-line-number="2">tf<span class="op">$</span><span class="kw">square</span>(<span class="dv">2</span>) <span class="op">+</span><span class="st"> </span>tf<span class="op">$</span><span class="kw">square</span>(<span class="dv">3</span>)</a></code></pre></div>
+<pre><code>## tf.Tensor(13.0, shape=(), dtype=float32)</code></pre>
+<p>Each <code>tf$Tensor</code> has a shape and a datatype:</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb12-1" data-line-number="1">x =<span class="st"> </span>tf<span class="op">$</span><span class="kw">matmul</span>(<span class="kw"><a href="https://rdrr.io/r/base/matrix.html">matrix</a></span>(<span class="dv">1</span>,<span class="dt">ncol =</span> <span class="dv">1</span>), <span class="kw"><a href="https://rdrr.io/r/base/matrix.html">matrix</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="dv">2</span>, <span class="dv">3</span>), <span class="dt">nrow =</span> <span class="dv">1</span>))</a>
+<a class="sourceLine" id="cb12-2" data-line-number="2">x</a></code></pre></div>
+<pre><code>## tf.Tensor([[2. 3.]], shape=(1, 2), dtype=float64)</code></pre>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb14-1" data-line-number="1">x<span class="op">$</span>shape</a></code></pre></div>
+<pre><code>## (1, 2)</code></pre>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb16-1" data-line-number="1">x<span class="op">$</span>dtype</a></code></pre></div>
+<pre><code>## &lt;dtype: 'float64'&gt;</code></pre>
+<p>The most obvious differences between arrays and <code>tf$Tensor</code>s are:</p>
+<ol style="list-style-type: decimal">
+<li>Tensors can be backed by accelerator memory (like GPU, TPU).</li>
+<li>Tensors are immutable.</li>
+</ol>
+</div>
+<div id="r-arrays-ompatibility" class="section level2">
+<h2>R arrays ompatibility</h2>
+<p>Converting between a TensorFlow tf.Tensors and an array is easy:</p>
+<ul>
+<li>TensorFlow operations automatically convert R arrays to Tensors.</li>
+</ul>
+<p>Tensors are explicitly converted to R arrays using the <code>as.array</code>, <code>as.matrix</code> or <code>as.numeric</code> methods. There’s always a memory copy when converting from a Tensor to an array in R.</p>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb18-1" data-line-number="1"><span class="co"># TensorFlow operations convert arrays to Tensors automatically</span></a>
+<a class="sourceLine" id="cb18-2" data-line-number="2"><span class="dv">1</span> <span class="op">+</span><span class="st"> </span>tf<span class="op">$</span><span class="kw">ones</span>(<span class="dt">shape =</span> <span class="dv">1</span>)</a></code></pre></div>
+<pre><code>## tf.Tensor([2.], shape=(1,), dtype=float32)</code></pre>
+<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb20-1" data-line-number="1"><span class="co"># The as.array method explicitly converts a Tensor to an array</span></a>
+<a class="sourceLine" id="cb20-2" data-line-number="2"><span class="kw"><a href="https://rdrr.io/r/base/array.html">as.array</a></span>(tf<span class="op">$</span><span class="kw">ones</span>(<span class="dt">shape =</span> <span class="dv">1</span>))</a></code></pre></div>
+<pre><code>## [1] 1</code></pre>
+</div>
+<div id="gpu-acceleration" class="section level2">
+<h2>GPU acceleration</h2>
+<p>Many TensorFlow operations are accelerated using the GPU for computation. Without any annotations, TensorFlow automatically decides whether to use the GPU or CPU for an operation—copying the tensor between CPU and GPU memory, if necessary. Tensors produced by an operation are typically backed by the memory of the device on which the operation executed, for example:</p>
+<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb22-1" data-line-number="1">x &lt;-<span class="st"> </span>tf<span class="op">$</span>random<span class="op">$</span><span class="kw">uniform</span>(<span class="kw"><a href="../../../tensorflow/reference/shape.html">shape</a></span>(<span class="dv">3</span>, <span class="dv">3</span>))</a>
+<a class="sourceLine" id="cb22-2" data-line-number="2"></a>
+<a class="sourceLine" id="cb22-3" data-line-number="3"><span class="co"># List devices</span></a>
+<a class="sourceLine" id="cb22-4" data-line-number="4">tf<span class="op">$</span>config<span class="op">$</span>experimental<span class="op">$</span><span class="kw">list_physical_devices</span>()</a></code></pre></div>
+<pre><code>## [[1]]
+## PhysicalDevice(name='/physical_device:CPU:0', device_type='CPU')
+## 
+## [[2]]
+## PhysicalDevice(name='/physical_device:XLA_CPU:0', device_type='XLA_CPU')</code></pre>
+<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb24-1" data-line-number="1"><span class="co"># What device is x placed</span></a>
+<a class="sourceLine" id="cb24-2" data-line-number="2">x<span class="op">$</span>device</a></code></pre></div>
+<pre><code>## [1] "/job:localhost/replica:0/task:0/device:CPU:0"</code></pre>
+<div id="device-names" class="section level3">
+<h3>Device Names</h3>
+<p>The <code>Tensor$device</code> property provides a fully qualified string name of the device hosting the contents of the tensor. This name encodes many details, such as an identifier of the network address of the host on which this program is executing and the device within that host. This is required for distributed execution of a TensorFlow program. The string ends with <code>GPU:&lt;N&gt;</code> if the tensor is placed on the <code>N</code>-th GPU on the host.</p>
+</div>
+</div>
+<div id="explicit-device-placement" class="section level2">
+<h2>Explicit Device Placement</h2>
+<p>In TensorFlow, placement refers to how individual operations are assigned (placed on) a device for execution. As mentioned, when there is no explicit guidance provided, TensorFlow automatically decides which device to execute an operation and copies tensors to that device, if needed. However, TensorFlow operations can be explicitly placed on specific devices using the <code>tf$device</code> context manager, for example:</p>
+<div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb26-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/base/print.html">print</a></span>(<span class="st">"On CPU:0:"</span>)</a>
+<a class="sourceLine" id="cb26-2" data-line-number="2"><span class="kw"><a href="https://rdrr.io/r/base/with.html">with</a></span>(tf<span class="op">$</span><span class="kw"><a href="https://rdrr.io/r/grDevices/Devices.html">device</a></span>(<span class="st">"CPU:0"</span>), {</a>
+<a class="sourceLine" id="cb26-3" data-line-number="3">  x &lt;-<span class="st"> </span>tf<span class="op">$</span><span class="kw">ones</span>(<span class="kw"><a href="../../../tensorflow/reference/shape.html">shape</a></span>(<span class="dv">1000</span>, <span class="dv">1000</span>))</a>
+<a class="sourceLine" id="cb26-4" data-line-number="4">  <span class="kw"><a href="https://rdrr.io/r/base/print.html">print</a></span>(x<span class="op">$</span>device)</a>
+<a class="sourceLine" id="cb26-5" data-line-number="5">})</a>
+<a class="sourceLine" id="cb26-6" data-line-number="6"></a>
+<a class="sourceLine" id="cb26-7" data-line-number="7"><span class="kw"><a href="https://rdrr.io/r/base/print.html">print</a></span>(<span class="st">"On GPU:0:"</span>)</a>
+<a class="sourceLine" id="cb26-8" data-line-number="8"><span class="kw"><a href="https://rdrr.io/r/base/with.html">with</a></span>(tf<span class="op">$</span><span class="kw"><a href="https://rdrr.io/r/grDevices/Devices.html">device</a></span>(<span class="st">"GPU:0"</span>), {</a>
+<a class="sourceLine" id="cb26-9" data-line-number="9">  x &lt;-<span class="st"> </span>tf<span class="op">$</span><span class="kw">ones</span>(<span class="kw"><a href="../../../tensorflow/reference/shape.html">shape</a></span>(<span class="dv">1000</span>, <span class="dv">1000</span>))</a>
+<a class="sourceLine" id="cb26-10" data-line-number="10">  <span class="kw"><a href="https://rdrr.io/r/base/print.html">print</a></span>(x<span class="op">$</span>device)</a>
+<a class="sourceLine" id="cb26-11" data-line-number="11">})</a></code></pre></div>
+</div>

@@ -81,6 +81,13 @@ disqusShortname = "r-tensorflow"
 	parent = "tutorials-top"
 	weight = 50
 	url = ""
+	
+[[menu.main]]
+	name   = "Customization"
+	parent = "tutorials-top"
+	identifier = "tutorials-advanced-customization-top"
+	weight = 60
+	url = "/tutorials/advanced/customization/tensors-operations/"
 
 # Guides
 
