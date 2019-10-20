@@ -51,7 +51,7 @@ The most obvious differences between arrays and `tf$Tensor`s are:
 1. Tensors can be backed by accelerator memory (like GPU, TPU).
 2. Tensors are immutable.
 
-## R arrays ompatibility
+## R arrays compatibility
 
 Converting between a TensorFlow tf.Tensors and an array is easy:
 
