@@ -89,6 +89,13 @@ disqusShortname = "r-tensorflow"
 	weight = 60
 	url = "/tutorials/advanced/customization/tensors-operations/"
 
+[[menu.main]]
+	name   = "Images"
+	parent = "tutorials-top"
+	identifier = "tutorials-advanced-images-top"
+	weight = 60
+	url = "/tutorials/advanced/images/cnn/"
+
 # Guides
 
 [[menu.main]]
