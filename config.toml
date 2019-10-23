@@ -95,6 +95,13 @@ disqusShortname = "r-tensorflow"
 	identifier = "tutorials-advanced-images-top"
 	weight = 60
 	url = "/tutorials/advanced/images/cnn/"
+	
+[[menu.main]]
+	name   = "Structured data"
+	parent = "tutorials-top"
+	identifier = "tutorials-advanced-structured-top"
+	weight = 60
+	url = "/tutorials/advanced/structured/classify/"
 
 # Guides
 
