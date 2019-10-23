@@ -1,0 +1,200 @@
+---
+title: "Transfer learning with TensorFlow Hub"
+type: docs
+menu:
+  main:
+    name: "Transfer Learning with tfhub"
+    identifier: "tutorials-advanced-images-transfer-learning-hub"
+    parent: "tutorials-advanced-images-top"
+    weight: 20
+---
+
+
+
+<p>TensorFlow Hub is a way to share pretrained model components. See the TensorFlow Module Hub for a searchable listing of pre-trained models. This tutorial demonstrates:</p>
+<ol style="list-style-type: decimal">
+<li>How to use TensorFlow Hub Keras.</li>
+<li>How to do image classification using TensorFlow Hub.</li>
+<li>How to do simple transfer learning.</li>
+</ol>
+<div id="setup" class="section level2">
+<h2>Setup</h2>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(keras)</a>
+<a class="sourceLine" id="cb1-2" data-line-number="2"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(tfhub)</a></code></pre></div>
+</div>
+<div id="an-imagenet-classifier" class="section level2">
+<h2>An ImageNet classifier</h2>
+<div id="download-the-classifier" class="section level3">
+<h3>Download the classifier</h3>
+<p>Use <code>layer_hub</code> to load a mobilenet and wrap it up as a keras layer. Any TensorFlow 2 compatible image classifier URL from <a href="https://tfhub.dev">tfhub.dev</a> will work here.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" data-line-number="1">classifier_url =<span class="st">"https://tfhub.dev/google/tf2-preview/mobilenet_v2/classification/2"</span></a>
+<a class="sourceLine" id="cb2-2" data-line-number="2"></a>
+<a class="sourceLine" id="cb2-3" data-line-number="3">image_shape &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(224L, 224L, 3L)</a>
+<a class="sourceLine" id="cb2-4" data-line-number="4"></a>
+<a class="sourceLine" id="cb2-5" data-line-number="5">classifier &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/pkg/tfhub/man/layer_hub.html">layer_hub</a></span>(<span class="dt">handle =</span> classifier_url, <span class="dt">input_shape =</span> image_shape)</a></code></pre></div>
+</div>
+<div id="run-it-on-a-single-image" class="section level3">
+<h3>Run it on a single image</h3>
+<p>Download a single image to try the model on.</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1">image_url &lt;-<span class="st"> "https://storage.googleapis.com/download.tensorflow.org/example_images/grace_hopper.jpg"</span></a>
+<a class="sourceLine" id="cb3-2" data-line-number="2"></a>
+<a class="sourceLine" id="cb3-3" data-line-number="3">img &lt;-<span class="st"> </span>pins<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/pins/man/pin.html">pin</a></span>(image_url, <span class="dt">name =</span> <span class="st">"grace_hopper"</span>) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb3-4" data-line-number="4"><span class="st">  </span>tensorflow<span class="op">::</span>tf<span class="op">$</span>io<span class="op">$</span><span class="kw">read_file</span>() <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb3-5" data-line-number="5"><span class="st">  </span>tensorflow<span class="op">::</span>tf<span class="op">$</span>image<span class="op">$</span><span class="kw">decode_image</span>(<span class="dt">dtype =</span> tf<span class="op">$</span>float32) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb3-6" data-line-number="6"><span class="st">  </span>tensorflow<span class="op">::</span>tf<span class="op">$</span>image<span class="op">$</span><span class="kw">resize</span>(<span class="dt">size =</span> image_shape[<span class="op">-</span><span class="dv">3</span>])</a></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" data-line-number="1">img <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb4-2" data-line-number="2"><span class="st">  </span><span class="kw"><a href="https://rdrr.io/r/base/array.html">as.array</a></span>() <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb4-3" data-line-number="3"><span class="st">  </span><span class="kw"><a href="https://rdrr.io/r/grDevices/as.raster.html">as.raster</a></span>() <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb4-4" data-line-number="4"><span class="st">  </span><span class="kw"><a href="https://rdrr.io/r/graphics/plot.html">plot</a></span>()</a></code></pre></div>
+<p><img src="/tutorials/advanced/images/transfer-learning-hub_files/figure-html/unnamed-chunk-4-1.png" width="672"></p>
+<p>Add a batch dimension, and pass the image to the model.</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" data-line-number="1">result &lt;-<span class="st"> </span>img <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb5-2" data-line-number="2"><span class="st">  </span>tf<span class="op">$</span><span class="kw">expand_dims</span>(0L) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb5-3" data-line-number="3"><span class="st">  </span><span class="kw">classifier</span>()</a></code></pre></div>
+<p>The result is a 1001 element vector of logits, rating the probability of each class for the image.</p>
+<p>So the top class ID can be found with argmax:</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" data-line-number="1">predicted_class &lt;-<span class="st"> </span>tf<span class="op">$</span><span class="kw">argmax</span>(result, <span class="dt">axis =</span> 1L) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/integer.html">as.integer</a></span>()</a>
+<a class="sourceLine" id="cb6-2" data-line-number="2">predicted_class</a></code></pre></div>
+<pre><code>## [1] 653</code></pre>
+</div>
+<div id="decode-the-predictions" class="section level3">
+<h3>Decode the predictions</h3>
+<p>We have the predicted class ID, Fetch the ImageNet labels, and decode the predictions:</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" data-line-number="1">labels_url &lt;-<span class="st"> "https://storage.googleapis.com/download.tensorflow.org/data/ImageNetLabels.txt"</span></a>
+<a class="sourceLine" id="cb8-2" data-line-number="2"></a>
+<a class="sourceLine" id="cb8-3" data-line-number="3">imagenet_labels &lt;-<span class="st"> </span>pins<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/pins/man/pin.html">pin</a></span>(labels_url, <span class="st">"imagenet_labels"</span>) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb8-4" data-line-number="4"><span class="st">  </span><span class="kw"><a href="https://rdrr.io/r/base/readLines.html">readLines</a></span>()</a></code></pre></div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" data-line-number="1">img <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb9-2" data-line-number="2"><span class="st">  </span><span class="kw"><a href="https://rdrr.io/r/base/array.html">as.array</a></span>() <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb9-3" data-line-number="3"><span class="st">  </span><span class="kw"><a href="https://rdrr.io/r/grDevices/as.raster.html">as.raster</a></span>() <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb9-4" data-line-number="4"><span class="st">  </span><span class="kw"><a href="https://rdrr.io/r/graphics/plot.html">plot</a></span>()</a>
+<a class="sourceLine" id="cb9-5" data-line-number="5"><span class="co"># </span></a>
+<a class="sourceLine" id="cb9-6" data-line-number="6"><span class="kw"><a href="https://rdrr.io/r/graphics/title.html">title</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/paste.html">paste</a></span>(<span class="st">"Prediction:"</span> , imagenet_labels[predicted_class <span class="op">+</span><span class="st"> </span><span class="dv">1</span>]))</a></code></pre></div>
+<p><img src="/tutorials/advanced/images/transfer-learning-hub_files/figure-html/unnamed-chunk-8-1.png" width="672"></p>
+</div>
+</div>
+<div id="simple-transfer-learning" class="section level2">
+<h2>Simple transfer learning</h2>
+<p>Using TF Hub it is simple to retrain the top layer of the model to recognize the classes in our dataset.</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" data-line-number="1">flowers &lt;-<span class="st"> </span>pins<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/pins/man/pin.html">pin</a></span>(<span class="st">"https://storage.googleapis.com/download.tensorflow.org/example_images/flower_photos.tgz"</span>, <span class="st">"flower_photos"</span>)</a></code></pre></div>
+<p>The simplest way to load this data into our model is using <code>image_data_generator</code>.</p>
+<p>All of TensorFlow Hub’s image modules expect float inputs in the [0, 1] range. Use the <code>image_data_generator</code> rescale parameter to achieve this.</p>
+<p>The image size will be handled later.</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb11-1" data-line-number="1">image_generator &lt;-<span class="st"> </span><span class="kw"><a href="../../../keras/reference/image_data_generator.html">image_data_generator</a></span>(<span class="dt">rescale=</span><span class="dv">1</span><span class="op">/</span><span class="dv">255</span>)</a>
+<a class="sourceLine" id="cb11-2" data-line-number="2">image_data &lt;-<span class="st"> </span>flowers[<span class="dv">1</span>] <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb11-3" data-line-number="3"><span class="st">  </span><span class="kw"><a href="https://rdrr.io/r/base/basename.html">dirname</a></span>() <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb11-4" data-line-number="4"><span class="st">  </span><span class="kw"><a href="https://rdrr.io/r/base/basename.html">dirname</a></span>() <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb11-5" data-line-number="5"><span class="st">  </span><span class="kw"><a href="../../../keras/reference/flow_images_from_directory.html">flow_images_from_directory</a></span>(image_generator, <span class="dt">target_size =</span> image_shape[<span class="op">-</span><span class="dv">3</span>])</a></code></pre></div>
+<pre><code>## Found 3670 images belonging to 5 classes.</code></pre>
+<p>The resulting object is an iterator that returns image_batch, label_batch pairs.
+We can iterate over it using the <code>iter_next</code> from <code>reticulate</code>:</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb13-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/utils/str.html">str</a></span>(reticulate<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/reticulate/man/iterate.html">iter_next</a></span>(image_data))</a></code></pre></div>
+<pre><code>## List of 2
+##  $ : num [1:32, 1:224, 1:224, 1:3] 0.984 0.663 0.914 0.431 0.882 ...
+##  $ : num [1:32, 1:5] 0 0 0 0 0 1 0 0 0 0 ...</code></pre>
+<div id="run-the-classifier-on-a-batch-of-images" class="section level3">
+<h3>Run the classifier on a batch of images</h3>
+<p>Now run the classifier on the image batch.</p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb15-1" data-line-number="1">image_batch &lt;-<span class="st"> </span>reticulate<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/reticulate/man/iterate.html">iter_next</a></span>(image_data)</a>
+<a class="sourceLine" id="cb15-2" data-line-number="2">predictions &lt;-<span class="st"> </span><span class="kw">classifier</span>(tf<span class="op">$</span><span class="kw">constant</span>(image_batch[[<span class="dv">1</span>]], tf<span class="op">$</span>float32))</a>
+<a class="sourceLine" id="cb15-3" data-line-number="3">predicted_classnames &lt;-<span class="st"> </span>imagenet_labels[<span class="kw"><a href="https://rdrr.io/r/base/integer.html">as.integer</a></span>(tf<span class="op">$</span><span class="kw">argmax</span>(predictions, <span class="dt">axis =</span> 1L) <span class="op">+</span><span class="st"> </span>1L)]</a></code></pre></div>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb16-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/graphics/par.html">par</a></span>(<span class="dt">mfcol =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="dv">4</span>,<span class="dv">8</span>), <span class="dt">mar =</span> <span class="kw"><a href="https://rdrr.io/r/base/rep.html">rep</a></span>(<span class="dv">1</span>, <span class="dv">4</span>), <span class="dt">oma =</span> <span class="kw"><a href="https://rdrr.io/r/base/rep.html">rep</a></span>(<span class="fl">0.2</span>, <span class="dv">4</span>))</a>
+<a class="sourceLine" id="cb16-2" data-line-number="2">image_batch[[<span class="dv">1</span>]] <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb16-3" data-line-number="3"><span class="st">  </span>purrr<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/purrr/man/array-coercion.html">array_tree</a></span>(<span class="dv">1</span>) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb16-4" data-line-number="4"><span class="st">  </span>purrr<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/purrr/man/set_names.html">set_names</a></span>(predicted_classnames) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb16-5" data-line-number="5"><span class="st">  </span>purrr<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/purrr/man/map.html">map</a></span>(as.raster) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb16-6" data-line-number="6"><span class="st">  </span>purrr<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/purrr/man/imap.html">iwalk</a></span>(<span class="op">~</span>{<span class="kw"><a href="https://rdrr.io/r/graphics/plot.html">plot</a></span>(.x); <span class="kw"><a href="https://rdrr.io/r/graphics/title.html">title</a></span>(.y)})</a></code></pre></div>
+<p><img src="/tutorials/advanced/images/transfer-learning-hub_files/figure-html/unnamed-chunk-13-1.png" width="672"></p>
+<p>See the <code>LICENSE.txt</code> file for image attributions.</p>
+<p>The results are far from perfect, but reasonable considering that these are not the classes the model was trained for (except “daisy”).</p>
+</div>
+<div id="download-the-headless-model" class="section level3">
+<h3>Download the headless model</h3>
+<p>TensorFlow Hub also distributes models without the top classification layer. These can be used to easily do transfer learning.</p>
+<p>Any <a href="https://tfhub.dev/s?module-type=image-feature-vector&amp;q=tf2">Tensorflow 2 compatible image feature vector</a> URL from tfhub.dev will work here.</p>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb17-1" data-line-number="1">feature_extractor_url &lt;-<span class="st"> "https://tfhub.dev/google/tf2-preview/mobilenet_v2/feature_vector/2"</span></a></code></pre></div>
+<p>Create the feature extractor.</p>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb18-1" data-line-number="1">feature_extractor_layer &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/pkg/tfhub/man/layer_hub.html">layer_hub</a></span>(<span class="dt">handle =</span> feature_extractor_url, </a>
+<a class="sourceLine" id="cb18-2" data-line-number="2">                                     <span class="dt">input_shape =</span> image_shape)</a></code></pre></div>
+<p>It returns a 1280-length vector for each image:</p>
+<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb19-1" data-line-number="1">feature_batch &lt;-<span class="st"> </span><span class="kw">feature_extractor_layer</span>(tf<span class="op">$</span><span class="kw">constant</span>(image_batch[[<span class="dv">1</span>]], tf<span class="op">$</span>float32))</a>
+<a class="sourceLine" id="cb19-2" data-line-number="2">feature_batch</a></code></pre></div>
+<pre><code>## tf.Tensor(
+## [[0.         0.27025068 0.         ... 0.12244381 0.         0.17645735]
+##  [0.         1.0332522  1.2897586  ... 0.07036199 0.08555372 0.        ]
+##  [0.         1.9186239  0.         ... 0.         0.         0.        ]
+##  ...
+##  [0.2664002  0.19638003 0.         ... 0.17649066 0.         0.33619452]
+##  [0.0243857  0.50991297 0.00841202 ... 0.06558122 0.         0.        ]
+##  [0.         0.706725   0.54912865 ... 0.         0.53959715 1.3498698 ]], shape=(32, 1280), dtype=float32)</code></pre>
+<p>Freeze the variables in the feature extractor layer, so that the training only modifies the new classifier layer.</p>
+<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb21-1" data-line-number="1"><span class="kw"><a href="../../../keras/reference/freeze_weights.html">freeze_weights</a></span>(feature_extractor_layer)</a></code></pre></div>
+</div>
+<div id="attach-a-classification-head" class="section level3">
+<h3>Attach a classification head</h3>
+<p>Now let’s create a sequential model using the feature extraction layer and add a new classification layer.</p>
+<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb22-1" data-line-number="1">model &lt;-<span class="st"> </span><span class="kw"><a href="../../../keras/reference/keras_model_sequential.html">keras_model_sequential</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/list.html">list</a></span>(</a>
+<a class="sourceLine" id="cb22-2" data-line-number="2">  feature_extractor_layer,</a>
+<a class="sourceLine" id="cb22-3" data-line-number="3">  <span class="kw"><a href="../../../keras/reference/layer_dense.html">layer_dense</a></span>(<span class="dt">units =</span> image_data<span class="op">$</span>num_classes, <span class="dt">activation=</span><span class="st">'softmax'</span>)</a>
+<a class="sourceLine" id="cb22-4" data-line-number="4">))</a>
+<a class="sourceLine" id="cb22-5" data-line-number="5"></a>
+<a class="sourceLine" id="cb22-6" data-line-number="6"><span class="kw"><a href="https://rdrr.io/r/base/summary.html">summary</a></span>(model)</a></code></pre></div>
+<pre><code>## Model: "sequential"
+## ___________________________________________________________________________
+## Layer (type)                     Output Shape                  Param #     
+## ===========================================================================
+## keras_layer_1 (KerasLayer)       (None, 1280)                  2257984     
+## ___________________________________________________________________________
+## dense (Dense)                    (None, 5)                     6405        
+## ===========================================================================
+## Total params: 2,264,389
+## Trainable params: 6,405
+## Non-trainable params: 2,257,984
+## ___________________________________________________________________________</code></pre>
+</div>
+</div>
+<div id="train-the-model" class="section level2">
+<h2>Train the model</h2>
+<p>Use compile to configure the training process:</p>
+<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb24-1" data-line-number="1">model <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../../../keras/reference/reexports.html">compile</a></span>(</a>
+<a class="sourceLine" id="cb24-2" data-line-number="2">  <span class="dt">optimizer =</span> <span class="st">"adam"</span>,</a>
+<a class="sourceLine" id="cb24-3" data-line-number="3">  <span class="dt">loss =</span> <span class="st">"categorical_crossentropy"</span>,</a>
+<a class="sourceLine" id="cb24-4" data-line-number="4">  <span class="dt">metrics =</span> <span class="st">"accuracy"</span></a>
+<a class="sourceLine" id="cb24-5" data-line-number="5">)</a></code></pre></div>
+<p>Now use the <code>fit</code> method to train the model.</p>
+<p>To keep this example short train just 2 epochs.</p>
+<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb25-1" data-line-number="1">history &lt;-<span class="st"> </span>model <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../../../keras/reference/fit_generator.html">fit_generator</a></span>(</a>
+<a class="sourceLine" id="cb25-2" data-line-number="2">  image_data, <span class="dt">epochs=</span><span class="dv">2</span>, </a>
+<a class="sourceLine" id="cb25-3" data-line-number="3">  <span class="dt">steps_per_epoch =</span> image_data<span class="op">$</span>n <span class="op">/</span><span class="st"> </span>image_data<span class="op">$</span>batch_size,</a>
+<a class="sourceLine" id="cb25-4" data-line-number="4">  <span class="dt">verbose =</span> <span class="dv">2</span></a>
+<a class="sourceLine" id="cb25-5" data-line-number="5">)</a></code></pre></div>
+<pre><code>## Epoch 1/2
+## 114/114 - 225s - loss: 0.6898 - accuracy: 0.7510
+## Epoch 2/2
+## 114/114 - 1192s - loss: 0.3397 - accuracy: 0.8914</code></pre>
+<p>Now after, even just a few training iterations, we can already see that the model is making progress on the task.</p>
+<p>We can then verify the predictions:</p>
+<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb27-1" data-line-number="1">image_batch &lt;-<span class="st"> </span>reticulate<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/reticulate/man/iterate.html">iter_next</a></span>(image_data)</a>
+<a class="sourceLine" id="cb27-2" data-line-number="2">predictions &lt;-<span class="st"> </span><span class="kw"><a href="../../../keras/reference/predict_proba.html">predict_classes</a></span>(model, image_batch[[<span class="dv">1</span>]])</a>
+<a class="sourceLine" id="cb27-3" data-line-number="3"></a>
+<a class="sourceLine" id="cb27-4" data-line-number="4"><span class="kw"><a href="https://rdrr.io/r/graphics/par.html">par</a></span>(<span class="dt">mfcol =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="dv">4</span>,<span class="dv">8</span>), <span class="dt">mar =</span> <span class="kw"><a href="https://rdrr.io/r/base/rep.html">rep</a></span>(<span class="dv">1</span>, <span class="dv">4</span>), <span class="dt">oma =</span> <span class="kw"><a href="https://rdrr.io/r/base/rep.html">rep</a></span>(<span class="fl">0.2</span>, <span class="dv">4</span>))</a>
+<a class="sourceLine" id="cb27-5" data-line-number="5">image_batch[[<span class="dv">1</span>]] <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb27-6" data-line-number="6"><span class="st">  </span>purrr<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/purrr/man/array-coercion.html">array_tree</a></span>(<span class="dv">1</span>) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb27-7" data-line-number="7"><span class="st">  </span>purrr<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/purrr/man/set_names.html">set_names</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/names.html">names</a></span>(image_data<span class="op">$</span>class_indices)[predictions <span class="op">+</span><span class="st"> </span><span class="dv">1</span>]) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb27-8" data-line-number="8"><span class="st">  </span>purrr<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/purrr/man/map.html">map</a></span>(as.raster) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb27-9" data-line-number="9"><span class="st">  </span>purrr<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/purrr/man/imap.html">iwalk</a></span>(<span class="op">~</span>{<span class="kw"><a href="https://rdrr.io/r/graphics/plot.html">plot</a></span>(.x); <span class="kw"><a href="https://rdrr.io/r/graphics/title.html">title</a></span>(.y)})</a></code></pre></div>
+<p><img src="/tutorials/advanced/images/transfer-learning-hub_files/figure-html/unnamed-chunk-21-1.png" width="672"></p>
+</div>
+<div id="export-your-model" class="section level2">
+<h2>Export your model</h2>
+<p>Now that you’ve trained the model, export it as a saved model:</p>
+<div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb28-1" data-line-number="1"><span class="kw"><a href="../../../keras/reference/save_model_tf.html">save_model_tf</a></span>(model, <span class="st">"mymodel/"</span>, <span class="dt">include_optimizer =</span> <span class="ot">FALSE</span>)</a></code></pre></div>
+<p>Now confirm that we can reload it, and it still gives the same results:</p>
+<div class="sourceCode" id="cb29"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb29-1" data-line-number="1">model_ &lt;-<span class="st"> </span><span class="kw"><a href="../../../keras/reference/save_model_tf.html">load_model_tf</a></span>(<span class="st">"mymodel/"</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb30"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb30-1" data-line-number="1">x &lt;-<span class="st"> </span>tf<span class="op">$</span><span class="kw">constant</span>(image_batch[[<span class="dv">1</span>]], tf<span class="op">$</span>float32)</a>
+<a class="sourceLine" id="cb30-2" data-line-number="2"><span class="kw"><a href="https://rdrr.io/r/base/all.equal.html">all.equal</a></span>(</a>
+<a class="sourceLine" id="cb30-3" data-line-number="3">  <span class="kw"><a href="https://rdrr.io/r/base/matrix.html">as.matrix</a></span>(<span class="kw">model</span>(x)),</a>
+<a class="sourceLine" id="cb30-4" data-line-number="4">  <span class="kw"><a href="https://rdrr.io/r/base/matrix.html">as.matrix</a></span>(<span class="kw">model_</span>(x))</a>
+<a class="sourceLine" id="cb30-5" data-line-number="5">)</a></code></pre></div>
+<pre><code>## [1] TRUE</code></pre>
+</div>
