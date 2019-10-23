@@ -1,0 +1,93 @@
+---
+title: mnist_irnn
+type: docs
+repo: https://github.com/rstudio/keras
+menu:
+  main:
+    parent: keras-examples
+---
+
+
+
+<div class="source-ref">
+<p><span class="caption">Source: </span><a href="https://github.com/rstudio/keras/blob/master/vignettes/examples/mnist_irnn.R" class="uri">https://github.com/rstudio/keras/blob/master/vignettes/examples/mnist_irnn.R</a></p>
+</div>
+<p>This is a reproduction of the IRNN experiment with pixel-by-pixel sequential
+MNIST in “A Simple Way to Initialize Recurrent Networks of Rectified Linear Units”
+by Quoc V. Le, Navdeep Jaitly, Geoffrey E. Hinton</p>
+<p>arxiv:1504.00941v2 [cs.NE] 7 Apr 2015
+<a href="http://arxiv.org/pdf/1504.00941v2.pdf" class="uri">http://arxiv.org/pdf/1504.00941v2.pdf</a></p>
+<p>Optimizer is replaced with RMSprop which yields more stable and steady
+improvement.</p>
+<p>Reaches 0.93 train/test accuracy after 900 epochs
+This corresponds to roughly 1687500 steps in the original paper.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(keras)</a>
+<a class="sourceLine" id="cb1-2" data-line-number="2"></a>
+<a class="sourceLine" id="cb1-3" data-line-number="3"><span class="co"># Data Preparation ---------------------------------------------------------------</span></a>
+<a class="sourceLine" id="cb1-4" data-line-number="4"></a>
+<a class="sourceLine" id="cb1-5" data-line-number="5">batch_size &lt;-<span class="st"> </span><span class="dv">32</span></a>
+<a class="sourceLine" id="cb1-6" data-line-number="6">num_classes &lt;-<span class="st"> </span><span class="dv">10</span></a>
+<a class="sourceLine" id="cb1-7" data-line-number="7">epochs &lt;-<span class="st"> </span><span class="dv">200</span></a>
+<a class="sourceLine" id="cb1-8" data-line-number="8">hidden_units &lt;-<span class="st"> </span><span class="dv">100</span></a>
+<a class="sourceLine" id="cb1-9" data-line-number="9"></a>
+<a class="sourceLine" id="cb1-10" data-line-number="10">img_rows &lt;-<span class="st"> </span><span class="dv">28</span></a>
+<a class="sourceLine" id="cb1-11" data-line-number="11">img_cols &lt;-<span class="st"> </span><span class="dv">28</span></a>
+<a class="sourceLine" id="cb1-12" data-line-number="12"></a>
+<a class="sourceLine" id="cb1-13" data-line-number="13">learning_rate &lt;-<span class="st"> </span><span class="fl">1e-6</span></a>
+<a class="sourceLine" id="cb1-14" data-line-number="14">clip_norm &lt;-<span class="st"> </span><span class="fl">1.0</span></a>
+<a class="sourceLine" id="cb1-15" data-line-number="15"></a>
+<a class="sourceLine" id="cb1-16" data-line-number="16"><span class="co"># The data, shuffled and split between train and test sets</span></a>
+<a class="sourceLine" id="cb1-17" data-line-number="17">mnist &lt;-<span class="st"> </span><span class="kw"><a href="../../../keras/reference/dataset_mnist.html">dataset_mnist</a></span>()</a>
+<a class="sourceLine" id="cb1-18" data-line-number="18">x_train &lt;-<span class="st"> </span>mnist<span class="op">$</span>train<span class="op">$</span>x</a>
+<a class="sourceLine" id="cb1-19" data-line-number="19">y_train &lt;-<span class="st"> </span>mnist<span class="op">$</span>train<span class="op">$</span>y</a>
+<a class="sourceLine" id="cb1-20" data-line-number="20">x_test &lt;-<span class="st"> </span>mnist<span class="op">$</span>test<span class="op">$</span>x</a>
+<a class="sourceLine" id="cb1-21" data-line-number="21">y_test &lt;-<span class="st"> </span>mnist<span class="op">$</span>test<span class="op">$</span>y</a>
+<a class="sourceLine" id="cb1-22" data-line-number="22"></a>
+<a class="sourceLine" id="cb1-23" data-line-number="23">x_train &lt;-<span class="st"> </span><span class="kw"><a href="../../../keras/reference/reexports.html">array_reshape</a></span>(x_train, <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span>(x_train), img_rows <span class="op">*</span><span class="st"> </span>img_cols, <span class="dv">1</span>))</a>
+<a class="sourceLine" id="cb1-24" data-line-number="24">x_test &lt;-<span class="st"> </span><span class="kw"><a href="../../../keras/reference/reexports.html">array_reshape</a></span>(x_test, <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span>(x_test), img_rows <span class="op">*</span><span class="st"> </span>img_cols, <span class="dv">1</span>))</a>
+<a class="sourceLine" id="cb1-25" data-line-number="25">input_shape &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(img_rows, img_cols, <span class="dv">1</span>)</a>
+<a class="sourceLine" id="cb1-26" data-line-number="26"></a>
+<a class="sourceLine" id="cb1-27" data-line-number="27"><span class="co"># Transform RGB values into [0,1] range</span></a>
+<a class="sourceLine" id="cb1-28" data-line-number="28">x_train &lt;-<span class="st"> </span>x_train <span class="op">/</span><span class="st"> </span><span class="dv">255</span></a>
+<a class="sourceLine" id="cb1-29" data-line-number="29">x_test &lt;-<span class="st"> </span>x_test <span class="op">/</span><span class="st"> </span><span class="dv">255</span></a>
+<a class="sourceLine" id="cb1-30" data-line-number="30"></a>
+<a class="sourceLine" id="cb1-31" data-line-number="31"><span class="kw"><a href="https://rdrr.io/r/base/cat.html">cat</a></span>(<span class="st">'x_train_shape:'</span>, <span class="kw"><a href="https://rdrr.io/r/base/dim.html">dim</a></span>(x_train), <span class="st">'</span><span class="ch">\n</span><span class="st">'</span>)</a>
+<a class="sourceLine" id="cb1-32" data-line-number="32"><span class="kw"><a href="https://rdrr.io/r/base/cat.html">cat</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span>(x_train), <span class="st">'train samples</span><span class="ch">\n</span><span class="st">'</span>)</a>
+<a class="sourceLine" id="cb1-33" data-line-number="33"><span class="kw"><a href="https://rdrr.io/r/base/cat.html">cat</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span>(x_test), <span class="st">'test samples</span><span class="ch">\n</span><span class="st">'</span>)</a>
+<a class="sourceLine" id="cb1-34" data-line-number="34"></a>
+<a class="sourceLine" id="cb1-35" data-line-number="35"><span class="co"># Convert class vectors to binary class matrices</span></a>
+<a class="sourceLine" id="cb1-36" data-line-number="36">y_train &lt;-<span class="st"> </span><span class="kw"><a href="../../../keras/reference/to_categorical.html">to_categorical</a></span>(y_train, num_classes)</a>
+<a class="sourceLine" id="cb1-37" data-line-number="37">y_test &lt;-<span class="st"> </span><span class="kw"><a href="../../../keras/reference/to_categorical.html">to_categorical</a></span>(y_test, num_classes)</a>
+<a class="sourceLine" id="cb1-38" data-line-number="38"></a>
+<a class="sourceLine" id="cb1-39" data-line-number="39"><span class="co"># Define Model ------------------------------------------------------------------</span></a>
+<a class="sourceLine" id="cb1-40" data-line-number="40"></a>
+<a class="sourceLine" id="cb1-41" data-line-number="41">model &lt;-<span class="st"> </span><span class="kw"><a href="../../../keras/reference/keras_model_sequential.html">keras_model_sequential</a></span>()</a>
+<a class="sourceLine" id="cb1-42" data-line-number="42">model <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb1-43" data-line-number="43"><span class="st">  </span><span class="kw"><a href="../../../keras/reference/layer_simple_rnn.html">layer_simple_rnn</a></span>(<span class="dt">units =</span> hidden_units,</a>
+<a class="sourceLine" id="cb1-44" data-line-number="44">                   <span class="dt">kernel_initializer =</span> <span class="kw"><a href="../../../keras/reference/initializer_random_normal.html">initializer_random_normal</a></span>(<span class="dt">stddev =</span> <span class="fl">0.01</span>),</a>
+<a class="sourceLine" id="cb1-45" data-line-number="45">                   <span class="dt">recurrent_initializer =</span> <span class="kw"><a href="../../../keras/reference/initializer_identity.html">initializer_identity</a></span>(<span class="dt">gain =</span> <span class="fl">1.0</span>),</a>
+<a class="sourceLine" id="cb1-46" data-line-number="46">                   <span class="dt">activation =</span> <span class="st">'relu'</span>,</a>
+<a class="sourceLine" id="cb1-47" data-line-number="47">                   <span class="dt">input_shape =</span> <span class="kw"><a href="https://rdrr.io/r/base/dim.html">dim</a></span>(x_train)[<span class="op">-</span><span class="dv">1</span>]) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb1-48" data-line-number="48"><span class="st">  </span><span class="kw"><a href="../../../keras/reference/layer_dense.html">layer_dense</a></span>(<span class="dt">units =</span> num_classes) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb1-49" data-line-number="49"><span class="st">  </span><span class="kw"><a href="../../../keras/reference/layer_activation.html">layer_activation</a></span>(<span class="dt">activation =</span> <span class="st">'softmax'</span>)</a>
+<a class="sourceLine" id="cb1-50" data-line-number="50"></a>
+<a class="sourceLine" id="cb1-51" data-line-number="51">model <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../../../keras/reference/reexports.html">compile</a></span>(</a>
+<a class="sourceLine" id="cb1-52" data-line-number="52">  <span class="dt">loss =</span> <span class="st">'categorical_crossentropy'</span>,</a>
+<a class="sourceLine" id="cb1-53" data-line-number="53">  <span class="dt">optimizer =</span> <span class="kw"><a href="../../../keras/reference/optimizer_rmsprop.html">optimizer_rmsprop</a></span>(<span class="dt">lr =</span> learning_rate),</a>
+<a class="sourceLine" id="cb1-54" data-line-number="54">  <span class="dt">metrics =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">'accuracy'</span>)</a>
+<a class="sourceLine" id="cb1-55" data-line-number="55">)</a>
+<a class="sourceLine" id="cb1-56" data-line-number="56"> </a>
+<a class="sourceLine" id="cb1-57" data-line-number="57"><span class="co"># Training &amp; Evaluation ---------------------------------------------------------</span></a>
+<a class="sourceLine" id="cb1-58" data-line-number="58"></a>
+<a class="sourceLine" id="cb1-59" data-line-number="59"><span class="kw"><a href="https://rdrr.io/r/base/cat.html">cat</a></span>(<span class="st">"Evaluate IRNN...</span><span class="ch">\n</span><span class="st">"</span>)</a>
+<a class="sourceLine" id="cb1-60" data-line-number="60">model <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../../../keras/reference/reexports.html">fit</a></span>(</a>
+<a class="sourceLine" id="cb1-61" data-line-number="61">  x_train, y_train,</a>
+<a class="sourceLine" id="cb1-62" data-line-number="62">  <span class="dt">batch_size =</span> batch_size,</a>
+<a class="sourceLine" id="cb1-63" data-line-number="63">  <span class="dt">epochs =</span> epochs,</a>
+<a class="sourceLine" id="cb1-64" data-line-number="64">  <span class="dt">verbose =</span> <span class="dv">1</span>,</a>
+<a class="sourceLine" id="cb1-65" data-line-number="65">  <span class="dt">validation_data =</span> <span class="kw"><a href="https://rdrr.io/r/base/list.html">list</a></span>(x_test, y_test)</a>
+<a class="sourceLine" id="cb1-66" data-line-number="66">)</a>
+<a class="sourceLine" id="cb1-67" data-line-number="67">  </a>
+<a class="sourceLine" id="cb1-68" data-line-number="68">scores &lt;-<span class="st"> </span>model <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../../../keras/reference/reexports.html">evaluate</a></span>(x_test, y_test, <span class="dt">verbose =</span> <span class="dv">0</span>)</a>
+<a class="sourceLine" id="cb1-69" data-line-number="69"><span class="kw"><a href="https://rdrr.io/r/base/cat.html">cat</a></span>(<span class="st">'IRNN test score:'</span>, scores[[<span class="dv">1</span>]], <span class="st">'</span><span class="ch">\n</span><span class="st">'</span>)</a>
+<a class="sourceLine" id="cb1-70" data-line-number="70"><span class="kw"><a href="https://rdrr.io/r/base/cat.html">cat</a></span>(<span class="st">'IRNN test accuracy:'</span>, scores[[<span class="dv">2</span>]], <span class="st">'</span><span class="ch">\n</span><span class="st">'</span>)</a></code></pre></div>
