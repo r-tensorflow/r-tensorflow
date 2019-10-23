@@ -1,0 +1,358 @@
+---
+title: "Guide to the Functional API"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Guide to the Functional API} 
+  %\VignetteEngine{knitr::rmarkdown} 
+  %\VignetteEncoding{UTF-8}
+type: docs
+repo: https://github.com/rstudio/keras
+menu:
+  main:
+    name: "Functional API"
+    identifier: "keras-functional-api"
+    parent: "keras-getting-started-top"
+    weight: 20
+---
+
+
+
+<p>The Keras functional API is the way to go for defining complex models, such as multi-output models, directed acyclic graphs, or models with shared layers.</p>
+<p>This guide assumes that you are already familiar with the <a href="sequential_model.html">Sequential</a> model.</p>
+<p>Let’s start with something simple.</p>
+<div id="first-example-a-densely-connected-network" class="section level2">
+<h2>First example: a densely-connected network</h2>
+<p>The <a href="sequential_model.html">Sequential</a> model is probably a better choice to implement such a network, but it helps to start with something really simple.</p>
+<p>To use the functional API, build your input and output layers and then pass them to the <code>model()</code> function. This model can be trained just like Keras sequential models.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(keras)</a>
+<a class="sourceLine" id="cb1-2" data-line-number="2"></a>
+<a class="sourceLine" id="cb1-3" data-line-number="3"><span class="co"># input layer</span></a>
+<a class="sourceLine" id="cb1-4" data-line-number="4">inputs &lt;-<span class="st"> </span><span class="kw"><a href="../../keras/reference/layer_input.html">layer_input</a></span>(<span class="dt">shape =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="dv">784</span>))</a>
+<a class="sourceLine" id="cb1-5" data-line-number="5"> </a>
+<a class="sourceLine" id="cb1-6" data-line-number="6"><span class="co"># outputs compose input + dense layers</span></a>
+<a class="sourceLine" id="cb1-7" data-line-number="7">predictions &lt;-<span class="st"> </span>inputs <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb1-8" data-line-number="8"><span class="st">  </span><span class="kw"><a href="../../keras/reference/layer_dense.html">layer_dense</a></span>(<span class="dt">units =</span> <span class="dv">64</span>, <span class="dt">activation =</span> <span class="st">'relu'</span>) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb1-9" data-line-number="9"><span class="st">  </span><span class="kw"><a href="../../keras/reference/layer_dense.html">layer_dense</a></span>(<span class="dt">units =</span> <span class="dv">64</span>, <span class="dt">activation =</span> <span class="st">'relu'</span>) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb1-10" data-line-number="10"><span class="st">  </span><span class="kw"><a href="../../keras/reference/layer_dense.html">layer_dense</a></span>(<span class="dt">units =</span> <span class="dv">10</span>, <span class="dt">activation =</span> <span class="st">'softmax'</span>)</a>
+<a class="sourceLine" id="cb1-11" data-line-number="11"></a>
+<a class="sourceLine" id="cb1-12" data-line-number="12"><span class="co"># create and compile model</span></a>
+<a class="sourceLine" id="cb1-13" data-line-number="13">model &lt;-<span class="st"> </span><span class="kw"><a href="../../keras/reference/keras_model.html">keras_model</a></span>(<span class="dt">inputs =</span> inputs, <span class="dt">outputs =</span> predictions)</a>
+<a class="sourceLine" id="cb1-14" data-line-number="14">model <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../../keras/reference/reexports.html">compile</a></span>(</a>
+<a class="sourceLine" id="cb1-15" data-line-number="15">  <span class="dt">optimizer =</span> <span class="st">'rmsprop'</span>,</a>
+<a class="sourceLine" id="cb1-16" data-line-number="16">  <span class="dt">loss =</span> <span class="st">'categorical_crossentropy'</span>,</a>
+<a class="sourceLine" id="cb1-17" data-line-number="17">  <span class="dt">metrics =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">'accuracy'</span>)</a>
+<a class="sourceLine" id="cb1-18" data-line-number="18">)</a></code></pre></div>
+<p>Note that Keras objects are <a href="faq.html#why-are-keras-objects-modified-in-place">modified in place</a> which is why it’s not necessary for <code>model</code> to be assigned back to after it is compiled.</p>
+</div>
+<div id="all-models-are-callable-just-like-layers" class="section level2">
+<h2>All models are callable, just like layers</h2>
+<p>With the functional API, it is easy to reuse trained models: you can treat any model as if it were a layer. Note that you aren’t just reusing the architecture of the model, you are also reusing its weights.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" data-line-number="1">x &lt;-<span class="st"> </span><span class="kw"><a href="../../keras/reference/layer_input.html">layer_input</a></span>(<span class="dt">shape =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="dv">784</span>))</a>
+<a class="sourceLine" id="cb2-2" data-line-number="2"><span class="co"># This works, and returns the 10-way softmax we defined above.</span></a>
+<a class="sourceLine" id="cb2-3" data-line-number="3">y &lt;-<span class="st"> </span>x <span class="op">%&gt;%</span><span class="st"> </span>model</a></code></pre></div>
+<p>This can allow, for instance, to quickly create models that can process sequences of inputs. You could turn an image classification model into a video classification model, in just one line:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1"><span class="co"># Input tensor for sequences of 20 timesteps,</span></a>
+<a class="sourceLine" id="cb3-2" data-line-number="2"><span class="co"># each containing a 784-dimensional vector</span></a>
+<a class="sourceLine" id="cb3-3" data-line-number="3">input_sequences &lt;-<span class="st"> </span><span class="kw"><a href="../../keras/reference/layer_input.html">layer_input</a></span>(<span class="dt">shape =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="dv">20</span>, <span class="dv">784</span>))</a>
+<a class="sourceLine" id="cb3-4" data-line-number="4"></a>
+<a class="sourceLine" id="cb3-5" data-line-number="5"><span class="co"># This applies our previous model to the input sequence</span></a>
+<a class="sourceLine" id="cb3-6" data-line-number="6">processed_sequences &lt;-<span class="st"> </span>input_sequences <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb3-7" data-line-number="7"><span class="st">  </span><span class="kw"><a href="../../keras/reference/time_distributed.html">time_distributed</a></span>(model)</a></code></pre></div>
+</div>
+<div id="multi-input-and-multi-output-models" class="section level2">
+<h2>Multi-input and multi-output models</h2>
+<p>Here’s a good use case for the functional API: models with multiple inputs and outputs. The functional API makes it easy to manipulate a large number of intertwined datastreams.</p>
+<p>Let’s consider the following model. We seek to predict how many retweets and likes a news headline will receive on Twitter. The main input to the model will be the headline itself, as a sequence of words, but to spice things up, our model will also have an auxiliary input, receiving extra data such as the time of day when the headline was posted, etc.</p>
+<p>The model will also be supervised via two loss functions. Using the main loss function earlier in a model is a good regularization mechanism for deep models.</p>
+<p>Here’s what our model looks like:</p>
+<p><img src="images/multi-input-multi-output-graph.png" alt="multi-input-multi-output-graph" style="width: 400px;"></p>
+<p>Let’s implement it with the functional API.</p>
+<p>The main input will receive the headline, as a sequence of integers (each integer encodes a word).
+The integers will be between 1 and 10,000 (a vocabulary of 10,000 words) and the sequences will be 100 words long.</p>
+<p>We’ll include an</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(keras)</a>
+<a class="sourceLine" id="cb4-2" data-line-number="2"></a>
+<a class="sourceLine" id="cb4-3" data-line-number="3">main_input &lt;-<span class="st"> </span><span class="kw"><a href="../../keras/reference/layer_input.html">layer_input</a></span>(<span class="dt">shape =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="dv">100</span>), <span class="dt">dtype =</span> <span class="st">'int32'</span>, <span class="dt">name =</span> <span class="st">'main_input'</span>)</a>
+<a class="sourceLine" id="cb4-4" data-line-number="4"></a>
+<a class="sourceLine" id="cb4-5" data-line-number="5">lstm_out &lt;-<span class="st"> </span>main_input <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb4-6" data-line-number="6"><span class="st">  </span><span class="kw"><a href="../../keras/reference/layer_embedding.html">layer_embedding</a></span>(<span class="dt">input_dim =</span> <span class="dv">10000</span>, <span class="dt">output_dim =</span> <span class="dv">512</span>, <span class="dt">input_length =</span> <span class="dv">100</span>) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb4-7" data-line-number="7"><span class="st">  </span><span class="kw"><a href="../../keras/reference/layer_lstm.html">layer_lstm</a></span>(<span class="dt">units =</span> <span class="dv">32</span>)</a></code></pre></div>
+<p>Here we insert the auxiliary loss, allowing the LSTM and Embedding layer to be trained smoothly even though the main loss will be much higher in the model:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" data-line-number="1">auxiliary_output &lt;-<span class="st"> </span>lstm_out <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb5-2" data-line-number="2"><span class="st">  </span><span class="kw"><a href="../../keras/reference/layer_dense.html">layer_dense</a></span>(<span class="dt">units =</span> <span class="dv">1</span>, <span class="dt">activation =</span> <span class="st">'sigmoid'</span>, <span class="dt">name =</span> <span class="st">'aux_output'</span>)</a></code></pre></div>
+<p>At this point, we feed into the model our auxiliary input data by concatenating it with the LSTM output, stacking a deep densely-connected network on top and adding the main logistic regression layer</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" data-line-number="1">auxiliary_input &lt;-<span class="st"> </span><span class="kw"><a href="../../keras/reference/layer_input.html">layer_input</a></span>(<span class="dt">shape =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="dv">5</span>), <span class="dt">name =</span> <span class="st">'aux_input'</span>)</a>
+<a class="sourceLine" id="cb6-2" data-line-number="2"></a>
+<a class="sourceLine" id="cb6-3" data-line-number="3">main_output &lt;-<span class="st"> </span><span class="kw"><a href="../../keras/reference/layer_concatenate.html">layer_concatenate</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(lstm_out, auxiliary_input)) <span class="op">%&gt;%</span><span class="st">  </span></a>
+<a class="sourceLine" id="cb6-4" data-line-number="4"><span class="st">  </span><span class="kw"><a href="../../keras/reference/layer_dense.html">layer_dense</a></span>(<span class="dt">units =</span> <span class="dv">64</span>, <span class="dt">activation =</span> <span class="st">'relu'</span>) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb6-5" data-line-number="5"><span class="st">  </span><span class="kw"><a href="../../keras/reference/layer_dense.html">layer_dense</a></span>(<span class="dt">units =</span> <span class="dv">64</span>, <span class="dt">activation =</span> <span class="st">'relu'</span>) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb6-6" data-line-number="6"><span class="st">  </span><span class="kw"><a href="../../keras/reference/layer_dense.html">layer_dense</a></span>(<span class="dt">units =</span> <span class="dv">64</span>, <span class="dt">activation =</span> <span class="st">'relu'</span>) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb6-7" data-line-number="7"><span class="st">  </span><span class="kw"><a href="../../keras/reference/layer_dense.html">layer_dense</a></span>(<span class="dt">units =</span> <span class="dv">1</span>, <span class="dt">activation =</span> <span class="st">'sigmoid'</span>, <span class="dt">name =</span> <span class="st">'main_output'</span>)</a></code></pre></div>
+<p>This defines a model with two inputs and two outputs:</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" data-line-number="1">model &lt;-<span class="st"> </span><span class="kw"><a href="../../keras/reference/keras_model.html">keras_model</a></span>(</a>
+<a class="sourceLine" id="cb7-2" data-line-number="2">  <span class="dt">inputs =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(main_input, auxiliary_input), </a>
+<a class="sourceLine" id="cb7-3" data-line-number="3">  <span class="dt">outputs =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(main_output, auxiliary_output)</a>
+<a class="sourceLine" id="cb7-4" data-line-number="4">)</a></code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/base/summary.html">summary</a></span>(model)</a></code></pre></div>
+<pre><code>Model
+__________________________________________________________________________________________
+Layer (type)                 Output Shape        Param #    Connected to                  
+==========================================================================================
+main_input (InputLayer)      (None, 100)         0                                        
+__________________________________________________________________________________________
+embedding_1 (Embedding)      (None, 100, 512)    5120000                                  
+__________________________________________________________________________________________
+lstm_1 (LSTM)                (None, 32)          69760                                    
+__________________________________________________________________________________________
+aux_input (InputLayer)       (None, 5)           0                                        
+__________________________________________________________________________________________
+concatenate_1 (Concatenate)  (None, 37)          0                                        
+__________________________________________________________________________________________
+dense_1 (Dense)              (None, 64)          2432                                     
+__________________________________________________________________________________________
+dense_2 (Dense)              (None, 64)          4160                                     
+__________________________________________________________________________________________
+dense_3 (Dense)              (None, 64)          4160                                     
+__________________________________________________________________________________________
+main_output (Dense)          (None, 1)           65                                       
+__________________________________________________________________________________________
+aux_output (Dense)           (None, 1)           33                                       
+==========================================================================================
+Total params: 5,200,610
+Trainable params: 5,200,610
+Non-trainable params: 0
+__________________________________________________________________________________________</code></pre>
+<p>We compile the model and assign a weight of 0.2 to the auxiliary loss.
+To specify different <code>loss_weights</code> or <code>loss</code> for each different output, you can use a list or a dictionary.
+Here we pass a single loss as the <code>loss</code> argument, so the same loss will be used on all outputs.</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" data-line-number="1">model <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../../keras/reference/reexports.html">compile</a></span>(</a>
+<a class="sourceLine" id="cb10-2" data-line-number="2">  <span class="dt">optimizer =</span> <span class="st">'rmsprop'</span>,</a>
+<a class="sourceLine" id="cb10-3" data-line-number="3">  <span class="dt">loss =</span> <span class="st">'binary_crossentropy'</span>,</a>
+<a class="sourceLine" id="cb10-4" data-line-number="4">  <span class="dt">loss_weights =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">1.0</span>, <span class="fl">0.2</span>)</a>
+<a class="sourceLine" id="cb10-5" data-line-number="5">)</a></code></pre></div>
+<p>We can train the model by passing it lists of input arrays and target arrays:</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb11-1" data-line-number="1">model <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../../keras/reference/reexports.html">fit</a></span>(</a>
+<a class="sourceLine" id="cb11-2" data-line-number="2">  <span class="dt">x =</span> <span class="kw"><a href="https://rdrr.io/r/base/list.html">list</a></span>(headline_data, additional_data),</a>
+<a class="sourceLine" id="cb11-3" data-line-number="3">  <span class="dt">y =</span> <span class="kw"><a href="https://rdrr.io/r/base/list.html">list</a></span>(labels, labels),</a>
+<a class="sourceLine" id="cb11-4" data-line-number="4">  <span class="dt">epochs =</span> <span class="dv">50</span>,</a>
+<a class="sourceLine" id="cb11-5" data-line-number="5">  <span class="dt">batch_size =</span> <span class="dv">32</span></a>
+<a class="sourceLine" id="cb11-6" data-line-number="6">)</a></code></pre></div>
+<p>Since our inputs and outputs are named (we passed them a “name” argument),
+We could also have compiled the model via:</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb12-1" data-line-number="1">model <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../../keras/reference/reexports.html">compile</a></span>(</a>
+<a class="sourceLine" id="cb12-2" data-line-number="2">  <span class="dt">optimizer =</span> <span class="st">'rmsprop'</span>,</a>
+<a class="sourceLine" id="cb12-3" data-line-number="3">  <span class="dt">loss =</span> <span class="kw"><a href="https://rdrr.io/r/base/list.html">list</a></span>(<span class="dt">main_output =</span> <span class="st">'binary_crossentropy'</span>, <span class="dt">aux_output =</span> <span class="st">'binary_crossentropy'</span>),</a>
+<a class="sourceLine" id="cb12-4" data-line-number="4">  <span class="dt">loss_weights =</span> <span class="kw"><a href="https://rdrr.io/r/base/list.html">list</a></span>(<span class="dt">main_output =</span> <span class="fl">1.0</span>, <span class="dt">aux_output =</span> <span class="fl">0.2</span>)</a>
+<a class="sourceLine" id="cb12-5" data-line-number="5">)</a>
+<a class="sourceLine" id="cb12-6" data-line-number="6"></a>
+<a class="sourceLine" id="cb12-7" data-line-number="7"><span class="co"># And trained it via:</span></a>
+<a class="sourceLine" id="cb12-8" data-line-number="8">model <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../../keras/reference/reexports.html">fit</a></span>(</a>
+<a class="sourceLine" id="cb12-9" data-line-number="9">  <span class="dt">x =</span> <span class="kw"><a href="https://rdrr.io/r/base/list.html">list</a></span>(<span class="dt">main_input =</span> headline_data, <span class="dt">aux_input =</span> additional_data),</a>
+<a class="sourceLine" id="cb12-10" data-line-number="10">  <span class="dt">y =</span> <span class="kw"><a href="https://rdrr.io/r/base/list.html">list</a></span>(<span class="dt">main_output =</span> labels, <span class="dt">aux_output =</span> labels),</a>
+<a class="sourceLine" id="cb12-11" data-line-number="11">  <span class="dt">epochs =</span> <span class="dv">50</span>,</a>
+<a class="sourceLine" id="cb12-12" data-line-number="12">  <span class="dt">batch_size =</span> <span class="dv">32</span></a>
+<a class="sourceLine" id="cb12-13" data-line-number="13">)</a></code></pre></div>
+</div>
+<div id="shared-layers" class="section level2">
+<h2>Shared layers</h2>
+<p>Another good use for the functional API are models that use shared layers. Let’s take a look at shared layers.</p>
+<p>Let’s consider a dataset of tweets. We want to build a model that can tell whether two tweets are from the same person or not (this can allow us to compare users by the similarity of their tweets, for instance).</p>
+<p>One way to achieve this is to build a model that encodes two tweets into two vectors, concatenates the vectors and then adds a logistic regression; this outputs a probability that the two tweets share the same author. The model would then be trained on positive tweet pairs and negative tweet pairs.</p>
+<p>Because the problem is symmetric, the mechanism that encodes the first tweet should be reused (weights and all) to encode the second tweet. Here we use a shared LSTM layer to encode the tweets.</p>
+<p>Let’s build this with the functional API. We will take as input for a tweet a binary matrix of shape <code>(280, 256)</code>, i.e. a sequence of 280 vectors of size 256, where each dimension in the 256-dimensional vector encodes the presence/absence of a character (out of an alphabet of 256 frequent characters).</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb13-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(keras)</a>
+<a class="sourceLine" id="cb13-2" data-line-number="2"></a>
+<a class="sourceLine" id="cb13-3" data-line-number="3">tweet_a &lt;-<span class="st"> </span><span class="kw"><a href="../../keras/reference/layer_input.html">layer_input</a></span>(<span class="dt">shape =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="dv">280</span>, <span class="dv">256</span>))</a>
+<a class="sourceLine" id="cb13-4" data-line-number="4">tweet_b &lt;-<span class="st"> </span><span class="kw"><a href="../../keras/reference/layer_input.html">layer_input</a></span>(<span class="dt">shape =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="dv">280</span>, <span class="dv">256</span>))</a></code></pre></div>
+<p>To share a layer across different inputs, simply instantiate the layer once, then call it on as many inputs as you want:</p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb14-1" data-line-number="1"><span class="co"># This layer can take as input a matrix and will return a vector of size 64</span></a>
+<a class="sourceLine" id="cb14-2" data-line-number="2">shared_lstm &lt;-<span class="st"> </span><span class="kw"><a href="../../keras/reference/layer_lstm.html">layer_lstm</a></span>(<span class="dt">units =</span> <span class="dv">64</span>)</a>
+<a class="sourceLine" id="cb14-3" data-line-number="3"></a>
+<a class="sourceLine" id="cb14-4" data-line-number="4"><span class="co"># When we reuse the same layer instance multiple times, the weights of the layer are also</span></a>
+<a class="sourceLine" id="cb14-5" data-line-number="5"><span class="co"># being reused (it is effectively *the same* layer)</span></a>
+<a class="sourceLine" id="cb14-6" data-line-number="6">encoded_a &lt;-<span class="st"> </span>tweet_a <span class="op">%&gt;%</span><span class="st"> </span>shared_lstm</a>
+<a class="sourceLine" id="cb14-7" data-line-number="7">encoded_b &lt;-<span class="st"> </span>tweet_b <span class="op">%&gt;%</span><span class="st"> </span>shared_lstm</a>
+<a class="sourceLine" id="cb14-8" data-line-number="8"></a>
+<a class="sourceLine" id="cb14-9" data-line-number="9"><span class="co"># We can then concatenate the two vectors and add a logistic regression on top</span></a>
+<a class="sourceLine" id="cb14-10" data-line-number="10">predictions &lt;-<span class="st"> </span><span class="kw"><a href="../../keras/reference/layer_concatenate.html">layer_concatenate</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(encoded_a, encoded_b), <span class="dt">axis=</span><span class="op">-</span><span class="dv">1</span>) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb14-11" data-line-number="11"><span class="st">  </span><span class="kw"><a href="../../keras/reference/layer_dense.html">layer_dense</a></span>(<span class="dt">units =</span> <span class="dv">1</span>, <span class="dt">activation =</span> <span class="st">'sigmoid'</span>)</a>
+<a class="sourceLine" id="cb14-12" data-line-number="12"></a>
+<a class="sourceLine" id="cb14-13" data-line-number="13"><span class="co"># We define a trainable model linking the tweet inputs to the predictions</span></a>
+<a class="sourceLine" id="cb14-14" data-line-number="14">model &lt;-<span class="st"> </span><span class="kw"><a href="../../keras/reference/keras_model.html">keras_model</a></span>(<span class="dt">inputs =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(tweet_a, tweet_b), <span class="dt">outputs =</span> predictions)</a>
+<a class="sourceLine" id="cb14-15" data-line-number="15"></a>
+<a class="sourceLine" id="cb14-16" data-line-number="16">model <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../../keras/reference/reexports.html">compile</a></span>(</a>
+<a class="sourceLine" id="cb14-17" data-line-number="17">  <span class="dt">optimizer =</span> <span class="st">'rmsprop'</span>,</a>
+<a class="sourceLine" id="cb14-18" data-line-number="18">  <span class="dt">loss =</span> <span class="st">'binary_crossentropy'</span>,</a>
+<a class="sourceLine" id="cb14-19" data-line-number="19">  <span class="dt">metrics =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">'accuracy'</span>)</a>
+<a class="sourceLine" id="cb14-20" data-line-number="20">)</a>
+<a class="sourceLine" id="cb14-21" data-line-number="21"></a>
+<a class="sourceLine" id="cb14-22" data-line-number="22">model <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../../keras/reference/reexports.html">fit</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/list.html">list</a></span>(data_a, data_b), labels, <span class="dt">epochs =</span> <span class="dv">10</span>)</a></code></pre></div>
+</div>
+<div id="the-concept-of-layer-node" class="section level2">
+<h2>The concept of layer “node”</h2>
+<p>Whenever you are calling a layer on some input, you are creating a new tensor (the output of the layer), and you are adding a “node” to the layer, linking the input tensor to the output tensor. When you are calling the same layer multiple times, that layer owns multiple nodes indexed as 1, 2, 2…</p>
+<p>You can obtain the output tensor of a layer via <code>layer$output</code>, or its output shape via <code>layer$output_shape</code>. But what if a layer is connected to multiple inputs?</p>
+<p>As long as a layer is only connected to one input, there is no confusion, and <code>$output</code> will return the one output of the layer:</p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb15-1" data-line-number="1">a &lt;-<span class="st"> </span><span class="kw"><a href="../../keras/reference/layer_input.html">layer_input</a></span>(<span class="dt">shape =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="dv">280</span>, <span class="dv">256</span>))</a>
+<a class="sourceLine" id="cb15-2" data-line-number="2"></a>
+<a class="sourceLine" id="cb15-3" data-line-number="3">lstm &lt;-<span class="st"> </span><span class="kw"><a href="../../keras/reference/layer_lstm.html">layer_lstm</a></span>(<span class="dt">units =</span> <span class="dv">32</span>)</a>
+<a class="sourceLine" id="cb15-4" data-line-number="4"></a>
+<a class="sourceLine" id="cb15-5" data-line-number="5">encoded_a &lt;-<span class="st"> </span>a <span class="op">%&gt;%</span><span class="st"> </span>lstm</a>
+<a class="sourceLine" id="cb15-6" data-line-number="6"></a>
+<a class="sourceLine" id="cb15-7" data-line-number="7">lstm<span class="op">$</span>output</a></code></pre></div>
+<p>Not so if the layer has multiple inputs:</p>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb16-1" data-line-number="1">a &lt;-<span class="st"> </span><span class="kw"><a href="../../keras/reference/layer_input.html">layer_input</a></span>(<span class="dt">shape =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="dv">280</span>, <span class="dv">256</span>))</a>
+<a class="sourceLine" id="cb16-2" data-line-number="2">b &lt;-<span class="st"> </span><span class="kw"><a href="../../keras/reference/layer_input.html">layer_input</a></span>(<span class="dt">shape =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="dv">280</span>, <span class="dv">256</span>))</a>
+<a class="sourceLine" id="cb16-3" data-line-number="3"></a>
+<a class="sourceLine" id="cb16-4" data-line-number="4">lstm &lt;-<span class="st"> </span><span class="kw"><a href="../../keras/reference/layer_lstm.html">layer_lstm</a></span>(<span class="dt">units =</span> <span class="dv">32</span>)</a>
+<a class="sourceLine" id="cb16-5" data-line-number="5"></a>
+<a class="sourceLine" id="cb16-6" data-line-number="6">encoded_a &lt;-<span class="st"> </span>a <span class="op">%&gt;%</span><span class="st"> </span>lstm</a>
+<a class="sourceLine" id="cb16-7" data-line-number="7">encoded_b &lt;-<span class="st"> </span>b <span class="op">%&gt;%</span><span class="st"> </span>lstm</a>
+<a class="sourceLine" id="cb16-8" data-line-number="8"></a>
+<a class="sourceLine" id="cb16-9" data-line-number="9">lstm<span class="op">$</span>output</a></code></pre></div>
+<pre><code>AttributeError: Layer lstm_4 has multiple inbound nodes, hence the notion of "layer output" is ill-defined. Use `get_output_at(node_index)` instead.</code></pre>
+<p>Okay then. The following works:</p>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb18-1" data-line-number="1"><span class="kw"><a href="../../keras/reference/get_input_at.html">get_output_at</a></span>(lstm, <span class="dv">1</span>)</a>
+<a class="sourceLine" id="cb18-2" data-line-number="2"><span class="kw"><a href="../../keras/reference/get_input_at.html">get_output_at</a></span>(lstm, <span class="dv">2</span>)</a></code></pre></div>
+<p>Simple enough, right?</p>
+<p>The same is true for the properties <code>input_shape</code> and <code>output_shape</code>: as long as the layer has only one node, or as long as all nodes have the same input/output shape, then the notion of “layer output/input shape” is well defined, and that one shape will be returned by <code>layer$output_shape</code>/<code>layer$input_shape</code>. But if, for instance, you apply the same <code><a href="../../keras/reference/layer_conv_2d.html">layer_conv_2d()</a></code> layer to an input of shape <code>(32, 32, 3)</code>, and then to an input of shape <code>(64, 64, 3)</code>, the layer will have multiple input/output shapes, and you will have to fetch them by specifying the index of the node they belong to:</p>
+<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb19-1" data-line-number="1">a &lt;-<span class="st"> </span><span class="kw"><a href="../../keras/reference/layer_input.html">layer_input</a></span>(<span class="dt">shape =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="dv">32</span>, <span class="dv">32</span>, <span class="dv">3</span>))</a>
+<a class="sourceLine" id="cb19-2" data-line-number="2">b &lt;-<span class="st"> </span><span class="kw"><a href="../../keras/reference/layer_input.html">layer_input</a></span>(<span class="dt">shape =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="dv">64</span>, <span class="dv">64</span>, <span class="dv">3</span>))</a>
+<a class="sourceLine" id="cb19-3" data-line-number="3"></a>
+<a class="sourceLine" id="cb19-4" data-line-number="4">conv &lt;-<span class="st"> </span><span class="kw"><a href="../../keras/reference/layer_conv_2d.html">layer_conv_2d</a></span>(<span class="dt">filters =</span> <span class="dv">16</span>, <span class="dt">kernel_size =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="dv">3</span>,<span class="dv">3</span>), <span class="dt">padding =</span> <span class="st">'same'</span>)</a>
+<a class="sourceLine" id="cb19-5" data-line-number="5"></a>
+<a class="sourceLine" id="cb19-6" data-line-number="6">conved_a &lt;-<span class="st"> </span>a <span class="op">%&gt;%</span><span class="st"> </span>conv</a>
+<a class="sourceLine" id="cb19-7" data-line-number="7"></a>
+<a class="sourceLine" id="cb19-8" data-line-number="8"><span class="co"># only one input so far, the following will work</span></a>
+<a class="sourceLine" id="cb19-9" data-line-number="9">conv<span class="op">$</span>input_shape</a>
+<a class="sourceLine" id="cb19-10" data-line-number="10"></a>
+<a class="sourceLine" id="cb19-11" data-line-number="11">conved_b &lt;-<span class="st"> </span>b <span class="op">%&gt;%</span><span class="st"> </span>conv</a>
+<a class="sourceLine" id="cb19-12" data-line-number="12"><span class="co"># now the `$input_shape` property wouldn't work, but this does:</span></a>
+<a class="sourceLine" id="cb19-13" data-line-number="13"><span class="kw"><a href="../../keras/reference/get_input_at.html">get_input_shape_at</a></span>(conv, <span class="dv">1</span>)</a>
+<a class="sourceLine" id="cb19-14" data-line-number="14"><span class="kw"><a href="../../keras/reference/get_input_at.html">get_input_shape_at</a></span>(conv, <span class="dv">2</span>) </a></code></pre></div>
+</div>
+<div id="more-examples" class="section level2">
+<h2>More examples</h2>
+<p>Code examples are still the best way to get started, so here are a few more.</p>
+<div id="inception-module" class="section level3">
+<h3>Inception module</h3>
+<p>For more information about the Inception architecture, see <a href="http://arxiv.org/abs/1409.4842">Going Deeper with Convolutions</a>.</p>
+<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb20-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(keras)</a>
+<a class="sourceLine" id="cb20-2" data-line-number="2"></a>
+<a class="sourceLine" id="cb20-3" data-line-number="3">input_img &lt;-<span class="st"> </span><span class="kw"><a href="../../keras/reference/layer_input.html">layer_input</a></span>(<span class="dt">shape =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="dv">256</span>, <span class="dv">256</span>, <span class="dv">3</span>))</a>
+<a class="sourceLine" id="cb20-4" data-line-number="4"></a>
+<a class="sourceLine" id="cb20-5" data-line-number="5">tower_<span class="dv">1</span> &lt;-<span class="st"> </span>input_img <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb20-6" data-line-number="6"><span class="st">  </span><span class="kw"><a href="../../keras/reference/layer_conv_2d.html">layer_conv_2d</a></span>(<span class="dt">filters =</span> <span class="dv">64</span>, <span class="dt">kernel_size =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="dv">1</span>, <span class="dv">1</span>), <span class="dt">padding=</span><span class="st">'same'</span>, <span class="dt">activation=</span><span class="st">'relu'</span>) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb20-7" data-line-number="7"><span class="st">  </span><span class="kw"><a href="../../keras/reference/layer_conv_2d.html">layer_conv_2d</a></span>(<span class="dt">filters =</span> <span class="dv">64</span>, <span class="dt">kernel_size =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="dv">3</span>, <span class="dv">3</span>), <span class="dt">padding=</span><span class="st">'same'</span>, <span class="dt">activation=</span><span class="st">'relu'</span>)</a>
+<a class="sourceLine" id="cb20-8" data-line-number="8"></a>
+<a class="sourceLine" id="cb20-9" data-line-number="9">tower_<span class="dv">2</span> &lt;-<span class="st"> </span>input_img <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb20-10" data-line-number="10"><span class="st">  </span><span class="kw"><a href="../../keras/reference/layer_conv_2d.html">layer_conv_2d</a></span>(<span class="dt">filters =</span> <span class="dv">64</span>, <span class="dt">kernel_size =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="dv">1</span>, <span class="dv">1</span>), <span class="dt">padding=</span><span class="st">'same'</span>, <span class="dt">activation=</span><span class="st">'relu'</span>) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb20-11" data-line-number="11"><span class="st">  </span><span class="kw"><a href="../../keras/reference/layer_conv_2d.html">layer_conv_2d</a></span>(<span class="dt">filters =</span> <span class="dv">64</span>, <span class="dt">kernel_size =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="dv">5</span>, <span class="dv">5</span>), <span class="dt">padding=</span><span class="st">'same'</span>, <span class="dt">activation=</span><span class="st">'relu'</span>)</a>
+<a class="sourceLine" id="cb20-12" data-line-number="12"></a>
+<a class="sourceLine" id="cb20-13" data-line-number="13">tower_<span class="dv">3</span> &lt;-<span class="st"> </span>input_img <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb20-14" data-line-number="14"><span class="st">  </span><span class="kw"><a href="../../keras/reference/layer_max_pooling_2d.html">layer_max_pooling_2d</a></span>(<span class="dt">pool_size =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="dv">3</span>, <span class="dv">3</span>), <span class="dt">strides =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="dv">1</span>, <span class="dv">1</span>), <span class="dt">padding =</span> <span class="st">'same'</span>) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb20-15" data-line-number="15"><span class="st">  </span><span class="kw"><a href="../../keras/reference/layer_conv_2d.html">layer_conv_2d</a></span>(<span class="dt">filters =</span> <span class="dv">64</span>, <span class="dt">kernel_size =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="dv">1</span>, <span class="dv">1</span>), <span class="dt">padding=</span><span class="st">'same'</span>, <span class="dt">activation=</span><span class="st">'relu'</span>)</a>
+<a class="sourceLine" id="cb20-16" data-line-number="16"></a>
+<a class="sourceLine" id="cb20-17" data-line-number="17">output &lt;-<span class="st"> </span><span class="kw"><a href="../../keras/reference/layer_concatenate.html">layer_concatenate</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(tower_<span class="dv">1</span>, tower_<span class="dv">2</span>, tower_<span class="dv">3</span>), <span class="dt">axis =</span> <span class="dv">1</span>)</a></code></pre></div>
+</div>
+<div id="residual-connection-on-a-convolution-layer" class="section level3">
+<h3>Residual connection on a convolution layer</h3>
+<p>For more information about residual networks, see <a href="http://arxiv.org/abs/1512.03385">Deep Residual Learning for Image Recognition</a>.</p>
+<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb21-1" data-line-number="1"><span class="co"># input tensor for a 3-channel 256x256 image</span></a>
+<a class="sourceLine" id="cb21-2" data-line-number="2">x &lt;-<span class="st"> </span><span class="kw"><a href="../../keras/reference/layer_input.html">layer_input</a></span>(<span class="dt">shape =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="dv">256</span>, <span class="dv">256</span>, <span class="dv">3</span>))</a>
+<a class="sourceLine" id="cb21-3" data-line-number="3"><span class="co"># 3x3 conv with 3 output channels (same as input channels)</span></a>
+<a class="sourceLine" id="cb21-4" data-line-number="4">y &lt;-<span class="st"> </span>x <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../../keras/reference/layer_conv_2d.html">layer_conv_2d</a></span>(<span class="dt">filters =</span> <span class="dv">3</span>, <span class="dt">kernel_size =</span><span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="dv">3</span>, <span class="dv">3</span>), <span class="dt">padding =</span> <span class="st">'same'</span>)</a>
+<a class="sourceLine" id="cb21-5" data-line-number="5"><span class="co"># this returns x + y.</span></a>
+<a class="sourceLine" id="cb21-6" data-line-number="6">z &lt;-<span class="st"> </span><span class="kw"><a href="../../keras/reference/layer_add.html">layer_add</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(x, y))</a></code></pre></div>
+</div>
+<div id="shared-vision-model" class="section level3">
+<h3>Shared vision model</h3>
+<p>This model reuses the same image-processing module on two inputs, to classify whether two MNIST digits are the same digit or different digits.</p>
+<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb22-1" data-line-number="1"><span class="co"># First, define the vision model</span></a>
+<a class="sourceLine" id="cb22-2" data-line-number="2">digit_input &lt;-<span class="st"> </span><span class="kw"><a href="../../keras/reference/layer_input.html">layer_input</a></span>(<span class="dt">shape =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="dv">27</span>, <span class="dv">27</span>, <span class="dv">1</span>))</a>
+<a class="sourceLine" id="cb22-3" data-line-number="3">out &lt;-<span class="st"> </span>digit_input <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb22-4" data-line-number="4"><span class="st">  </span><span class="kw"><a href="../../keras/reference/layer_conv_2d.html">layer_conv_2d</a></span>(<span class="dt">filters =</span> <span class="dv">64</span>, <span class="dt">kernel_size =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="dv">3</span>, <span class="dv">3</span>)) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb22-5" data-line-number="5"><span class="st">  </span><span class="kw"><a href="../../keras/reference/layer_conv_2d.html">layer_conv_2d</a></span>(<span class="dt">filters =</span> <span class="dv">64</span>, <span class="dt">kernel_size =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="dv">3</span>, <span class="dv">3</span>)) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb22-6" data-line-number="6"><span class="st">  </span><span class="kw"><a href="../../keras/reference/layer_max_pooling_2d.html">layer_max_pooling_2d</a></span>(<span class="dt">pool_size =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="dv">2</span>, <span class="dv">2</span>)) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb22-7" data-line-number="7"><span class="st">  </span><span class="kw"><a href="../../keras/reference/layer_flatten.html">layer_flatten</a></span>()</a>
+<a class="sourceLine" id="cb22-8" data-line-number="8"></a>
+<a class="sourceLine" id="cb22-9" data-line-number="9">vision_model &lt;-<span class="st"> </span><span class="kw"><a href="../../keras/reference/keras_model.html">keras_model</a></span>(digit_input, out)</a>
+<a class="sourceLine" id="cb22-10" data-line-number="10"></a>
+<a class="sourceLine" id="cb22-11" data-line-number="11"><span class="co"># Then define the tell-digits-apart model</span></a>
+<a class="sourceLine" id="cb22-12" data-line-number="12">digit_a &lt;-<span class="st"> </span><span class="kw"><a href="../../keras/reference/layer_input.html">layer_input</a></span>(<span class="dt">shape =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="dv">27</span>, <span class="dv">27</span>, <span class="dv">1</span>))</a>
+<a class="sourceLine" id="cb22-13" data-line-number="13">digit_b &lt;-<span class="st"> </span><span class="kw"><a href="../../keras/reference/layer_input.html">layer_input</a></span>(<span class="dt">shape =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="dv">27</span>, <span class="dv">27</span>, <span class="dv">1</span>))</a>
+<a class="sourceLine" id="cb22-14" data-line-number="14"></a>
+<a class="sourceLine" id="cb22-15" data-line-number="15"><span class="co"># The vision model will be shared, weights and all</span></a>
+<a class="sourceLine" id="cb22-16" data-line-number="16">out_a &lt;-<span class="st"> </span>digit_a <span class="op">%&gt;%</span><span class="st"> </span>vision_model</a>
+<a class="sourceLine" id="cb22-17" data-line-number="17">out_b &lt;-<span class="st"> </span>digit_b <span class="op">%&gt;%</span><span class="st"> </span>vision_model</a>
+<a class="sourceLine" id="cb22-18" data-line-number="18"></a>
+<a class="sourceLine" id="cb22-19" data-line-number="19">out &lt;-<span class="st"> </span><span class="kw"><a href="../../keras/reference/layer_concatenate.html">layer_concatenate</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(out_a, out_b)) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb22-20" data-line-number="20"><span class="st">  </span><span class="kw"><a href="../../keras/reference/layer_dense.html">layer_dense</a></span>(<span class="dt">units =</span> <span class="dv">1</span>, <span class="dt">activation =</span> <span class="st">'sigmoid'</span>)</a>
+<a class="sourceLine" id="cb22-21" data-line-number="21"></a>
+<a class="sourceLine" id="cb22-22" data-line-number="22">classification_model &lt;-<span class="st"> </span><span class="kw"><a href="../../keras/reference/keras_model.html">keras_model</a></span>(<span class="dt">inputs =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(digit_a, digit_b), out)</a></code></pre></div>
+</div>
+<div id="visual-question-answering-model" class="section level3">
+<h3>Visual question answering model</h3>
+<p>This model can select the correct one-word answer when asked a natural-language question about a picture.</p>
+<p>It works by encoding the question into a vector, encoding the image into a vector, concatenating the two, and training on top a logistic regression over some vocabulary of potential answers.</p>
+<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb23-1" data-line-number="1"><span class="co"># First, let's define a vision model using a Sequential model.</span></a>
+<a class="sourceLine" id="cb23-2" data-line-number="2"><span class="co"># This model will encode an image into a vector.</span></a>
+<a class="sourceLine" id="cb23-3" data-line-number="3">vision_model &lt;-<span class="st"> </span><span class="kw"><a href="../../keras/reference/keras_model_sequential.html">keras_model_sequential</a></span>() </a>
+<a class="sourceLine" id="cb23-4" data-line-number="4">vision_model <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb23-5" data-line-number="5"><span class="st">  </span><span class="kw"><a href="../../keras/reference/layer_conv_2d.html">layer_conv_2d</a></span>(<span class="dt">filters =</span> <span class="dv">64</span>, <span class="dt">kernel_size =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="dv">3</span>, <span class="dv">3</span>), <span class="dt">activation =</span> <span class="st">'relu'</span>, <span class="dt">padding =</span> <span class="st">'same'</span>,</a>
+<a class="sourceLine" id="cb23-6" data-line-number="6">                <span class="dt">input_shape =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="dv">224</span>, <span class="dv">224</span>, <span class="dv">3</span>)) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb23-7" data-line-number="7"><span class="st">  </span><span class="kw"><a href="../../keras/reference/layer_conv_2d.html">layer_conv_2d</a></span>(<span class="dt">filters =</span> <span class="dv">64</span>, <span class="dt">kernel_size =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="dv">3</span>, <span class="dv">3</span>), <span class="dt">activation =</span> <span class="st">'relu'</span>) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb23-8" data-line-number="8"><span class="st">  </span><span class="kw"><a href="../../keras/reference/layer_max_pooling_2d.html">layer_max_pooling_2d</a></span>(<span class="dt">pool_size =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="dv">2</span>, <span class="dv">2</span>)) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb23-9" data-line-number="9"><span class="st">  </span><span class="kw"><a href="../../keras/reference/layer_conv_2d.html">layer_conv_2d</a></span>(<span class="dt">filters =</span> <span class="dv">128</span>, <span class="dt">kernel_size =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="dv">3</span>, <span class="dv">3</span>), <span class="dt">activation =</span> <span class="st">'relu'</span>, <span class="dt">padding =</span> <span class="st">'same'</span>) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb23-10" data-line-number="10"><span class="st">  </span><span class="kw"><a href="../../keras/reference/layer_conv_2d.html">layer_conv_2d</a></span>(<span class="dt">filters =</span> <span class="dv">128</span>, <span class="dt">kernel_size =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="dv">3</span>, <span class="dv">3</span>), <span class="dt">activation =</span> <span class="st">'relu'</span>) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb23-11" data-line-number="11"><span class="st">  </span><span class="kw"><a href="../../keras/reference/layer_max_pooling_2d.html">layer_max_pooling_2d</a></span>(<span class="dt">pool_size =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="dv">2</span>, <span class="dv">2</span>)) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb23-12" data-line-number="12"><span class="st">  </span><span class="kw"><a href="../../keras/reference/layer_conv_2d.html">layer_conv_2d</a></span>(<span class="dt">filters =</span> <span class="dv">256</span>, <span class="dt">kernel_size =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="dv">3</span>, <span class="dv">3</span>), <span class="dt">activation =</span> <span class="st">'relu'</span>, <span class="dt">padding =</span> <span class="st">'same'</span>) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb23-13" data-line-number="13"><span class="st">  </span><span class="kw"><a href="../../keras/reference/layer_conv_2d.html">layer_conv_2d</a></span>(<span class="dt">filters =</span> <span class="dv">256</span>, <span class="dt">kernel_size =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="dv">3</span>, <span class="dv">3</span>), <span class="dt">activation =</span> <span class="st">'relu'</span>) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb23-14" data-line-number="14"><span class="st">  </span><span class="kw"><a href="../../keras/reference/layer_conv_2d.html">layer_conv_2d</a></span>(<span class="dt">filters =</span> <span class="dv">256</span>, <span class="dt">kernel_size =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="dv">3</span>, <span class="dv">3</span>), <span class="dt">activation =</span> <span class="st">'relu'</span>) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb23-15" data-line-number="15"><span class="st">  </span><span class="kw"><a href="../../keras/reference/layer_max_pooling_2d.html">layer_max_pooling_2d</a></span>(<span class="dt">pool_size =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="dv">2</span>, <span class="dv">2</span>)) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb23-16" data-line-number="16"><span class="st">  </span><span class="kw"><a href="../../keras/reference/layer_flatten.html">layer_flatten</a></span>()</a>
+<a class="sourceLine" id="cb23-17" data-line-number="17"></a>
+<a class="sourceLine" id="cb23-18" data-line-number="18"><span class="co"># Now let's get a tensor with the output of our vision model:</span></a>
+<a class="sourceLine" id="cb23-19" data-line-number="19">image_input &lt;-<span class="st"> </span><span class="kw"><a href="../../keras/reference/layer_input.html">layer_input</a></span>(<span class="dt">shape =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="dv">224</span>, <span class="dv">224</span>, <span class="dv">3</span>))</a>
+<a class="sourceLine" id="cb23-20" data-line-number="20">encoded_image &lt;-<span class="st"> </span>image_input <span class="op">%&gt;%</span><span class="st"> </span>vision_model</a>
+<a class="sourceLine" id="cb23-21" data-line-number="21"></a>
+<a class="sourceLine" id="cb23-22" data-line-number="22"><span class="co"># Next, let's define a language model to encode the question into a vector.</span></a>
+<a class="sourceLine" id="cb23-23" data-line-number="23"><span class="co"># Each question will be at most 100 word long,</span></a>
+<a class="sourceLine" id="cb23-24" data-line-number="24"><span class="co"># and we will index words as integers from 1 to 9999.</span></a>
+<a class="sourceLine" id="cb23-25" data-line-number="25">question_input &lt;-<span class="st"> </span><span class="kw"><a href="../../keras/reference/layer_input.html">layer_input</a></span>(<span class="dt">shape =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="dv">100</span>), <span class="dt">dtype =</span> <span class="st">'int32'</span>)</a>
+<a class="sourceLine" id="cb23-26" data-line-number="26">encoded_question &lt;-<span class="st"> </span>question_input <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb23-27" data-line-number="27"><span class="st">  </span><span class="kw"><a href="../../keras/reference/layer_embedding.html">layer_embedding</a></span>(<span class="dt">input_dim =</span> <span class="dv">10000</span>, <span class="dt">output_dim =</span> <span class="dv">256</span>, <span class="dt">input_length =</span> <span class="dv">100</span>) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb23-28" data-line-number="28"><span class="st">  </span><span class="kw"><a href="../../keras/reference/layer_lstm.html">layer_lstm</a></span>(<span class="dt">units =</span> <span class="dv">256</span>)</a>
+<a class="sourceLine" id="cb23-29" data-line-number="29"></a>
+<a class="sourceLine" id="cb23-30" data-line-number="30"><span class="co"># Let's concatenate the question vector and the image vector then</span></a>
+<a class="sourceLine" id="cb23-31" data-line-number="31"><span class="co"># train a logistic regression over 1000 words on top</span></a>
+<a class="sourceLine" id="cb23-32" data-line-number="32">output &lt;-<span class="st"> </span><span class="kw"><a href="../../keras/reference/layer_concatenate.html">layer_concatenate</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(encoded_question, encoded_image)) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb23-33" data-line-number="33"><span class="st">  </span><span class="kw"><a href="../../keras/reference/layer_dense.html">layer_dense</a></span>(<span class="dt">units =</span> <span class="dv">1000</span>, <span class="dt">activation=</span><span class="st">'softmax'</span>)</a>
+<a class="sourceLine" id="cb23-34" data-line-number="34"></a>
+<a class="sourceLine" id="cb23-35" data-line-number="35"><span class="co"># This is our final model:</span></a>
+<a class="sourceLine" id="cb23-36" data-line-number="36">vqa_model &lt;-<span class="st"> </span><span class="kw"><a href="../../keras/reference/keras_model.html">keras_model</a></span>(<span class="dt">inputs =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(image_input, question_input), <span class="dt">outputs =</span> output)</a></code></pre></div>
+</div>
+<div id="video-question-answering-model" class="section level3">
+<h3>Video question answering model</h3>
+<p>Now that we have trained our image QA model, we can quickly turn it into a video QA model. With appropriate training, you will be able to show it a short video (e.g. 100-frame human action) and ask a natural language question about the video (e.g. “what sport is the boy playing?” -&gt; “football”).</p>
+<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb24-1" data-line-number="1">video_input &lt;-<span class="st"> </span><span class="kw"><a href="../../keras/reference/layer_input.html">layer_input</a></span>(<span class="dt">shape =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="dv">100</span>, <span class="dv">224</span>, <span class="dv">224</span>, <span class="dv">3</span>))</a>
+<a class="sourceLine" id="cb24-2" data-line-number="2"></a>
+<a class="sourceLine" id="cb24-3" data-line-number="3"><span class="co"># This is our video encoded via the previously trained vision_model (weights are reused)</span></a>
+<a class="sourceLine" id="cb24-4" data-line-number="4">encoded_video &lt;-<span class="st"> </span>video_input <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb24-5" data-line-number="5"><span class="st">  </span><span class="kw"><a href="../../keras/reference/time_distributed.html">time_distributed</a></span>(vision_model) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb24-6" data-line-number="6"><span class="st">  </span><span class="kw"><a href="../../keras/reference/layer_lstm.html">layer_lstm</a></span>(<span class="dt">units =</span> <span class="dv">256</span>)</a>
+<a class="sourceLine" id="cb24-7" data-line-number="7"></a>
+<a class="sourceLine" id="cb24-8" data-line-number="8"><span class="co"># This is a model-level representation of the question encoder, reusing the same weights as before:</span></a>
+<a class="sourceLine" id="cb24-9" data-line-number="9">question_encoder &lt;-<span class="st"> </span><span class="kw"><a href="../../keras/reference/keras_model.html">keras_model</a></span>(<span class="dt">inputs =</span> question_input, <span class="dt">outputs =</span> encoded_question)</a>
+<a class="sourceLine" id="cb24-10" data-line-number="10"></a>
+<a class="sourceLine" id="cb24-11" data-line-number="11"><span class="co"># Let's use it to encode the question:</span></a>
+<a class="sourceLine" id="cb24-12" data-line-number="12">video_question_input &lt;-<span class="st"> </span><span class="kw"><a href="../../keras/reference/layer_input.html">layer_input</a></span>(<span class="dt">shape =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="dv">100</span>), <span class="dt">dtype =</span> <span class="st">'int32'</span>)</a>
+<a class="sourceLine" id="cb24-13" data-line-number="13">encoded_video_question &lt;-<span class="st"> </span>video_question_input <span class="op">%&gt;%</span><span class="st"> </span>question_encoder</a>
+<a class="sourceLine" id="cb24-14" data-line-number="14"></a>
+<a class="sourceLine" id="cb24-15" data-line-number="15"><span class="co"># And this is our video question answering model:</span></a>
+<a class="sourceLine" id="cb24-16" data-line-number="16">output &lt;-<span class="st"> </span><span class="kw"><a href="../../keras/reference/layer_concatenate.html">layer_concatenate</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(encoded_video, encoded_video_question)) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb24-17" data-line-number="17"><span class="st">  </span><span class="kw"><a href="../../keras/reference/layer_dense.html">layer_dense</a></span>(<span class="dt">units =</span> <span class="dv">1000</span>, <span class="dt">activation =</span> <span class="st">'softmax'</span>)</a>
+<a class="sourceLine" id="cb24-18" data-line-number="18"></a>
+<a class="sourceLine" id="cb24-19" data-line-number="19">video_qa_model &lt;-<span class="st"> </span><span class="kw"><a href="../../keras/reference/keras_model.html">keras_model</a></span>(<span class="dt">inputs=</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(video_input, video_question_input), <span class="dt">outputs =</span> output)</a></code></pre></div>
+</div>
+</div>

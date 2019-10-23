@@ -111,6 +111,33 @@ disqusShortname = "r-tensorflow"
 	identifier = "guide-top"
 	weight = 30
 	
+[[menu.main]]
+	name   = "Keras"
+	parent = "guide-top"
+	weight = 21
+	url = ""
+	
+[[menu.main]]
+	name   = "Getting started"
+	identifier = "keras-getting-started-top"
+	parent = "guide-top"
+	weight = 22
+	url = "/guide/keras/guide_keras/"
+	
+[[menu.main]]
+	name   = "Advanced"
+	identifier = "keras-advanced-top"
+	parent = "guide-top"
+	weight = 23
+	url = "/guide/keras/custom_layers/"
+	
+[[menu.main]]
+	name   = "Examples"
+	identifier = "keras-examples-top"
+	parent = "guide-top"
+	weight = 24
+	url = "/guide/keras/examples/"
+	
 # Deploy
 
 [[menu.main]]
