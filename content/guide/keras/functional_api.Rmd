@@ -22,13 +22,13 @@ knitr::opts_chunk$set(comment = NA, eval = FALSE)
 
 The Keras functional API is the way to go for defining complex models, such as multi-output models, directed acyclic graphs, or models with shared layers.
 
-This guide assumes that you are already familiar with the [Sequential](sequential_model.html) model.
+This guide assumes that you are already familiar with the [Sequential](../sequential_model) model.
 
 Let's start with something simple.
 
 ## First example: a densely-connected network
 
-The [Sequential](sequential_model.html) model is probably a better choice to implement such a network, but it helps to start with something really simple.
+The [Sequential](../sequential_model) model is probably a better choice to implement such a network, but it helps to start with something really simple.
 
 To use the functional API, build your input and output layers and then pass them to the `model()` function. This model can be trained just like Keras sequential models.
 
@@ -90,7 +90,7 @@ The model will also be supervised via two loss functions. Using the main loss fu
 
 Here's what our model looks like:
 
-<img src="images/multi-input-multi-output-graph.png" alt="multi-input-multi-output-graph" style="width: 400px;"/>
+<img src="../images/multi-input-multi-output-graph.png" alt="multi-input-multi-output-graph" style="width: 400px;"/>
 
 Let's implement it with the functional API.
 
