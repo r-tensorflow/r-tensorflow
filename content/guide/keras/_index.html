@@ -5,6 +5,12 @@ vignette: >
   %\VignetteIndexEntry{Getting Started with Keras} 
   %\VignetteEngine{knitr::rmarkdown} 
   %\VignetteEncoding{UTF-8}
+menu:
+  main:
+    name: "Overview"
+    identifier: "keras-keras-overview"
+    parent: "keras-getting-started-top"
+    weight: 5
 ---
 
 
@@ -17,18 +23,19 @@ vignette: >
 <li><p>User-friendly API which makes it easy to quickly prototype deep learning models.</p></li>
 <li><p>Built-in support for convolutional networks (for computer vision), recurrent networks (for sequence processing), and any combination of both.</p></li>
 <li><p>Supports arbitrary network architectures: multi-input or multi-output models, layer sharing, model sharing, etc. This means that Keras is appropriate for building essentially any deep learning model, from a memory network to a neural Turing machine.</p></li>
-<li><p>Is capable of running on top of multiple back-ends including <a href="https://github.com/tensorflow/tensorflow">TensorFlow</a>, <a href="https://github.com/Microsoft/cntk">CNTK</a>, or <a href="https://github.com/Theano/Theano">Theano</a>.</p></li>
 </ul>
 <p>This website provides documentation for the R interface to Keras. See the main Keras website at <a href="https://keras.io" class="uri">https://keras.io</a> for additional information on the project.</p>
 </div>
 <div id="installation" class="section level2">
 <h2>Installation</h2>
-<p>First, install the keras R package from GitHub as follows:</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1">devtools<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/devtools/man/reexports.html">install_github</a></span>(<span class="st">"rstudio/keras"</span>)</a></code></pre></div>
-<p>The Keras R interface uses the <a href="https://www.tensorflow.org/">TensorFlow</a> backend engine by default. To install both the core Keras library as well as the TensorFlow backend use the <code><a href="../../keras/reference/install_keras.html">install_keras()</a></code> function:</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(keras)</a>
-<a class="sourceLine" id="cb2-2" data-line-number="2"><span class="kw"><a href="../../keras/reference/install_keras.html">install_keras</a></span>()</a></code></pre></div>
-<p>This will provide you with default CPU-based installations of Keras and TensorFlow. If you want a more customized installation, e.g. if you want to take advantage of NVIDIA GPUs, see the documentation for <code><a href="../../keras/reference/install_keras.html">install_keras()</a></code>.</p>
+<p>First, install the keras R package with:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span>(<span class="st">"keras"</span>)</a></code></pre></div>
+<p>or install the development version with:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" data-line-number="1">devtools<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/devtools/man/reexports.html">install_github</a></span>(<span class="st">"rstudio/keras"</span>)</a></code></pre></div>
+<p>The Keras R interface uses the <a href="https://www.tensorflow.org/">TensorFlow</a> backend engine by default.</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span>(<span class="st">"keras"</span>)</a>
+<a class="sourceLine" id="cb3-2" data-line-number="2"><span class="kw">install_keras</span>()</a></code></pre></div>
+<p>This will provide you with default CPU-based installations of Keras and TensorFlow. If you want a more customized installation, e.g. if you want to take advantage of NVIDIA GPUs, see the documentation for <code><a href="../../keras/reference/install_keras.html">install_keras()</a></code> and the <a href="/installation/">installation</a> section.</p>
 </div>
 <div id="mnist-example" class="section level2">
 <h2>MNIST Example</h2>
@@ -38,38 +45,38 @@ vignette: >
 <div id="preparing-the-data" class="section level3">
 <h3>Preparing the Data</h3>
 <p>The MNIST dataset is included with Keras and can be accessed using the <code><a href="../../keras/reference/dataset_mnist.html">dataset_mnist()</a></code> function. Here we load the dataset then create variables for our test and training data:</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(keras)</a>
-<a class="sourceLine" id="cb3-2" data-line-number="2">mnist &lt;-<span class="st"> </span><span class="kw"><a href="../../keras/reference/dataset_mnist.html">dataset_mnist</a></span>()</a>
-<a class="sourceLine" id="cb3-3" data-line-number="3">x_train &lt;-<span class="st"> </span>mnist<span class="op">$</span>train<span class="op">$</span>x</a>
-<a class="sourceLine" id="cb3-4" data-line-number="4">y_train &lt;-<span class="st"> </span>mnist<span class="op">$</span>train<span class="op">$</span>y</a>
-<a class="sourceLine" id="cb3-5" data-line-number="5">x_test &lt;-<span class="st"> </span>mnist<span class="op">$</span>test<span class="op">$</span>x</a>
-<a class="sourceLine" id="cb3-6" data-line-number="6">y_test &lt;-<span class="st"> </span>mnist<span class="op">$</span>test<span class="op">$</span>y</a></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(keras)</a>
+<a class="sourceLine" id="cb4-2" data-line-number="2">mnist &lt;-<span class="st"> </span><span class="kw"><a href="../../keras/reference/dataset_mnist.html">dataset_mnist</a></span>()</a>
+<a class="sourceLine" id="cb4-3" data-line-number="3">x_train &lt;-<span class="st"> </span>mnist<span class="op">$</span>train<span class="op">$</span>x</a>
+<a class="sourceLine" id="cb4-4" data-line-number="4">y_train &lt;-<span class="st"> </span>mnist<span class="op">$</span>train<span class="op">$</span>y</a>
+<a class="sourceLine" id="cb4-5" data-line-number="5">x_test &lt;-<span class="st"> </span>mnist<span class="op">$</span>test<span class="op">$</span>x</a>
+<a class="sourceLine" id="cb4-6" data-line-number="6">y_test &lt;-<span class="st"> </span>mnist<span class="op">$</span>test<span class="op">$</span>y</a></code></pre></div>
 <p>The <code>x</code> data is a 3-d array <code>(images,width,height)</code> of grayscale values . To prepare the data for training we convert the 3-d arrays into matrices by reshaping width and height into a single dimension (28x28 images are flattened into length 784 vectors). Then, we convert the grayscale values from integers ranging between 0 to 255 into floating point values ranging between 0 and 1:</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" data-line-number="1"><span class="co"># reshape</span></a>
-<a class="sourceLine" id="cb4-2" data-line-number="2">x_train &lt;-<span class="st"> </span><span class="kw"><a href="../../keras/reference/reexports.html">array_reshape</a></span>(x_train, <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span>(x_train), <span class="dv">784</span>))</a>
-<a class="sourceLine" id="cb4-3" data-line-number="3">x_test &lt;-<span class="st"> </span><span class="kw"><a href="../../keras/reference/reexports.html">array_reshape</a></span>(x_test, <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span>(x_test), <span class="dv">784</span>))</a>
-<a class="sourceLine" id="cb4-4" data-line-number="4"><span class="co"># rescale</span></a>
-<a class="sourceLine" id="cb4-5" data-line-number="5">x_train &lt;-<span class="st"> </span>x_train <span class="op">/</span><span class="st"> </span><span class="dv">255</span></a>
-<a class="sourceLine" id="cb4-6" data-line-number="6">x_test &lt;-<span class="st"> </span>x_test <span class="op">/</span><span class="st"> </span><span class="dv">255</span></a></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" data-line-number="1"><span class="co"># reshape</span></a>
+<a class="sourceLine" id="cb5-2" data-line-number="2">x_train &lt;-<span class="st"> </span><span class="kw"><a href="../../keras/reference/reexports.html">array_reshape</a></span>(x_train, <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span>(x_train), <span class="dv">784</span>))</a>
+<a class="sourceLine" id="cb5-3" data-line-number="3">x_test &lt;-<span class="st"> </span><span class="kw"><a href="../../keras/reference/reexports.html">array_reshape</a></span>(x_test, <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span>(x_test), <span class="dv">784</span>))</a>
+<a class="sourceLine" id="cb5-4" data-line-number="4"><span class="co"># rescale</span></a>
+<a class="sourceLine" id="cb5-5" data-line-number="5">x_train &lt;-<span class="st"> </span>x_train <span class="op">/</span><span class="st"> </span><span class="dv">255</span></a>
+<a class="sourceLine" id="cb5-6" data-line-number="6">x_test &lt;-<span class="st"> </span>x_test <span class="op">/</span><span class="st"> </span><span class="dv">255</span></a></code></pre></div>
 <p>Note that we use the <code><a href="../../keras/reference/reexports.html">array_reshape()</a></code> function rather than the <code>dim&lt;-()</code> function to reshape the array. This is so that the data is re-interpreted using row-major semantics (as opposed to R’s default column-major semantics), which is in turn compatible with the way that the numerical libraries called by Keras interpret array dimensions.</p>
 <p>The <code>y</code> data is an integer vector with values ranging from 0 to 9. To prepare this data for training we <a href="https://www.quora.com/What-is-one-hot-encoding-and-when-is-it-used-in-data-science">one-hot encode</a> the vectors into binary class matrices using the Keras <code><a href="../../keras/reference/to_categorical.html">to_categorical()</a></code> function:</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" data-line-number="1">y_train &lt;-<span class="st"> </span><span class="kw"><a href="../../keras/reference/to_categorical.html">to_categorical</a></span>(y_train, <span class="dv">10</span>)</a>
-<a class="sourceLine" id="cb5-2" data-line-number="2">y_test &lt;-<span class="st"> </span><span class="kw"><a href="../../keras/reference/to_categorical.html">to_categorical</a></span>(y_test, <span class="dv">10</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" data-line-number="1">y_train &lt;-<span class="st"> </span><span class="kw"><a href="../../keras/reference/to_categorical.html">to_categorical</a></span>(y_train, <span class="dv">10</span>)</a>
+<a class="sourceLine" id="cb6-2" data-line-number="2">y_test &lt;-<span class="st"> </span><span class="kw"><a href="../../keras/reference/to_categorical.html">to_categorical</a></span>(y_test, <span class="dv">10</span>)</a></code></pre></div>
 </div>
 <div id="defining-the-model" class="section level3">
 <h3>Defining the Model</h3>
 <p>The core data structure of Keras is a model, a way to organize layers. The simplest type of model is the <a href="https://keras.rstudio.com/articles/sequential_model.html">Sequential model</a>, a linear stack of layers.</p>
 <p>We begin by creating a sequential model and then adding layers using the pipe (<code><a href="../../keras/reference/pipe.html">%&gt;%</a></code>) operator:</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" data-line-number="1">model &lt;-<span class="st"> </span><span class="kw"><a href="../../keras/reference/keras_model_sequential.html">keras_model_sequential</a></span>() </a>
-<a class="sourceLine" id="cb6-2" data-line-number="2">model <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb6-3" data-line-number="3"><span class="st">  </span><span class="kw"><a href="../../keras/reference/layer_dense.html">layer_dense</a></span>(<span class="dt">units =</span> <span class="dv">256</span>, <span class="dt">activation =</span> <span class="st">'relu'</span>, <span class="dt">input_shape =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="dv">784</span>)) <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb6-4" data-line-number="4"><span class="st">  </span><span class="kw"><a href="../../keras/reference/layer_dropout.html">layer_dropout</a></span>(<span class="dt">rate =</span> <span class="fl">0.4</span>) <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb6-5" data-line-number="5"><span class="st">  </span><span class="kw"><a href="../../keras/reference/layer_dense.html">layer_dense</a></span>(<span class="dt">units =</span> <span class="dv">128</span>, <span class="dt">activation =</span> <span class="st">'relu'</span>) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb6-6" data-line-number="6"><span class="st">  </span><span class="kw"><a href="../../keras/reference/layer_dropout.html">layer_dropout</a></span>(<span class="dt">rate =</span> <span class="fl">0.3</span>) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb6-7" data-line-number="7"><span class="st">  </span><span class="kw"><a href="../../keras/reference/layer_dense.html">layer_dense</a></span>(<span class="dt">units =</span> <span class="dv">10</span>, <span class="dt">activation =</span> <span class="st">'softmax'</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" data-line-number="1">model &lt;-<span class="st"> </span><span class="kw"><a href="../../keras/reference/keras_model_sequential.html">keras_model_sequential</a></span>() </a>
+<a class="sourceLine" id="cb7-2" data-line-number="2">model <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb7-3" data-line-number="3"><span class="st">  </span><span class="kw"><a href="../../keras/reference/layer_dense.html">layer_dense</a></span>(<span class="dt">units =</span> <span class="dv">256</span>, <span class="dt">activation =</span> <span class="st">'relu'</span>, <span class="dt">input_shape =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="dv">784</span>)) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb7-4" data-line-number="4"><span class="st">  </span><span class="kw"><a href="../../keras/reference/layer_dropout.html">layer_dropout</a></span>(<span class="dt">rate =</span> <span class="fl">0.4</span>) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb7-5" data-line-number="5"><span class="st">  </span><span class="kw"><a href="../../keras/reference/layer_dense.html">layer_dense</a></span>(<span class="dt">units =</span> <span class="dv">128</span>, <span class="dt">activation =</span> <span class="st">'relu'</span>) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb7-6" data-line-number="6"><span class="st">  </span><span class="kw"><a href="../../keras/reference/layer_dropout.html">layer_dropout</a></span>(<span class="dt">rate =</span> <span class="fl">0.3</span>) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb7-7" data-line-number="7"><span class="st">  </span><span class="kw"><a href="../../keras/reference/layer_dense.html">layer_dense</a></span>(<span class="dt">units =</span> <span class="dv">10</span>, <span class="dt">activation =</span> <span class="st">'softmax'</span>)</a></code></pre></div>
 <p>The <code>input_shape</code> argument to the first layer specifies the shape of the input data (a length 784 numeric vector representing a grayscale image). The final layer outputs a length 10 numeric vector (probabilities for each digit) using a <a href="https://en.wikipedia.org/wiki/Softmax_function">softmax activation function</a>.</p>
 <p>Use the <code><a href="https://rdrr.io/r/base/summary.html">summary()</a></code> function to print the details of the model:</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/base/summary.html">summary</a></span>(model)</a></code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/base/summary.html">summary</a></span>(model)</a></code></pre></div>
 <pre style="box-shadow: none;"><code>Model
 ________________________________________________________________________________
 Layer (type)                        Output Shape                    Param #     
@@ -89,64 +96,38 @@ Trainable params: 235,146
 Non-trainable params: 0
 ________________________________________________________________________________</code></pre>
 <p>Next, compile the model with appropriate loss function, optimizer, and metrics:</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" data-line-number="1">model <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../../keras/reference/reexports.html">compile</a></span>(</a>
-<a class="sourceLine" id="cb8-2" data-line-number="2">  <span class="dt">loss =</span> <span class="st">'categorical_crossentropy'</span>,</a>
-<a class="sourceLine" id="cb8-3" data-line-number="3">  <span class="dt">optimizer =</span> <span class="kw"><a href="../../keras/reference/optimizer_rmsprop.html">optimizer_rmsprop</a></span>(),</a>
-<a class="sourceLine" id="cb8-4" data-line-number="4">  <span class="dt">metrics =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">'accuracy'</span>)</a>
-<a class="sourceLine" id="cb8-5" data-line-number="5">)</a></code></pre></div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" data-line-number="1">model <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../../keras/reference/reexports.html">compile</a></span>(</a>
+<a class="sourceLine" id="cb9-2" data-line-number="2">  <span class="dt">loss =</span> <span class="st">'categorical_crossentropy'</span>,</a>
+<a class="sourceLine" id="cb9-3" data-line-number="3">  <span class="dt">optimizer =</span> <span class="kw"><a href="../../keras/reference/optimizer_rmsprop.html">optimizer_rmsprop</a></span>(),</a>
+<a class="sourceLine" id="cb9-4" data-line-number="4">  <span class="dt">metrics =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">'accuracy'</span>)</a>
+<a class="sourceLine" id="cb9-5" data-line-number="5">)</a></code></pre></div>
 </div>
 <div id="training-and-evaluation" class="section level3">
 <h3>Training and Evaluation</h3>
 <p>Use the <code><a href="../../keras/reference/reexports.html">fit()</a></code> function to train the model for 30 epochs using batches of 128 images:</p>
-<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" data-line-number="1">history &lt;-<span class="st"> </span>model <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../../keras/reference/reexports.html">fit</a></span>(</a>
-<a class="sourceLine" id="cb9-2" data-line-number="2">  x_train, y_train, </a>
-<a class="sourceLine" id="cb9-3" data-line-number="3">  <span class="dt">epochs =</span> <span class="dv">30</span>, <span class="dt">batch_size =</span> <span class="dv">128</span>, </a>
-<a class="sourceLine" id="cb9-4" data-line-number="4">  <span class="dt">validation_split =</span> <span class="fl">0.2</span></a>
-<a class="sourceLine" id="cb9-5" data-line-number="5">)</a></code></pre></div>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" data-line-number="1">history &lt;-<span class="st"> </span>model <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../../keras/reference/reexports.html">fit</a></span>(</a>
+<a class="sourceLine" id="cb10-2" data-line-number="2">  x_train, y_train, </a>
+<a class="sourceLine" id="cb10-3" data-line-number="3">  <span class="dt">epochs =</span> <span class="dv">30</span>, <span class="dt">batch_size =</span> <span class="dv">128</span>, </a>
+<a class="sourceLine" id="cb10-4" data-line-number="4">  <span class="dt">validation_split =</span> <span class="fl">0.2</span></a>
+<a class="sourceLine" id="cb10-5" data-line-number="5">)</a></code></pre></div>
 <p>The <code>history</code> object returned by <code><a href="../../keras/reference/reexports.html">fit()</a></code> includes loss and accuracy metrics which we can plot:</p>
-<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/graphics/plot.html">plot</a></span>(history)</a></code></pre></div>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb11-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/graphics/plot.html">plot</a></span>(history)</a></code></pre></div>
 <p><img src="images/training_history_ggplot2.png" class="r-plot" width="757" height="489"></p>
 <p>Evaluate the model’s performance on the test data:</p>
-<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb11-1" data-line-number="1">model <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../../keras/reference/reexports.html">evaluate</a></span>(x_test, y_test)</a></code></pre></div>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb12-1" data-line-number="1">model <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../../keras/reference/reexports.html">evaluate</a></span>(x_test, y_test)</a></code></pre></div>
 <pre><code>$loss
 [1] 0.1149
 
 $acc
 [1] 0.9807</code></pre>
 <p>Generate predictions on new data:</p>
-<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb13-1" data-line-number="1">model <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../../keras/reference/predict_proba.html">predict_classes</a></span>(x_test)</a></code></pre></div>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb14-1" data-line-number="1">model <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../../keras/reference/predict_proba.html">predict_classes</a></span>(x_test)</a></code></pre></div>
 <pre><code>  [1] 7 2 1 0 4 1 4 9 5 9 0 6 9 0 1 5 9 7 3 4 9 6 6 5 4 0 7 4 0 1 3 1 3 4 7 2 7 1 2
  [40] 1 1 7 4 2 3 5 1 2 4 4 6 3 5 5 6 0 4 1 9 5 7 8 9 3 7 4 6 4 3 0 7 0 2 9 1 7 3 2
  [79] 9 7 7 6 2 7 8 4 7 3 6 1 3 6 9 3 1 4 1 7 6 9
  [ reached getOption("max.print") -- omitted 9900 entries ]</code></pre>
 <p>Keras provides a vocabulary for building deep learning models that is simple, elegant, and intuitive. Building a question answering system, an image classification model, a neural Turing machine, or any other model is just as straightforward.</p>
 </div>
-</div>
-<div id="tutorials" class="section level2">
-<h2>Tutorials</h2>
-<p>To learn the basics of Keras, we recommend the following sequence of tutorials:</p>
-<ul>
-<li><p><a href="tutorial_basic_classification.html">Basic Classification</a> — In this tutorial, we train a neural network model to classify images of clothing, like sneakers and shirts.</p></li>
-<li><p><a href="tutorial_basic_text_classification.html">Text Classification</a> — This tutorial classifies movie reviews as positive or negative using the text of the review.</p></li>
-<li><p><a href="tutorial_basic_regression.html">Basic Regression</a> — This tutorial builds a model to predict the median price of homes in a Boston suburb during the mid-1970s.</p></li>
-<li><p><a href="tutorial_overfit_underfit.html">Overfitting and Underfitting</a> — In this tutorial, we explore two common regularization techniques (weight regularization and dropout) and use them to improve our movie review classification results.</p></li>
-<li><p><a href="tutorial_save_and_restore.html">Save and Restore Models</a> — This tutorial demonstrates various ways to save and share models (after as well as during training).</p></li>
-</ul>
-<p>These tutorials walk you through the main components of the Keras library and demonstrate the core workflows used for training and improving the performance of neural networks. The <a href="guide_keras.html">Guide to Keras Basics</a> provides a more condensed summary of this material.</p>
-<p>The <a href="https://github.com/rstudio/cheatsheets/raw/master/keras.pdf">Deep Learning with Keras</a> cheat sheet also provides a condensed high level guide to using Keras.</p>
-</div>
-<div id="learning-more" class="section level2">
-<h2>Learning More</h2>
-<p>To learn more about Keras, you can check out these articles:</p>
-<ul>
-<li><p><a href="sequential_model.html">Guide to the Sequential Model</a></p></li>
-<li><p><a href="functional_api.html">Guide to the Functional API</a></p></li>
-<li><p><a href="faq.html">Frequently Asked Questions</a></p></li>
-<li><p><a href="training_visualization.html">Training Visualization</a></p></li>
-<li><p><a href="applications.html">Using Pre-Trained Models</a></p></li>
-<li><p><a href="eager_guide.html">Keras with Eager Execution</a></p></li>
-</ul>
-<p><a href="https://www.amazon.com/Deep-Learning-R-Francois-Chollet/dp/161729554X"><img src="https://images.manning.com/720/960/resize/book/a/4e5e97f-4e8d-4d97-a715-f6c2b0eb95f5/Allaire-DLwithR-HI.png" align="right" style="margin-left:10px; margin-right: 20px; margin-top: 15px; border: solid 1px #cccccc;" width="125"></a></p>
 <div id="deep-learning-with-r-book" class="section level3">
 <h3>Deep Learning with R Book</h3>
 <p>If you want a more comprehensive introduction to both Keras and the concepts and practice of deep learning, we recommend the <a href="https://www.amazon.com/Deep-Learning-R-Francois-Chollet/dp/161729554X">Deep Learning with R</a> book from Manning. This book is a collaboration between François Chollet, the creator of Keras, and J.J. Allaire, who wrote the R interface to Keras.</p>

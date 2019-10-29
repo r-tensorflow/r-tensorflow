@@ -122,7 +122,7 @@ disqusShortname = "r-tensorflow"
 	identifier = "keras-getting-started-top"
 	parent = "guide-top"
 	weight = 22
-	url = "/guide/keras/guide_keras/"
+	url = "/guide/keras/"
 	
 [[menu.main]]
 	name   = "Advanced"
