@@ -152,13 +152,13 @@ ________________________________________________________________________________
 <div id="examples" class="section level2">
 <h2>Examples</h2>
 <p>Here are a few examples to get you started!</p>
-<p>On the <a href="https://keras.rstudio.com/articles/examples/index.html">examples</a> page you will also find example models for real datasets:</p>
+<p>On the <a href="../examples/">examples</a> page you will also find example models for real datasets:</p>
 <ul>
-<li><p><a href="https://keras.rstudio.com/articles/examples/cifar10_cnn.html">CIFAR10 small images classification</a></p></li>
-<li><p><a href="https://keras.rstudio.com/articles/examples/imdb_cnn_lstm.html">IMDB movie review sentiment classification</a></p></li>
-<li><p><a href="https://keras.rstudio.com/articles/examples/reuters_mlp.html">Reuters newswires topic classification</a></p></li>
-<li><p><a href="https://keras.rstudio.com/articles/examples/mnist_mlp.html">MNIST handwritten digits classification</a></p></li>
-<li><p><a href="https://keras.rstudio.com/articles/examples/lstm_text_generation.html">Character-level text generation with LSTM</a></p></li>
+<li><p><a href="../examples/cifar10_cnn">CIFAR10 small images classification</a></p></li>
+<li><p><a href="../examples/imdb_cnn_lstm">IMDB movie review sentiment classification</a></p></li>
+<li><p><a href="../examples/reuters_mlp">Reuters newswires topic classification</a></p></li>
+<li><p><a href="../examples/mnist_mlp">MNIST handwritten digits classification</a></p></li>
+<li><p><a href="../examples/lstm_text_generation">Character-level text generation with LSTM</a></p></li>
 </ul>
 <p>Some additional examples are provided below.</p>
 <div id="multilayer-perceptron-mlp-for-multi-class-softmax-classification" class="section level3">
@@ -330,7 +330,7 @@ making the model capable of learning higher-level temporal representations.</p>
 <p>The first two LSTMs return their full output sequences, but the last one only returns
 the last step in its output sequence, thus dropping the temporal dimension
 (i.e. converting the input sequence into a single vector).</p>
-<p><img src="images/regular_stacked_lstm.png" alt="stacked LSTM" style="width: 300px;"></p>
+<p><img src="../images/regular_stacked_lstm.png" alt="stacked LSTM" style="width: 300px;"></p>
 <div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb15-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(keras)</a>
 <a class="sourceLine" id="cb15-2" data-line-number="2"></a>
 <a class="sourceLine" id="cb15-3" data-line-number="3"><span class="co"># constants</span></a>
@@ -368,7 +368,7 @@ the last step in its output sequence, thus dropping the temporal dimension
 <div id="same-stacked-lstm-model-rendered-stateful" class="section level3">
 <h3>Same stacked LSTM model, rendered “stateful”</h3>
 <p>A stateful recurrent model is one for which the internal states (memories) obtained after processing a batch of samples are reused as initial states for the samples of the next batch. This allows to process longer sequences while keeping computational complexity manageable.</p>
-<p><a href="faq.html#how-can-i-use-stateful-rnns">You can read more about stateful RNNs in the FAQ.</a></p>
+<p><a href="../faq#how-can-i-use-stateful-rnns">You can read more about stateful RNNs in the FAQ.</a></p>
 <div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb16-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(keras)</a>
 <a class="sourceLine" id="cb16-2" data-line-number="2"></a>
 <a class="sourceLine" id="cb16-3" data-line-number="3"><span class="co"># constants</span></a>
