@@ -131,13 +131,6 @@ disqusShortname = "r-tensorflow"
 	weight = 23
 	url = "/guide/keras/custom_layers/"
 	
-[[menu.main]]
-	name   = "Examples"
-	identifier = "keras-examples-top"
-	parent = "guide-top"
-	weight = 24
-	url = "/guide/keras/examples/"
-	
 # Deploy
 
 [[menu.main]]
