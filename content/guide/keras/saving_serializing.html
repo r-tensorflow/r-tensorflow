@@ -29,16 +29,12 @@ The APIs in this case are slightly different than for Sequential or Functional m
 <h2>Overview</h2>
 <p>For Sequential Models and models built using the Functional API use:</p>
 <ul>
-<li><p><code><a href="../../keras/reference/save_model_hdf5.html">save_model_hdf5()</a></code>/<code><a href="../../keras/reference/save_model_hdf5.html">load_model_hdf5()</a></code> to save the entire model to disk, including the <code>optimizer</code> state.</p></li>
+<li><p><code><a href="../../keras/reference/save_model_hdf5.html">save_model_hdf5()</a></code>/<code><a href="../../keras/reference/save_model_hdf5.html">load_model_hdf5()</a></code> to save the entire model to disk, including the <code>optimizer</code> state. You can also use <code>save_model_tf</code>/<code>load_model_tf</code> to save the entire model to the SavedModel format.</p></li>
 <li><p><code><a href="../../keras/reference/get_config.html">get_config()</a></code>/<code><a href="../../keras/reference/get_config.html">from_config()</a></code> to load only the model architecture into an R object.</p></li>
 <li><p><code><a href="../../keras/reference/model_to_json.html">model_to_json()</a></code>/<code><a href="../../keras/reference/model_to_json.html">model_from_json()</a></code> to save only the architecture of the model to a single string - useful for saving the architecture to disk. You can also use <code><a href="../../keras/reference/model_to_yaml.html">model_to_yaml()</a></code>/<code><a href="../../keras/reference/model_to_yaml.html">model_from_yaml()</a></code> to save the architecture.</p></li>
 <li><p><code><a href="../../keras/reference/save_model_weights_hdf5.html">save_model_weights_hdf5()</a></code>/<code><a href="../../keras/reference/save_model_weights_hdf5.html">load_model_weights_hdf5()</a></code> if you want to save only the model weights to disk in the <code>hdf5</code> format. You can also use <code><a href="../../keras/reference/save_model_weights_tf.html">save_model_weights_tf()</a></code>/<code><a href="../../keras/reference/save_model_weights_tf.html">load_model_weights_tf()</a></code> to save the weights in the SavedModel format.</p></li>
 </ul>
 <p><strong>Note</strong> you can use a combination of <code><a href="../../keras/reference/model_to_json.html">model_to_json()</a></code> and <code><a href="../../keras/reference/save_model_weights_hdf5.html">save_model_weights_hdf5()</a></code> to save both the architecture and the weights. In this case the optimizer state is not saved.</p>
-<ul>
-<li>
-<code><a href="../../keras/reference/model_to_saved_model.html">model_to_saved_model()</a></code>/<code><a href="../../keras/reference/model_from_saved_model.html">model_from_saved_model()</a></code> to save both architecture and model weights to the SavedModel format. This is useful if you want to serve the model using TensorFlow Serving.</li>
-</ul>
 <p>For custom models use:</p>
 <ul>
 <li>
@@ -99,12 +95,12 @@ training where you left off.</p>
 <p>You can also export a whole model to the TensorFlow SavedModel format. SavedModel is
 a standalone serialization format for Tensorflow objects, supported by TensorFlow
 serving as well as TensorFlow implementations other than Python. Note that
-<code>model_to_saved_model</code> is only available for TensorFlow version greater than 1.14.</p>
+<code>save_model_tf</code> is only available for TensorFlow version greater than 1.14.</p>
 <div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" data-line-number="1"><span class="co"># Export the model to a SavedModel</span></a>
-<a class="sourceLine" id="cb7-2" data-line-number="2"><span class="kw"><a href="../../keras/reference/model_to_saved_model.html">model_to_saved_model</a></span>(model, <span class="st">"model/"</span>)</a>
+<a class="sourceLine" id="cb7-2" data-line-number="2"><span class="kw"><a href="../../keras/reference/save_model_tf.html">save_model_tf</a></span>(model, <span class="st">"model/"</span>)</a>
 <a class="sourceLine" id="cb7-3" data-line-number="3"></a>
 <a class="sourceLine" id="cb7-4" data-line-number="4"><span class="co"># Recreate the exact same model</span></a>
-<a class="sourceLine" id="cb7-5" data-line-number="5">new_model &lt;-<span class="st"> </span><span class="kw"><a href="../../keras/reference/model_from_saved_model.html">model_from_saved_model</a></span>(<span class="st">"model/"</span>)</a>
+<a class="sourceLine" id="cb7-5" data-line-number="5">new_model &lt;-<span class="st"> </span><span class="kw"><a href="../../keras/reference/save_model_tf.html">load_model_tf</a></span>(<span class="st">"model/"</span>)</a>
 <a class="sourceLine" id="cb7-6" data-line-number="6"></a>
 <a class="sourceLine" id="cb7-7" data-line-number="7"><span class="co"># Check that the state is preserved</span></a>
 <a class="sourceLine" id="cb7-8" data-line-number="8">new_predictions &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/stats/predict.html">predict</a></span>(new_model, x_test)</a>
