@@ -9,7 +9,7 @@ type: docs
 repo: https://github.com/rstudio/keras
 menu:
   main:
-    name: "Overview"
+    name: "Keras basics"
     identifier: "keras-keras-basics"
     parent: "keras-getting-started-top"
     weight: 10
@@ -390,12 +390,12 @@ method:</p>
 <div id="weights-only" class="section level3">
 <h3>Weights only</h3>
 <p>Save and load the weights of a model using <code>save_model_weights_hdf5</code> and <code>load_model_weights_hdf5</code>, respectively:</p>
-<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb16-1" data-line-number="1"><span class="co"># save in HDF5 format</span></a>
-<a class="sourceLine" id="cb16-2" data-line-number="2">model <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../../keras/reference/save_model_weights_hdf5.html">save_model_weights_hdf5</a></span>(<span class="st">'my_model.h5'</span>)</a>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb16-1" data-line-number="1"><span class="co"># save in SavedModel format</span></a>
+<a class="sourceLine" id="cb16-2" data-line-number="2">model <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../../keras/reference/save_model_weights_tf.html">save_model_weights_tf</a></span>(<span class="st">'my_model/'</span>)</a>
 <a class="sourceLine" id="cb16-3" data-line-number="3"></a>
 <a class="sourceLine" id="cb16-4" data-line-number="4"><span class="co"># Restore the model's state,</span></a>
 <a class="sourceLine" id="cb16-5" data-line-number="5"><span class="co"># this requires a model with the same architecture.</span></a>
-<a class="sourceLine" id="cb16-6" data-line-number="6">model <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../../keras/reference/save_model_weights_hdf5.html">load_model_weights_hdf5</a></span>(<span class="st">'my_model.h5'</span>)</a></code></pre></div>
+<a class="sourceLine" id="cb16-6" data-line-number="6">model <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../../keras/reference/save_model_weights_tf.html">load_model_weights_tf</a></span>(<span class="st">'my_model/'</span>)</a></code></pre></div>
 </div>
 <div id="configuration-only" class="section level3">
 <h3>Configuration only</h3>
@@ -423,43 +423,10 @@ architecture is defined by the R code in the function passed to <code>keras_mode
 the model’s configuration, and even the optimizer’s configuration. This
 allows you to checkpoint a model and resume training later —from the
 exact same state —without access to the original code.</p>
-<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb18-1" data-line-number="1"><span class="co"># Save entire model to a HDF5 file</span></a>
-<a class="sourceLine" id="cb18-2" data-line-number="2">model <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../../keras/reference/save_model_hdf5.html">save_model_hdf5</a></span>(<span class="st">'my_model.h5'</span>)</a>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb18-1" data-line-number="1"><span class="co"># Save entire model to the SavedModel format</span></a>
+<a class="sourceLine" id="cb18-2" data-line-number="2">model <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../../keras/reference/save_model_tf.html">save_model_tf</a></span>(<span class="st">'my_model/'</span>)</a>
 <a class="sourceLine" id="cb18-3" data-line-number="3"></a>
 <a class="sourceLine" id="cb18-4" data-line-number="4"><span class="co"># Recreate the exact same model, including weights and optimizer.</span></a>
-<a class="sourceLine" id="cb18-5" data-line-number="5">model &lt;-<span class="st"> </span><span class="kw"><a href="../../keras/reference/save_model_hdf5.html">load_model_hdf5</a></span>(<span class="st">'my_model.h5'</span>)</a></code></pre></div>
-</div>
-</div>
-<div id="eager-execution" class="section level2">
-<h2>Eager execution</h2>
-<p><a href="eager_guide.Rmd">Eager execution</a> is an imperative programming environment that evaluates operations immediately. This is not required for Keras,
-but is supported by the TensorFlow backend and useful for inspecting your program
-and debugging.</p>
-<p>To use eager execution from R, you need to tell Keras to use the TensorFlow implementation of Keras (as opposed to native Keras):</p>
-<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb19-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(keras)</a>
-<a class="sourceLine" id="cb19-2" data-line-number="2"><span class="kw"><a href="../../keras/reference/use_implementation.html">use_implementation</a></span>(<span class="st">"tensorflow"</span>)</a></code></pre></div>
-<p>When using the TensorFlow implementation, all model-building APIs are compatible with eager
-execution.</p>
-</div>
-<div id="distribution" class="section level2">
-<h2>Distribution</h2>
-<div id="estimators" class="section level3">
-<h3>Estimators</h3>
-<p>The <a href="https://tensorflow.rstudio.com/tfestimators/">Estimators</a> API is used for training models for distributed environments. This targets industry use cases such as
-distributed training on large datasets that can export a model for
-production.</p>
-<p>To use <code>tfestimators</code>, you need to install separately:</p>
-<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb20-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span>(<span class="st">"tfestimators"</span>)</a></code></pre></div>
-<p>A <code>model</code> can be trained with the <code>tfestimators</code> API by
-converting the model to an <code>estimator</code> object with
-<code>keras_model_to_estimator</code>.
-Note: As of today this only works with the TensorFlow implementation of Keras.</p>
-<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb21-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(keras)</a>
-<a class="sourceLine" id="cb21-2" data-line-number="2"><span class="kw"><a href="../../keras/reference/use_implementation.html">use_implementation</a></span>(<span class="st">"tensorflow"</span>)</a>
-<a class="sourceLine" id="cb21-3" data-line-number="3"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(tfestimators)</a>
-<a class="sourceLine" id="cb21-4" data-line-number="4"></a>
-<a class="sourceLine" id="cb21-5" data-line-number="5">estimator &lt;-<span class="st"> </span><span class="kw"><a href="../../tfestimators/reference/keras_model_to_estimator.html">keras_model_to_estimator</a></span>(model)</a></code></pre></div>
-<p>Note: You can enable eager execution for debugging <a href="https://tensorflow.rstudio.com/tfestimators/articles/estimator_basics.html">estimator
-input functions</a> and inspecting data.</p>
+<a class="sourceLine" id="cb18-5" data-line-number="5">model &lt;-<span class="st"> </span><span class="kw"><a href="../../keras/reference/save_model_tf.html">load_model_tf</a></span>(<span class="st">'my_model/'</span>)</a></code></pre></div>
 </div>
 </div>
