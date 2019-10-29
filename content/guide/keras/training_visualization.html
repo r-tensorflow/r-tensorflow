@@ -44,7 +44,7 @@ menu:
 <a class="sourceLine" id="cb1-11" data-line-number="11">)</a></code></pre></div>
 <p>We can then plot the training history as follows:</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/graphics/plot.html">plot</a></span>(history)</a></code></pre></div>
-<p><img src="images/training_history_ggplot2.png" class="r-plot" width="757" height="489"></p>
+<p><img src="../images/training_history_ggplot2.png" class="r-plot" width="757" height="489"></p>
 <p>The history will be plotted using <a href="http://ggplot2.tidyverse.org/">ggplot2</a> if available (if not then base graphics will be used), include all specified metrics as well as the loss, and draw a smoothing line if there are 10 or more epochs. You can customize all of this behavior via various options of the <a href="https://keras.rstudio.com/reference/plot.keras_training_history.html">plot method</a>.</p>
 <p>If you want to create a custom visualization you can call the <code><a href="https://rdrr.io/r/base/as.data.frame.html">as.data.frame()</a></code> method on the history to obtain a data frame with factors for each metric as well as training vs. validation:</p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1">history_df &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/as.data.frame.html">as.data.frame</a></span>(history)</a>
@@ -94,7 +94,7 @@ a.appendChild(img);
 <h2>TensorBoard</h2>
 <p>TensorBoard is a visualization tool included with TensorFlow that enables you to visualize dynamic graphs of your Keras training and test metrics, as well as activation histograms for the different layers in your model.</p>
 <p>For example, here’s a TensorBoard display for Keras accuracy and loss metrics:</p>
-<p><img src="images/tensorboard.png" class="screenshot" width="700" height="545"></p>
+<p><img src="../images/tensorboard.png" class="screenshot" width="700" height="545"></p>
 <div id="recording-data" class="section level3">
 <h3>Recording Data</h3>
 <p>To record data that can be visualized with TensorBoard, you add a TensorBoard callback to the <code>fit()</code> function. For example:</p>
@@ -135,7 +135,7 @@ a.appendChild(img);
 <p>Then called tensorboard as follows:</p>
 <div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" data-line-number="1"><span class="kw">tensorboard</span>(<span class="st">"logs"</span>)</a></code></pre></div>
 <p>The TensorBoard visualization would look like this:</p>
-<p><img src="images/tensorboard_compare.png" class="screenshot" width="700" height="540"></p>
+<p><img src="../images/tensorboard_compare.png" class="screenshot" width="700" height="540"></p>
 <p>You can also pass multiple log directories. For example:</p>
 <div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb11-1" data-line-number="1"><span class="kw">tensorboard</span>(<span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"logs/run_a"</span>, <span class="st">"logs/run_b"</span>))</a></code></pre></div>
 </div>
