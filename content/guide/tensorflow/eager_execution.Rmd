@@ -1,0 +1,146 @@
+---
+title: "Eager execution"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Eager execution} 
+  %\VignetteEngine{knitr::rmarkdown} 
+  %\VignetteEncoding{UTF-8}
+menu:
+  main:
+    name: "Eager execution"
+    identifier: "core-eager-execution"
+    parent: "core-top"
+    weight: 10 
+---
+
+
+```{r setup, include=FALSE}
+library(keras)
+knitr::opts_chunk$set(eval = FALSE)
+```
+
+
+TensorFlow's eager execution is an imperative programming environment that
+evaluates operations immediately, without building graphs: operations return
+concrete values instead of constructing a computational graph to run later. This
+makes it easy to get started with TensorFlow and debug models, and it
+reduces boilerplate as well. To follow along with this guide, run the code
+samples below in an interactive `R` interpreter.
+
+Eager execution is a flexible machine learning platform for research and
+experimentation, providing:
+
+* *An intuitive interface*—Structure your code naturally and use R data
+  structures. Quickly iterate on small models and small data.
+* *Easier debugging*—Call ops directly to inspect running models and test
+  changes. Use standard R debugging tools for immediate error reporting.
+* *Natural control flow*—Use R control flow instead of graph control
+  flow, simplifying the specification of dynamic models.
+
+Eager execution supports most TensorFlow operations and GPU acceleration.
+
+Note: Some models may experience increased overhead with eager execution
+enabled. Performance improvements are ongoing, but please
+[file a bug](https://github.com/tensorflow/tensorflow/issues) if you find a
+problem and share your benchmarks.
+
+## Setup and basic usage
+
+```{r}
+library(tensorflow)
+library(tfautograph)
+```
+
+In Tensorflow 2.0, eager execution is enabled by default.
+
+```{r}
+tf$executing_eagerly()
+```
+
+Now you can run TensorFlow operations and the results will return immediately:
+
+```{r}
+x <- matrix(2, ncol = 1, nrow = 1)
+m <- tf$matmul(x, x)
+m
+```
+
+Enabling eager execution changes how TensorFlow operations behave—now they
+immediately evaluate and return their values to R `tf$Tensor` objects
+reference concrete values instead of symbolic handles to nodes in a computational
+graph. Since there isn't a computational graph to build and run later in a
+session, it's easy to inspect results using `print()` or a debugger. Evaluating,
+printing, and checking tensor values does not break the flow for computing
+gradients.
+
+Eager execution works nicely with R. TensorFlow
+[math operations](https://www.tensorflow.org/api_guides/python/math_ops) convert
+R objects and R arrays to `tf$Tensor` objects. The
+`as.array` method returns the object's value as an R `array`.
+
+```{r}
+a <- tf$constant(matrix(c(1,2,3,4), ncol = 2))
+a
+```
+
+```{r}
+# Broadcasting support
+b <- tf$add(a, 1)
+b
+```
+
+```{r}
+# Operator overloading is supported
+a * b
+```
+
+```{r}
+# Obtain an R value from a Tensor
+as.array(a)
+```
+
+## Dynamic control flow
+
+A major benefit of eager execution is that all the functionality of the host
+language is available while your model is executing. So, for example,
+it is easy to write [fizzbuzz](https://en.wikipedia.org/wiki/Fizz_buzz):
+
+```{r}
+fizzbuzz <- autograph(function(max_num) {
+  counter <- tf$constant(0)
+  max_num <- tf$convert_to_tensor(max_num)
+  for (num in (tf$range(max_num) + 1)) {
+    if ((num %% 3 == 0) & (num %% 5 == 0)) {
+      tf$print("FizzBuzz")
+    } else if (num %% 3 == 0) {
+      tf$print("Fizz")
+    } else if (num %% 5 == 0) {
+      tf$print("Buzz")
+    } else {
+      tf$print(num)
+    }
+    counter <- counter + 1
+  }
+})
+fizzbuzz(15)
+```
+
+This has conditionals that depend on tensor values and it prints these values
+at runtime.
+
+## Eager training
+
+### Computing gradients
+
+[Automatic differentiation](https://en.wikipedia.org/wiki/Automatic_differentiation)
+is useful for implementing machine learning algorithms such as
+[backpropagation](https://en.wikipedia.org/wiki/Backpropagation) for training
+neural networks. During eager execution, use `tf$GradientTape` to trace
+operations for computing gradients later.
+
+You can use `tf$GradientTape` to train and/or compute gradients in eager. It is especially useful for complicated training loops.  
+
+Since different operations can occur during each call, all
+forward-pass operations get recorded to a "tape". To compute the gradient, play
+the tape backwards and then discard. A particular `tf$GradientTape` can only
+compute one gradient; subsequent calls throw a runtime error.
