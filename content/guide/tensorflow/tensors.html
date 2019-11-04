@@ -1,0 +1,261 @@
+---
+title: "TensorFlow tensors"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{TensorFlow tensors} 
+  %\VignetteEngine{knitr::rmarkdown} 
+  %\VignetteEncoding{UTF-8}
+type: "docs"
+menu:
+  main:
+    name: "Tensors"
+    identifier: "custom-basic-tensors"
+    parent: "custom-basic-top"
+    weight: 30
+---
+
+
+
+<p>TensorFlow, as the name indicates, is a framework to define and run computations
+involving tensors. A <em>tensor</em> is a generalization of vectors and matrices to
+potentially higher dimensions. Internally, TensorFlow represents tensors as
+n-dimensional arrays of base datatypes.</p>
+<p>When writing a TensorFlow program, the main object you manipulate and pass
+around is the <code>tf$Tensor</code>. A <code>tf$Tensor</code> object represents a partially defined
+computation that will eventually produce a value. TensorFlow programs work by
+first building a graph of <code>tf$Tensor</code> objects, detailing how each tensor is
+computed based on the other available tensors and then by running parts of this
+graph to achieve the desired results.</p>
+<p>A <code>tf$Tensor</code> has the following properties:</p>
+<ul>
+<li>a data type (<code>float32</code>, <code>int32</code>, or <code>string</code>, for example)</li>
+<li>a shape</li>
+</ul>
+<p>Each element in the Tensor has the same data type, and the data type is always
+known. The shape (that is, the number of dimensions it has and the size of each
+dimension) might be only partially known. Most operations produce tensors of
+fully-known shapes if the shapes of their inputs are also fully known, but in
+some cases it’s only possible to find the shape of a tensor at graph execution
+time.</p>
+<p>Some types of tensors are special, and these will be covered in other
+units of the TensorFlow guide. The main ones are:</p>
+<ul>
+<li><code>tf$Variable</code></li>
+<li><code>tf$constant</code></li>
+<li><code>tf$SparseTensor</code></li>
+</ul>
+<p>With the exception of <code>tf.Variable</code>, the value of a tensor is immutable, which
+means that in the context of a single execution tensors only have a single
+value. However, evaluating the same tensor twice can return different values;
+for example that tensor can be the result of reading data from disk, or
+generating a random number.</p>
+<div id="rank" class="section level2">
+<h2>Rank</h2>
+<p>The <strong>rank</strong> of a <code>tf$Tensor</code> object is its number of dimensions. Synonyms for
+rank include <strong>order</strong> or <strong>degree</strong> or <strong>n-dimension</strong>.
+Note that rank in TensorFlow is not the same as matrix rank in mathematics.
+As the following table shows, each rank in TensorFlow corresponds to a
+different mathematical entity:</p>
+<table>
+<thead><tr class="header">
+<th>Rank</th>
+<th>Math entity</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td>0</td>
+<td>Scalar (magnitude only)</td>
+</tr>
+<tr class="even">
+<td>1</td>
+<td>Vector (magnitude and direction)</td>
+</tr>
+<tr class="odd">
+<td>2</td>
+<td>Matrix (table of numbers)</td>
+</tr>
+<tr class="even">
+<td>3</td>
+<td>3-Tensor (cube of numbers)</td>
+</tr>
+<tr class="odd">
+<td>n</td>
+<td>n-Tensor (you get the idea)</td>
+</tr>
+</tbody>
+</table>
+<div id="rank-0" class="section level3">
+<h3>Rank 0</h3>
+<p>The following snippet demonstrates creating a few rank 0 variables:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(tensorflow)</a>
+<a class="sourceLine" id="cb1-2" data-line-number="2">mammal &lt;-<span class="st"> </span>tf<span class="op">$</span><span class="kw">Variable</span>(<span class="st">"Elephant"</span>, tf<span class="op">$</span>string)</a>
+<a class="sourceLine" id="cb1-3" data-line-number="3">ignition &lt;-<span class="st"> </span>tf<span class="op">$</span><span class="kw">Variable</span>(<span class="dv">451</span>, tf<span class="op">$</span>int16)</a>
+<a class="sourceLine" id="cb1-4" data-line-number="4">floating &lt;-<span class="st"> </span>tf<span class="op">$</span><span class="kw">Variable</span>(<span class="fl">3.14159265359</span>, tf<span class="op">$</span>float64)</a>
+<a class="sourceLine" id="cb1-5" data-line-number="5">its_complicated &lt;-<span class="st"> </span>tf<span class="op">$</span><span class="kw">Variable</span>(<span class="fl">12.3</span> <span class="op">-</span><span class="st"> </span><span class="fl">4.85</span>i, tf<span class="op">$</span>complex64)</a></code></pre></div>
+<p>Note: A string is treated as a single object in TensorFlow, not as a sequence of
+characters. It is possible to have scalar strings, vectors of strings, etc.</p>
+</div>
+<div id="rank-1" class="section level3">
+<h3>Rank 1</h3>
+<p>To create a rank 1 <code>tf.Tensor</code> object, you can pass a list of items as the
+initial value. For example:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" data-line-number="1">mystr &lt;-<span class="st"> </span>tf<span class="op">$</span><span class="kw">Variable</span>(<span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"Hello"</span>), tf<span class="op">$</span>string)</a>
+<a class="sourceLine" id="cb2-2" data-line-number="2">cool_numbers &lt;-<span class="st"> </span>tf<span class="op">$</span><span class="kw">Variable</span>(<span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">3.14159</span>, <span class="fl">2.71828</span>), tf<span class="op">$</span>float32)</a>
+<a class="sourceLine" id="cb2-3" data-line-number="3">first_primes &lt;-<span class="st"> </span>tf<span class="op">$</span><span class="kw">Variable</span>(<span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">5</span>, <span class="dv">7</span>, <span class="dv">11</span>), tf<span class="op">$</span>int32)</a>
+<a class="sourceLine" id="cb2-4" data-line-number="4">its_very_complicated &lt;-<span class="st"> </span>tf<span class="op">$</span><span class="kw">Variable</span>(<span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">12.3</span> <span class="op">-</span><span class="st"> </span><span class="fl">4.85</span>i, <span class="fl">7.5</span> <span class="op">-</span><span class="st"> </span><span class="fl">6.23</span>i), tf<span class="op">$</span>complex64)</a></code></pre></div>
+</div>
+<div id="higher-ranks" class="section level3">
+<h3>Higher ranks</h3>
+<p>A rank 2 <code>tf$Tensor</code> object consists of at least one row and at least
+one column:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1">mymat &lt;-<span class="st"> </span>tf<span class="op">$</span><span class="kw">Variable</span>(<span class="kw"><a href="https://rdrr.io/r/base/list.html">list</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="dv">7</span>, <span class="dv">2</span>),<span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="dv">11</span>, <span class="dv">3</span>)), tf<span class="op">$</span>int16)</a></code></pre></div>
+<p>Higher-rank Tensors, similarly, consist of an n-dimensional array. For example,
+during image processing, many tensors of rank 4 are used, with dimensions
+corresponding to example-in-batch, image height, image width, and color channel.</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" data-line-number="1">my_image &lt;-<span class="st"> </span>tf<span class="op">$</span><span class="kw">zeros</span>(<span class="dt">shape =</span> <span class="kw"><a href="../../tensorflow/reference/shape.html">shape</a></span>(<span class="dv">10</span>, <span class="dv">299</span>, <span class="dv">299</span>, <span class="dv">3</span>)) <span class="co"># batch x height x width x color</span></a></code></pre></div>
+</div>
+<div id="getting-a-tftensor-objects-rank" class="section level3">
+<h3>Getting a <code>tf$Tensor</code> object’s rank</h3>
+<p>To determine the rank of a <code>tf$Tensor</code> object, call the <code>tf$rank</code> method.
+For example, the following method programmatically determines the rank
+of the <code>tf$Tensor</code> defined in the previous section:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" data-line-number="1">r &lt;-<span class="st"> </span>tf<span class="op">$</span><span class="kw"><a href="https://rdrr.io/r/base/rank.html">rank</a></span>(my_image)</a>
+<a class="sourceLine" id="cb5-2" data-line-number="2">r</a></code></pre></div>
+<pre><code>## tf.Tensor(4, shape=(), dtype=int32)</code></pre>
+</div>
+<div id="referring-to-tftensor-slices" class="section level3">
+<h3>Referring to <code>tf$Tensor</code> slices</h3>
+<p>Tensor elements can be extracted either by using functions like <code>tf$gather()</code> and <code>tf$slice()</code>, or by using <code><a href="https://rdrr.io/r/base/Extract.html">[</a></code> syntax.</p>
+<p>Extracting tensor elements with <code><a href="https://rdrr.io/r/base/Extract.html">[</a></code> in R is similar to extracting elements from standard R arrays, albeit with some minor differences in capabilities. In contrast to most <code>tf$</code> functions, <code><a href="https://rdrr.io/r/base/Extract.html">[</a></code> defaults to R style 1-based rather than 0-based indexes. Currently, only numeric indexes in <code><a href="https://rdrr.io/r/base/Extract.html">[</a></code> are supported (no logical or character indexes)</p>
+<p>Extracting works identically to R arrays if the slicing index is missing, supplied as a scalar, or as a sequence (e.g, created by <code>:</code> or <code><a href="https://rdrr.io/r/base/seq.html">seq_len()</a></code>)</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" data-line-number="1">x[,<span class="dv">1</span>] <span class="er">)</span>      <span class="co"># all rows, first column</span></a>
+<a class="sourceLine" id="cb7-2" data-line-number="2">x[<span class="dv">1</span><span class="op">:</span><span class="dv">2</span>,] <span class="er">)</span>    <span class="co"># first two rows, all columns</span></a>
+<a class="sourceLine" id="cb7-3" data-line-number="3">x[,<span class="dv">1</span>, drop =<span class="st"> </span><span class="ot">FALSE</span>] <span class="er">)</span> <span class="co"># all rows, first column, but preserving the tensor rank</span></a></code></pre></div>
+<p><code><a href="https://rdrr.io/r/base/Extract.html">[</a></code> also supports slices with a strided step, which can be specified in traditional R style with <code><a href="https://rdrr.io/r/base/seq.html">seq()</a></code> or with a python-style second colon. If you are unfamiliar with python-style strided step syntax, see here for a <a href="https://docs.scipy.org/doc/numpy-1.13.0/reference/arrays.indexing.html#basic-slicing-and-indexing">quick primer</a></p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" data-line-number="1">x[, <span class="kw"><a href="https://rdrr.io/r/base/seq.html">seq</a></span>(<span class="dv">1</span>, <span class="dv">5</span>, <span class="dt">by =</span> <span class="dv">2</span>)]  <span class="co"># R style</span></a>
+<a class="sourceLine" id="cb8-2" data-line-number="2">x[, <span class="dv">1</span><span class="op">:</span><span class="dv">5</span><span class="op">:</span><span class="dv">2</span>]              <span class="co"># Equivalent python-style strided step </span></a></code></pre></div>
+<p>Missing arguments for python syntax are valid, but they must be supplied as NULL or whole expression must by backticked.</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" data-line-number="1">x[, <span class="st">`</span><span class="dt">::2</span><span class="st">`</span>] </a>
+<a class="sourceLine" id="cb9-2" data-line-number="2">x[, <span class="ot">NULL</span><span class="op">:</span><span class="ot">NULL</span><span class="op">:</span><span class="dv">2</span>] </a>
+<a class="sourceLine" id="cb9-3" data-line-number="3">x[, <span class="st">`</span><span class="dt">2:</span><span class="st">`</span>] </a></code></pre></div>
+<p><code><a href="https://rdrr.io/r/base/Extract.html">[</a></code> also accepts <code>tf$newaxis</code> and <code><a href="../../tensorflow/reference/all_dims.html">all_dims()</a></code> as arguments</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" data-line-number="1">x[,, tf<span class="op">$</span>newaxis]</a>
+<a class="sourceLine" id="cb10-2" data-line-number="2">x[<span class="kw"><a href="../../tensorflow/reference/all_dims.html">all_dims</a></span>(), <span class="dv">1</span>] <span class="co"># all_dims expands to the shape of the tensor</span></a></code></pre></div>
+<p>An important difference between extracting R arrays and tensorflow tensors with <code><a href="https://rdrr.io/r/base/Extract.html">[</a></code> is how negative numbers are interpreted. For tensorflow tensors, negative numbers are interpreted as selecting elements by counting from tail (e.g, they are interpreted python-style).</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb11-1" data-line-number="1">x[<span class="op">-</span><span class="dv">1</span>,]  <span class="co"># the last row</span></a></code></pre></div>
+<p>Tensors are accepted by <code><a href="https://rdrr.io/r/base/Extract.html">[</a></code> as well, but note that tensors suplied to <code><a href="https://rdrr.io/r/base/Extract.html">[</a></code> are not translated from R to python. Meaning that tensors are interpreted as 0-based, and if slicing a range with <code>:</code>, then the returned arrays is exclusive of the upper bound.</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb12-1" data-line-number="1">x[, tf<span class="op">$</span><span class="kw">constant</span>(1L)] <span class="co"># second column</span></a>
+<a class="sourceLine" id="cb12-2" data-line-number="2">x[, tf<span class="op">$</span><span class="kw">constant</span>(0L)<span class="op">:</span>tf<span class="op">$</span><span class="kw">constant</span>(2L)] <span class="co"># first two columns</span></a></code></pre></div>
+<p>If you are translating existing python code to R, note that you can set an option to have all <code><a href="https://rdrr.io/r/base/Extract.html">[</a></code> arguments be interpreted pure-python style by setting <code><a href="https://rdrr.io/r/base/options.html">options(tensorflow.extract.style = "python")</a></code>. See <code><a href="../../tensorflow/reference/sub-.tensorflow.tensor.html">?`[.tensorflow.tensor`</a></code> for additional options and details.</p>
+</div>
+</div>
+<div id="shape" class="section level2">
+<h2>Shape</h2>
+<p>The <strong>shape</strong> of a tensor is the number of elements in each dimension.
+TensorFlow automatically infers shapes during graph construction. These inferred
+shapes might have known or unknown rank. If the rank is known, the sizes of each
+dimension might be known or unknown.</p>
+<p>The TensorFlow documentation uses three notational conventions to describe
+tensor dimensionality: rank, shape, and dimension number. The following table
+shows how these relate to one another:</p>
+<table>
+<thead><tr class="header">
+<th>Rank</th>
+<th>Shape</th>
+<th>Dimension number</th>
+<th>Example</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td>0</td>
+<td>[]</td>
+<td>0-D</td>
+<td>A 0-D tensor. A scalar.</td>
+</tr>
+<tr class="even">
+<td>1</td>
+<td>[D0]</td>
+<td>1-D</td>
+<td>A 1-D tensor with shape [5].</td>
+</tr>
+<tr class="odd">
+<td>2</td>
+<td>[D0, D1]</td>
+<td>2-D</td>
+<td>A 2-D tensor with shape [3, 4].</td>
+</tr>
+<tr class="even">
+<td>3</td>
+<td>[D0, D1, D2]</td>
+<td>3-D</td>
+<td>A 3-D tensor with shape [1, 4, 3].</td>
+</tr>
+<tr class="odd">
+<td>n</td>
+<td>[D0, D1, … Dn-1]</td>
+<td>n-D</td>
+<td>A tensor with shape [D0, D1, … Dn-1].</td>
+</tr>
+</tbody>
+</table>
+<p>Shapes can be represented via lists of ints, or with the
+<code>tf$TensorShape</code>.</p>
+<div id="getting-a-tftensor-objects-shape" class="section level3">
+<h3>Getting a <code>tf$Tensor</code> object’s shape</h3>
+<p>There are two ways of accessing the shape of a <code>tf$Tensor</code>. While building the
+graph, it is often useful to ask what is already known about a tensor’s
+shape. This can be done by reading the <code>shape</code> property of a <code>tf$Tensor</code> object.
+This method returns a <code>TensorShape</code> object, which is a convenient way of
+representing partially-specified shapes (since, when building the graph, not all
+shapes will be fully known).</p>
+<p>It is also possible to get a <code>tf$Tensor</code> that will represent the fully-defined
+shape of another <code>tf$Tensor</code> at runtime. This is done by calling the <code>tf$shape</code>
+operation. This way, you can build a graph that manipulates the shapes of
+tensors by building other tensors that depend on the dynamic shape of the input
+<code>tf$Tensor</code>.</p>
+<p>For example, here is how to make a vector of zeros with the same size as the
+number of columns in a given matrix:</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb13-1" data-line-number="1">zeros &lt;-<span class="st"> </span>tf<span class="op">$</span><span class="kw">zeros</span>(my_image<span class="op">$</span>shape[<span class="dv">2</span>])</a></code></pre></div>
+</div>
+<div id="changing-the-shape-of-a-tftensor" class="section level3">
+<h3>Changing the shape of a <code>tf$Tensor</code>
+</h3>
+<p>The <strong>number of elements</strong> of a tensor is the product of the sizes of all its
+shapes. The number of elements of a scalar is always <code>1</code>. Since there are often
+many different shapes that have the same number of elements, it’s often
+convenient to be able to change the shape of a <code>tf.Tensor</code>, keeping its elements
+fixed. This can be done with <code>tf.reshape</code>.</p>
+<p>The following examples demonstrate how to reshape tensors:</p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb14-1" data-line-number="1">rank_three_tensor &lt;-<span class="st"> </span>tf<span class="op">$</span><span class="kw">ones</span>(<span class="kw"><a href="../../tensorflow/reference/shape.html">shape</a></span>(<span class="dv">3</span>, <span class="dv">4</span>, <span class="dv">5</span>))</a>
+<a class="sourceLine" id="cb14-2" data-line-number="2">matrix &lt;-<span class="st"> </span>tf<span class="op">$</span><span class="kw"><a href="https://rdrr.io/r/stats/reshape.html">reshape</a></span>(rank_three_tensor, <span class="kw"><a href="../../tensorflow/reference/shape.html">shape</a></span>(<span class="dv">6</span>, <span class="dv">10</span>))  <span class="co"># Reshape existing content into</span></a>
+<a class="sourceLine" id="cb14-3" data-line-number="3">                                                 <span class="co"># a 6x10 matrix</span></a>
+<a class="sourceLine" id="cb14-4" data-line-number="4">matrixB &lt;-<span class="st"> </span>tf<span class="op">$</span><span class="kw"><a href="https://rdrr.io/r/stats/reshape.html">reshape</a></span>(matrix, <span class="kw"><a href="../../tensorflow/reference/shape.html">shape</a></span>(<span class="dv">3</span>, <span class="dv">-1</span>))  <span class="co">#  Reshape existing content into a 3x20</span></a>
+<a class="sourceLine" id="cb14-5" data-line-number="5">                                       <span class="co"># matrix. -1 tells reshape to calculate</span></a>
+<a class="sourceLine" id="cb14-6" data-line-number="6">                                       <span class="co"># the size of this dimension.</span></a>
+<a class="sourceLine" id="cb14-7" data-line-number="7">matrixAlt &lt;-<span class="st"> </span>tf<span class="op">$</span><span class="kw"><a href="https://rdrr.io/r/stats/reshape.html">reshape</a></span>(matrixB, <span class="kw"><a href="../../tensorflow/reference/shape.html">shape</a></span>(<span class="dv">4</span>, <span class="dv">3</span>, <span class="dv">-1</span>))  <span class="co"># Reshape existing content into a</span></a>
+<a class="sourceLine" id="cb14-8" data-line-number="8">                                             <span class="co">#4x3x5 tensor</span></a>
+<a class="sourceLine" id="cb14-9" data-line-number="9"></a>
+<a class="sourceLine" id="cb14-10" data-line-number="10"><span class="co"># Note that the number of elements of the reshaped Tensors has to match the</span></a>
+<a class="sourceLine" id="cb14-11" data-line-number="11"><span class="co"># original number of elements. Therefore, the following example generates an</span></a>
+<a class="sourceLine" id="cb14-12" data-line-number="12"><span class="co"># error because no possible value for the last dimension will match the number</span></a>
+<a class="sourceLine" id="cb14-13" data-line-number="13"><span class="co"># of elements.</span></a></code></pre></div>
+</div>
+</div>
+<div id="data-types" class="section level2">
+<h2>Data types</h2>
+<p>In addition to dimensionality, Tensors have a data type. Refer to the
+<code>tf$DType</code> page for a complete list of the data types.</p>
+<p>It is not possible to have a <code>tf$Tensor</code> with more than one data type. It is
+possible, however, to serialize arbitrary data structures as <code>string</code>s and store
+those in <code>tf$Tensor</code>s.</p>
+<p>It is possible to cast <code>tf$Tensor</code>s from one datatype to another using
+<code>tf$cast</code>:</p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb15-1" data-line-number="1"><span class="co"># Cast a constant integer tensor into floating point.</span></a>
+<a class="sourceLine" id="cb15-2" data-line-number="2">float_tensor &lt;-<span class="st"> </span>tf<span class="op">$</span><span class="kw">cast</span>(tf<span class="op">$</span><span class="kw">constant</span>(<span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(1L, 2L, 3L)), <span class="dt">dtype=</span>tf<span class="op">$</span>float32)</a></code></pre></div>
+<p>To inspect a <code>tf$Tensor</code>’s data type use the <code>Tensor.dtype</code> property.</p>
+<p>When creating a <code>tf$Tensor</code> from an R object you may optionally specify the
+datatype. If you don’t, TensorFlow chooses a datatype that can represent your
+data. TensorFlow converts R integers to <code>tf$int32</code> and R floating
+point numbers to <code>tf$float32</code>. Otherwise TensorFlow uses the same rules numpy
+uses when converting to arrays.</p>
+</div>

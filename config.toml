@@ -133,7 +133,7 @@ disqusShortname = "r-tensorflow"
 	url = "/guide/keras/custom_layers/"
 	
 [[menu.main]]
-	name   = "Customization"
+	name   = "TensorFlow Mechanics"
 	parent = "guide-top"
 	weight = 30
 	url = ""
@@ -144,6 +144,13 @@ disqusShortname = "r-tensorflow"
 	identifier = "custom-basic-top"
 	weight = 31
 	url = "/guide/tensorflow/eager_execution"
+	
+[[menu.main]]
+	name   = "Advanced"
+	parent = "guide-top"
+	identifier = "custom-advanced-top"
+	weight = 32
+	url = "/guide/tensorflow/ragged_tensors"	
 
 	
 # Deploy
