@@ -1,0 +1,71 @@
+---
+title: "TensorFlow variables"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{TensorFlow variables} 
+  %\VignetteEngine{knitr::rmarkdown} 
+  %\VignetteEncoding{UTF-8}
+type: "docs"
+menu:
+  main:
+    name: "Variables"
+    identifier: "custom-basic-variables"
+    parent: "custom-basic-top"
+    weight: 20
+---
+
+
+
+<p>A TensorFlow <strong>variable</strong> is the best way to represent shared, persistent state
+manipulated by your program.</p>
+<p>Variables are manipulated via the <code>tf$Variable</code> class. A <code>tf$Variable</code>
+represents a tensor whose value can be changed by running ops on it. Specific
+ops allow you to read and modify the values of this tensor. Higher level
+libraries like Keras use <code>tf$Variable</code> to store model parameters. This
+guide covers how to create, update, and manage <code>tf$Variable</code>s in TensorFlow.</p>
+<div id="create-a-variable" class="section level2">
+<h2>Create a variable</h2>
+<p>To create a variable, simply provide the initial value</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(tensorflow)</a>
+<a class="sourceLine" id="cb1-2" data-line-number="2">my_variable &lt;-<span class="st"> </span>tf<span class="op">$</span><span class="kw">Variable</span>(tf<span class="op">$</span><span class="kw">zeros</span>(<span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">3</span>)))</a></code></pre></div>
+<p>This creates a variable which is a three-dimensional tensor with shape <code>[1, 2, 3]</code> filled with zeros. This variable will, by default, have the <code>dtype</code>
+<code>tf$float32</code>. The dtype is, if not specified, inferred from the initial
+value.</p>
+<p>If there’s a <code>tf$device</code> scope active, the variable will be placed on that
+device; otherwise the variable will be placed on the “fastest” device compatible
+with its dtype (this means most variables are automatically placed on a GPU if
+one is available). For example, the following snippet creates a variable named
+<code>v</code> and places it on the second GPU device:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/base/with.html">with</a></span>(tf<span class="op">$</span><span class="kw"><a href="https://rdrr.io/r/grDevices/Devices.html">device</a></span>(<span class="st">"/device:GPU:1"</span>), {</a>
+<a class="sourceLine" id="cb2-2" data-line-number="2">  v &lt;-<span class="st"> </span>tf<span class="op">$</span><span class="kw">Variable</span>(tf<span class="op">$</span><span class="kw">zeros</span>(<span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="dv">10</span>, <span class="dv">10</span>)))</a>
+<a class="sourceLine" id="cb2-3" data-line-number="3">})</a></code></pre></div>
+<p>Ideally though you should use the <code>tf$distribute</code> API, as that allows you to
+write your code once and have it work under many different distributed setups.</p>
+</div>
+<div id="use-a-variable" class="section level2">
+<h2>Use a variable</h2>
+<p>To use the value of a <code>tf$Variable</code> in a TensorFlow graph, simply treat it like
+a normal <code>tf$Tensor</code>:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1">v &lt;-<span class="st"> </span>tf<span class="op">$</span><span class="kw">Variable</span>(<span class="dv">0</span>)</a>
+<a class="sourceLine" id="cb3-2" data-line-number="2">w &lt;-<span class="st"> </span>v <span class="op">+</span><span class="st"> </span><span class="dv">1</span> <span class="co"># w is a tf.Tensor which is computed based on the value of v.</span></a>
+<a class="sourceLine" id="cb3-3" data-line-number="3"><span class="co"># Any time a variable is used in an expression it gets automatically</span></a>
+<a class="sourceLine" id="cb3-4" data-line-number="4"><span class="co"># converted to a tf$Tensor representing its value.</span></a></code></pre></div>
+<p>To assign a value to a variable, use the methods <code>assign</code>, <code>assign_add</code>, and
+friends in the <code>tf$Variable</code> class. For example, here is how you can call these
+methods:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" data-line-number="1">v &lt;-<span class="st"> </span>tf<span class="op">$</span><span class="kw">Variable</span>(<span class="dv">0</span>)</a>
+<a class="sourceLine" id="cb4-2" data-line-number="2">v<span class="op">$</span><span class="kw">assign_add</span>(<span class="dv">1</span>)</a></code></pre></div>
+<pre><code>## &lt;tf.Variable 'UnreadVariable' shape=() dtype=float32, numpy=1.0&gt;</code></pre>
+<p>Most TensorFlow optimizers have specialized ops that efficiently update the
+values of variables according to some gradient descent-like algorithm. See
+<code>tf$keras$optimizers$Optimizer</code> for an explanation of how to use optimizers.</p>
+<p>You can also explicitly read the current value of a variable, using
+<code>read_value</code>:</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" data-line-number="1">v &lt;-<span class="st"> </span>tf<span class="op">$</span><span class="kw">Variable</span>(<span class="dv">0</span>)</a>
+<a class="sourceLine" id="cb6-2" data-line-number="2">v<span class="op">$</span><span class="kw">assign_add</span>(<span class="dv">1</span>)</a></code></pre></div>
+<pre><code>## &lt;tf.Variable 'UnreadVariable' shape=() dtype=float32, numpy=1.0&gt;</code></pre>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" data-line-number="1">v<span class="op">$</span><span class="kw">read_value</span>()</a></code></pre></div>
+<pre><code>## tf.Tensor(1.0, shape=(), dtype=float32)</code></pre>
+<p>When the last reference to a <code>tf$Variable</code> goes out of scope its memory is
+freed.</p>
+</div>
