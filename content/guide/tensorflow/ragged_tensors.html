@@ -1,0 +1,144 @@
+---
+title: "Ragged tensors"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{TensorFlow variables} 
+  %\VignetteEngine{knitr::rmarkdown} 
+  %\VignetteEncoding{UTF-8}
+type: "docs"
+menu:
+  main:
+    name: "Ragged tensors"
+    identifier: "custom-advanced-ragged"
+    parent: "custom-advanced-top"
+    weight: 10
+---
+
+
+
+<div id="overview" class="section level2">
+<h2>Overview</h2>
+<p>Your data comes in many shapes; your tensors should too.
+<em>Ragged tensors</em> are the TensorFlow equivalent of nested variable-length
+lists. They make it easy to store and process data with non-uniform shapes,
+including:</p>
+<ul>
+<li>Variable-length features, such as the set of actors in a movie.</li>
+<li>Batches of variable-length sequential inputs, such as sentences or video
+clips.</li>
+<li>Hierarchical inputs, such as text documents that are subdivided into
+sections, paragraphs, sentences, and words.</li>
+<li>Individual fields in structured inputs, such as protocol buffers.</li>
+</ul>
+<div id="what-you-can-do-with-a-ragged-tensor" class="section level3">
+<h3>What you can do with a ragged tensor</h3>
+<p>Ragged tensors are supported by more than a hundred TensorFlow operations,
+including math operations (such as <code>tf$add</code> and <code>tf$reduce_mean</code>), array operations
+(such as <code>tf$concat</code> and <code>tf$tile</code>), string manipulation ops (such as
+<code>tf$substr</code>), and many others:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(tensorflow)</a>
+<a class="sourceLine" id="cb1-2" data-line-number="2">digits &lt;-<span class="st"> </span>tf<span class="op">$</span>ragged<span class="op">$</span><span class="kw">constant</span>(</a>
+<a class="sourceLine" id="cb1-3" data-line-number="3">  <span class="kw"><a href="https://rdrr.io/r/base/list.html">list</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/list.html">list</a></span>(<span class="dv">3</span>, <span class="dv">1</span>, <span class="dv">4</span>, <span class="dv">1</span>), <span class="kw"><a href="https://rdrr.io/r/base/list.html">list</a></span>(), <span class="kw"><a href="https://rdrr.io/r/base/list.html">list</a></span>(<span class="dv">5</span>, <span class="dv">9</span>, <span class="dv">2</span>), <span class="kw"><a href="https://rdrr.io/r/base/list.html">list</a></span>(<span class="dv">6</span>), <span class="kw"><a href="https://rdrr.io/r/base/list.html">list</a></span>())</a>
+<a class="sourceLine" id="cb1-4" data-line-number="4">)</a>
+<a class="sourceLine" id="cb1-5" data-line-number="5">words =<span class="st"> </span>tf<span class="op">$</span>ragged<span class="op">$</span><span class="kw">constant</span>(</a>
+<a class="sourceLine" id="cb1-6" data-line-number="6">  <span class="kw"><a href="https://rdrr.io/r/base/list.html">list</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/list.html">list</a></span>(<span class="st">"So"</span>, <span class="st">"long"</span>), <span class="kw"><a href="https://rdrr.io/r/base/list.html">list</a></span>(<span class="st">"thanks"</span>, <span class="st">"for"</span>, <span class="st">"all"</span>, <span class="st">"the"</span>, <span class="st">"fish"</span>))</a>
+<a class="sourceLine" id="cb1-7" data-line-number="7">)</a>
+<a class="sourceLine" id="cb1-8" data-line-number="8">tf<span class="op">$</span><span class="kw">add</span>(digits, <span class="dv">3</span>)</a></code></pre></div>
+<pre><code>## tf.RaggedTensor(values=Tensor("Add_1:0", shape=(8,), dtype=float32), row_splits=Tensor("RaggedConstant/RaggedFromRowSplits/row_splits:0", shape=(6,), dtype=int64))</code></pre>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1">tf<span class="op">$</span><span class="kw">reduce_mean</span>(digits, <span class="dt">axis=</span>1L)</a></code></pre></div>
+<pre><code>## Tensor("RaggedReduceMean/truediv:0", shape=(5,), dtype=float32)</code></pre>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" data-line-number="1">tf<span class="op">$</span><span class="kw">concat</span>(<span class="kw"><a href="https://rdrr.io/r/base/list.html">list</a></span>(digits, <span class="kw"><a href="https://rdrr.io/r/base/list.html">list</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/list.html">list</a></span>(<span class="dv">5</span>, <span class="dv">3</span>))), <span class="dt">axis=</span>0L)</a></code></pre></div>
+<pre><code>## tf.RaggedTensor(values=Tensor("RaggedConcat/concat:0", shape=(10,), dtype=float32), row_splits=Tensor("RaggedConcat/concat_1:0", shape=(7,), dtype=int64))</code></pre>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" data-line-number="1">tf<span class="op">$</span><span class="kw">tile</span>(digits, <span class="kw"><a href="https://rdrr.io/r/base/list.html">list</a></span>(1L, 2L))</a></code></pre></div>
+<pre><code>## tf.RaggedTensor(values=Tensor("RaggedTile/Tile:0", shape=(?,), dtype=float32), row_splits=Tensor("RaggedTile/concat_1:0", shape=(6,), dtype=int64))</code></pre>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" data-line-number="1">tf<span class="op">$</span>strings<span class="op">$</span><span class="kw"><a href="https://rdrr.io/r/base/substr.html">substr</a></span>(words, 0L, 2L)</a></code></pre></div>
+<pre><code>## tf.RaggedTensor(values=Tensor("Substr_1:0", shape=(7,), dtype=string), row_splits=Tensor("RaggedConstant_1/RaggedFromRowSplits/row_splits:0", shape=(3,), dtype=int64))</code></pre>
+<p>There are also a number of methods and operations that are
+specific to ragged tensors, including factory methods, conversion methods,
+and value-mapping operations.</p>
+<p>As with normal tensors, you can use R-style indexing to access specific
+slices of a ragged tensor. For more information, see the section on
+<strong>Indexing</strong> below.</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb11-1" data-line-number="1">digits[<span class="dv">1</span>,] <span class="co"># First row</span></a></code></pre></div>
+<pre><code>## Tensor("RaggedGetItem/strided_slice_5:0", shape=(4,), dtype=float32)</code></pre>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb13-1" data-line-number="1">digits[, <span class="dv">1</span><span class="op">:</span><span class="dv">2</span>]   <span class="co"># First two values in each row.</span></a></code></pre></div>
+<pre><code>## tf.RaggedTensor(values=Tensor("RaggedGetItem_1/GatherV2:0", shape=(?,), dtype=float32), row_splits=Tensor("RaggedGetItem_1/RaggedRange:0", shape=(6,), dtype=int64))</code></pre>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb15-1" data-line-number="1">digits[, <span class="st">`</span><span class="dt">-2:</span><span class="st">`</span>]  <span class="co"># Last two values in each row.</span></a></code></pre></div>
+<pre><code>## Warning: Negative numbers are interpreted python-style when subsetting tensorflow tensors.(they select items by counting from the back). For more details, see: https://docs.scipy.org/doc/numpy-1.13.0/reference/arrays.indexing.html#basic-slicing-and-indexing
+## To turn off this warning, set 'options(tensorflow.extract.warn_negatives_pythonic = FALSE)'</code></pre>
+<pre><code>## tf.RaggedTensor(values=Tensor("RaggedGetItem_2/GatherV2:0", shape=(?,), dtype=float32), row_splits=Tensor("RaggedGetItem_2/RaggedRange:0", shape=(6,), dtype=int64))</code></pre>
+<p>And just like normal tensors, you can use Python arithmetic and comparison operators to perform
+elementwise operations. For more information, see the section on Overloaded Operators below.</p>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb18-1" data-line-number="1">digits <span class="op">+</span><span class="st"> </span><span class="dv">3</span></a></code></pre></div>
+<pre><code>## tf.RaggedTensor(values=Tensor("Add_3:0", shape=(8,), dtype=float32), row_splits=Tensor("RaggedConstant/RaggedFromRowSplits/row_splits:0", shape=(6,), dtype=int64))</code></pre>
+<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb20-1" data-line-number="1">digits <span class="op">+</span><span class="st"> </span>tf<span class="op">$</span>ragged<span class="op">$</span><span class="kw">constant</span>(<span class="kw"><a href="https://rdrr.io/r/base/list.html">list</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/list.html">list</a></span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">4</span>), <span class="kw"><a href="https://rdrr.io/r/base/list.html">list</a></span>(), <span class="kw"><a href="https://rdrr.io/r/base/list.html">list</a></span>(<span class="dv">5</span>, <span class="dv">6</span>, <span class="dv">7</span>), <span class="kw"><a href="https://rdrr.io/r/base/list.html">list</a></span>(<span class="dv">8</span>), <span class="kw"><a href="https://rdrr.io/r/base/list.html">list</a></span>()))</a></code></pre></div>
+<pre><code>## tf.RaggedTensor(values=Tensor("Add_5:0", shape=(?,), dtype=float32), row_splits=Tensor("RaggedTile_1/concat_1:0", shape=(6,), dtype=int64))</code></pre>
+<p>If you need to perform an elementwise transformation to the values of a RaggedTensor, you can use <code>tf$ragged$map_flat_values</code>, which takes a function plus one or more arguments, and applies the function to transform the RaggedTensor’s values.</p>
+<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb22-1" data-line-number="1">times_two_plus_one &lt;-<span class="st"> </span><span class="cf">function</span>(x) {</a>
+<a class="sourceLine" id="cb22-2" data-line-number="2">  <span class="dv">2</span><span class="op">*</span>x <span class="op">+</span><span class="st"> </span><span class="dv">1</span></a>
+<a class="sourceLine" id="cb22-3" data-line-number="3">}</a>
+<a class="sourceLine" id="cb22-4" data-line-number="4">tf<span class="op">$</span>ragged<span class="op">$</span><span class="kw">map_flat_values</span>(times_two_plus_one, digits)</a></code></pre></div>
+<pre><code>## tf.RaggedTensor(values=Tensor("Add_6:0", shape=(8,), dtype=float32), row_splits=Tensor("RaggedConstant/RaggedFromRowSplits/row_splits:0", shape=(6,), dtype=int64))</code></pre>
+</div>
+<div id="constructing-a-ragged-tensor" class="section level3">
+<h3>Constructing a ragged tensor</h3>
+<p>The simplest way to construct a ragged tensor is using
+<code>tf$ragged$constant</code>, which builds the
+<code>RaggedTensor</code> corresponding to a given nested <code>list</code>:</p>
+<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb24-1" data-line-number="1">sentences &lt;-<span class="st"> </span>tf<span class="op">$</span>ragged<span class="op">$</span><span class="kw">constant</span>(<span class="kw"><a href="https://rdrr.io/r/base/list.html">list</a></span>(</a>
+<a class="sourceLine" id="cb24-2" data-line-number="2">    <span class="kw"><a href="https://rdrr.io/r/base/list.html">list</a></span>(<span class="st">"Let's"</span>, <span class="st">"build"</span>, <span class="st">"some"</span>, <span class="st">"ragged"</span>, <span class="st">"tensors"</span>, <span class="st">"!"</span>),</a>
+<a class="sourceLine" id="cb24-3" data-line-number="3">    <span class="kw"><a href="https://rdrr.io/r/base/list.html">list</a></span>(<span class="st">"We"</span>, <span class="st">"can"</span>, <span class="st">"use"</span>, <span class="st">"tf.ragged.constant"</span>, <span class="st">"."</span>)))</a></code></pre></div>
+<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb25-1" data-line-number="1">paragraphs &lt;-<span class="st"> </span>tf<span class="op">$</span>ragged<span class="op">$</span><span class="kw">constant</span>(<span class="kw"><a href="https://rdrr.io/r/base/list.html">list</a></span>(</a>
+<a class="sourceLine" id="cb25-2" data-line-number="2">    <span class="kw"><a href="https://rdrr.io/r/base/list.html">list</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/list.html">list</a></span>(<span class="st">'I'</span>, <span class="st">'have'</span>, <span class="st">'a'</span>, <span class="st">'cat'</span>), <span class="kw"><a href="https://rdrr.io/r/base/list.html">list</a></span>(<span class="st">'His'</span>, <span class="st">'name'</span>, <span class="st">'is'</span>, <span class="st">'Mat'</span>)),</a>
+<a class="sourceLine" id="cb25-3" data-line-number="3">    <span class="kw"><a href="https://rdrr.io/r/base/list.html">list</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/list.html">list</a></span>(<span class="st">'Do'</span>, <span class="st">'you'</span>, <span class="st">'want'</span>, <span class="st">'to'</span>, <span class="st">'come'</span>, <span class="st">'visit'</span>), <span class="kw"><a href="https://rdrr.io/r/base/list.html">list</a></span>(<span class="st">"I'm"</span>, <span class="st">'free'</span>, <span class="st">'tomorrow'</span>))</a>
+<a class="sourceLine" id="cb25-4" data-line-number="4">))</a>
+<a class="sourceLine" id="cb25-5" data-line-number="5">paragraphs</a></code></pre></div>
+<pre><code>## tf.RaggedTensor(values=tf.RaggedTensor(values=Tensor("RaggedConstant_4/values:0", shape=(17,), dtype=string), row_splits=Tensor("RaggedConstant_4/RaggedFromRowSplits/row_splits:0", shape=(5,), dtype=int64)), row_splits=Tensor("RaggedConstant_4/RaggedFromRowSplits_1/row_splits:0", shape=(3,), dtype=int64))</code></pre>
+<p>Ragged tensors can also be constructed by pairing flat <em>values</em> tensors with
+<em>row-partitioning</em> tensors indicating how those values should be divided into
+rows, using factory classmethods such as <code>tf$RaggedTensor$from_value_rowids</code>,
+<code>tf$RaggedTensor$from_row_lengths</code>, and
+<code>tf$RaggedTensor$from_row_splits</code>.</p>
+<div id="tfraggedtensorfrom_value_rowids" class="section level4">
+<h4><code>tf$RaggedTensor$from_value_rowids</code></h4>
+<p>If you know which row each value belongs in, then you can build a <code>RaggedTensor</code> using a <code>value_rowids</code> row-partitioning tensor:</p>
+<p><img src="../images/value_rowids.png"></p>
+<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb27-1" data-line-number="1">tf<span class="op">$</span>RaggedTensor<span class="op">$</span><span class="kw">from_value_rowids</span>(</a>
+<a class="sourceLine" id="cb27-2" data-line-number="2">    <span class="dt">values=</span><span class="kw"><a href="https://rdrr.io/r/base/integer.html">as.integer</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="dv">3</span>, <span class="dv">1</span>, <span class="dv">4</span>, <span class="dv">1</span>, <span class="dv">5</span>, <span class="dv">9</span>, <span class="dv">2</span>, <span class="dv">6</span>)),</a>
+<a class="sourceLine" id="cb27-3" data-line-number="3">    <span class="dt">value_rowids=</span><span class="kw"><a href="https://rdrr.io/r/base/integer.html">as.integer</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">2</span>, <span class="dv">2</span>, <span class="dv">2</span>, <span class="dv">3</span>)))</a></code></pre></div>
+<pre><code>## tf.RaggedTensor(values=Tensor("RaggedFromValueRowIds/values:0", shape=(8,), dtype=int32), row_splits=Tensor("RaggedFromValueRowIds/concat:0", shape=(5,), dtype=int64))</code></pre>
+</div>
+<div id="tf.raggedtensor.from_row_lengths" class="section level4">
+<h4><code>tf.RaggedTensor.from_row_lengths</code></h4>
+<p>If you know how long each row is, then you can use a <code>row_lengths</code> row-partitioning tensor:</p>
+<p><img src="../images/row_lengths.png"></p>
+<div class="sourceCode" id="cb29"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb29-1" data-line-number="1">tf<span class="op">$</span>RaggedTensor<span class="op">$</span><span class="kw">from_row_lengths</span>(</a>
+<a class="sourceLine" id="cb29-2" data-line-number="2">    <span class="dt">values=</span><span class="kw"><a href="https://rdrr.io/r/base/integer.html">as.integer</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="dv">3</span>, <span class="dv">1</span>, <span class="dv">4</span>, <span class="dv">1</span>, <span class="dv">5</span>, <span class="dv">9</span>, <span class="dv">2</span>, <span class="dv">6</span>)),</a>
+<a class="sourceLine" id="cb29-3" data-line-number="3">    <span class="dt">row_lengths=</span><span class="kw"><a href="https://rdrr.io/r/base/integer.html">as.integer</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="dv">4</span>, <span class="dv">0</span>, <span class="dv">3</span>, <span class="dv">1</span>)))</a></code></pre></div>
+<pre><code>## tf.RaggedTensor(values=Tensor("RaggedFromRowLengths/values:0", shape=(8,), dtype=int32), row_splits=Tensor("RaggedFromRowLengths/concat:0", shape=(5,), dtype=int64))</code></pre>
+</div>
+<div id="tf.raggedtensor.from_row_splits" class="section level4">
+<h4><code>tf.RaggedTensor.from_row_splits</code></h4>
+<p>If you know the index where each row starts and ends, then you can use a <code>row_splits</code> row-partitioning tensor:</p>
+<div class="figure">
+<img src="../images/row_splits.png" alt="row_splits"><p class="caption">row_splits</p>
+</div>
+<div class="sourceCode" id="cb31"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb31-1" data-line-number="1">tf<span class="op">$</span>RaggedTensor<span class="op">$</span><span class="kw">from_row_splits</span>(</a>
+<a class="sourceLine" id="cb31-2" data-line-number="2">    <span class="dt">values=</span><span class="kw"><a href="https://rdrr.io/r/base/integer.html">as.integer</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="dv">3</span>, <span class="dv">1</span>, <span class="dv">4</span>, <span class="dv">1</span>, <span class="dv">5</span>, <span class="dv">9</span>, <span class="dv">2</span>, <span class="dv">6</span>)),</a>
+<a class="sourceLine" id="cb31-3" data-line-number="3">    <span class="dt">row_splits=</span><span class="kw"><a href="https://rdrr.io/r/base/integer.html">as.integer</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="dv">0</span>, <span class="dv">4</span>, <span class="dv">4</span>, <span class="dv">7</span>, <span class="dv">8</span>)))</a></code></pre></div>
+<pre><code>## tf.RaggedTensor(values=Tensor("RaggedFromRowSplits/values:0", shape=(8,), dtype=int32), row_splits=Tensor("RaggedFromRowSplits/row_splits:0", shape=(5,), dtype=int64))</code></pre>
+<p>See the <code>tf.RaggedTensor</code> class documentation for a full list of factory methods.</p>
+</div>
+</div>
+<div id="what-you-can-store-in-a-ragged-tensor" class="section level3">
+<h3>What you can store in a ragged tensor</h3>
+<p>As with normal <code>Tensor</code>s, the values in a <code>RaggedTensor</code> must all have the same
+type; and the values must all be at the same nesting depth (the <em>rank</em> of the
+tensor):</p>
+<div class="sourceCode" id="cb33"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb33-1" data-line-number="1">tf<span class="op">$</span>ragged<span class="op">$</span><span class="kw">constant</span>(<span class="kw"><a href="https://rdrr.io/r/base/list.html">list</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/list.html">list</a></span>(<span class="st">"Hi"</span>), <span class="kw"><a href="https://rdrr.io/r/base/list.html">list</a></span>(<span class="st">"How"</span>, <span class="st">"are"</span>, <span class="st">"you"</span>))) <span class="co"># ok: type=string, rank=2</span></a></code></pre></div>
+<pre><code>## tf.RaggedTensor(values=Tensor("RaggedConstant_5/values:0", shape=(4,), dtype=string), row_splits=Tensor("RaggedConstant_5/RaggedFromRowSplits/row_splits:0", shape=(3,), dtype=int64))</code></pre>
+<div class="sourceCode" id="cb35"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb35-1" data-line-number="1">tf<span class="op">$</span>ragged<span class="op">$</span><span class="kw">constant</span>(<span class="kw"><a href="https://rdrr.io/r/base/list.html">list</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/list.html">list</a></span>(<span class="st">"one"</span>, <span class="st">"two"</span>), <span class="kw"><a href="https://rdrr.io/r/base/list.html">list</a></span>(<span class="dv">3</span>, <span class="dv">4</span>))) <span class="co"># bad: multiple types</span></a></code></pre></div>
+<div class="sourceCode" id="cb36"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb36-1" data-line-number="1">tf<span class="op">$</span>ragged<span class="op">$</span><span class="kw">constant</span>(<span class="kw"><a href="https://rdrr.io/r/base/list.html">list</a></span>(<span class="st">"A"</span>, <span class="kw"><a href="https://rdrr.io/r/base/list.html">list</a></span>(<span class="st">"B"</span>, <span class="st">"C"</span>))) <span class="co"># bad: multiple nesting depths</span></a></code></pre></div>
+<p>This is a small introduction to Ragged Tensors in TensorFlow. See the complete tutorial (in Python) <a href="https://www.tensorflow.org/guide/ragged_tensor">here</a>.</p>
+</div>
+</div>
