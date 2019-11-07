@@ -1,0 +1,138 @@
+---
+title: "Key concepts"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Key concepts}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+type: docs
+repo: https://github.com/rstudio/tfhub
+menu:
+  main:
+    name: "Key Concepts"
+    identifier: "tfhub-key-concepts"
+    parent: "tfhub-key-top"
+    weight: 10
+---
+
+
+
+<div id="using-a-module" class="section level2">
+<h2>Using a Module</h2>
+<div id="instantiating-a-module" class="section level3">
+<h3>Instantiating a Module</h3>
+<p>A TensorFlow Hub module is imported into a TensorFlow program by creating a Module object from a string with its URL or filesystem path, such as:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(tfhub)</a>
+<a class="sourceLine" id="cb1-2" data-line-number="2">m &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/pkg/tfhub/man/hub_load.html">hub_load</a></span>(<span class="st">"path/to/a/module_dir"</span>)</a></code></pre></div>
+<p>This adds the module’s variables to the current TensorFlow graph.</p>
+</div>
+<div id="caching-modules" class="section level3">
+<h3>Caching Modules</h3>
+<p>When creating a module from a URL, the module content is downloaded and cached in the local system temporary directory. The location where modules are cached can be overridden using TFHUB_CACHE_DIR environment variable.</p>
+<p>For example, setting <code>TFHUB_CACHE_DIR</code> to <code>/my_module_cache</code>:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/base/Sys.setenv.html">Sys.setenv</a></span>(<span class="dt">TFHUB_CACHE_DIR =</span> <span class="st">"/my_module_cache"</span>)</a></code></pre></div>
+<p>and then creating a module from a URL:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1">m &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/pkg/tfhub/man/hub_load.html">hub_load</a></span>(<span class="st">"https://tfhub.dev/google/progan-128/1"</span>)</a></code></pre></div>
+<p>results in downloading and unpacking the module into <code>/my_module_cache</code>.</p>
+</div>
+<div id="applying-a-module" class="section level3">
+<h3>Applying a Module</h3>
+<p>Once instantiated, a module m can be called zero or more times like a Python function from tensor inputs to tensor outputs:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" data-line-number="1">y &lt;-<span class="st"> </span><span class="kw">m</span>(x)</a></code></pre></div>
+<p>Each such call adds operations to the current TensorFlow graph to compute <code>y</code> from <code>x</code>. If this involves variables with trained weights, these are shared between all applications.</p>
+<p>Modules can define multiple named signatures in order to allow being applied in more than one way (similar to how Python objects have methods). A module’s documentation should describe the available signatures. The call above applies the signature named “default”. Any signature can be selected by passing its name to the optional <code>signature=</code> argument.</p>
+<p>If a signature has multiple inputs, they must be passed as a dict, with the keys defined by the signature. Likewise, if a signature has multiple outputs, these can be retrieved as a dict by passing as_dict=True, under the keys defined by the signature. (The key <code>"default"</code> is for the single output returned if <code>as_dict=FALSE</code>) So the most general form of applying a Module looks like:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" data-line-number="1">outputs &lt;-<span class="st"> </span><span class="kw">m</span>(<span class="kw"><a href="https://rdrr.io/r/base/list.html">list</a></span>(<span class="dt">apples=</span>x1, <span class="dt">oranges=</span>x2), <span class="dt">signature=</span><span class="st">"fruit_to_pet"</span>, <span class="dt">as_dict=</span><span class="ot">TRUE</span>)</a>
+<a class="sourceLine" id="cb5-2" data-line-number="2">y1 =<span class="st"> </span>outputs<span class="op">$</span>cats</a>
+<a class="sourceLine" id="cb5-3" data-line-number="3">y2 =<span class="st"> </span>outputs<span class="op">$</span>dogs</a></code></pre></div>
+<p>A caller must supply all inputs defined by a signature, but there is no requirement to use all of a module’s outputs. Module consumers should handle additional outputs gracefully.</p>
+</div>
+</div>
+<div id="creating-a-new-module" class="section level2">
+<h2>Creating a new Module</h2>
+<div id="general-approach" class="section level3">
+<h3>General approach</h3>
+<p>A Hub Module is simply a TensorFlow graph in the SavedModel format. In order
+to create a Module you can run the <code>export_savedmodel</code> function with any
+TensorFlow object.</p>
+<p>For example:</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(keras)</a>
+<a class="sourceLine" id="cb6-2" data-line-number="2"></a>
+<a class="sourceLine" id="cb6-3" data-line-number="3">mnist &lt;-<span class="st"> </span><span class="kw"><a href="../../keras/reference/dataset_mnist.html">dataset_mnist</a></span>()</a>
+<a class="sourceLine" id="cb6-4" data-line-number="4"></a>
+<a class="sourceLine" id="cb6-5" data-line-number="5">input &lt;-<span class="st"> </span><span class="kw"><a href="../../keras/reference/layer_input.html">layer_input</a></span>(<span class="kw"><a href="../../keras/reference/reexports.html">shape</a></span>(<span class="dv">28</span>,<span class="dv">28</span>), <span class="dt">dtype =</span> <span class="st">"int32"</span>)</a>
+<a class="sourceLine" id="cb6-6" data-line-number="6"></a>
+<a class="sourceLine" id="cb6-7" data-line-number="7">output &lt;-<span class="st"> </span>input <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb6-8" data-line-number="8"><span class="st">  </span><span class="kw"><a href="../../keras/reference/layer_flatten.html">layer_flatten</a></span>() <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb6-9" data-line-number="9"><span class="st">  </span><span class="kw"><a href="../../keras/reference/layer_lambda.html">layer_lambda</a></span>(tensorflow<span class="op">::</span><span class="kw"><a href="../../tensorflow/reference/tf_function.html">tf_function</a></span>(<span class="cf">function</span>(x) tf<span class="op">$</span><span class="kw">cast</span>(x, tf<span class="op">$</span>float32)<span class="op">/</span><span class="dv">255</span>)) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb6-10" data-line-number="10"><span class="st">  </span><span class="kw"><a href="../../keras/reference/layer_dense.html">layer_dense</a></span>(<span class="dt">units =</span> <span class="dv">10</span>, <span class="dt">activation =</span> <span class="st">"softmax"</span>)</a>
+<a class="sourceLine" id="cb6-11" data-line-number="11"></a>
+<a class="sourceLine" id="cb6-12" data-line-number="12">model &lt;-<span class="st"> </span><span class="kw"><a href="../../keras/reference/keras_model.html">keras_model</a></span>(input, output)</a>
+<a class="sourceLine" id="cb6-13" data-line-number="13"></a>
+<a class="sourceLine" id="cb6-14" data-line-number="14">model <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb6-15" data-line-number="15"><span class="st">  </span><span class="kw"><a href="../../keras/reference/reexports.html">compile</a></span>(</a>
+<a class="sourceLine" id="cb6-16" data-line-number="16">    <span class="dt">loss =</span> <span class="st">"sparse_categorical_crossentropy"</span>,</a>
+<a class="sourceLine" id="cb6-17" data-line-number="17">    <span class="dt">optimizer =</span> <span class="st">"adam"</span>,</a>
+<a class="sourceLine" id="cb6-18" data-line-number="18">    <span class="dt">metrics =</span> <span class="st">"acc"</span></a>
+<a class="sourceLine" id="cb6-19" data-line-number="19">  )</a>
+<a class="sourceLine" id="cb6-20" data-line-number="20"></a>
+<a class="sourceLine" id="cb6-21" data-line-number="21">model <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb6-22" data-line-number="22"><span class="st">  </span><span class="kw"><a href="../../keras/reference/reexports.html">fit</a></span>(<span class="dt">x =</span> mnist<span class="op">$</span>train<span class="op">$</span>x, <span class="dt">y =</span> mnist<span class="op">$</span>train<span class="op">$</span>y, <span class="dt">validation_split =</span> <span class="fl">0.2</span>, <span class="dt">epochs =</span><span class="dv">1</span> )</a>
+<a class="sourceLine" id="cb6-23" data-line-number="23"></a>
+<a class="sourceLine" id="cb6-24" data-line-number="24"><span class="kw"><a href="../../keras/reference/save_model_tf.html">save_model_tf</a></span>(model, <span class="st">"my_module/"</span>, <span class="dt">include_optimizer =</span> <span class="ot">FALSE</span>)</a></code></pre></div>
+<p>After exporting the model to the SavedModel format you can load it using <code>hub_load</code>,
+and use it for predictions for example:</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" data-line-number="1">module &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/pkg/tfhub/man/hub_load.html">hub_load</a></span>(<span class="st">"my_module/"</span>)</a>
+<a class="sourceLine" id="cb7-2" data-line-number="2"></a>
+<a class="sourceLine" id="cb7-3" data-line-number="3">predictions &lt;-<span class="st"> </span><span class="kw">module</span>(mnist<span class="op">$</span>test<span class="op">$</span>x) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb7-4" data-line-number="4"><span class="st">  </span>tf<span class="op">$</span><span class="kw">argmax</span>(<span class="dt">axis =</span> 1L) </a>
+<a class="sourceLine" id="cb7-5" data-line-number="5"></a>
+<a class="sourceLine" id="cb7-6" data-line-number="6"><span class="kw"><a href="https://rdrr.io/r/base/mean.html">mean</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/integer.html">as.integer</a></span>(predictions) <span class="op">==</span><span class="st"> </span>mnist<span class="op">$</span>test<span class="op">$</span>y)</a></code></pre></div>
+<p>Exporting a module serializes its definition together with the current state of
+its variables in session into the passed path. This can be used when exporting a
+module for the first time, as well as when exporting a fine tuned module.</p>
+<p>Module publishers should implement a <a href="https://www.tensorflow.org/hub/common_signatures/index">common signature</a> when possible, so that consumers can easily exchange modules and find the best one for their problem.</p>
+</div>
+</div>
+<div id="fine-tuning" class="section level2">
+<h2>Fine-Tuning</h2>
+<p>Training the variables of an imported module together with those of the model around it is called fine-tuning. Fine-tuning can result in better quality, but adds new complications. We advise consumers to look into fine-tuning only after exploring simpler quality tweaks.</p>
+<div id="for-consumers" class="section level3">
+<h3>For consumers</h3>
+<p>To enable fine-tuning, instantiate the module with <code>hub_module(..., trainable = TRUE)</code> to make its variables trainable and import TensorFlow’s <code>REGULARIZATION_LOSSES</code>. If the module has multiple graph variants, make sure to pick the one appropriate for training. Usually, that’s the one
+with tags <code>{"train"}</code>.</p>
+<p>Choose a training regime that does not ruin the pre-trained weights, for example,
+a lower learning rate than for training from scratch.</p>
+</div>
+<div id="for-publishers" class="section level3">
+<h3>For publishers</h3>
+<p>To make fine-tuning easier for consumers, please be mindful of the following:</p>
+<ul>
+<li><p>Fine-tuning needs regularization. Your module is exported with the <code>REGULARIZATION_LOSSES</code> collection, which is what puts your choice of <code><a href="../../keras/reference/layer_dense.html">layer_dense(..., kernel_regularizer=...)</a></code> etc. into what the consumer gets from <code>tf$losses$get_regularization_losses()</code>. Prefer this way of defining L1/L2 regularization losses.</p></li>
+<li><p>In the publisher model, avoid defining L1/L2 regularization via the <code>l1_</code> and <code>l2_regularization_strength</code> parameters of <code>tf$train$FtrlOptimizer</code>, <code>tf$train$ProximalGradientDescentOptimizer</code>, and other proximal optimizers. These are not exported alongside the module, and setting regularization strengths globally may not be appropriate for the consumer. Except for L1 regularization in wide (i.e. sparse linear) or wide &amp; deep models, it should be possible to use individual regularization losses instead.</p></li>
+<li><p>If you use dropout, batch normalization, or similar training techniques, set dropout rate and other hyperparameters to values that make sense across many expected uses.</p></li>
+</ul>
+</div>
+</div>
+<div id="hosting-a-module" class="section level2">
+<h2>Hosting a Module</h2>
+<p>TensorFlow Hub supports HTTP based distribution of modules. In particular the protocol allows to use the URL identifying the module both as the documentation of the module and the endpoint to fetch the module.</p>
+<div id="protocol" class="section level3">
+<h3>Protocol</h3>
+<p>When a URL such as <code>https://example.com/module</code> is used to identify a module to load or instantiate, the module resolver will attempt to download a compressed tar ball from the URL after appending a query parameter <code>?tf-hub-format=compressed</code>.</p>
+<p>The query param is to be interpreted as a comma separated list of the module formats that the client is interested in. For now only the <code>"compressed"</code> format is defined.</p>
+<p>The compressed format indicates that the client expects a <code>tar.gz</code> archive with the module contents. The root of the archive is the root of the module directory and should contain a module e.g.:</p>
+<pre><code># Create a compressed module from an exported module directory.
+$ tar -cz -f module.tar.gz --owner=0 --group=0 -C /tmp/export-module/ .
+
+# Inspect files inside a compressed module
+$ tar -tf module.tar.gz
+./
+./tfhub_module.pb
+./variables/
+./variables/variables.data-00000-of-00001
+./variables/variables.index
+./assets/
+./saved_model.pb</code></pre>
+</div>
+</div>

@@ -171,6 +171,28 @@ disqusShortname = "r-tensorflow"
 	identifier = "data-feature-spec-top"
 	weight = 42
 	url = "/guide/tfdatasets/feature_spec"
+	
+[[menu.main]]
+	name   = "TensorFlow Hub"
+	parent = "guide-top"
+	weight = 50
+	url = ""
+
+[[menu.main]]
+	name   = "Basics"
+	parent = "guide-top"
+	identifier = "tfhub-basics-top"
+	weight = 51
+	url = "/guide/tfhub/intro"
+	
+[[menu.main]]
+	name   = "Key concepts"
+	parent = "guide-top"
+	identifier = "tfhub-key-top"
+	weight = 52
+	url = "/guide/tfhub/key-concepts"
+	
+
 
 # Deploy
 
