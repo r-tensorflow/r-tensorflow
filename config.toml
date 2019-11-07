@@ -151,8 +151,27 @@ disqusShortname = "r-tensorflow"
 	identifier = "custom-advanced-top"
 	weight = 32
 	url = "/guide/tensorflow/ragged_tensors"	
-
 	
+[[menu.main]]
+	name   = "Data input pipeline"
+	parent = "guide-top"
+	weight = 40
+	url = ""
+	
+[[menu.main]]
+	name   = "Overview"
+	parent = "guide-top"
+	identifier = "data-overview-top"
+	weight = 41
+	url = "/guide/tfdatasets/introduction"
+
+[[menu.main]]
+	name   = "Feature spec API"
+	parent = "guide-top"
+	identifier = "data-feature-spec-top"
+	weight = 42
+	url = "/guide/tfdatasets/feature_spec"
+
 # Deploy
 
 [[menu.main]]
