@@ -6,7 +6,7 @@ menu:
     name: "Quickstart"
     identifier: "tutorials-advanced-quickstart-quickstart"
     parent: "tutorials-top"
-    weight: 55
+    weight: 50
 ---
 
 This is a short introduction to Keras advanced features. It uses:

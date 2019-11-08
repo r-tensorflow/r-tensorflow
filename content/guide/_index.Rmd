@@ -9,5 +9,51 @@ menu:
     weight: 10
 ---
 
+In the guide you will find documentation about specific functionality of the R packages in the TensorFlow ecosystem.
+
+## Essential documentation
+
+If you are just getting started started with TensorFlow for R, we recommend reading the following selected topics in the guide:
+
+<div class="row" style="margin-top: 15px;">
+
+<div class="col">
+<div class="card">
+<div class="col center">
+  <h2>Keras</h2>
+  <p>jhdagjhgfkghfkjaghskjhdkjahdkjhsakjdhka</p>
+</div>
+</div>
+</div>
+
+<div class="col">
+<div class="card">
+<div class="col center">
+  <h2>Keras</h2>
+  <p>jhdagjhgfkghfkjaghskjhdkjahdkjhsakjdhka</p>
+</div>
+</div>
+</div>
+
+<div class="col">
+<div class="card">
+<div class="col center">
+  <h2>Keras</h2>
+  <p>jhdagjhgfkghfkjaghskjhdkjahdkjhsakjdhka</p>
+</div>
+</div>
+</div>
+
+</div>
+  
+
+
+
+
+
+
+
+
+
 
 
