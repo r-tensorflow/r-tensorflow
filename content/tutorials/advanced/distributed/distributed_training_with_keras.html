@@ -1,0 +1,188 @@
+---
+title: "Distributed training with Keras"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Tutorial: Distributed training with Keras}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+type: docs
+repo: https://github.com/rstudio/keras
+menu:
+  main:
+    name: "Distributed training with Keras"
+    identifier: "distributed-training-with-keras"
+    parent: "tutorials-advanced-distributed-top"
+    weight: 20
+---
+
+
+
+<div id="overview" class="section level2">
+<h2>Overview</h2>
+<p>The <code>tf$distribute$Strategy</code> API provides an abstraction for distributing your training across multiple processing units. The goal is to allow users to enable distributed training using existing models and training code, with minimal changes.</p>
+<p>This tutorial uses the <code>tf$distribute$MirroredStrategy</code>, which does in-graph replication with synchronous training on many GPUs on one machine. Essentially, it copies all of the model’s variables to each processor. Then, it uses <a href="http://mpitutorial.com/tutorials/mpi-reduce-and-allreduce/">all-reduce</a> to combine the gradients from all processors and applies the combined value to all copies of the model.</p>
+<p><code>MirroredStategy</code> is one of several distribution strategy available in TensorFlow core. You can read about more strategies in the <a href="TBD%20guide">distribution strategy guide</a>.</p>
+<div id="keras-api" class="section level3">
+<h3>Keras API</h3>
+<p>This example uses the <code>keras</code> API to build the model and training loop. For custom training loops, see the <a href="TBD%20tutorial">Custom training loops</a> tutorial.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(tensorflow)</a>
+<a class="sourceLine" id="cb1-2" data-line-number="2"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(keras)</a>
+<a class="sourceLine" id="cb1-3" data-line-number="3"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(tfdatasets)</a>
+<a class="sourceLine" id="cb1-4" data-line-number="4"><span class="co"># used to load the MNIST dataset</span></a>
+<a class="sourceLine" id="cb1-5" data-line-number="5"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(tfds)</a>
+<a class="sourceLine" id="cb1-6" data-line-number="6"></a>
+<a class="sourceLine" id="cb1-7" data-line-number="7"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(purrr)</a>
+<a class="sourceLine" id="cb1-8" data-line-number="8"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(glue)</a></code></pre></div>
+</div>
+<div id="download-the-dataset" class="section level3">
+<h3>Download the dataset</h3>
+<p>Download the MNIST dataset and load it using <a href="https://github.com/rstudio/tfds">tfds</a>. This returns a dataset in <code>tfdatasets</code> format.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" data-line-number="1"><span class="co"># if you haven't done it yet:</span></a>
+<a class="sourceLine" id="cb2-2" data-line-number="2"><span class="co"># tfds::install_tfds()</span></a>
+<a class="sourceLine" id="cb2-3" data-line-number="3">mnist &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/pkg/tfds/man/tfds_load.html">tfds_load</a></span>(<span class="st">"mnist"</span>)</a>
+<a class="sourceLine" id="cb2-4" data-line-number="4">info &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/summary.html">summary</a></span>(mnist)</a></code></pre></div>
+</div>
+<div id="define-distribution-strategy" class="section level3">
+<h3>Define distribution strategy</h3>
+<p>Create a <code>MirroredStrategy</code> object. This will handle distribution, and provides a context manager (<code>tf$distribute$MirroredStrategy$scope</code>) to build your model inside.</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1">strategy &lt;-<span class="st"> </span>tf<span class="op">$</span>distribute<span class="op">$</span><span class="kw">MirroredStrategy</span>()</a>
+<a class="sourceLine" id="cb3-2" data-line-number="2">strategy<span class="op">$</span>num_replicas_in_sync</a></code></pre></div>
+</div>
+<div id="setup-input-pipeline" class="section level3">
+<h3>Setup input pipeline</h3>
+<p>When training a model with multiple GPUs, you can use the extra computing power effectively by increasing the batch size. In general, use the largest batch size that fits the GPU memory, and tune the learning rate accordingly.</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" data-line-number="1">num_train_examples &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/integer.html">as.integer</a></span>(info<span class="op">$</span>splits[[<span class="dv">2</span>]]<span class="op">$</span>statistics<span class="op">$</span>numExamples)</a>
+<a class="sourceLine" id="cb4-2" data-line-number="2">num_test_examples &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/integer.html">as.integer</a></span>(info<span class="op">$</span>splits[[<span class="dv">1</span>]]<span class="op">$</span>statistics<span class="op">$</span>numExamples)</a>
+<a class="sourceLine" id="cb4-3" data-line-number="3"></a>
+<a class="sourceLine" id="cb4-4" data-line-number="4">BUFFER_SIZE &lt;-<span class="st"> </span><span class="dv">10000</span></a>
+<a class="sourceLine" id="cb4-5" data-line-number="5"></a>
+<a class="sourceLine" id="cb4-6" data-line-number="6">BATCH_SIZE_PER_REPLICA &lt;-<span class="st"> </span><span class="dv">64</span></a>
+<a class="sourceLine" id="cb4-7" data-line-number="7">BATCH_SIZE &lt;-<span class="st"> </span>BATCH_SIZE_PER_REPLICA <span class="op">*</span><span class="st"> </span>strategy<span class="op">$</span>num_replicas_in_sync</a></code></pre></div>
+<p>Pixel values, which are 0-255, have to be normalized to the 0-1 range. Furthermore, we shuffle and batch the train and test datasets. Notice we are also keeping an in-memory cache of the training data to improve performance.</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" data-line-number="1">train_dataset &lt;-<span class="st"> </span>mnist<span class="op">$</span>train <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb5-2" data-line-number="2"><span class="st">  </span><span class="kw"><a href="../../../tools/tfdatasets/reference/dataset_map.html">dataset_map</a></span>(<span class="cf">function</span>(record) {</a>
+<a class="sourceLine" id="cb5-3" data-line-number="3">    record<span class="op">$</span>image &lt;-<span class="st"> </span>tf<span class="op">$</span><span class="kw">cast</span>(record<span class="op">$</span>image, tf<span class="op">$</span>float32) <span class="op">/</span><span class="st"> </span><span class="dv">255</span></a>
+<a class="sourceLine" id="cb5-4" data-line-number="4">    record}) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb5-5" data-line-number="5"><span class="st">  </span><span class="kw"><a href="../../../tools/tfdatasets/reference/dataset_cache.html">dataset_cache</a></span>() <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb5-6" data-line-number="6"><span class="st">  </span><span class="kw"><a href="../../../tools/tfdatasets/reference/dataset_shuffle.html">dataset_shuffle</a></span>(BUFFER_SIZE) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb5-7" data-line-number="7"><span class="st">  </span><span class="kw"><a href="../../../tools/tfdatasets/reference/dataset_batch.html">dataset_batch</a></span>(BATCH_SIZE) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb5-8" data-line-number="8"><span class="st">  </span><span class="kw"><a href="../../../tools/tfdatasets/reference/dataset_map.html">dataset_map</a></span>(unname)</a>
+<a class="sourceLine" id="cb5-9" data-line-number="9"></a>
+<a class="sourceLine" id="cb5-10" data-line-number="10">test_dataset &lt;-<span class="st"> </span>mnist<span class="op">$</span>test <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb5-11" data-line-number="11"><span class="st"> </span><span class="kw"><a href="../../../tools/tfdatasets/reference/dataset_map.html">dataset_map</a></span>(<span class="cf">function</span>(record) {</a>
+<a class="sourceLine" id="cb5-12" data-line-number="12">    record<span class="op">$</span>image &lt;-<span class="st"> </span>tf<span class="op">$</span><span class="kw">cast</span>(record<span class="op">$</span>image, tf<span class="op">$</span>float32) <span class="op">/</span><span class="st"> </span><span class="dv">255</span></a>
+<a class="sourceLine" id="cb5-13" data-line-number="13">    record}) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb5-14" data-line-number="14"><span class="st">  </span><span class="kw"><a href="../../../tools/tfdatasets/reference/dataset_batch.html">dataset_batch</a></span>(BATCH_SIZE) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb5-15" data-line-number="15"><span class="st">  </span><span class="kw"><a href="../../../tools/tfdatasets/reference/dataset_map.html">dataset_map</a></span>(unname)</a></code></pre></div>
+</div>
+<div id="create-the-model" class="section level3">
+<h3>Create the model</h3>
+<p>Create and compile the Keras model in the context of <code>strategy$scope</code>.</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/base/with.html">with</a></span> (strategy<span class="op">$</span><span class="kw">scope</span>(), {</a>
+<a class="sourceLine" id="cb6-2" data-line-number="2">   model &lt;-<span class="st"> </span><span class="kw"><a href="../../../keras/reference/keras_model_sequential.html">keras_model_sequential</a></span>() <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb6-3" data-line-number="3"><span class="st">     </span><span class="kw"><a href="../../../keras/reference/layer_conv_2d.html">layer_conv_2d</a></span>(</a>
+<a class="sourceLine" id="cb6-4" data-line-number="4">       <span class="dt">filters =</span> <span class="dv">32</span>,</a>
+<a class="sourceLine" id="cb6-5" data-line-number="5">       <span class="dt">kernel_size =</span> <span class="dv">3</span>,</a>
+<a class="sourceLine" id="cb6-6" data-line-number="6">       <span class="dt">activation =</span> <span class="st">'relu'</span>,</a>
+<a class="sourceLine" id="cb6-7" data-line-number="7">       <span class="dt">input_shape =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="dv">28</span>, <span class="dv">28</span>, <span class="dv">1</span>)</a>
+<a class="sourceLine" id="cb6-8" data-line-number="8">       ) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb6-9" data-line-number="9"><span class="st">     </span><span class="kw"><a href="../../../keras/reference/layer_max_pooling_2d.html">layer_max_pooling_2d</a></span>() <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb6-10" data-line-number="10"><span class="st">     </span><span class="kw"><a href="../../../keras/reference/layer_flatten.html">layer_flatten</a></span>() <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb6-11" data-line-number="11"><span class="st">     </span><span class="kw"><a href="../../../keras/reference/layer_dense.html">layer_dense</a></span>(<span class="dt">units =</span> <span class="dv">64</span>, <span class="dt">activation =</span> <span class="st">'relu'</span>) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb6-12" data-line-number="12"><span class="st">     </span><span class="kw"><a href="../../../keras/reference/layer_dense.html">layer_dense</a></span>(<span class="dt">units =</span> <span class="dv">10</span>, <span class="dt">activation =</span> <span class="st">'softmax'</span>)</a>
+<a class="sourceLine" id="cb6-13" data-line-number="13">   </a>
+<a class="sourceLine" id="cb6-14" data-line-number="14">  model <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../../../keras/reference/reexports.html">compile</a></span>(</a>
+<a class="sourceLine" id="cb6-15" data-line-number="15">    <span class="dt">loss =</span> <span class="st">'sparse_categorical_crossentropy'</span>,</a>
+<a class="sourceLine" id="cb6-16" data-line-number="16">    <span class="dt">optimizer =</span> <span class="st">'adam'</span>,</a>
+<a class="sourceLine" id="cb6-17" data-line-number="17">    <span class="dt">metrics =</span> <span class="st">'accuracy'</span>)</a>
+<a class="sourceLine" id="cb6-18" data-line-number="18">})</a></code></pre></div>
+</div>
+<div id="define-the-callbacks" class="section level3">
+<h3>Define the callbacks</h3>
+<p>The callbacks used here are:</p>
+<ul>
+<li>TensorBoard: This callback writes a log for TensorBoard which allows you to visualize the graphs.</li>
+<li>Model Checkpoint: This callback saves the model after every epoch.</li>
+<li>Learning Rate Scheduler: Using this callback, you can schedule the learning rate to change after every epoch/batch.</li>
+</ul>
+<p>For illustrative purposes, add a print callback to display the learning rate.</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" data-line-number="1"><span class="co"># Define the checkpoint directory to store the checkpoints</span></a>
+<a class="sourceLine" id="cb7-2" data-line-number="2">checkpoint_dir &lt;-<span class="st"> './training_checkpoints'</span></a>
+<a class="sourceLine" id="cb7-3" data-line-number="3"><span class="co"># Name of the checkpoint files</span></a>
+<a class="sourceLine" id="cb7-4" data-line-number="4">checkpoint_prefix &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/file.path.html">file.path</a></span>(checkpoint_dir, <span class="st">"ckpt_{epoch}"</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" data-line-number="1"><span class="co"># Function for decaying the learning rate.</span></a>
+<a class="sourceLine" id="cb8-2" data-line-number="2"><span class="co"># You can define any decay function you need.</span></a>
+<a class="sourceLine" id="cb8-3" data-line-number="3">decay &lt;-<span class="st"> </span><span class="cf">function</span>(epoch, lr) {</a>
+<a class="sourceLine" id="cb8-4" data-line-number="4">  <span class="cf">if</span> (epoch <span class="op">&lt;</span><span class="st"> </span><span class="dv">3</span>) <span class="fl">1e-3</span></a>
+<a class="sourceLine" id="cb8-5" data-line-number="5">    <span class="cf">else</span> <span class="cf">if</span> (epoch <span class="op">&gt;=</span><span class="st"> </span><span class="dv">3</span> <span class="op">&amp;&amp;</span><span class="st"> </span>epoch <span class="op">&lt;</span><span class="st"> </span><span class="dv">7</span>) <span class="fl">1e-4</span></a>
+<a class="sourceLine" id="cb8-6" data-line-number="6">      <span class="cf">else</span> <span class="fl">1e-5</span></a>
+<a class="sourceLine" id="cb8-7" data-line-number="7">}</a></code></pre></div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" data-line-number="1"><span class="co"># Callback for printing the LR at the end of each epoch.</span></a>
+<a class="sourceLine" id="cb9-2" data-line-number="2">PrintLR &lt;-<span class="st"> </span>R6<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/R6/man/R6Class.html">R6Class</a></span>(<span class="st">"PrintLR"</span>,</a>
+<a class="sourceLine" id="cb9-3" data-line-number="3">  <span class="dt">inherit =</span> KerasCallback,</a>
+<a class="sourceLine" id="cb9-4" data-line-number="4">  </a>
+<a class="sourceLine" id="cb9-5" data-line-number="5">  <span class="dt">public =</span> <span class="kw"><a href="https://rdrr.io/r/base/list.html">list</a></span>(</a>
+<a class="sourceLine" id="cb9-6" data-line-number="6">    </a>
+<a class="sourceLine" id="cb9-7" data-line-number="7">    <span class="dt">losses =</span> <span class="ot">NULL</span>,</a>
+<a class="sourceLine" id="cb9-8" data-line-number="8">     </a>
+<a class="sourceLine" id="cb9-9" data-line-number="9">    <span class="dt">on_epoch_end =</span> <span class="cf">function</span>(epoch, <span class="dt">logs =</span> <span class="kw"><a href="https://rdrr.io/r/base/list.html">list</a></span>()) {</a>
+<a class="sourceLine" id="cb9-10" data-line-number="10">      tf<span class="op">$</span><span class="kw"><a href="https://rdrr.io/r/base/print.html">print</a></span>(<span class="kw"><a href="https://rdrr.io/pkg/glue/man/glue.html">glue</a></span>(<span class="st">'</span><span class="ch">\n</span><span class="st">Learning rate for epoch {epoch} is {as.numeric(model$optimizer$lr)}</span><span class="ch">\n</span><span class="st">'</span>))</a>
+<a class="sourceLine" id="cb9-11" data-line-number="11">    }</a>
+<a class="sourceLine" id="cb9-12" data-line-number="12">))</a>
+<a class="sourceLine" id="cb9-13" data-line-number="13"></a>
+<a class="sourceLine" id="cb9-14" data-line-number="14">print_lr &lt;-<span class="st"> </span>PrintLR<span class="op">$</span><span class="kw">new</span>()</a></code></pre></div>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" data-line-number="1">callbacks &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/list.html">list</a></span>(</a>
+<a class="sourceLine" id="cb10-2" data-line-number="2">    <span class="kw"><a href="../../../keras/reference/callback_tensorboard.html">callback_tensorboard</a></span>(<span class="dt">log_dir =</span> <span class="st">'/tmp/logs'</span>),</a>
+<a class="sourceLine" id="cb10-3" data-line-number="3">    <span class="kw"><a href="../../../keras/reference/callback_model_checkpoint.html">callback_model_checkpoint</a></span>(<span class="dt">filepath =</span> checkpoint_prefix, <span class="dt">save_weights_only =</span> <span class="ot">TRUE</span>),</a>
+<a class="sourceLine" id="cb10-4" data-line-number="4">    <span class="kw"><a href="../../../keras/reference/callback_learning_rate_scheduler.html">callback_learning_rate_scheduler</a></span>(decay),</a>
+<a class="sourceLine" id="cb10-5" data-line-number="5">    print_lr</a>
+<a class="sourceLine" id="cb10-6" data-line-number="6">)</a></code></pre></div>
+</div>
+<div id="train-and-evaluate" class="section level3">
+<h3>Train and evaluate</h3>
+<p>Now, train the model in the usual way, calling fit on the model and passing in the dataset created at the beginning of the tutorial. This step is the same whether you are distributing the training or not.</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb11-1" data-line-number="1">model <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../../../keras/reference/reexports.html">fit</a></span>(train_dataset, <span class="dt">epochs =</span> <span class="dv">12</span>, <span class="dt">callbacks =</span> callbacks)</a></code></pre></div>
+<p>As you can see below, the checkpoints are getting saved.</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb12-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/base/list.files.html">list.files</a></span>(checkpoint_dir)</a></code></pre></div>
+<p>To see how the model performs, load the latest checkpoint and call evaluate on the test data.</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb13-1" data-line-number="1">model <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../../../keras/reference/save_model_weights_tf.html">load_model_weights_tf</a></span>(tf<span class="op">$</span>train<span class="op">$</span><span class="kw">latest_checkpoint</span>(checkpoint_dir))</a>
+<a class="sourceLine" id="cb13-2" data-line-number="2"></a>
+<a class="sourceLine" id="cb13-3" data-line-number="3">model <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../../../tensorflow/reference/evaluate.html">evaluate</a></span>(test_dataset)</a></code></pre></div>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb14-1" data-line-number="1"><span class="kw"><a href="../../../tensorflow/reference/tensorboard.html">tensorboard</a></span>(<span class="dt">log_dir =</span> <span class="st">"/tmp/logs"</span>)</a></code></pre></div>
+</div>
+</div>
+<div id="export-to-savedmodel" class="section level2">
+<h2>Export to SavedModel</h2>
+<p>Export the graph and the variables to the platform-agnostic SavedModel format. After your model is saved, you can load it with or without the scope.</p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb15-1" data-line-number="1">path &lt;-<span class="st"> 'saved_model/'</span></a>
+<a class="sourceLine" id="cb15-2" data-line-number="2">model <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../../../keras/reference/save_model_tf.html">save_model_tf</a></span>(path)</a></code></pre></div>
+<p>Load the model without <code>strategy$scope</code>.</p>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb16-1" data-line-number="1">unreplicated_model &lt;-<span class="st"> </span><span class="kw"><a href="../../../keras/reference/save_model_tf.html">load_model_tf</a></span>(path)</a>
+<a class="sourceLine" id="cb16-2" data-line-number="2"></a>
+<a class="sourceLine" id="cb16-3" data-line-number="3">unreplicated_model <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../../../keras/reference/reexports.html">compile</a></span>(</a>
+<a class="sourceLine" id="cb16-4" data-line-number="4">    <span class="dt">loss =</span> <span class="st">'sparse_categorical_crossentropy'</span>,</a>
+<a class="sourceLine" id="cb16-5" data-line-number="5">    <span class="dt">optimizer =</span> <span class="st">'adam'</span>,</a>
+<a class="sourceLine" id="cb16-6" data-line-number="6">    <span class="dt">metrics =</span> <span class="st">'accuracy'</span>)</a>
+<a class="sourceLine" id="cb16-7" data-line-number="7"></a>
+<a class="sourceLine" id="cb16-8" data-line-number="8">unreplicated_model <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../../../tensorflow/reference/evaluate.html">evaluate</a></span>(test_dataset)</a></code></pre></div>
+<p>Load the model with <code>strategy$scope</code>.</p>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb17-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/base/with.html">with</a></span> (strategy<span class="op">$</span><span class="kw">scope</span>(), {</a>
+<a class="sourceLine" id="cb17-2" data-line-number="2">  replicated_model &lt;-<span class="st"> </span><span class="kw"><a href="../../../keras/reference/save_model_tf.html">load_model_tf</a></span>(path)</a>
+<a class="sourceLine" id="cb17-3" data-line-number="3"></a>
+<a class="sourceLine" id="cb17-4" data-line-number="4">  replicated_model <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../../../keras/reference/reexports.html">compile</a></span>(</a>
+<a class="sourceLine" id="cb17-5" data-line-number="5">    <span class="dt">loss =</span> <span class="st">'sparse_categorical_crossentropy'</span>,</a>
+<a class="sourceLine" id="cb17-6" data-line-number="6">    <span class="dt">optimizer =</span> <span class="st">'adam'</span>,</a>
+<a class="sourceLine" id="cb17-7" data-line-number="7">    <span class="dt">metrics =</span> <span class="st">'accuracy'</span>)</a>
+<a class="sourceLine" id="cb17-8" data-line-number="8"></a>
+<a class="sourceLine" id="cb17-9" data-line-number="9">  replicated_model <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../../../tensorflow/reference/evaluate.html">evaluate</a></span>(test_dataset)</a>
+<a class="sourceLine" id="cb17-10" data-line-number="10">})</a></code></pre></div>
+</div>
+<div id="examples-and-tutorials" class="section level2">
+<h2>Examples and Tutorials</h2>
+<p>Here are some examples for using distribution strategy with keras fit/compile:</p>
+<ol style="list-style-type: decimal">
+<li><a href="tbd">Transformer example trained using tf.distribute.MirroredStrategy</a></li>
+<li><a href="tbd">NCF example trained using tf.distribute.MirroredStrategy</a></li>
+</ol>
+<p>Call evaluate as before using appropriate datasets.</p>
+</div>

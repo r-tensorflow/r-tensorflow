@@ -86,22 +86,29 @@ disqusShortname = "r-tensorflow"
 	name   = "Customization"
 	parent = "tutorials-top"
 	identifier = "tutorials-advanced-customization-top"
-	weight = 60
+	weight = 51
 	url = "/tutorials/advanced/customization/tensors-operations/"
 
 [[menu.main]]
 	name   = "Images"
 	parent = "tutorials-top"
 	identifier = "tutorials-advanced-images-top"
-	weight = 60
+	weight = 52
 	url = "/tutorials/advanced/images/cnn/"
 	
 [[menu.main]]
 	name   = "Structured data"
 	parent = "tutorials-top"
 	identifier = "tutorials-advanced-structured-top"
-	weight = 60
+	weight = 53
 	url = "/tutorials/advanced/structured/classify/"
+	
+[[menu.main]]
+	name   = "Distributed training"
+	parent = "tutorials-top"
+	identifier = "tutorials-advanced-distributed-top"
+	weight = 54
+	url = "/tutorials/advanced/distributed/distributed_training_with_keras/"
 
 # Guides
 
@@ -200,7 +207,7 @@ disqusShortname = "r-tensorflow"
 	name   = "Deploy"
 	url    = "/deploy/"
 	identifier = "deploy-top"
-	weight = 30
+	weight = 60
 
 
 # Learn Navigational Menus
