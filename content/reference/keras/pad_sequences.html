@@ -1,0 +1,77 @@
+---
+title: "Pads sequences to the same length"
+type: docs
+repo: https://github.com/rstudio/keras
+menu:
+  main:
+    name: "Pads sequences to the same length - keras"
+    parent: keras-reference
+aliases: '/reference/keras/pad_sequences.html'
+---
+    
+    <p>Pads sequences to the same length</p>
+
+    <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>pad_sequences</span>(<span class='no'>sequences</span>, <span class='kw'>maxlen</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>dtype</span> <span class='kw'>=</span> <span class='st'>"int32"</span>,
+  <span class='kw'>padding</span> <span class='kw'>=</span> <span class='st'>"pre"</span>, <span class='kw'>truncating</span> <span class='kw'>=</span> <span class='st'>"pre"</span>, <span class='kw'>value</span> <span class='kw'>=</span> <span class='fl'>0</span>)</code></pre></div>
+
+    <h2 id="arguments">Arguments</h2>
+    <table class="ref-arguments">
+    
+    <colgroup>
+      <col class="name" />
+      <col class="desc" />
+    </colgroup>  
+      
+    <tr>
+      <td>sequences</td>
+      <td><p>List of lists where each element is a sequence</p></td>
+    </tr>
+    <tr>
+      <td>maxlen</td>
+      <td><p>int, maximum length of all sequences</p></td>
+    </tr>
+    <tr>
+      <td>dtype</td>
+      <td><p>type of the output sequences</p></td>
+    </tr>
+    <tr>
+      <td>padding</td>
+      <td><p>'pre' or 'post', pad either before or after each sequence.</p></td>
+    </tr>
+    <tr>
+      <td>truncating</td>
+      <td><p>'pre' or 'post', remove values from sequences larger than
+maxlen either in the beginning or in the end of the sequence</p></td>
+    </tr>
+    <tr>
+      <td>value</td>
+      <td><p>float, padding value</p></td>
+    </tr>
+    </table>
+
+    <h2 id="value">Value</h2>
+
+    <p>Matrix with dimensions (number_of_sequences, maxlen)</p>
+    <h2 id="details">Details</h2>
+
+    <p>This function transforms a list of <code>num_samples</code> sequences (lists
+of integers) into a matrix of shape <code>(num_samples, num_timesteps)</code>.
+<code>num_timesteps</code> is either the <code>maxlen</code> argument if provided, or the length
+of the longest sequence otherwise.</p>
+<p>Sequences that are shorter than <code>num_timesteps</code> are padded with <code>value</code> at
+the end.</p>
+<p>Sequences longer than <code>num_timesteps</code> are truncated so that they fit the
+desired length. The position where padding or truncation happens is
+determined by the arguments <code>padding</code> and <code>truncating</code>, respectively.</p>
+<p>Pre-padding is the default.</p>
+    <h2 id="see-also">See also</h2>
+
+    <div class='dont-index'><p>Other text preprocessing: <code><a href='make_sampling_table.html'>make_sampling_table</a></code>,
+  <code><a href='skipgrams.html'>skipgrams</a></code>,
+  <code><a href='text_hashing_trick.html'>text_hashing_trick</a></code>,
+  <code><a href='text_one_hot.html'>text_one_hot</a></code>,
+  <code><a href='text_to_word_sequence.html'>text_to_word_sequence</a></code></p></div>
+
+
+
+

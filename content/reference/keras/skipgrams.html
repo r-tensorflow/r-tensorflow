@@ -1,0 +1,99 @@
+---
+title: "Generates skipgram word pairs."
+type: docs
+repo: https://github.com/rstudio/keras
+menu:
+  main:
+    name: "Generates skipgram word pairs. - keras"
+    parent: keras-reference
+aliases: '/reference/keras/skipgrams.html'
+---
+    
+    <p>Generates skipgram word pairs.</p>
+
+    <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>skipgrams</span>(<span class='no'>sequence</span>, <span class='no'>vocabulary_size</span>, <span class='kw'>window_size</span> <span class='kw'>=</span> <span class='fl'>4</span>,
+  <span class='kw'>negative_samples</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>shuffle</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>categorical</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
+  <span class='kw'>sampling_table</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>seed</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</code></pre></div>
+
+    <h2 id="arguments">Arguments</h2>
+    <table class="ref-arguments">
+    
+    <colgroup>
+      <col class="name" />
+      <col class="desc" />
+    </colgroup>  
+      
+    <tr>
+      <td>sequence</td>
+      <td><p>A word sequence (sentence), encoded as a list of word indices
+(integers). If using a <code>sampling_table</code>, word indices are expected to match
+the rank of the words in a reference dataset (e.g. 10 would encode the
+10-th most frequently occuring token). Note that index 0 is expected to be
+a non-word and will be skipped.</p></td>
+    </tr>
+    <tr>
+      <td>vocabulary_size</td>
+      <td><p>Int, maximum possible word index + 1</p></td>
+    </tr>
+    <tr>
+      <td>window_size</td>
+      <td><p>Int, size of sampling windows (technically half-window).
+The window of a word <code>w_i</code> will be <code>[i-window_size, i+window_size+1]</code></p></td>
+    </tr>
+    <tr>
+      <td>negative_samples</td>
+      <td><p>float &gt;= 0. 0 for no negative (i.e. random) samples. 1
+for same number as positive samples.</p></td>
+    </tr>
+    <tr>
+      <td>shuffle</td>
+      <td><p>whether to shuffle the word couples before returning them.</p></td>
+    </tr>
+    <tr>
+      <td>categorical</td>
+      <td><p>bool. if <code>FALSE</code>, labels will be integers (eg. <code>[0, 1, 1 .. ]</code>),
+if <code>TRUE</code> labels will be categorical eg. <code>[[1,0],[0,1],[0,1] .. ]</code></p></td>
+    </tr>
+    <tr>
+      <td>sampling_table</td>
+      <td><p>1D array of size <code>vocabulary_size</code> where the entry i
+encodes the probabibily to sample a word of rank i.</p></td>
+    </tr>
+    <tr>
+      <td>seed</td>
+      <td><p>Random seed</p></td>
+    </tr>
+    </table>
+
+    <h2 id="value">Value</h2>
+
+    <p>List of <code>couples</code>, <code>labels</code> where:</p><ul>
+<li><p><code>couples</code> is a list of 2-element integer vectors: <code>[word_index, other_word_index]</code>.</p></li>
+<li><p><code>labels</code> is an integer vector of 0 and 1, where 1 indicates that <code>other_word_index</code>
+was found in the same window as <code>word_index</code>, and 0 indicates that <code>other_word_index</code>
+was random.</p></li>
+<li><p>if <code>categorical</code> is set to <code>TRUE</code>, the labels are categorical, ie. 1 becomes <code>[0,1]</code>,
+and 0 becomes <code>[1, 0]</code>.</p></li>
+</ul>
+
+    <h2 id="details">Details</h2>
+
+    <p>This function transforms a list of word indexes (lists of integers)
+into lists of words of the form:</p><ul>
+<li><p>(word, word in the same window), with label 1 (positive samples).</p></li>
+<li><p>(word, random word from the vocabulary), with label 0 (negative samples).</p></li>
+</ul>
+
+<p>Read more about Skipgram in this gnomic paper by Mikolov et al.:
+<a href='http://arxiv.org/pdf/1301.3781v3.pdf'>Efficient Estimation of Word Representations in Vector Space</a></p>
+    <h2 id="see-also">See also</h2>
+
+    <div class='dont-index'><p>Other text preprocessing: <code><a href='make_sampling_table.html'>make_sampling_table</a></code>,
+  <code><a href='pad_sequences.html'>pad_sequences</a></code>,
+  <code><a href='text_hashing_trick.html'>text_hashing_trick</a></code>,
+  <code><a href='text_one_hot.html'>text_one_hot</a></code>,
+  <code><a href='text_to_word_sequence.html'>text_to_word_sequence</a></code></p></div>
+
+
+
+

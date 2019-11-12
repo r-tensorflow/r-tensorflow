@@ -1,0 +1,95 @@
+---
+title: "Save the model after every epoch."
+type: docs
+repo: https://github.com/rstudio/keras
+menu:
+  main:
+    name: "Save the model after every epoch. - keras"
+    parent: keras-reference
+aliases: '/reference/keras/callback_model_checkpoint.html'
+---
+    
+    <p><code>filepath</code> can contain named formatting options, which will be filled the
+value of <code>epoch</code> and keys in <code>logs</code> (passed in <code>on_epoch_end</code>). For example:
+if <code>filepath</code> is <code>weights.{epoch:02d}-{val_loss:.2f}.hdf5</code>, then the model
+checkpoints will be saved with the epoch number and the validation loss in
+the filename.</p>
+
+    <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>callback_model_checkpoint</span>(<span class='no'>filepath</span>, <span class='kw'>monitor</span> <span class='kw'>=</span> <span class='st'>"val_loss"</span>, <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>0</span>,
+  <span class='kw'>save_best_only</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>save_weights_only</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>mode</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"auto"</span>,
+  <span class='st'>"min"</span>, <span class='st'>"max"</span>), <span class='kw'>period</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>save_freq</span> <span class='kw'>=</span> <span class='st'>"epoch"</span>)</code></pre></div>
+
+    <h2 id="arguments">Arguments</h2>
+    <table class="ref-arguments">
+    
+    <colgroup>
+      <col class="name" />
+      <col class="desc" />
+    </colgroup>  
+      
+    <tr>
+      <td>filepath</td>
+      <td><p>string, path to save the model file.</p></td>
+    </tr>
+    <tr>
+      <td>monitor</td>
+      <td><p>quantity to monitor.</p></td>
+    </tr>
+    <tr>
+      <td>verbose</td>
+      <td><p>verbosity mode, 0 or 1.</p></td>
+    </tr>
+    <tr>
+      <td>save_best_only</td>
+      <td><p>if <code>save_best_only=TRUE</code>, the latest best model
+according to the quantity monitored will not be overwritten.</p></td>
+    </tr>
+    <tr>
+      <td>save_weights_only</td>
+      <td><p>if <code>TRUE</code>, then only the model's weights will be
+saved (<code><a href='save_model_weights_hdf5.html'>save_model_weights_hdf5(filepath)</a></code>), else the full model is saved
+(<code><a href='save_model_hdf5.html'>save_model_hdf5(filepath)</a></code>).</p></td>
+    </tr>
+    <tr>
+      <td>mode</td>
+      <td><p>one of "auto", "min", "max". If <code>save_best_only=TRUE</code>, the decision to
+overwrite the current save file is made based on either the maximization or
+the minimization of the monitored quantity. For val_acc, this should be
+max, for val_loss this should be min, etc. In auto mode, the direction is
+automatically inferred from the name of the monitored quantity.</p></td>
+    </tr>
+    <tr>
+      <td>period</td>
+      <td><p>Interval (number of epochs) between checkpoints.</p></td>
+    </tr>
+    <tr>
+      <td>save_freq</td>
+      <td><p><code>'epoch'</code> or integer. When using 'epoch', the callback saves
+the model after each epoch. When using integer, the callback saves the model
+at end of a batch at which this many samples have been seen since last saving.
+Note that if the saving isn't aligned to epochs, the monitored metric may
+potentially be less reliable (it could reflect as little as 1 batch, since
+the metrics get reset every epoch). Defaults to <code>'epoch'</code></p></td>
+    </tr>
+    </table>
+
+    <h2 id="for-example">For example</h2>
+
+    <p>if <code>filepath</code> is
+<code>weights.{epoch:02d}-{val_loss:.2f}.hdf5</code>,: then the model checkpoints will
+be saved with the epoch number and the validation loss in the filename.</p>
+    <h2 id="see-also">See also</h2>
+
+    <div class='dont-index'><p>Other callbacks: <code><a href='callback_csv_logger.html'>callback_csv_logger</a></code>,
+  <code><a href='callback_early_stopping.html'>callback_early_stopping</a></code>,
+  <code><a href='callback_lambda.html'>callback_lambda</a></code>,
+  <code><a href='callback_learning_rate_scheduler.html'>callback_learning_rate_scheduler</a></code>,
+  <code><a href='callback_progbar_logger.html'>callback_progbar_logger</a></code>,
+  <code><a href='callback_reduce_lr_on_plateau.html'>callback_reduce_lr_on_plateau</a></code>,
+  <code><a href='callback_remote_monitor.html'>callback_remote_monitor</a></code>,
+  <code><a href='callback_tensorboard.html'>callback_tensorboard</a></code>,
+  <code><a href='callback_terminate_on_naan.html'>callback_terminate_on_naan</a></code></p></div>
+
+
+
+

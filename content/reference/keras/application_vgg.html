@@ -1,0 +1,99 @@
+---
+title: "VGG16 and VGG19 models for Keras."
+type: docs
+repo: https://github.com/rstudio/keras
+menu:
+  main:
+    name: "VGG16 and VGG19 models for Keras. - keras"
+    parent: keras-reference
+aliases: '/reference/keras/application_vgg.html'
+---
+    
+    <p>VGG16 and VGG19 models for Keras.</p>
+
+    <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>application_vgg16</span>(<span class='kw'>include_top</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>weights</span> <span class='kw'>=</span> <span class='st'>"imagenet"</span>,
+  <span class='kw'>input_tensor</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>input_shape</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>pooling</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>classes</span> <span class='kw'>=</span> <span class='fl'>1000</span>)
+
+<span class='fu'>application_vgg19</span>(<span class='kw'>include_top</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>weights</span> <span class='kw'>=</span> <span class='st'>"imagenet"</span>,
+  <span class='kw'>input_tensor</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>input_shape</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>pooling</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>classes</span> <span class='kw'>=</span> <span class='fl'>1000</span>)</code></pre></div>
+
+    <h2 id="arguments">Arguments</h2>
+    <table class="ref-arguments">
+    
+    <colgroup>
+      <col class="name" />
+      <col class="desc" />
+    </colgroup>  
+      
+    <tr>
+      <td>include_top</td>
+      <td><p>whether to include the 3 fully-connected layers at the top
+of the network.</p></td>
+    </tr>
+    <tr>
+      <td>weights</td>
+      <td><p><code>NULL</code> (random initialization), <code>imagenet</code> (ImageNet
+weights), or the path to the weights file to be loaded.</p></td>
+    </tr>
+    <tr>
+      <td>input_tensor</td>
+      <td><p>optional Keras tensor to use as image input for the
+model.</p></td>
+    </tr>
+    <tr>
+      <td>input_shape</td>
+      <td><p>optional shape list, only to be specified if <code>include_top</code>
+is FALSE (otherwise the input shape has to be <code>(224, 224, 3)</code> It should
+have exactly 3 inputs channels, and width and height should be no smaller
+than 32. E.g. <code>(200, 200, 3)</code> would be one valid value.</p></td>
+    </tr>
+    <tr>
+      <td>pooling</td>
+      <td><p>Optional pooling mode for feature extraction when
+<code>include_top</code> is <code>FALSE</code>.</p><ul>
+<li><p><code>NULL</code> means that the output of the model will be the 4D tensor output
+of the last convolutional layer.</p></li>
+<li><p><code>avg</code> means that global average pooling will be applied to the output of
+the last convolutional layer, and thus the output of the model will be
+a 2D tensor.</p></li>
+<li><p><code>max</code> means that global max pooling will be applied.</p></li>
+</ul></td>
+    </tr>
+    <tr>
+      <td>classes</td>
+      <td><p>optional number of classes to classify images into, only to be
+specified if <code>include_top</code> is TRUE, and if no <code>weights</code> argument is
+specified.</p></td>
+    </tr>
+    </table>
+
+    <h2 id="value">Value</h2>
+
+    <p>Keras model instance.</p>
+    <h2 id="details">Details</h2>
+
+    <p>Optionally loads weights pre-trained on ImageNet.</p>
+<p>The <code><a href='imagenet_preprocess_input.html'>imagenet_preprocess_input()</a></code> function should be used for image preprocessing.</p>
+    <h2 id="reference">Reference</h2>
+
+    <p>- <a href='https://arxiv.org/abs/1409.1556'>Very Deep Convolutional Networks for Large-Scale Image Recognition</a></p>
+
+    <h2 id="examples">Examples</h2>
+    <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><div class='input'><span class='kw'>if</span> (<span class='fl'>FALSE</span>) {
+<span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='no'>keras</span>)
+
+<span class='no'>model</span> <span class='kw'>&lt;-</span> <span class='fu'>application_vgg16</span>(<span class='kw'>weights</span> <span class='kw'>=</span> <span class='st'>'imagenet'</span>, <span class='kw'>include_top</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)
+
+<span class='no'>img_path</span> <span class='kw'>&lt;-</span> <span class='st'>"elephant.jpg"</span>
+<span class='no'>img</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='image_load.html'>image_load</a></span>(<span class='no'>img_path</span>, <span class='kw'>target_size</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>224</span>,<span class='fl'>224</span>))
+<span class='no'>x</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='image_to_array.html'>image_to_array</a></span>(<span class='no'>img</span>)
+<span class='no'>x</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/reticulate/man/array_reshape.html'>array_reshape</a></span>(<span class='no'>x</span>, <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>, <span class='fu'><a href='https://rdrr.io/r/base/dim.html'>dim</a></span>(<span class='no'>x</span>)))
+<span class='no'>x</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='imagenet_preprocess_input.html'>imagenet_preprocess_input</a></span>(<span class='no'>x</span>)
+
+<span class='no'>features</span> <span class='kw'>&lt;-</span> <span class='no'>model</span> <span class='kw'>%&gt;%</span> <span class='fu'><a href='https://rdrr.io/r/stats/predict.html'>predict</a></span>(<span class='no'>x</span>)
+}</div></code></pre></div>
+
+
+

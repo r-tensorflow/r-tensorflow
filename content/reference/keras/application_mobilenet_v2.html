@@ -1,0 +1,120 @@
+---
+title: "MobileNetV2 model architecture"
+type: docs
+repo: https://github.com/rstudio/keras
+menu:
+  main:
+    name: "MobileNetV2 model architecture - keras"
+    parent: keras-reference
+aliases: '/reference/keras/application_mobilenet_v2.html'
+---
+    
+    <p>MobileNetV2 model architecture</p>
+
+    <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>application_mobilenet_v2</span>(<span class='kw'>input_shape</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>alpha</span> <span class='kw'>=</span> <span class='fl'>1</span>,
+  <span class='kw'>include_top</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>weights</span> <span class='kw'>=</span> <span class='st'>"imagenet"</span>, <span class='kw'>input_tensor</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>pooling</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>classes</span> <span class='kw'>=</span> <span class='fl'>1000</span>)
+
+<span class='fu'>mobilenet_v2_preprocess_input</span>(<span class='no'>x</span>)
+
+<span class='fu'>mobilenet_v2_decode_predictions</span>(<span class='no'>preds</span>, <span class='kw'>top</span> <span class='kw'>=</span> <span class='fl'>5</span>)
+
+<span class='fu'>mobilenet_v2_load_model_hdf5</span>(<span class='no'>filepath</span>)</code></pre></div>
+
+    <h2 id="arguments">Arguments</h2>
+    <table class="ref-arguments">
+    
+    <colgroup>
+      <col class="name" />
+      <col class="desc" />
+    </colgroup>  
+      
+    <tr>
+      <td>input_shape</td>
+      <td><p>optional shape list, only to be specified if <code>include_top</code>
+is FALSE (otherwise the input shape has to be <code>(224, 224, 3)</code> (with
+<code>channels_last</code> data format) or (3, 224, 224) (with <code>channels_first</code> data
+format). It should have exactly 3 inputs channels, and width and height
+should be no smaller than 32. E.g. <code>(200, 200, 3)</code> would be one valid
+value.</p></td>
+    </tr>
+    <tr>
+      <td>alpha</td>
+      <td><p>controls the width of the network.</p><ul>
+<li><p>If <code>alpha</code> &lt; 1.0, proportionally decreases the number of filters in each layer.</p></li>
+<li><p>If <code>alpha</code> &gt; 1.0, proportionally increases the number of filters in each layer.</p></li>
+<li><p>If <code>alpha</code> = 1, default number of filters from the paper are used at each layer.</p></li>
+</ul></td>
+    </tr>
+    <tr>
+      <td>include_top</td>
+      <td><p>whether to include the fully-connected layer at the top of
+the network.</p></td>
+    </tr>
+    <tr>
+      <td>weights</td>
+      <td><p><code>NULL</code> (random initialization), <code>imagenet</code> (ImageNet
+weights), or the path to the weights file to be loaded.</p></td>
+    </tr>
+    <tr>
+      <td>input_tensor</td>
+      <td><p>optional Keras tensor (i.e. output of <code><a href='layer_input.html'>layer_input()</a></code>)
+to use as image input for the model.</p></td>
+    </tr>
+    <tr>
+      <td>pooling</td>
+      <td><p>Optional pooling mode for feature extraction when
+<code>include_top</code> is <code>FALSE</code>.
+- <code>NULL</code> means that the output of the model will be the 4D tensor output
+of the last convolutional layer.
+- <code>avg</code> means that global average pooling will be applied to the output
+of the last convolutional layer, and thus the output of the model will
+be a 2D tensor.
+- <code>max</code> means that global max pooling will be applied.</p></td>
+    </tr>
+    <tr>
+      <td>classes</td>
+      <td><p>optional number of classes to classify images into, only to be
+specified if <code>include_top</code> is TRUE, and if no <code>weights</code> argument is
+specified.</p></td>
+    </tr>
+    <tr>
+      <td>x</td>
+      <td><p>input tensor, 4D</p></td>
+    </tr>
+    <tr>
+      <td>preds</td>
+      <td><p>Tensor encoding a batch of predictions.</p></td>
+    </tr>
+    <tr>
+      <td>top</td>
+      <td><p>integer, how many top-guesses to return.</p></td>
+    </tr>
+    <tr>
+      <td>filepath</td>
+      <td><p>File path</p></td>
+    </tr>
+    </table>
+
+    <h2 id="value">Value</h2>
+
+    <p><code>application_mobilenet_v2()</code> and <code>mobilenet_v2_load_model_hdf5()</code> return a
+Keras model instance. <code>mobilenet_v2_preprocess_input()</code> returns image input
+suitable for feeding into a mobilenet v2 model. <code>mobilenet_v2_decode_predictions()</code>
+returns a list of data frames with variables <code>class_name</code>, <code>class_description</code>,
+and <code>score</code> (one data frame per sample in batch input).</p>
+    <h2 id="reference">Reference</h2>
+
+    
+
+<ul>
+<li><p><a href='https://arxiv.org/abs/1801.04381'>MobileNetV2: Inverted Residuals and Linear Bottlenecks</a></p></li>
+</ul>
+
+    <h2 id="see-also">See also</h2>
+
+    <div class='dont-index'><p>application_mobilenet</p></div>
+
+
+
+

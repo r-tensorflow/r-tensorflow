@@ -1,0 +1,57 @@
+---
+title: "Glorot uniform initializer, also called Xavier uniform initializer."
+type: docs
+repo: https://github.com/rstudio/keras
+menu:
+  main:
+    name: "Glorot uniform initializer, also called Xavier uniform initializer. - keras"
+    parent: keras-reference
+aliases: '/reference/keras/initializer_glorot_uniform.html'
+---
+    
+    <p>It draws samples from a uniform distribution within <code>-limit, limit</code>
+where <code>limit</code> is <code><a href='https://rdrr.io/r/base/MathFun.html'>sqrt(6 / (fan_in + fan_out))</a></code>
+where <code>fan_in</code> is the number of input units in the weight tensor
+and <code>fan_out</code> is the number of output units in the weight tensor.</p>
+
+    <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>initializer_glorot_uniform</span>(<span class='kw'>seed</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</code></pre></div>
+
+    <h2 id="arguments">Arguments</h2>
+    <table class="ref-arguments">
+    
+    <colgroup>
+      <col class="name" />
+      <col class="desc" />
+    </colgroup>  
+      
+    <tr>
+      <td>seed</td>
+      <td><p>Integer used to seed the random generator.</p></td>
+    </tr>
+    </table>
+
+    <h2 id="references">References</h2>
+
+    
+
+<p>Glorot &amp; Bengio, AISTATS 2010 http://jmlr.org/proceedings/papers/v9/glorot10a/glorot10a.pdf</p>
+    <h2 id="see-also">See also</h2>
+
+    <div class='dont-index'><p>Other initializers: <code><a href='initializer_constant.html'>initializer_constant</a></code>,
+  <code><a href='initializer_glorot_normal.html'>initializer_glorot_normal</a></code>,
+  <code><a href='initializer_he_normal.html'>initializer_he_normal</a></code>,
+  <code><a href='initializer_he_uniform.html'>initializer_he_uniform</a></code>,
+  <code><a href='initializer_identity.html'>initializer_identity</a></code>,
+  <code><a href='initializer_lecun_normal.html'>initializer_lecun_normal</a></code>,
+  <code><a href='initializer_lecun_uniform.html'>initializer_lecun_uniform</a></code>,
+  <code><a href='initializer_ones.html'>initializer_ones</a></code>,
+  <code><a href='initializer_orthogonal.html'>initializer_orthogonal</a></code>,
+  <code><a href='initializer_random_normal.html'>initializer_random_normal</a></code>,
+  <code><a href='initializer_random_uniform.html'>initializer_random_uniform</a></code>,
+  <code><a href='initializer_truncated_normal.html'>initializer_truncated_normal</a></code>,
+  <code><a href='initializer_variance_scaling.html'>initializer_variance_scaling</a></code>,
+  <code><a href='initializer_zeros.html'>initializer_zeros</a></code></p></div>
+
+
+
+

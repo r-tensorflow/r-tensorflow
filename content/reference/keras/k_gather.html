@@ -1,0 +1,52 @@
+---
+title: "Retrieves the elements of indices <code>indices</code> in the tensor <code>reference</code>."
+type: docs
+repo: https://github.com/rstudio/keras
+menu:
+  main:
+    name: "Retrieves the elements of indices &lt;code&gt;indices&lt;/code&gt; in the tensor &lt;code&gt;reference&lt;/code&gt;. - keras"
+    parent: keras-reference
+aliases: '/reference/keras/k_gather.html'
+---
+    
+    <p>Retrieves the elements of indices <code>indices</code> in the tensor <code>reference</code>.</p>
+
+    <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>k_gather</span>(<span class='no'>reference</span>, <span class='no'>indices</span>)</code></pre></div>
+
+    <h2 id="arguments">Arguments</h2>
+    <table class="ref-arguments">
+    
+    <colgroup>
+      <col class="name" />
+      <col class="desc" />
+    </colgroup>  
+      
+    <tr>
+      <td>reference</td>
+      <td><p>A tensor.</p></td>
+    </tr>
+    <tr>
+      <td>indices</td>
+      <td><p>Indices. Dimension indices are 1-based. Note however that if you pass a
+tensor for <code>indices</code> they will be passed as-is, in which case indices will be 0 based
+because no normalizing of R 1-based axes to Python 0-based axes is performed.</p></td>
+    </tr>
+    </table>
+
+    <h2 id="value">Value</h2>
+
+    <p>A tensor of same type as <code>reference</code>.</p>
+    <h2 id="keras-backend">Keras Backend</h2>
+
+    
+
+
+<p>This function is part of a set of Keras backend functions that enable
+lower level access to the core operations of the backend tensor engine
+(e.g. TensorFlow, CNTK, Theano, etc.).</p>
+<p>You can see a list of all available backend functions here:
+<a href='https://keras.rstudio.com/articles/backend.html#backend-functions'>https://keras.rstudio.com/articles/backend.html#backend-functions</a>.</p>
+
+
+
+

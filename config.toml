@@ -208,7 +208,12 @@ disqusShortname = "r-tensorflow"
 	url    = "/deploy/"
 	identifier = "deploy-top"
 	weight = 60
-
+	
+[[menu.main]]
+	name   = "API"
+	url    = "/reference/keras"
+	identifier = "reference-top"
+	weight = 70
 
 # Learn Navigational Menus
 
@@ -216,7 +221,7 @@ disqusShortname = "r-tensorflow"
 	name   = "Learn"
 	url    = "/learn/resources.html"
 	identifier = "learn-top"
-	weight = 60	
+	weight = 80	
 
 # Blog Menu
 	
@@ -224,7 +229,7 @@ disqusShortname = "r-tensorflow"
   name   = "Blog"
   url    = "/blog.html"
   identifier = "blog"
-  weight = 70	
+  weight = 90	
 	
 
   

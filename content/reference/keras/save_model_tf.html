@@ -1,0 +1,75 @@
+---
+title: "Save/Load models using SavedModel format"
+type: docs
+repo: https://github.com/rstudio/keras
+menu:
+  main:
+    name: "Save/Load models using SavedModel format - keras"
+    parent: keras-reference
+aliases: '/reference/keras/save_model_tf.html'
+---
+    
+    <p>Save/Load models using SavedModel format</p>
+
+    <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>save_model_tf</span>(<span class='no'>object</span>, <span class='no'>filepath</span>, <span class='kw'>overwrite</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='kw'>include_optimizer</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>signatures</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>options</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)
+
+<span class='fu'>load_model_tf</span>(<span class='no'>filepath</span>, <span class='kw'>custom_objects</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>compile</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</code></pre></div>
+
+    <h2 id="arguments">Arguments</h2>
+    <table class="ref-arguments">
+    
+    <colgroup>
+      <col class="name" />
+      <col class="desc" />
+    </colgroup>  
+      
+    <tr>
+      <td>object</td>
+      <td><p>Model object to save</p></td>
+    </tr>
+    <tr>
+      <td>filepath</td>
+      <td><p>File path</p></td>
+    </tr>
+    <tr>
+      <td>overwrite</td>
+      <td><p>Overwrite existing file if necessary</p></td>
+    </tr>
+    <tr>
+      <td>include_optimizer</td>
+      <td><p>If <code>TRUE</code>, save optimizer's state.</p></td>
+    </tr>
+    <tr>
+      <td>signatures</td>
+      <td><p>Signatures to save with the SavedModel. Please see the signatures
+argument in <code>tf$saved_model$save</code> for details.</p></td>
+    </tr>
+    <tr>
+      <td>options</td>
+      <td><p>Optional <code>tf$saved_model$SaveOptions</code> object that specifies options
+for saving to SavedModel</p></td>
+    </tr>
+    <tr>
+      <td>custom_objects</td>
+      <td><p>Mapping class names (or function names) of custom
+(non-Keras) objects to class/functions (for example, custom metrics
+or custom loss functions).</p></td>
+    </tr>
+    <tr>
+      <td>compile</td>
+      <td><p>Whether to compile the model after loading.</p></td>
+    </tr>
+    </table>
+
+    <h2 id="see-also">See also</h2>
+
+    <div class='dont-index'><p>Other model persistence: <code><a href='get_weights.html'>get_weights</a></code>,
+  <code><a href='model_to_json.html'>model_to_json</a></code>, <code><a href='model_to_yaml.html'>model_to_yaml</a></code>,
+  <code><a href='save_model_hdf5.html'>save_model_hdf5</a></code>,
+  <code><a href='save_model_weights_hdf5.html'>save_model_weights_hdf5</a></code>,
+  <code><a href='serialize_model.html'>serialize_model</a></code></p></div>
+
+
+
+

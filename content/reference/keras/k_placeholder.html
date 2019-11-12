@@ -1,0 +1,65 @@
+---
+title: "Instantiates a placeholder tensor and returns it."
+type: docs
+repo: https://github.com/rstudio/keras
+menu:
+  main:
+    name: "Instantiates a placeholder tensor and returns it. - keras"
+    parent: keras-reference
+aliases: '/reference/keras/k_placeholder.html'
+---
+    
+    <p>Instantiates a placeholder tensor and returns it.</p>
+
+    <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>k_placeholder</span>(<span class='kw'>shape</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>ndim</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>dtype</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>sparse</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>name</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</code></pre></div>
+
+    <h2 id="arguments">Arguments</h2>
+    <table class="ref-arguments">
+    
+    <colgroup>
+      <col class="name" />
+      <col class="desc" />
+    </colgroup>  
+      
+    <tr>
+      <td>shape</td>
+      <td><p>Shape of the placeholder (integer list, may include <code>NULL</code>
+entries).</p></td>
+    </tr>
+    <tr>
+      <td>ndim</td>
+      <td><p>Number of axes of the tensor. At least one of <code>shape</code>, <code>ndim</code>
+must be specified. If both are specified, <code>shape</code> is used.</p></td>
+    </tr>
+    <tr>
+      <td>dtype</td>
+      <td><p>Placeholder type.</p></td>
+    </tr>
+    <tr>
+      <td>sparse</td>
+      <td><p>Logical, whether the placeholder should have a sparse type.</p></td>
+    </tr>
+    <tr>
+      <td>name</td>
+      <td><p>Optional name string for the placeholder.</p></td>
+    </tr>
+    </table>
+
+    <h2 id="value">Value</h2>
+
+    <p>Tensor instance (with Keras metadata included).</p>
+    <h2 id="keras-backend">Keras Backend</h2>
+
+    
+
+
+<p>This function is part of a set of Keras backend functions that enable
+lower level access to the core operations of the backend tensor engine
+(e.g. TensorFlow, CNTK, Theano, etc.).</p>
+<p>You can see a list of all available backend functions here:
+<a href='https://keras.rstudio.com/articles/backend.html#backend-functions'>https://keras.rstudio.com/articles/backend.html#backend-functions</a>.</p>
+
+
+
+

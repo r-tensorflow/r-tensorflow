@@ -1,0 +1,123 @@
+---
+title: "Create a custom callback"
+type: docs
+repo: https://github.com/rstudio/keras
+menu:
+  main:
+    name: "Create a custom callback - keras"
+    parent: keras-reference
+aliases: '/reference/keras/callback_lambda.html'
+---
+    
+    <p>This callback is constructed with anonymous functions that will be called at
+the appropriate time. Note that the callbacks expects positional arguments,
+as:</p><ul>
+<li><p><code>on_epoch_begin</code> and <code>on_epoch_end</code> expect two positional arguments: <code>epoch</code>, <code>logs</code></p></li>
+<li><p><code>on_batch_*</code>, <code>on_train_batch_*</code>, <code>on_predict_batch_*</code> and <code>on_test_batch_*</code>, expect
+two positional arguments: <code>batch</code>, <code>logs</code></p></li>
+<li><p><code>on_train_*</code>, <code>on_test_*</code> and <code>on_predict_*</code> expect one positional argument: <code>logs</code></p></li>
+</ul>
+
+
+    <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>callback_lambda</span>(<span class='kw'>on_epoch_begin</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>on_epoch_end</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>on_batch_begin</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>on_batch_end</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>on_train_batch_begin</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>on_train_batch_end</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>on_train_begin</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>on_train_end</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>on_predict_batch_begin</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>on_predict_batch_end</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>on_predict_begin</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>on_predict_end</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>on_test_batch_begin</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>on_test_batch_end</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>on_test_begin</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>on_test_end</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</code></pre></div>
+
+    <h2 id="arguments">Arguments</h2>
+    <table class="ref-arguments">
+    
+    <colgroup>
+      <col class="name" />
+      <col class="desc" />
+    </colgroup>  
+      
+    <tr>
+      <td>on_epoch_begin</td>
+      <td><p>called at the beginning of every epoch.</p></td>
+    </tr>
+    <tr>
+      <td>on_epoch_end</td>
+      <td><p>called at the end of every epoch.</p></td>
+    </tr>
+    <tr>
+      <td>on_batch_begin</td>
+      <td><p>called at the beginning of every training batch.</p></td>
+    </tr>
+    <tr>
+      <td>on_batch_end</td>
+      <td><p>called at the end of every training batch.</p></td>
+    </tr>
+    <tr>
+      <td>on_train_batch_begin</td>
+      <td><p>called at the beginning of every batch.</p></td>
+    </tr>
+    <tr>
+      <td>on_train_batch_end</td>
+      <td><p>called at the end of every batch.</p></td>
+    </tr>
+    <tr>
+      <td>on_train_begin</td>
+      <td><p>called at the beginning of model training.</p></td>
+    </tr>
+    <tr>
+      <td>on_train_end</td>
+      <td><p>called at the end of model training.</p></td>
+    </tr>
+    <tr>
+      <td>on_predict_batch_begin</td>
+      <td><p>called at the beginning of a batch in predict methods.</p></td>
+    </tr>
+    <tr>
+      <td>on_predict_batch_end</td>
+      <td><p>called at the end of a batch in predict methods.</p></td>
+    </tr>
+    <tr>
+      <td>on_predict_begin</td>
+      <td><p>called at the beginning of prediction.</p></td>
+    </tr>
+    <tr>
+      <td>on_predict_end</td>
+      <td><p>called at the end of prediction.</p></td>
+    </tr>
+    <tr>
+      <td>on_test_batch_begin</td>
+      <td><p>called at the beginning of a batch in evaluate methods.
+Also called at the beginning of a validation batch in the fit methods,
+if validation data is provided.</p></td>
+    </tr>
+    <tr>
+      <td>on_test_batch_end</td>
+      <td><p>called at the end of a batch in evaluate methods.
+Also called at the end of a validation batch in the fit methods,
+if validation data is provided.</p></td>
+    </tr>
+    <tr>
+      <td>on_test_begin</td>
+      <td><p>called at the beginning of evaluation or validation.</p></td>
+    </tr>
+    <tr>
+      <td>on_test_end</td>
+      <td><p>called at the end of evaluation or validation.</p></td>
+    </tr>
+    </table>
+
+    <h2 id="see-also">See also</h2>
+
+    <div class='dont-index'><p>Other callbacks: <code><a href='callback_csv_logger.html'>callback_csv_logger</a></code>,
+  <code><a href='callback_early_stopping.html'>callback_early_stopping</a></code>,
+  <code><a href='callback_learning_rate_scheduler.html'>callback_learning_rate_scheduler</a></code>,
+  <code><a href='callback_model_checkpoint.html'>callback_model_checkpoint</a></code>,
+  <code><a href='callback_progbar_logger.html'>callback_progbar_logger</a></code>,
+  <code><a href='callback_reduce_lr_on_plateau.html'>callback_reduce_lr_on_plateau</a></code>,
+  <code><a href='callback_remote_monitor.html'>callback_remote_monitor</a></code>,
+  <code><a href='callback_tensorboard.html'>callback_tensorboard</a></code>,
+  <code><a href='callback_terminate_on_naan.html'>callback_terminate_on_naan</a></code></p></div>
+
+
+
+

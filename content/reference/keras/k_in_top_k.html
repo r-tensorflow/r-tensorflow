@@ -1,0 +1,58 @@
+---
+title: "Returns whether the <code>targets</code> are in the top <code>k</code> <code>predictions</code>."
+type: docs
+repo: https://github.com/rstudio/keras
+menu:
+  main:
+    name: "Returns whether the &lt;code&gt;targets&lt;/code&gt; are in the top &lt;code&gt;k&lt;/code&gt; &lt;code&gt;predictions&lt;/code&gt;. - keras"
+    parent: keras-reference
+aliases: '/reference/keras/k_in_top_k.html'
+---
+    
+    <p>Returns whether the <code>targets</code> are in the top <code>k</code> <code>predictions</code>.</p>
+
+    <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>k_in_top_k</span>(<span class='no'>predictions</span>, <span class='no'>targets</span>, <span class='no'>k</span>)</code></pre></div>
+
+    <h2 id="arguments">Arguments</h2>
+    <table class="ref-arguments">
+    
+    <colgroup>
+      <col class="name" />
+      <col class="desc" />
+    </colgroup>  
+      
+    <tr>
+      <td>predictions</td>
+      <td><p>A tensor of shape <code>(batch_size, classes)</code> and type
+<code>float32</code>.</p></td>
+    </tr>
+    <tr>
+      <td>targets</td>
+      <td><p>A 1D tensor of length <code>batch_size</code> and type <code>int32</code> or
+<code>int64</code>.</p></td>
+    </tr>
+    <tr>
+      <td>k</td>
+      <td><p>An <code>int</code>, number of top elements to consider.</p></td>
+    </tr>
+    </table>
+
+    <h2 id="value">Value</h2>
+
+    <p>A 1D tensor of length <code>batch_size</code> and type <code>bool</code>. <code>output[[i]]</code> is
+<code>TRUE</code> if <code>predictions[i, targets[[i]]</code> is within top-<code>k</code> values of
+<code>predictions[[i]]</code>.</p>
+    <h2 id="keras-backend">Keras Backend</h2>
+
+    
+
+
+<p>This function is part of a set of Keras backend functions that enable
+lower level access to the core operations of the backend tensor engine
+(e.g. TensorFlow, CNTK, Theano, etc.).</p>
+<p>You can see a list of all available backend functions here:
+<a href='https://keras.rstudio.com/articles/backend.html#backend-functions'>https://keras.rstudio.com/articles/backend.html#backend-functions</a>.</p>
+
+
+
+

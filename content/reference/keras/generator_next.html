@@ -1,0 +1,39 @@
+---
+title: "Retrieve the next item from a generator"
+type: docs
+repo: https://github.com/rstudio/keras
+menu:
+  main:
+    name: "Retrieve the next item from a generator - keras"
+    parent: keras-reference
+aliases: '/reference/keras/generator_next.html'
+---
+    
+    <p>Use to retrieve items from generators (e.g. <code><a href='image_data_generator.html'>image_data_generator()</a></code>). Will return
+either the next item or <code>NULL</code> if there are no more items.</p>
+
+    <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>generator_next</span>(<span class='no'>generator</span>, <span class='kw'>completed</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</code></pre></div>
+
+    <h2 id="arguments">Arguments</h2>
+    <table class="ref-arguments">
+    
+    <colgroup>
+      <col class="name" />
+      <col class="desc" />
+    </colgroup>  
+      
+    <tr>
+      <td>generator</td>
+      <td><p>Generator</p></td>
+    </tr>
+    <tr>
+      <td>completed</td>
+      <td><p>Sentinel value to return from <code>generator_next()</code> if the iteration
+completes (defaults to <code>NULL</code> but can be any R value you specify).</p></td>
+    </tr>
+    </table>
+
+
+
+
+

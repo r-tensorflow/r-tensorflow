@@ -1,0 +1,92 @@
+---
+title: "Text tokenization utility"
+type: docs
+repo: https://github.com/rstudio/keras
+menu:
+  main:
+    name: "Text tokenization utility - keras"
+    parent: keras-reference
+aliases: '/reference/keras/text_tokenizer.html'
+---
+    
+    <p>Vectorize a text corpus, by turning each text into either a sequence of
+integers (each integer being the index of a token in a dictionary) or into a
+vector where the coefficient for each token could be binary, based on word
+count, based on tf-idf...</p>
+
+    <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>text_tokenizer</span>(<span class='kw'>num_words</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>filters</span> <span class='kw'>=</span> <span class='st'>"!\"#$%&amp;()*+,-./:;&lt;=&gt;?@[\\]^_`{|}~\t\n"</span>,
+  <span class='kw'>lower</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>split</span> <span class='kw'>=</span> <span class='st'>" "</span>, <span class='kw'>char_level</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>oov_token</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</code></pre></div>
+
+    <h2 id="arguments">Arguments</h2>
+    <table class="ref-arguments">
+    
+    <colgroup>
+      <col class="name" />
+      <col class="desc" />
+    </colgroup>  
+      
+    <tr>
+      <td>num_words</td>
+      <td><p>the maximum number of words to keep, based on word
+frequency. Only the most common <code>num_words</code> words will be kept.</p></td>
+    </tr>
+    <tr>
+      <td>filters</td>
+      <td><p>a string where each element is a character that will be
+filtered from the texts. The default is all punctuation, plus tabs and line
+breaks, minus the ' character.</p></td>
+    </tr>
+    <tr>
+      <td>lower</td>
+      <td><p>boolean. Whether to convert the texts to lowercase.</p></td>
+    </tr>
+    <tr>
+      <td>split</td>
+      <td><p>character or string to use for token splitting.</p></td>
+    </tr>
+    <tr>
+      <td>char_level</td>
+      <td><p>if <code>TRUE</code>, every character will be treated as a token</p></td>
+    </tr>
+    <tr>
+      <td>oov_token</td>
+      <td><p><code>NULL</code> or string If given, it will be added to `word_index``
+and used to replace out-of-vocabulary words during text_to_sequence calls.</p></td>
+    </tr>
+    </table>
+
+    <h2 id="details">Details</h2>
+
+    <p>By default, all punctuation is removed, turning the texts into
+space-separated sequences of words (words maybe include the ' character).
+These sequences are then split into lists of tokens. They will then be
+indexed or vectorized. <code>0</code> is a reserved index that won't be assigned to any
+word.</p>
+    <h2 id="attributes">Attributes</h2>
+
+    
+
+<p>The tokenizer object has the following attributes:</p><ul>
+<li><p><code>word_counts</code> --- named list mapping words to the number of times they appeared
+on during fit. Only set after <code><a href='fit_text_tokenizer.html'>fit_text_tokenizer()</a></code> is called on the tokenizer.</p></li>
+<li><p><code>word_docs</code> --- named list mapping words to the number of documents/texts they
+appeared on during fit. Only set after <code><a href='fit_text_tokenizer.html'>fit_text_tokenizer()</a></code> is called on the tokenizer.</p></li>
+<li><p><code>word_index</code> --- named list mapping words to their rank/index (int). Only set
+after <code><a href='fit_text_tokenizer.html'>fit_text_tokenizer()</a></code> is called on the tokenizer.</p></li>
+<li><p><code>document_count</code> --- int. Number of documents (texts/sequences) the tokenizer
+was trained on. Only set after <code><a href='fit_text_tokenizer.html'>fit_text_tokenizer()</a></code> is called on the tokenizer.</p></li>
+</ul>
+
+    <h2 id="see-also">See also</h2>
+
+    <div class='dont-index'><p>Other text tokenization: <code><a href='fit_text_tokenizer.html'>fit_text_tokenizer</a></code>,
+  <code><a href='save_text_tokenizer.html'>save_text_tokenizer</a></code>,
+  <code><a href='sequences_to_matrix.html'>sequences_to_matrix</a></code>,
+  <code><a href='texts_to_matrix.html'>texts_to_matrix</a></code>,
+  <code><a href='texts_to_sequences_generator.html'>texts_to_sequences_generator</a></code>,
+  <code><a href='texts_to_sequences.html'>texts_to_sequences</a></code></p></div>
+
+
+
+

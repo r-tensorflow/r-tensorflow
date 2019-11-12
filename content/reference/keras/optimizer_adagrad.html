@@ -1,0 +1,64 @@
+---
+title: "Adagrad optimizer."
+type: docs
+repo: https://github.com/rstudio/keras
+menu:
+  main:
+    name: "Adagrad optimizer. - keras"
+    parent: keras-reference
+aliases: '/reference/keras/optimizer_adagrad.html'
+---
+    
+    <p>Adagrad optimizer as described in <a href='http://www.jmlr.org/papers/volume12/duchi11a/duchi11a.pdf'>Adaptive Subgradient Methods for Online Learning and Stochastic Optimization</a>.</p>
+
+    <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>optimizer_adagrad</span>(<span class='kw'>lr</span> <span class='kw'>=</span> <span class='fl'>0.01</span>, <span class='kw'>epsilon</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>decay</span> <span class='kw'>=</span> <span class='fl'>0</span>,
+  <span class='kw'>clipnorm</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>clipvalue</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</code></pre></div>
+
+    <h2 id="arguments">Arguments</h2>
+    <table class="ref-arguments">
+    
+    <colgroup>
+      <col class="name" />
+      <col class="desc" />
+    </colgroup>  
+      
+    <tr>
+      <td>lr</td>
+      <td><p>float &gt;= 0. Learning rate.</p></td>
+    </tr>
+    <tr>
+      <td>epsilon</td>
+      <td><p>float &gt;= 0. Fuzz factor. If <code>NULL</code>, defaults to <code><a href='k_epsilon.html'>k_epsilon()</a></code>.</p></td>
+    </tr>
+    <tr>
+      <td>decay</td>
+      <td><p>float &gt;= 0. Learning rate decay over each update.</p></td>
+    </tr>
+    <tr>
+      <td>clipnorm</td>
+      <td><p>Gradients will be clipped when their L2 norm exceeds this
+value.</p></td>
+    </tr>
+    <tr>
+      <td>clipvalue</td>
+      <td><p>Gradients will be clipped when their absolute value exceeds
+this value.</p></td>
+    </tr>
+    </table>
+
+    <h2 id="note">Note</h2>
+
+    <p>It is recommended to leave the parameters of this optimizer at their
+default values.</p>
+    <h2 id="see-also">See also</h2>
+
+    <div class='dont-index'><p>Other optimizers: <code><a href='optimizer_adadelta.html'>optimizer_adadelta</a></code>,
+  <code><a href='optimizer_adamax.html'>optimizer_adamax</a></code>,
+  <code><a href='optimizer_adam.html'>optimizer_adam</a></code>,
+  <code><a href='optimizer_nadam.html'>optimizer_nadam</a></code>,
+  <code><a href='optimizer_rmsprop.html'>optimizer_rmsprop</a></code>,
+  <code><a href='optimizer_sgd.html'>optimizer_sgd</a></code></p></div>
+
+
+
+

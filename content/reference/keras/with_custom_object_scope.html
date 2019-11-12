@@ -1,0 +1,74 @@
+---
+title: "Provide a scope with mappings of names to custom objects"
+type: docs
+repo: https://github.com/rstudio/keras
+menu:
+  main:
+    name: "Provide a scope with mappings of names to custom objects - keras"
+    parent: keras-reference
+aliases: '/reference/keras/with_custom_object_scope.html'
+---
+    
+    <p>Provide a scope with mappings of names to custom objects</p>
+
+    <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>with_custom_object_scope</span>(<span class='no'>objects</span>, <span class='no'>expr</span>)</code></pre></div>
+
+    <h2 id="arguments">Arguments</h2>
+    <table class="ref-arguments">
+    
+    <colgroup>
+      <col class="name" />
+      <col class="desc" />
+    </colgroup>  
+      
+    <tr>
+      <td>objects</td>
+      <td><p>Named list of objects</p></td>
+    </tr>
+    <tr>
+      <td>expr</td>
+      <td><p>Expression to evaluate</p></td>
+    </tr>
+    </table>
+
+    <h2 id="details">Details</h2>
+
+    <p>There are many elements of Keras models that can be customized with
+user objects (e.g. losses, metrics, regularizers, etc.). When
+loading saved models that use these functions you typically
+need to explicitily map names to user objects via the <code>custom_objects</code>
+parmaeter.</p>
+<p>The <code>with_custom_object_scope()</code> function provides an alternative that
+lets you create a named alias for a user object that applies to an entire
+block of code, and is automatically recognized when loading saved models.</p>
+
+    <h2 id="examples">Examples</h2>
+    <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><div class='input'><span class='kw'>if</span> (<span class='fl'>FALSE</span>) {
+<span class='co'># define custom metric</span>
+<span class='no'>metric_top_3_categorical_accuracy</span> <span class='kw'>&lt;-</span>
+  <span class='fu'><a href='metric_binary_accuracy.html'>custom_metric</a></span>(<span class='st'>"top_3_categorical_accuracy"</span>, <span class='kw'>function</span>(<span class='no'>y_true</span>, <span class='no'>y_pred</span>) {
+    <span class='fu'><a href='metric_binary_accuracy.html'>metric_top_k_categorical_accuracy</a></span>(<span class='no'>y_true</span>, <span class='no'>y_pred</span>, <span class='kw'>k</span> <span class='kw'>=</span> <span class='fl'>3</span>)
+  })
+
+<span class='fu'>with_custom_object_scope</span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='kw'>top_k_acc</span> <span class='kw'>=</span> <span class='no'>sparse_top_k_cat_acc</span>), {
+
+  <span class='co'># ...define model...</span>
+
+  <span class='co'># compile model (refer to "top_k_acc" by name)</span>
+  <span class='no'>model</span> <span class='kw'>%&gt;%</span> <span class='fu'><a href='https://rdrr.io/pkg/generics/man/compile.html'>compile</a></span>(
+    <span class='kw'>loss</span> <span class='kw'>=</span> <span class='st'>"binary_crossentropy"</span>,
+    <span class='kw'>optimizer</span> <span class='kw'>=</span> <span class='fu'><a href='optimizer_nadam.html'>optimizer_nadam</a></span>(),
+    <span class='kw'>metrics</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"top_k_acc"</span>)
+  )
+
+  <span class='co'># save the model</span>
+  <span class='fu'><a href='save_model_hdf5.html'>save_model_hdf5</a></span>(<span class='st'>"my_model.h5"</span>)
+
+  <span class='co'># loading the model within the custom object scope doesn't</span>
+  <span class='co'># require explicitly providing the custom_object</span>
+  <span class='fu'><a href='save_model_hdf5.html'>load_model_hdf5</a></span>(<span class='st'>"my_model.h5"</span>)
+})
+}</div></code></pre></div>
+
+
+

@@ -1,0 +1,61 @@
+---
+title: "Base R6 class for Keras constraints"
+type: docs
+repo: https://github.com/rstudio/keras
+menu:
+  main:
+    name: "Base R6 class for Keras constraints - keras"
+    parent: keras-reference
+aliases: '/reference/keras/KerasConstraint.html'
+---
+    
+    <p>Base R6 class for Keras constraints</p>
+
+    <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class='no'>KerasConstraint</span></code></pre></div>
+
+
+    <h2 id="format">Format</h2>
+
+    <p>An R6Class generator object</p>
+    <h2 id="details">Details</h2>
+
+    <p>You can implement a custom constraint either by creating an
+R function that accepts a weights (<code>w</code>) parameter, or by creating
+an R6 class that derives from <code>KerasConstraint</code> and implements a
+<code>call</code> method.</p>
+    <h2 id="note">Note</h2>
+
+    <p>Models which use custom constraints cannot be serialized using
+<code><a href='save_model_hdf5.html'>save_model_hdf5()</a></code>. Rather, the weights of the model should be saved
+and restored using <code><a href='save_model_weights_hdf5.html'>save_model_weights_hdf5()</a></code>.</p>
+    <h2 id="methods">Methods</h2>
+
+    
+
+<dl class='dl-horizontal'>
+<dt><code><a href='https://rdrr.io/r/base/call.html'>call(w)</a></code></dt><dd><p>Constrain the specified weights.</p></dd>
+
+</dl>
+
+    <h2 id="see-also">See also</h2>
+
+    <div class='dont-index'><p><a href='constraints.html'>constraints</a></p></div>
+
+    <h2 id="examples">Examples</h2>
+    <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><div class='input'><span class='kw'>if</span> (<span class='fl'>FALSE</span>) {
+<span class='no'>CustomNonNegConstraint</span> <span class='kw'>&lt;-</span> <span class='kw pkg'>R6</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/pkg/R6/man/R6Class.html'>R6Class</a></span>(
+  <span class='st'>"CustomNonNegConstraint"</span>,
+  <span class='kw'>inherit</span> <span class='kw'>=</span> <span class='no'>KerasConstraint</span>,
+  <span class='kw'>public</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(
+    <span class='kw'>call</span> <span class='kw'>=</span> <span class='kw'>function</span>(<span class='no'>x</span>) {
+       <span class='no'>w</span> * <span class='fu'><a href='k_cast.html'>k_cast</a></span>(<span class='fu'><a href='k_greater_equal.html'>k_greater_equal</a></span>(<span class='no'>w</span>, <span class='fl'>0</span>), <span class='fu'><a href='k_floatx.html'>k_floatx</a></span>())
+    }
+  )
+)
+
+<span class='fu'><a href='layer_dense.html'>layer_dense</a></span>(<span class='kw'>units</span> <span class='kw'>=</span> <span class='fl'>32</span>, <span class='kw'>input_shape</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>784</span>),
+            <span class='kw'>kernel_constraint</span> <span class='kw'>=</span> <span class='no'>CustomNonNegConstraint</span>$<span class='fu'>new</span>())
+}</div></code></pre></div>
+
+
+

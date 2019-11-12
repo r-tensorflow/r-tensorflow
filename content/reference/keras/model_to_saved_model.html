@@ -1,0 +1,69 @@
+---
+title: "Export to Saved Model format"
+type: docs
+repo: https://github.com/rstudio/keras
+menu:
+  main:
+    name: "Export to Saved Model format - keras"
+    parent: keras-reference
+aliases: '/reference/keras/model_to_saved_model.html'
+---
+    
+    <p>Export to Saved Model format</p>
+
+    <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>model_to_saved_model</span>(<span class='no'>model</span>, <span class='no'>saved_model_path</span>, <span class='kw'>custom_objects</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>as_text</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>input_signature</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>serving_only</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)</code></pre></div>
+
+    <h2 id="arguments">Arguments</h2>
+    <table class="ref-arguments">
+    
+    <colgroup>
+      <col class="name" />
+      <col class="desc" />
+    </colgroup>  
+      
+    <tr>
+      <td>model</td>
+      <td><p>A Keras model to be saved. If the model is subclassed, the flag
+<code>serving_only</code> must be set to <code>TRUE</code>.</p></td>
+    </tr>
+    <tr>
+      <td>saved_model_path</td>
+      <td><p>a string specifying the path to the SavedModel directory.</p></td>
+    </tr>
+    <tr>
+      <td>custom_objects</td>
+      <td><p>Optional dictionary mapping string names to custom classes
+or functions (e.g. custom loss functions).</p></td>
+    </tr>
+    <tr>
+      <td>as_text</td>
+      <td><p>bool, <code>FALSE</code> by default. Whether to write the SavedModel proto in text
+format. Currently unavailable in serving-only mode.</p></td>
+    </tr>
+    <tr>
+      <td>input_signature</td>
+      <td><p>A possibly nested sequence of <code>tf.TensorSpec</code> objects, used to
+specify the expected model inputs. See tf.function for more details.</p></td>
+    </tr>
+    <tr>
+      <td>serving_only</td>
+      <td><p>bool, <code>FALSE</code> by default. When this is true, only the
+prediction graph is saved.</p></td>
+    </tr>
+    </table>
+
+    <h2 id="value">Value</h2>
+
+    <p>Invisibly returns the <code>saved_model_path</code>.</p>
+    <h2 id="note">Note</h2>
+
+    <p>This functionality is experimental and only works with TensorFlow
+version &gt;= "2.0".</p>
+    <h2 id="see-also">See also</h2>
+
+    <div class='dont-index'><p>Other saved_model: <code><a href='model_from_saved_model.html'>model_from_saved_model</a></code></p></div>
+
+
+
+

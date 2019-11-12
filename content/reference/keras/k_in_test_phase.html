@@ -1,0 +1,57 @@
+---
+title: "Selects <code>x</code> in test phase, and <code>alt</code> otherwise."
+type: docs
+repo: https://github.com/rstudio/keras
+menu:
+  main:
+    name: "Selects &lt;code&gt;x&lt;/code&gt; in test phase, and &lt;code&gt;alt&lt;/code&gt; otherwise. - keras"
+    parent: keras-reference
+aliases: '/reference/keras/k_in_test_phase.html'
+---
+    
+    <p>Note that <code>alt</code> should have the <em>same shape</em> as <code>x</code>.</p>
+
+    <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>k_in_test_phase</span>(<span class='no'>x</span>, <span class='no'>alt</span>, <span class='kw'>training</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</code></pre></div>
+
+    <h2 id="arguments">Arguments</h2>
+    <table class="ref-arguments">
+    
+    <colgroup>
+      <col class="name" />
+      <col class="desc" />
+    </colgroup>  
+      
+    <tr>
+      <td>x</td>
+      <td><p>What to return in test phase (tensor or function that returns a
+tensor).</p></td>
+    </tr>
+    <tr>
+      <td>alt</td>
+      <td><p>What to return otherwise (tensor or function that returns a
+tensor).</p></td>
+    </tr>
+    <tr>
+      <td>training</td>
+      <td><p>Optional scalar tensor (or R logical or integer) specifying
+the learning phase.</p></td>
+    </tr>
+    </table>
+
+    <h2 id="value">Value</h2>
+
+    <p>Either <code>x</code> or <code>alt</code> based on <code><a href='k_learning_phase.html'>k_learning_phase()</a></code>.</p>
+    <h2 id="keras-backend">Keras Backend</h2>
+
+    
+
+
+<p>This function is part of a set of Keras backend functions that enable
+lower level access to the core operations of the backend tensor engine
+(e.g. TensorFlow, CNTK, Theano, etc.).</p>
+<p>You can see a list of all available backend functions here:
+<a href='https://keras.rstudio.com/articles/backend.html#backend-functions'>https://keras.rstudio.com/articles/backend.html#backend-functions</a>.</p>
+
+
+
+

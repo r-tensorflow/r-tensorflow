@@ -1,0 +1,68 @@
+---
+title: "Depthwise 2D convolution with separable filters."
+type: docs
+repo: https://github.com/rstudio/keras
+menu:
+  main:
+    name: "Depthwise 2D convolution with separable filters. - keras"
+    parent: keras-reference
+aliases: '/reference/keras/k_depthwise_conv2d.html'
+---
+    
+    <p>Depthwise 2D convolution with separable filters.</p>
+
+    <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>k_depthwise_conv2d</span>(<span class='no'>x</span>, <span class='no'>depthwise_kernel</span>, <span class='kw'>strides</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>, <span class='fl'>1</span>),
+  <span class='kw'>padding</span> <span class='kw'>=</span> <span class='st'>"valid"</span>, <span class='kw'>data_format</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>dilation_rate</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>, <span class='fl'>1</span>))</code></pre></div>
+
+    <h2 id="arguments">Arguments</h2>
+    <table class="ref-arguments">
+    
+    <colgroup>
+      <col class="name" />
+      <col class="desc" />
+    </colgroup>  
+      
+    <tr>
+      <td>x</td>
+      <td><p>input tensor</p></td>
+    </tr>
+    <tr>
+      <td>depthwise_kernel</td>
+      <td><p>convolution kernel for the depthwise convolution.</p></td>
+    </tr>
+    <tr>
+      <td>strides</td>
+      <td><p>strides (length 2).</p></td>
+    </tr>
+    <tr>
+      <td>padding</td>
+      <td><p>string, <code>"same"</code> or <code>"valid"</code>.</p></td>
+    </tr>
+    <tr>
+      <td>data_format</td>
+      <td><p>string, <code>"channels_last"</code> or <code>"channels_first"</code>.</p></td>
+    </tr>
+    <tr>
+      <td>dilation_rate</td>
+      <td><p>vector of integers, dilation rates for the separable
+convolution.</p></td>
+    </tr>
+    </table>
+
+    <h2 id="value">Value</h2>
+
+    <p>Output tensor.</p>
+    <h2 id="keras-backend">Keras Backend</h2>
+
+    
+
+
+<p>This function is part of a set of Keras backend functions that enable
+lower level access to the core operations of the backend tensor engine
+(e.g. TensorFlow, CNTK, Theano, etc.).</p>
+<p>You can see a list of all available backend functions here:
+<a href='https://keras.rstudio.com/articles/backend.html#backend-functions'>https://keras.rstudio.com/articles/backend.html#backend-functions</a>.</p>
+
+
+
+

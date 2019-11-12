@@ -1,0 +1,51 @@
+---
+title: "Computes the one-hot representation of an integer tensor."
+type: docs
+repo: https://github.com/rstudio/keras
+menu:
+  main:
+    name: "Computes the one-hot representation of an integer tensor. - keras"
+    parent: keras-reference
+aliases: '/reference/keras/k_one_hot.html'
+---
+    
+    <p>Computes the one-hot representation of an integer tensor.</p>
+
+    <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>k_one_hot</span>(<span class='no'>indices</span>, <span class='no'>num_classes</span>)</code></pre></div>
+
+    <h2 id="arguments">Arguments</h2>
+    <table class="ref-arguments">
+    
+    <colgroup>
+      <col class="name" />
+      <col class="desc" />
+    </colgroup>  
+      
+    <tr>
+      <td>indices</td>
+      <td><p>nD integer tensor of shape <code>(batch_size, dim1, dim2, ... dim(n-1))</code></p></td>
+    </tr>
+    <tr>
+      <td>num_classes</td>
+      <td><p>Integer, number of classes to consider.</p></td>
+    </tr>
+    </table>
+
+    <h2 id="value">Value</h2>
+
+    <p>(n + 1)D one hot representation of the input with shape
+<code>(batch_size, dim1, dim2, ... dim(n-1), num_classes)</code></p>
+    <h2 id="keras-backend">Keras Backend</h2>
+
+    
+
+
+<p>This function is part of a set of Keras backend functions that enable
+lower level access to the core operations of the backend tensor engine
+(e.g. TensorFlow, CNTK, Theano, etc.).</p>
+<p>You can see a list of all available backend functions here:
+<a href='https://keras.rstudio.com/articles/backend.html#backend-functions'>https://keras.rstudio.com/articles/backend.html#backend-functions</a>.</p>
+
+
+
+

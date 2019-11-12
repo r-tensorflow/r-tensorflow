@@ -1,0 +1,66 @@
+---
+title: "Returns a tensor with truncated random normal distribution of values."
+type: docs
+repo: https://github.com/rstudio/keras
+menu:
+  main:
+    name: "Returns a tensor with truncated random normal distribution of values. - keras"
+    parent: keras-reference
+aliases: '/reference/keras/k_truncated_normal.html'
+---
+    
+    <p>The generated values follow a normal distribution
+with specified mean and standard deviation,
+except that values whose magnitude is more than
+two standard deviations from the mean are dropped and re-picked.</p>
+
+    <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>k_truncated_normal</span>(<span class='no'>shape</span>, <span class='kw'>mean</span> <span class='kw'>=</span> <span class='fl'>0</span>, <span class='kw'>stddev</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>dtype</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>seed</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</code></pre></div>
+
+    <h2 id="arguments">Arguments</h2>
+    <table class="ref-arguments">
+    
+    <colgroup>
+      <col class="name" />
+      <col class="desc" />
+    </colgroup>  
+      
+    <tr>
+      <td>shape</td>
+      <td><p>A list of integers, the shape of tensor to create.</p></td>
+    </tr>
+    <tr>
+      <td>mean</td>
+      <td><p>Mean of the values.</p></td>
+    </tr>
+    <tr>
+      <td>stddev</td>
+      <td><p>Standard deviation of the values.</p></td>
+    </tr>
+    <tr>
+      <td>dtype</td>
+      <td><p>String, dtype of returned tensor.</p></td>
+    </tr>
+    <tr>
+      <td>seed</td>
+      <td><p>Integer, random seed.</p></td>
+    </tr>
+    </table>
+
+    <h2 id="value">Value</h2>
+
+    <p>A tensor.</p>
+    <h2 id="keras-backend">Keras Backend</h2>
+
+    
+
+
+<p>This function is part of a set of Keras backend functions that enable
+lower level access to the core operations of the backend tensor engine
+(e.g. TensorFlow, CNTK, Theano, etc.).</p>
+<p>You can see a list of all available backend functions here:
+<a href='https://keras.rstudio.com/articles/backend.html#backend-functions'>https://keras.rstudio.com/articles/backend.html#backend-functions</a>.</p>
+
+
+
+

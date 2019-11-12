@@ -1,0 +1,62 @@
+---
+title: "Retrieve tensors for layers with multiple nodes"
+type: docs
+repo: https://github.com/rstudio/keras
+menu:
+  main:
+    name: "Retrieve tensors for layers with multiple nodes - keras"
+    parent: keras-reference
+aliases: '/reference/keras/get_input_at.html'
+---
+    
+    <p>Whenever you are calling a layer on some input, you are creating a new tensor
+(the output of the layer), and you are adding a "node" to the layer, linking
+the input tensor to the output tensor. When you are calling the same layer
+multiple times, that layer owns multiple nodes indexed as 1, 2, 3. These
+functions enable you to retrieve various tensor properties of layers with
+multiple nodes.</p>
+
+    <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>get_input_at</span>(<span class='no'>object</span>, <span class='no'>node_index</span>)
+
+<span class='fu'>get_output_at</span>(<span class='no'>object</span>, <span class='no'>node_index</span>)
+
+<span class='fu'>get_input_shape_at</span>(<span class='no'>object</span>, <span class='no'>node_index</span>)
+
+<span class='fu'>get_output_shape_at</span>(<span class='no'>object</span>, <span class='no'>node_index</span>)
+
+<span class='fu'>get_input_mask_at</span>(<span class='no'>object</span>, <span class='no'>node_index</span>)
+
+<span class='fu'>get_output_mask_at</span>(<span class='no'>object</span>, <span class='no'>node_index</span>)</code></pre></div>
+
+    <h2 id="arguments">Arguments</h2>
+    <table class="ref-arguments">
+    
+    <colgroup>
+      <col class="name" />
+      <col class="desc" />
+    </colgroup>  
+      
+    <tr>
+      <td>object</td>
+      <td><p>Layer or model object</p></td>
+    </tr>
+    <tr>
+      <td>node_index</td>
+      <td><p>Integer, index of the node from which to retrieve the
+attribute. E.g. <code>node_index = 1</code> will correspond to the first time the
+layer was called.</p></td>
+    </tr>
+    </table>
+
+    <h2 id="value">Value</h2>
+
+    <p>A tensor (or list of tensors if the layer has multiple inputs/outputs).</p>
+    <h2 id="see-also">See also</h2>
+
+    <div class='dont-index'><p>Other layer methods: <code><a href='count_params.html'>count_params</a></code>,
+  <code><a href='get_config.html'>get_config</a></code>, <code><a href='get_weights.html'>get_weights</a></code>,
+  <code><a href='reset_states.html'>reset_states</a></code></p></div>
+
+
+
+

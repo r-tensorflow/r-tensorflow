@@ -1,0 +1,62 @@
+---
+title: "Categorical crossentropy between an output tensor and a target tensor."
+type: docs
+repo: https://github.com/rstudio/keras
+menu:
+  main:
+    name: "Categorical crossentropy between an output tensor and a target tensor. - keras"
+    parent: keras-reference
+aliases: '/reference/keras/k_categorical_crossentropy.html'
+---
+    
+    <p>Categorical crossentropy between an output tensor and a target tensor.</p>
+
+    <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>k_categorical_crossentropy</span>(<span class='no'>target</span>, <span class='no'>output</span>, <span class='kw'>from_logits</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
+  <span class='kw'>axis</span> <span class='kw'>=</span> -<span class='fl'>1</span>)</code></pre></div>
+
+    <h2 id="arguments">Arguments</h2>
+    <table class="ref-arguments">
+    
+    <colgroup>
+      <col class="name" />
+      <col class="desc" />
+    </colgroup>  
+      
+    <tr>
+      <td>target</td>
+      <td><p>A tensor of the same shape as <code>output</code>.</p></td>
+    </tr>
+    <tr>
+      <td>output</td>
+      <td><p>A tensor resulting from a softmax (unless <code>from_logits</code> is
+TRUE, in which case <code>output</code> is expected to be the logits).</p></td>
+    </tr>
+    <tr>
+      <td>from_logits</td>
+      <td><p>Logical, whether <code>output</code> is the result of a softmax, or
+is a tensor of logits.</p></td>
+    </tr>
+    <tr>
+      <td>axis</td>
+      <td><p>Axis (axis indexes are 1-based). Pass -1 (the
+default) to select the last axis.</p></td>
+    </tr>
+    </table>
+
+    <h2 id="value">Value</h2>
+
+    <p>Output tensor.</p>
+    <h2 id="keras-backend">Keras Backend</h2>
+
+    
+
+
+<p>This function is part of a set of Keras backend functions that enable
+lower level access to the core operations of the backend tensor engine
+(e.g. TensorFlow, CNTK, Theano, etc.).</p>
+<p>You can see a list of all available backend functions here:
+<a href='https://keras.rstudio.com/articles/backend.html#backend-functions'>https://keras.rstudio.com/articles/backend.html#backend-functions</a>.</p>
+
+
+
+

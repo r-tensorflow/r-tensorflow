@@ -1,0 +1,73 @@
+---
+title: "Applies batch normalization on x given mean, var, beta and gamma."
+type: docs
+repo: https://github.com/rstudio/keras
+menu:
+  main:
+    name: "Applies batch normalization on x given mean, var, beta and gamma. - keras"
+    parent: keras-reference
+aliases: '/reference/keras/k_batch_normalization.html'
+---
+    
+    <p>i.e. returns
+<code>output &lt;- (x - mean) / (sqrt(var) + epsilon) * gamma + beta</code></p>
+
+    <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>k_batch_normalization</span>(<span class='no'>x</span>, <span class='no'>mean</span>, <span class='no'>var</span>, <span class='no'>beta</span>, <span class='no'>gamma</span>, <span class='kw'>axis</span> <span class='kw'>=</span> -<span class='fl'>1</span>,
+  <span class='kw'>epsilon</span> <span class='kw'>=</span> <span class='fl'>0.001</span>)</code></pre></div>
+
+    <h2 id="arguments">Arguments</h2>
+    <table class="ref-arguments">
+    
+    <colgroup>
+      <col class="name" />
+      <col class="desc" />
+    </colgroup>  
+      
+    <tr>
+      <td>x</td>
+      <td><p>Input tensor or variable.</p></td>
+    </tr>
+    <tr>
+      <td>mean</td>
+      <td><p>Mean of batch.</p></td>
+    </tr>
+    <tr>
+      <td>var</td>
+      <td><p>Variance of batch.</p></td>
+    </tr>
+    <tr>
+      <td>beta</td>
+      <td><p>Tensor with which to center the input.</p></td>
+    </tr>
+    <tr>
+      <td>gamma</td>
+      <td><p>Tensor by which to scale the input.</p></td>
+    </tr>
+    <tr>
+      <td>axis</td>
+      <td><p>Axis (axis indexes are 1-based). Pass -1 (the
+default) to select the last axis.</p></td>
+    </tr>
+    <tr>
+      <td>epsilon</td>
+      <td><p>Fuzz factor.</p></td>
+    </tr>
+    </table>
+
+    <h2 id="value">Value</h2>
+
+    <p>A tensor.</p>
+    <h2 id="keras-backend">Keras Backend</h2>
+
+    
+
+
+<p>This function is part of a set of Keras backend functions that enable
+lower level access to the core operations of the backend tensor engine
+(e.g. TensorFlow, CNTK, Theano, etc.).</p>
+<p>You can see a list of all available backend functions here:
+<a href='https://keras.rstudio.com/articles/backend.html#backend-functions'>https://keras.rstudio.com/articles/backend.html#backend-functions</a>.</p>
+
+
+
+

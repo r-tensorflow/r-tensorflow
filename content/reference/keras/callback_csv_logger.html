@@ -1,0 +1,53 @@
+---
+title: "Callback that streams epoch results to a csv file"
+type: docs
+repo: https://github.com/rstudio/keras
+menu:
+  main:
+    name: "Callback that streams epoch results to a csv file - keras"
+    parent: keras-reference
+aliases: '/reference/keras/callback_csv_logger.html'
+---
+    
+    <p>Supports all values that can be represented as a string</p>
+
+    <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>callback_csv_logger</span>(<span class='no'>filename</span>, <span class='kw'>separator</span> <span class='kw'>=</span> <span class='st'>","</span>, <span class='kw'>append</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)</code></pre></div>
+
+    <h2 id="arguments">Arguments</h2>
+    <table class="ref-arguments">
+    
+    <colgroup>
+      <col class="name" />
+      <col class="desc" />
+    </colgroup>  
+      
+    <tr>
+      <td>filename</td>
+      <td><p>filename of the csv file, e.g. 'run/log.csv'.</p></td>
+    </tr>
+    <tr>
+      <td>separator</td>
+      <td><p>string used to separate elements in the csv file.</p></td>
+    </tr>
+    <tr>
+      <td>append</td>
+      <td><p><code>TRUE</code>: append if file exists (useful for continuing training).
+<code>FALSE</code>: overwrite existing file,</p></td>
+    </tr>
+    </table>
+
+    <h2 id="see-also">See also</h2>
+
+    <div class='dont-index'><p>Other callbacks: <code><a href='callback_early_stopping.html'>callback_early_stopping</a></code>,
+  <code><a href='callback_lambda.html'>callback_lambda</a></code>,
+  <code><a href='callback_learning_rate_scheduler.html'>callback_learning_rate_scheduler</a></code>,
+  <code><a href='callback_model_checkpoint.html'>callback_model_checkpoint</a></code>,
+  <code><a href='callback_progbar_logger.html'>callback_progbar_logger</a></code>,
+  <code><a href='callback_reduce_lr_on_plateau.html'>callback_reduce_lr_on_plateau</a></code>,
+  <code><a href='callback_remote_monitor.html'>callback_remote_monitor</a></code>,
+  <code><a href='callback_tensorboard.html'>callback_tensorboard</a></code>,
+  <code><a href='callback_terminate_on_naan.html'>callback_terminate_on_naan</a></code></p></div>
+
+
+
+

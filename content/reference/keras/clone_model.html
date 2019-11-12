@@ -1,0 +1,41 @@
+---
+title: "Clone a model instance."
+type: docs
+repo: https://github.com/rstudio/keras
+menu:
+  main:
+    name: "Clone a model instance. - keras"
+    parent: keras-reference
+aliases: '/reference/keras/clone_model.html'
+---
+    
+    <p>Model cloning is similar to calling a model on new inputs, except that it
+creates new layers (and thus new weights) instead of sharing the weights of
+the existing layers.</p>
+
+    <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>clone_model</span>(<span class='no'>model</span>, <span class='kw'>input_tensors</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</code></pre></div>
+
+    <h2 id="arguments">Arguments</h2>
+    <table class="ref-arguments">
+    
+    <colgroup>
+      <col class="name" />
+      <col class="desc" />
+    </colgroup>  
+      
+    <tr>
+      <td>model</td>
+      <td><p>Instance of Keras model (could be a functional model or a
+Sequential model).</p></td>
+    </tr>
+    <tr>
+      <td>input_tensors</td>
+      <td><p>Optional list of input tensors to build the model upon.
+If not provided, placeholders will be created.</p></td>
+    </tr>
+    </table>
+
+
+
+
+
