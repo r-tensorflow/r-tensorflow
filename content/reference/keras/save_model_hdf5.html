@@ -11,8 +11,7 @@ aliases: '/reference/keras/save_model_hdf5.html'
     
     <p>Save/Load models using HDF5 files</p>
 
-    <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>save_model_hdf5</span>(<span class='no'>object</span>, <span class='no'>filepath</span>, <span class='kw'>overwrite</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='kw'>include_optimizer</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)
+    <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>save_model_hdf5</span>(<span class='no'>object</span>, <span class='no'>filepath</span>, <span class='kw'>overwrite</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>include_optimizer</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)
 
 <span class='fu'>load_model_hdf5</span>(<span class='no'>filepath</span>, <span class='kw'>custom_objects</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>compile</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</code></pre></div>
 
@@ -75,11 +74,13 @@ execute the definition and persistence of your model using the
 R objects that can be persisted across R sessions.</p>
     <h2 id="see-also">See also</h2>
 
-    <div class='dont-index'><p>Other model persistence: <code><a href='get_weights.html'>get_weights</a></code>,
-  <code><a href='model_to_json.html'>model_to_json</a></code>, <code><a href='model_to_yaml.html'>model_to_yaml</a></code>,
-  <code><a href='save_model_tf.html'>save_model_tf</a></code>,
-  <code><a href='save_model_weights_hdf5.html'>save_model_weights_hdf5</a></code>,
-  <code><a href='serialize_model.html'>serialize_model</a></code></p></div>
+    <div class='dont-index'><p>Other model persistence: 
+<code><a href='get_weights.html'>get_weights</a>()</code>,
+<code><a href='model_to_json.html'>model_to_json</a>()</code>,
+<code><a href='model_to_yaml.html'>model_to_yaml</a>()</code>,
+<code><a href='save_model_tf.html'>save_model_tf</a>()</code>,
+<code><a href='save_model_weights_hdf5.html'>save_model_weights_hdf5</a>()</code>,
+<code><a href='serialize_model.html'>serialize_model</a>()</code></p></div>
 
 
 

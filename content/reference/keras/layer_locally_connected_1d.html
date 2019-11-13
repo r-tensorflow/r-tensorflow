@@ -13,13 +13,27 @@ aliases: '/reference/keras/layer_locally_connected_1d.html'
 that weights are unshared, that is, a different set of filters is applied at
 each different patch of the input.</p>
 
-    <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>layer_locally_connected_1d</span>(<span class='no'>object</span>, <span class='no'>filters</span>, <span class='no'>kernel_size</span>, <span class='kw'>strides</span> <span class='kw'>=</span> <span class='fl'>1L</span>,
-  <span class='kw'>padding</span> <span class='kw'>=</span> <span class='st'>"valid"</span>, <span class='kw'>data_format</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>activation</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>use_bias</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>kernel_initializer</span> <span class='kw'>=</span> <span class='st'>"glorot_uniform"</span>,
-  <span class='kw'>bias_initializer</span> <span class='kw'>=</span> <span class='st'>"zeros"</span>, <span class='kw'>kernel_regularizer</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>bias_regularizer</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>activity_regularizer</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>kernel_constraint</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>bias_constraint</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>batch_size</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>name</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>trainable</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>weights</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>layer_locally_connected_1d</span>(
+  <span class='no'>object</span>,
+  <span class='no'>filters</span>,
+  <span class='no'>kernel_size</span>,
+  <span class='kw'>strides</span> <span class='kw'>=</span> <span class='fl'>1L</span>,
+  <span class='kw'>padding</span> <span class='kw'>=</span> <span class='st'>"valid"</span>,
+  <span class='kw'>data_format</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>activation</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>use_bias</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='kw'>kernel_initializer</span> <span class='kw'>=</span> <span class='st'>"glorot_uniform"</span>,
+  <span class='kw'>bias_initializer</span> <span class='kw'>=</span> <span class='st'>"zeros"</span>,
+  <span class='kw'>kernel_regularizer</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>bias_regularizer</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>activity_regularizer</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>kernel_constraint</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>bias_constraint</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>batch_size</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>name</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>trainable</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>weights</span> <span class='kw'>=</span> <span class='kw'>NULL</span>
+)</code></pre></div>
 
     <h2 id="arguments">Arguments</h2>
     <table class="ref-arguments">
@@ -129,7 +143,8 @@ isn't provided.</p></td>
     <p>3D tensor with shape: <code>(batch_size, new_steps,  filters)</code> <code>steps</code> value might have changed due to padding or strides.</p>
     <h2 id="see-also">See also</h2>
 
-    <div class='dont-index'><p>Other locally connected layers: <code><a href='layer_locally_connected_2d.html'>layer_locally_connected_2d</a></code></p></div>
+    <div class='dont-index'><p>Other locally connected layers: 
+<code><a href='layer_locally_connected_2d.html'>layer_locally_connected_2d</a>()</code></p></div>
 
 
 

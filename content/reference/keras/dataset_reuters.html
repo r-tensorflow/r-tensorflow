@@ -13,9 +13,17 @@ aliases: '/reference/keras/dataset_reuters.html'
 <code><a href='dataset_imdb.html'>dataset_imdb()</a></code> , each wire is encoded as a sequence of word indexes (same
 conventions).</p>
 
-    <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>dataset_reuters</span>(<span class='kw'>path</span> <span class='kw'>=</span> <span class='st'>"reuters.npz"</span>, <span class='kw'>num_words</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>skip_top</span> <span class='kw'>=</span> <span class='fl'>0L</span>, <span class='kw'>maxlen</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>test_split</span> <span class='kw'>=</span> <span class='fl'>0.2</span>, <span class='kw'>seed</span> <span class='kw'>=</span> <span class='fl'>113L</span>,
-  <span class='kw'>start_char</span> <span class='kw'>=</span> <span class='fl'>1L</span>, <span class='kw'>oov_char</span> <span class='kw'>=</span> <span class='fl'>2L</span>, <span class='kw'>index_from</span> <span class='kw'>=</span> <span class='fl'>3L</span>)
+    <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>dataset_reuters</span>(
+  <span class='kw'>path</span> <span class='kw'>=</span> <span class='st'>"reuters.npz"</span>,
+  <span class='kw'>num_words</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>skip_top</span> <span class='kw'>=</span> <span class='fl'>0L</span>,
+  <span class='kw'>maxlen</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>test_split</span> <span class='kw'>=</span> <span class='fl'>0.2</span>,
+  <span class='kw'>seed</span> <span class='kw'>=</span> <span class='fl'>113L</span>,
+  <span class='kw'>start_char</span> <span class='kw'>=</span> <span class='fl'>1L</span>,
+  <span class='kw'>oov_char</span> <span class='kw'>=</span> <span class='fl'>2L</span>,
+  <span class='kw'>index_from</span> <span class='kw'>=</span> <span class='fl'>3L</span>
+)
 
 <span class='fu'>dataset_reuters_word_index</span>(<span class='kw'>path</span> <span class='kw'>=</span> <span class='st'>"reuters_word_index.pkl"</span>)</code></pre></div>
 
@@ -78,11 +86,13 @@ function returns a list where the names are words and the values are
 integer. e.g. <code>word_index[["giraffe"]]</code> might return <code>1234</code>.</p>
     <h2 id="see-also">See also</h2>
 
-    <div class='dont-index'><p>Other datasets: <code><a href='dataset_boston_housing.html'>dataset_boston_housing</a></code>,
-  <code><a href='dataset_cifar100.html'>dataset_cifar100</a></code>,
-  <code><a href='dataset_cifar10.html'>dataset_cifar10</a></code>,
-  <code><a href='dataset_fashion_mnist.html'>dataset_fashion_mnist</a></code>,
-  <code><a href='dataset_imdb.html'>dataset_imdb</a></code>, <code><a href='dataset_mnist.html'>dataset_mnist</a></code></p></div>
+    <div class='dont-index'><p>Other datasets: 
+<code><a href='dataset_boston_housing.html'>dataset_boston_housing</a>()</code>,
+<code><a href='dataset_cifar100.html'>dataset_cifar100</a>()</code>,
+<code><a href='dataset_cifar10.html'>dataset_cifar10</a>()</code>,
+<code><a href='dataset_fashion_mnist.html'>dataset_fashion_mnist</a>()</code>,
+<code><a href='dataset_imdb.html'>dataset_imdb</a>()</code>,
+<code><a href='dataset_mnist.html'>dataset_mnist</a>()</code></p></div>
 
 
 

@@ -12,9 +12,17 @@ aliases: '/reference/keras/time_distributed.html'
     <p>The input should be at least 3D, and the dimension of index one will be
 considered to be the temporal dimension.</p>
 
-    <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>time_distributed</span>(<span class='no'>object</span>, <span class='no'>layer</span>, <span class='kw'>input_shape</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>batch_input_shape</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>batch_size</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>dtype</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>name</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>trainable</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>weights</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>time_distributed</span>(
+  <span class='no'>object</span>,
+  <span class='no'>layer</span>,
+  <span class='kw'>input_shape</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>batch_input_shape</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>batch_size</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>dtype</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>name</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>trainable</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>weights</span> <span class='kw'>=</span> <span class='kw'>NULL</span>
+)</code></pre></div>
 
     <h2 id="arguments">Arguments</h2>
     <table class="ref-arguments">
@@ -79,7 +87,8 @@ including the samples dimension, is <code>(10, 16)</code>. You can then use
 independently.</p>
     <h2 id="see-also">See also</h2>
 
-    <div class='dont-index'><p>Other layer wrappers: <code><a href='bidirectional.html'>bidirectional</a></code></p></div>
+    <div class='dont-index'><p>Other layer wrappers: 
+<code><a href='bidirectional.html'>bidirectional</a>()</code></p></div>
 
 
 

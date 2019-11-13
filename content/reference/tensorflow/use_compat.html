@@ -1,0 +1,40 @@
+---
+title: "Use Compatibility"
+type: docs
+repo: https://github.com/rstudio/tensorflow
+menu:
+  main:
+    name: "Use Compatibility - tensorflow"
+    parent: tensorflow-reference
+aliases: '/reference/tensorflow/use_compat.html'
+---
+    
+    <p>Enables TensorFlow to run under a different API version for compatibility
+with previous versions. For instance, this is useful to run TensorFlow 1.x
+code when using TensorFlow 2.x.</p>
+
+    <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>use_compat</span>(<span class='kw'>version</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"v1"</span>, <span class='st'>"v2"</span>))</code></pre></div>
+
+    <h2 id="arguments">Arguments</h2>
+    <table class="ref-arguments">
+    
+    <colgroup>
+      <col class="name" />
+      <col class="desc" />
+    </colgroup>  
+      
+    <tr>
+      <td>version</td>
+      <td><p>The version to activate. Must be <code>"v1"</code> or <code>"v2"</code></p></td>
+    </tr>
+    </table>
+
+
+    <h2 id="examples">Examples</h2>
+    <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><div class='input'><span class='kw'>if</span> (<span class='fl'>FALSE</span>) {
+<span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='no'>tensorflow</span>)
+<span class='fu'>use_compat</span>(<span class='st'>"v1"</span>)
+}</div></code></pre></div>
+
+
+

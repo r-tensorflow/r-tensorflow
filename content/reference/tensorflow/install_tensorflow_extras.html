@@ -1,0 +1,40 @@
+---
+title: "Install additional Python packages alongside TensorFlow"
+type: docs
+repo: https://github.com/rstudio/tensorflow
+menu:
+  main:
+    name: "Install additional Python packages alongside TensorFlow - tensorflow"
+    parent: tensorflow-reference
+aliases: '/reference/tensorflow/install_tensorflow_extras.html'
+---
+    
+    <p>This function is deprecated. Use the <code>extra_packages</code> argument to
+<code><a href='install_tensorflow.html'>install_tensorflow()</a></code> to install additional packages.</p>
+
+    <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>install_tensorflow_extras</span>(<span class='no'>packages</span>, <span class='kw'>conda</span> <span class='kw'>=</span> <span class='st'>"auto"</span>)</code></pre></div>
+
+    <h2 id="arguments">Arguments</h2>
+    <table class="ref-arguments">
+    
+    <colgroup>
+      <col class="name" />
+      <col class="desc" />
+    </colgroup>  
+      
+    <tr>
+      <td>packages</td>
+      <td><p>Python packages to install</p></td>
+    </tr>
+    <tr>
+      <td>conda</td>
+      <td><p>Path to conda executable (or "auto" to find conda using the PATH
+and other conventional install locations). Only used when TensorFlow is
+installed within a conda environment.</p></td>
+    </tr>
+    </table>
+
+
+
+
+

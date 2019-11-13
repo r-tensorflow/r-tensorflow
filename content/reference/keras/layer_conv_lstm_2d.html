@@ -12,19 +12,39 @@ aliases: '/reference/keras/layer_conv_lstm_2d.html'
     <p>It is similar to an LSTM layer, but the input transformations and recurrent
 transformations are both convolutional.</p>
 
-    <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>layer_conv_lstm_2d</span>(<span class='no'>object</span>, <span class='no'>filters</span>, <span class='no'>kernel_size</span>, <span class='kw'>strides</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1L</span>, <span class='fl'>1L</span>),
-  <span class='kw'>padding</span> <span class='kw'>=</span> <span class='st'>"valid"</span>, <span class='kw'>data_format</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>dilation_rate</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1L</span>, <span class='fl'>1L</span>),
-  <span class='kw'>activation</span> <span class='kw'>=</span> <span class='st'>"tanh"</span>, <span class='kw'>recurrent_activation</span> <span class='kw'>=</span> <span class='st'>"hard_sigmoid"</span>,
-  <span class='kw'>use_bias</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>kernel_initializer</span> <span class='kw'>=</span> <span class='st'>"glorot_uniform"</span>,
-  <span class='kw'>recurrent_initializer</span> <span class='kw'>=</span> <span class='st'>"orthogonal"</span>, <span class='kw'>bias_initializer</span> <span class='kw'>=</span> <span class='st'>"zeros"</span>,
-  <span class='kw'>unit_forget_bias</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>kernel_regularizer</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>recurrent_regularizer</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>bias_regularizer</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>activity_regularizer</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>kernel_constraint</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>recurrent_constraint</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>bias_constraint</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>return_sequences</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>go_backwards</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>stateful</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>dropout</span> <span class='kw'>=</span> <span class='fl'>0</span>, <span class='kw'>recurrent_dropout</span> <span class='kw'>=</span> <span class='fl'>0</span>, <span class='kw'>batch_size</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>name</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>trainable</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>weights</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>input_shape</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>layer_conv_lstm_2d</span>(
+  <span class='no'>object</span>,
+  <span class='no'>filters</span>,
+  <span class='no'>kernel_size</span>,
+  <span class='kw'>strides</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1L</span>, <span class='fl'>1L</span>),
+  <span class='kw'>padding</span> <span class='kw'>=</span> <span class='st'>"valid"</span>,
+  <span class='kw'>data_format</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>dilation_rate</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1L</span>, <span class='fl'>1L</span>),
+  <span class='kw'>activation</span> <span class='kw'>=</span> <span class='st'>"tanh"</span>,
+  <span class='kw'>recurrent_activation</span> <span class='kw'>=</span> <span class='st'>"hard_sigmoid"</span>,
+  <span class='kw'>use_bias</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='kw'>kernel_initializer</span> <span class='kw'>=</span> <span class='st'>"glorot_uniform"</span>,
+  <span class='kw'>recurrent_initializer</span> <span class='kw'>=</span> <span class='st'>"orthogonal"</span>,
+  <span class='kw'>bias_initializer</span> <span class='kw'>=</span> <span class='st'>"zeros"</span>,
+  <span class='kw'>unit_forget_bias</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='kw'>kernel_regularizer</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>recurrent_regularizer</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>bias_regularizer</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>activity_regularizer</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>kernel_constraint</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>recurrent_constraint</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>bias_constraint</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>return_sequences</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
+  <span class='kw'>go_backwards</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
+  <span class='kw'>stateful</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
+  <span class='kw'>dropout</span> <span class='kw'>=</span> <span class='fl'>0</span>,
+  <span class='kw'>recurrent_dropout</span> <span class='kw'>=</span> <span class='fl'>0</span>,
+  <span class='kw'>batch_size</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>name</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>trainable</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>weights</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>input_shape</span> <span class='kw'>=</span> <span class='kw'>NULL</span>
+)</code></pre></div>
 
     <h2 id="arguments">Arguments</h2>
     <table class="ref-arguments">
@@ -216,23 +236,24 @@ output</p></li>
 
     <h2 id="see-also">See also</h2>
 
-    <div class='dont-index'><p>Other convolutional layers: <code><a href='layer_conv_1d.html'>layer_conv_1d</a></code>,
-  <code><a href='layer_conv_2d_transpose.html'>layer_conv_2d_transpose</a></code>,
-  <code><a href='layer_conv_2d.html'>layer_conv_2d</a></code>,
-  <code><a href='layer_conv_3d_transpose.html'>layer_conv_3d_transpose</a></code>,
-  <code><a href='layer_conv_3d.html'>layer_conv_3d</a></code>,
-  <code><a href='layer_cropping_1d.html'>layer_cropping_1d</a></code>,
-  <code><a href='layer_cropping_2d.html'>layer_cropping_2d</a></code>,
-  <code><a href='layer_cropping_3d.html'>layer_cropping_3d</a></code>,
-  <code><a href='layer_depthwise_conv_2d.html'>layer_depthwise_conv_2d</a></code>,
-  <code><a href='layer_separable_conv_1d.html'>layer_separable_conv_1d</a></code>,
-  <code><a href='layer_separable_conv_2d.html'>layer_separable_conv_2d</a></code>,
-  <code><a href='layer_upsampling_1d.html'>layer_upsampling_1d</a></code>,
-  <code><a href='layer_upsampling_2d.html'>layer_upsampling_2d</a></code>,
-  <code><a href='layer_upsampling_3d.html'>layer_upsampling_3d</a></code>,
-  <code><a href='layer_zero_padding_1d.html'>layer_zero_padding_1d</a></code>,
-  <code><a href='layer_zero_padding_2d.html'>layer_zero_padding_2d</a></code>,
-  <code><a href='layer_zero_padding_3d.html'>layer_zero_padding_3d</a></code></p></div>
+    <div class='dont-index'><p>Other convolutional layers: 
+<code><a href='layer_conv_1d.html'>layer_conv_1d</a>()</code>,
+<code><a href='layer_conv_2d_transpose.html'>layer_conv_2d_transpose</a>()</code>,
+<code><a href='layer_conv_2d.html'>layer_conv_2d</a>()</code>,
+<code><a href='layer_conv_3d_transpose.html'>layer_conv_3d_transpose</a>()</code>,
+<code><a href='layer_conv_3d.html'>layer_conv_3d</a>()</code>,
+<code><a href='layer_cropping_1d.html'>layer_cropping_1d</a>()</code>,
+<code><a href='layer_cropping_2d.html'>layer_cropping_2d</a>()</code>,
+<code><a href='layer_cropping_3d.html'>layer_cropping_3d</a>()</code>,
+<code><a href='layer_depthwise_conv_2d.html'>layer_depthwise_conv_2d</a>()</code>,
+<code><a href='layer_separable_conv_1d.html'>layer_separable_conv_1d</a>()</code>,
+<code><a href='layer_separable_conv_2d.html'>layer_separable_conv_2d</a>()</code>,
+<code><a href='layer_upsampling_1d.html'>layer_upsampling_1d</a>()</code>,
+<code><a href='layer_upsampling_2d.html'>layer_upsampling_2d</a>()</code>,
+<code><a href='layer_upsampling_3d.html'>layer_upsampling_3d</a>()</code>,
+<code><a href='layer_zero_padding_1d.html'>layer_zero_padding_1d</a>()</code>,
+<code><a href='layer_zero_padding_2d.html'>layer_zero_padding_2d</a>()</code>,
+<code><a href='layer_zero_padding_3d.html'>layer_zero_padding_3d</a>()</code></p></div>
 
 
 

@@ -12,8 +12,14 @@ aliases: '/reference/keras/layer_multiply.html'
     <p>It takes as input a list of tensors, all of the same shape, and returns a
 single tensor (also of the same shape).</p>
 
-    <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>layer_multiply</span>(<span class='no'>inputs</span>, <span class='kw'>batch_size</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>dtype</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>name</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>trainable</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>weights</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>layer_multiply</span>(
+  <span class='no'>inputs</span>,
+  <span class='kw'>batch_size</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>dtype</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>name</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>trainable</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>weights</span> <span class='kw'>=</span> <span class='kw'>NULL</span>
+)</code></pre></div>
 
     <h2 id="arguments">Arguments</h2>
     <table class="ref-arguments">
@@ -57,11 +63,14 @@ isn't provided.</p></td>
     <p>A tensor, the element-wise product of the inputs.</p>
     <h2 id="see-also">See also</h2>
 
-    <div class='dont-index'><p>Other merge layers: <code><a href='layer_add.html'>layer_add</a></code>,
-  <code><a href='layer_average.html'>layer_average</a></code>,
-  <code><a href='layer_concatenate.html'>layer_concatenate</a></code>, <code><a href='layer_dot.html'>layer_dot</a></code>,
-  <code><a href='layer_maximum.html'>layer_maximum</a></code>, <code><a href='layer_minimum.html'>layer_minimum</a></code>,
-  <code><a href='layer_subtract.html'>layer_subtract</a></code></p></div>
+    <div class='dont-index'><p>Other merge layers: 
+<code><a href='layer_add.html'>layer_add</a>()</code>,
+<code><a href='layer_average.html'>layer_average</a>()</code>,
+<code><a href='layer_concatenate.html'>layer_concatenate</a>()</code>,
+<code><a href='layer_dot.html'>layer_dot</a>()</code>,
+<code><a href='layer_maximum.html'>layer_maximum</a>()</code>,
+<code><a href='layer_minimum.html'>layer_minimum</a>()</code>,
+<code><a href='layer_subtract.html'>layer_subtract</a>()</code></p></div>
 
 
 

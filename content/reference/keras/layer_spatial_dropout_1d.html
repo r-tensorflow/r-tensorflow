@@ -17,8 +17,14 @@ and will otherwise just result in an effective learning rate decrease. In
 this case, <code>layer_spatial_dropout_1d</code> will help promote independence between
 feature maps and should be used instead.</p>
 
-    <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>layer_spatial_dropout_1d</span>(<span class='no'>object</span>, <span class='no'>rate</span>, <span class='kw'>batch_size</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>name</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>trainable</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>weights</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>layer_spatial_dropout_1d</span>(
+  <span class='no'>object</span>,
+  <span class='no'>rate</span>,
+  <span class='kw'>batch_size</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>name</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>trainable</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>weights</span> <span class='kw'>=</span> <span class='kw'>NULL</span>
+)</code></pre></div>
 
     <h2 id="arguments">Arguments</h2>
     <table class="ref-arguments">
@@ -67,9 +73,10 @@ isn't provided.</p></td>
     <p>- <a href='https://arxiv.org/abs/1411.4280'>Efficient Object Localization Using Convolutional Networks</a></p>
     <h2 id="see-also">See also</h2>
 
-    <div class='dont-index'><p>Other dropout layers: <code><a href='layer_dropout.html'>layer_dropout</a></code>,
-  <code><a href='layer_spatial_dropout_2d.html'>layer_spatial_dropout_2d</a></code>,
-  <code><a href='layer_spatial_dropout_3d.html'>layer_spatial_dropout_3d</a></code></p></div>
+    <div class='dont-index'><p>Other dropout layers: 
+<code><a href='layer_dropout.html'>layer_dropout</a>()</code>,
+<code><a href='layer_spatial_dropout_2d.html'>layer_spatial_dropout_2d</a>()</code>,
+<code><a href='layer_spatial_dropout_3d.html'>layer_spatial_dropout_3d</a>()</code></p></div>
 
 
 

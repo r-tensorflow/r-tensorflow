@@ -11,8 +11,14 @@ aliases: '/reference/keras/model_to_saved_model.html'
     
     <p>Export to Saved Model format</p>
 
-    <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>model_to_saved_model</span>(<span class='no'>model</span>, <span class='no'>saved_model_path</span>, <span class='kw'>custom_objects</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>as_text</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>input_signature</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>serving_only</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)</code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>model_to_saved_model</span>(
+  <span class='no'>model</span>,
+  <span class='no'>saved_model_path</span>,
+  <span class='kw'>custom_objects</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>as_text</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
+  <span class='kw'>input_signature</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>serving_only</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>
+)</code></pre></div>
 
     <h2 id="arguments">Arguments</h2>
     <table class="ref-arguments">
@@ -62,7 +68,8 @@ prediction graph is saved.</p></td>
 version &gt;= "2.0".</p>
     <h2 id="see-also">See also</h2>
 
-    <div class='dont-index'><p>Other saved_model: <code><a href='model_from_saved_model.html'>model_from_saved_model</a></code></p></div>
+    <div class='dont-index'><p>Other saved_model: 
+<code><a href='model_from_saved_model.html'>model_from_saved_model</a>()</code></p></div>
 
 
 

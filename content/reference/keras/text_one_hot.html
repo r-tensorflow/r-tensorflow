@@ -11,9 +11,13 @@ aliases: '/reference/keras/text_one_hot.html'
     
     <p>One-hot encode a text into a list of word indexes in a vocabulary of size n.</p>
 
-    <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>text_one_hot</span>(<span class='no'>text</span>, <span class='no'>n</span>,
+    <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>text_one_hot</span>(
+  <span class='no'>text</span>,
+  <span class='no'>n</span>,
   <span class='kw'>filters</span> <span class='kw'>=</span> <span class='st'>"!\"#$%&amp;()*+,-./:;&lt;=&gt;?@[\\]^_`{|}~\t\n"</span>,
-  <span class='kw'>lower</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>split</span> <span class='kw'>=</span> <span class='st'>" "</span>)</code></pre></div>
+  <span class='kw'>lower</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='kw'>split</span> <span class='kw'>=</span> <span class='st'>" "</span>
+)</code></pre></div>
 
     <h2 id="arguments">Arguments</h2>
     <table class="ref-arguments">
@@ -52,10 +56,12 @@ punctuation. Default includes basic punctuation, tabs, and newlines.</p></td>
 non-guaranteed).</p>
     <h2 id="see-also">See also</h2>
 
-    <div class='dont-index'><p>Other text preprocessing: <code><a href='make_sampling_table.html'>make_sampling_table</a></code>,
-  <code><a href='pad_sequences.html'>pad_sequences</a></code>, <code><a href='skipgrams.html'>skipgrams</a></code>,
-  <code><a href='text_hashing_trick.html'>text_hashing_trick</a></code>,
-  <code><a href='text_to_word_sequence.html'>text_to_word_sequence</a></code></p></div>
+    <div class='dont-index'><p>Other text preprocessing: 
+<code><a href='make_sampling_table.html'>make_sampling_table</a>()</code>,
+<code><a href='pad_sequences.html'>pad_sequences</a>()</code>,
+<code><a href='skipgrams.html'>skipgrams</a>()</code>,
+<code><a href='text_hashing_trick.html'>text_hashing_trick</a>()</code>,
+<code><a href='text_to_word_sequence.html'>text_to_word_sequence</a>()</code></p></div>
 
 
 

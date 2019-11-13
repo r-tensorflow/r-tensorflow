@@ -1,0 +1,49 @@
+---
+title: "Samples elements at random from the datasets in <code>datasets</code>."
+type: docs
+repo: https://github.com/rstudio/tfdatasets
+menu:
+  main:
+    name: "Samples elements at random from the datasets in &lt;code&gt;datasets&lt;/code&gt;. - tfdatasets"
+    parent: tfdatasets-reference
+aliases: '/reference/tfdatasets/sample_from_datasets.html'
+---
+    
+    <p>Samples elements at random from the datasets in <code>datasets</code>.</p>
+
+    <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>sample_from_datasets</span>(<span class='no'>datasets</span>, <span class='kw'>weights</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>seed</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</code></pre></div>
+
+    <h2 id="arguments">Arguments</h2>
+    <table class="ref-arguments">
+    
+    <colgroup>
+      <col class="name" />
+      <col class="desc" />
+    </colgroup>  
+      
+    <tr>
+      <td>datasets</td>
+      <td><p>A list ofobjects with compatible structure.</p></td>
+    </tr>
+    <tr>
+      <td>weights</td>
+      <td><p>(Optional.) A list of <code><a href='https://rdrr.io/r/base/length.html'>length(datasets)</a></code> floating-point values where
+<code>weights[[i]]</code> represents the probability with which an element should be sampled
+from <code>datasets[[i]]</code>, or a dataset object where each element is such a list.
+Defaults to a uniform distribution across <code>datasets</code>.</p></td>
+    </tr>
+    <tr>
+      <td>seed</td>
+      <td><p>(Optional.) An integer, representing the random seed
+that will be used to create the distribution.</p></td>
+    </tr>
+    </table>
+
+    <h2 id="value">Value</h2>
+
+    <p>A dataset that interleaves elements from <code>datasets</code> at random, according to
+<code>weights</code> if provided, otherwise with uniform probability.</p>
+
+
+
+

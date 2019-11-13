@@ -1,0 +1,86 @@
+---
+title: "Fused implementation of dataset_map() and dataset_batch()"
+type: docs
+repo: https://github.com/rstudio/tfdatasets
+menu:
+  main:
+    name: "Fused implementation of dataset_map() and dataset_batch() - tfdatasets"
+    parent: tfdatasets-reference
+aliases: '/reference/tfdatasets/dataset_map_and_batch.html'
+---
+    
+    <p>Maps `map_func`` across batch_size consecutive elements of this dataset and then combines
+them into a batch. Functionally, it is equivalent to map followed by batch. However, by
+fusing the two transformations together, the implementation can be more efficient.</p>
+
+    <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>dataset_map_and_batch</span>(<span class='no'>dataset</span>, <span class='no'>map_func</span>, <span class='no'>batch_size</span>,
+  <span class='kw'>num_parallel_batches</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>drop_remainder</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
+  <span class='kw'>num_parallel_calls</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</code></pre></div>
+
+    <h2 id="arguments">Arguments</h2>
+    <table class="ref-arguments">
+    
+    <colgroup>
+      <col class="name" />
+      <col class="desc" />
+    </colgroup>  
+      
+    <tr>
+      <td>dataset</td>
+      <td><p>A dataset</p></td>
+    </tr>
+    <tr>
+      <td>map_func</td>
+      <td><p>A function mapping a nested structure of tensors (having
+shapes and types defined by <code><a href='output_types.html'>output_shapes()</a></code> and <code><a href='output_types.html'>output_types()</a></code> to
+another nested structure of tensors. It also supports <code>purrr</code> style
+lambda functions powered by <code><a href='https://rlang.r-lib.org/reference/as_function.html'>rlang::as_function()</a></code>.</p></td>
+    </tr>
+    <tr>
+      <td>batch_size</td>
+      <td><p>An integer, representing the number of consecutive elements
+of this dataset to combine in a single batch.</p></td>
+    </tr>
+    <tr>
+      <td>num_parallel_batches</td>
+      <td><p>(Optional) An integer, representing the number of batches
+to create in parallel. On one hand, higher values can help mitigate the effect of
+stragglers. On the other hand, higher values can increase contention if CPU is
+scarce.</p></td>
+    </tr>
+    <tr>
+      <td>drop_remainder</td>
+      <td><p>Ensure that batches have a fixed size by
+omitting any final smaller batch if it's present. Note that this is
+required for use with the Keras tensor inputs to fit/evaluate/etc.</p></td>
+    </tr>
+    <tr>
+      <td>num_parallel_calls</td>
+      <td><p>(Optional) An integer, representing the
+number of elements to process in parallel If not specified, elements will
+be processed sequentially.</p></td>
+    </tr>
+    </table>
+
+    <h2 id="see-also">See also</h2>
+
+    <div class='dont-index'><p>Other dataset methods: <code><a href='dataset_batch.html'>dataset_batch</a></code>,
+  <code><a href='dataset_cache.html'>dataset_cache</a></code>,
+  <code><a href='dataset_collect.html'>dataset_collect</a></code>,
+  <code><a href='dataset_concatenate.html'>dataset_concatenate</a></code>,
+  <code><a href='dataset_decode_delim.html'>dataset_decode_delim</a></code>,
+  <code><a href='dataset_filter.html'>dataset_filter</a></code>,
+  <code><a href='dataset_interleave.html'>dataset_interleave</a></code>,
+  <code><a href='dataset_map.html'>dataset_map</a></code>,
+  <code><a href='dataset_padded_batch.html'>dataset_padded_batch</a></code>,
+  <code><a href='dataset_prefetch_to_device.html'>dataset_prefetch_to_device</a></code>,
+  <code><a href='dataset_prefetch.html'>dataset_prefetch</a></code>,
+  <code><a href='dataset_repeat.html'>dataset_repeat</a></code>,
+  <code><a href='dataset_shuffle_and_repeat.html'>dataset_shuffle_and_repeat</a></code>,
+  <code><a href='dataset_shuffle.html'>dataset_shuffle</a></code>,
+  <code><a href='dataset_skip.html'>dataset_skip</a></code>, <code><a href='dataset_take.html'>dataset_take</a></code>,
+  <code><a href='dataset_window.html'>dataset_window</a></code></p></div>
+
+
+
+

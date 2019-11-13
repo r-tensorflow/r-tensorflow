@@ -1,0 +1,37 @@
+---
+title: "Parse Command Line Arguments"
+type: docs
+repo: https://github.com/rstudio/tensorflow
+menu:
+  main:
+    name: "Parse Command Line Arguments - tensorflow"
+    parent: tensorflow-reference
+aliases: '/reference/tensorflow/parse_arguments.html'
+---
+    
+    <p>Parse command line arguments of the form <code>--key=value</code> and
+<code>--key value</code>. The values are assumed to be valid <code>yaml</code> and
+will be converted using <code>yaml.load()</code>.</p>
+
+    <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>parse_arguments</span>(<span class='kw'>arguments</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</code></pre></div>
+
+    <h2 id="arguments">Arguments</h2>
+    <table class="ref-arguments">
+    
+    <colgroup>
+      <col class="name" />
+      <col class="desc" />
+    </colgroup>  
+      
+    <tr>
+      <td>arguments</td>
+      <td><p>A vector of command line arguments. When
+<code>NULL</code> (the default), the command line arguments received
+by the current <span style="R">R</span> process are used.</p></td>
+    </tr>
+    </table>
+
+
+
+
+

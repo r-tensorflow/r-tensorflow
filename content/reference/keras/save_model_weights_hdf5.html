@@ -13,8 +13,13 @@ aliases: '/reference/keras/save_model_weights_hdf5.html'
 
     <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>save_model_weights_hdf5</span>(<span class='no'>object</span>, <span class='no'>filepath</span>, <span class='kw'>overwrite</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)
 
-<span class='fu'>load_model_weights_hdf5</span>(<span class='no'>object</span>, <span class='no'>filepath</span>, <span class='kw'>by_name</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>skip_mismatch</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>reshape</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)</code></pre></div>
+<span class='fu'>load_model_weights_hdf5</span>(
+  <span class='no'>object</span>,
+  <span class='no'>filepath</span>,
+  <span class='kw'>by_name</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
+  <span class='kw'>skip_mismatch</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
+  <span class='kw'>reshape</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>
+)</code></pre></div>
 
     <h2 id="arguments">Arguments</h2>
     <table class="ref-arguments">
@@ -75,11 +80,13 @@ the same name. This is useful for fine-tuning or transfer-learning models
 where some of the layers have changed.</p>
     <h2 id="see-also">See also</h2>
 
-    <div class='dont-index'><p>Other model persistence: <code><a href='get_weights.html'>get_weights</a></code>,
-  <code><a href='model_to_json.html'>model_to_json</a></code>, <code><a href='model_to_yaml.html'>model_to_yaml</a></code>,
-  <code><a href='save_model_hdf5.html'>save_model_hdf5</a></code>,
-  <code><a href='save_model_tf.html'>save_model_tf</a></code>,
-  <code><a href='serialize_model.html'>serialize_model</a></code></p></div>
+    <div class='dont-index'><p>Other model persistence: 
+<code><a href='get_weights.html'>get_weights</a>()</code>,
+<code><a href='model_to_json.html'>model_to_json</a>()</code>,
+<code><a href='model_to_yaml.html'>model_to_yaml</a>()</code>,
+<code><a href='save_model_hdf5.html'>save_model_hdf5</a>()</code>,
+<code><a href='save_model_tf.html'>save_model_tf</a>()</code>,
+<code><a href='serialize_model.html'>serialize_model</a>()</code></p></div>
 
 
 

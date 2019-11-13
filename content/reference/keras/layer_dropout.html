@@ -12,9 +12,18 @@ aliases: '/reference/keras/layer_dropout.html'
     <p>Dropout consists in randomly setting a fraction <code>rate</code> of input units to 0 at
 each update during training time, which helps prevent overfitting.</p>
 
-    <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>layer_dropout</span>(<span class='no'>object</span>, <span class='no'>rate</span>, <span class='kw'>noise_shape</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>seed</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>input_shape</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>batch_input_shape</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>batch_size</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>name</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>trainable</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>weights</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>layer_dropout</span>(
+  <span class='no'>object</span>,
+  <span class='no'>rate</span>,
+  <span class='kw'>noise_shape</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>seed</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>input_shape</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>batch_input_shape</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>batch_size</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>name</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>trainable</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>weights</span> <span class='kw'>=</span> <span class='kw'>NULL</span>
+)</code></pre></div>
 
     <h2 id="arguments">Arguments</h2>
     <table class="ref-arguments">
@@ -79,17 +88,22 @@ isn't provided.</p></td>
 
     <h2 id="see-also">See also</h2>
 
-    <div class='dont-index'><p>Other core layers: <code><a href='layer_activation.html'>layer_activation</a></code>,
-  <code><a href='layer_activity_regularization.html'>layer_activity_regularization</a></code>,
-  <code><a href='layer_dense_features.html'>layer_dense_features</a></code>,
-  <code><a href='layer_dense.html'>layer_dense</a></code>, <code><a href='layer_flatten.html'>layer_flatten</a></code>,
-  <code><a href='layer_input.html'>layer_input</a></code>, <code><a href='layer_lambda.html'>layer_lambda</a></code>,
-  <code><a href='layer_masking.html'>layer_masking</a></code>, <code><a href='layer_permute.html'>layer_permute</a></code>,
-  <code><a href='layer_repeat_vector.html'>layer_repeat_vector</a></code>,
-  <code><a href='layer_reshape.html'>layer_reshape</a></code></p>
-<p>Other dropout layers: <code><a href='layer_spatial_dropout_1d.html'>layer_spatial_dropout_1d</a></code>,
-  <code><a href='layer_spatial_dropout_2d.html'>layer_spatial_dropout_2d</a></code>,
-  <code><a href='layer_spatial_dropout_3d.html'>layer_spatial_dropout_3d</a></code></p></div>
+    <div class='dont-index'><p>Other core layers: 
+<code><a href='layer_activation.html'>layer_activation</a>()</code>,
+<code><a href='layer_activity_regularization.html'>layer_activity_regularization</a>()</code>,
+<code><a href='layer_dense_features.html'>layer_dense_features</a>()</code>,
+<code><a href='layer_dense.html'>layer_dense</a>()</code>,
+<code><a href='layer_flatten.html'>layer_flatten</a>()</code>,
+<code><a href='layer_input.html'>layer_input</a>()</code>,
+<code><a href='layer_lambda.html'>layer_lambda</a>()</code>,
+<code><a href='layer_masking.html'>layer_masking</a>()</code>,
+<code><a href='layer_permute.html'>layer_permute</a>()</code>,
+<code><a href='layer_repeat_vector.html'>layer_repeat_vector</a>()</code>,
+<code><a href='layer_reshape.html'>layer_reshape</a>()</code></p>
+<p>Other dropout layers: 
+<code><a href='layer_spatial_dropout_1d.html'>layer_spatial_dropout_1d</a>()</code>,
+<code><a href='layer_spatial_dropout_2d.html'>layer_spatial_dropout_2d</a>()</code>,
+<code><a href='layer_spatial_dropout_3d.html'>layer_spatial_dropout_3d</a>()</code></p></div>
 
 
 

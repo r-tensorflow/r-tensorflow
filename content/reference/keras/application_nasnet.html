@@ -14,19 +14,38 @@ therefore it only works with the data format
 <code>image_data_format='channels_last'</code> in your Keras config
 at <code>~/.keras/keras.json</code>.</p>
 
-    <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>application_nasnet</span>(<span class='kw'>input_shape</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>penultimate_filters</span> <span class='kw'>=</span> <span class='fl'>4032L</span>,
-  <span class='kw'>num_blocks</span> <span class='kw'>=</span> <span class='fl'>6L</span>, <span class='kw'>stem_block_filters</span> <span class='kw'>=</span> <span class='fl'>96L</span>, <span class='kw'>skip_reduction</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='kw'>filter_multiplier</span> <span class='kw'>=</span> <span class='fl'>2L</span>, <span class='kw'>include_top</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>weights</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>input_tensor</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>pooling</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>classes</span> <span class='kw'>=</span> <span class='fl'>1000</span>,
-  <span class='kw'>default_size</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)
+    <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>application_nasnet</span>(
+  <span class='kw'>input_shape</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>penultimate_filters</span> <span class='kw'>=</span> <span class='fl'>4032L</span>,
+  <span class='kw'>num_blocks</span> <span class='kw'>=</span> <span class='fl'>6L</span>,
+  <span class='kw'>stem_block_filters</span> <span class='kw'>=</span> <span class='fl'>96L</span>,
+  <span class='kw'>skip_reduction</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='kw'>filter_multiplier</span> <span class='kw'>=</span> <span class='fl'>2L</span>,
+  <span class='kw'>include_top</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='kw'>weights</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>input_tensor</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>pooling</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>classes</span> <span class='kw'>=</span> <span class='fl'>1000</span>,
+  <span class='kw'>default_size</span> <span class='kw'>=</span> <span class='kw'>NULL</span>
+)
 
-<span class='fu'>application_nasnetlarge</span>(<span class='kw'>input_shape</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>include_top</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='kw'>weights</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>input_tensor</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>pooling</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>classes</span> <span class='kw'>=</span> <span class='fl'>1000</span>)
+<span class='fu'>application_nasnetlarge</span>(
+  <span class='kw'>input_shape</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>include_top</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='kw'>weights</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>input_tensor</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>pooling</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>classes</span> <span class='kw'>=</span> <span class='fl'>1000</span>
+)
 
-<span class='fu'>application_nasnetmobile</span>(<span class='kw'>input_shape</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>include_top</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='kw'>weights</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>input_tensor</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>pooling</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>classes</span> <span class='kw'>=</span> <span class='fl'>1000</span>)
+<span class='fu'>application_nasnetmobile</span>(
+  <span class='kw'>input_shape</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>include_top</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='kw'>weights</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>input_tensor</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>pooling</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>classes</span> <span class='kw'>=</span> <span class='fl'>1000</span>
+)
 
 <span class='fu'>nasnet_preprocess_input</span>(<span class='no'>x</span>)</code></pre></div>
 

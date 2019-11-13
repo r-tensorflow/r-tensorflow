@@ -17,8 +17,7 @@ aliases: '/reference/keras/constraints.html'
 
 <span class='fu'>constraint_unitnorm</span>(<span class='kw'>axis</span> <span class='kw'>=</span> <span class='fl'>0</span>)
 
-<span class='fu'>constraint_minmaxnorm</span>(<span class='kw'>min_value</span> <span class='kw'>=</span> <span class='fl'>0</span>, <span class='kw'>max_value</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>rate</span> <span class='kw'>=</span> <span class='fl'>1</span>,
-  <span class='kw'>axis</span> <span class='kw'>=</span> <span class='fl'>0</span>)</code></pre></div>
+<span class='fu'>constraint_minmaxnorm</span>(<span class='kw'>min_value</span> <span class='kw'>=</span> <span class='fl'>0</span>, <span class='kw'>max_value</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>rate</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>axis</span> <span class='kw'>=</span> <span class='fl'>0</span>)</code></pre></div>
 
     <h2 id="arguments">Arguments</h2>
     <table class="ref-arguments">
@@ -77,14 +76,13 @@ hidden unit to have the norm between a lower bound and an upper bound.</p></li>
 constraint is an R function that takes weights (<code>w</code>) as input
 and returns modified weights. Note that keras <code><a href='backend.html'>backend()</a></code> tensor
 functions (e.g. <code><a href='k_greater_equal.html'>k_greater_equal()</a></code>) should be used in the
-implementation of custom constraints. For example:</p><pre>nonneg_constraint &lt;- function(w) {
+implementation of custom constraints. For example:<div class="r"></p><pre>nonneg_constraint &lt;- function(w) {
   w * k_cast(k_greater_equal(w, 0), k_floatx())
 }
 
 layer_dense(units = 32, input_shape = c(784), 
             kernel_constraint = nonneg_constraint)
-</pre>
-
+</pre><p></div></p>
 <p>Note that models which use custom constraints cannot be serialized using
 <code><a href='save_model_hdf5.html'>save_model_hdf5()</a></code>. Rather, the weights of the model should be saved
 and restored using <code><a href='save_model_weights_hdf5.html'>save_model_weights_hdf5()</a></code>.</p>

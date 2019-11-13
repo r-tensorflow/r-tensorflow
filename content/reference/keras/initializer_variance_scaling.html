@@ -17,9 +17,12 @@ distribution centered on zero, with <code>stddev = sqrt(scale / n)</code> where 
 </ul>
 
 
-    <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>initializer_variance_scaling</span>(<span class='kw'>scale</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>mode</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"fan_in"</span>, <span class='st'>"fan_out"</span>,
-  <span class='st'>"fan_avg"</span>), <span class='kw'>distribution</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"normal"</span>, <span class='st'>"uniform"</span>, <span class='st'>"truncated_normal"</span>,
-  <span class='st'>"untruncated_normal"</span>), <span class='kw'>seed</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>initializer_variance_scaling</span>(
+  <span class='kw'>scale</span> <span class='kw'>=</span> <span class='fl'>1</span>,
+  <span class='kw'>mode</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"fan_in"</span>, <span class='st'>"fan_out"</span>, <span class='st'>"fan_avg"</span>),
+  <span class='kw'>distribution</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"normal"</span>, <span class='st'>"uniform"</span>, <span class='st'>"truncated_normal"</span>, <span class='st'>"untruncated_normal"</span>),
+  <span class='kw'>seed</span> <span class='kw'>=</span> <span class='kw'>NULL</span>
+)</code></pre></div>
 
     <h2 id="arguments">Arguments</h2>
     <table class="ref-arguments">
@@ -55,20 +58,21 @@ For backward compatibility, "normal" will be accepted and converted to
 within <code>-limit, limit</code>, with <code>limit = sqrt(3 * scale / n)</code>.</p>
     <h2 id="see-also">See also</h2>
 
-    <div class='dont-index'><p>Other initializers: <code><a href='initializer_constant.html'>initializer_constant</a></code>,
-  <code><a href='initializer_glorot_normal.html'>initializer_glorot_normal</a></code>,
-  <code><a href='initializer_glorot_uniform.html'>initializer_glorot_uniform</a></code>,
-  <code><a href='initializer_he_normal.html'>initializer_he_normal</a></code>,
-  <code><a href='initializer_he_uniform.html'>initializer_he_uniform</a></code>,
-  <code><a href='initializer_identity.html'>initializer_identity</a></code>,
-  <code><a href='initializer_lecun_normal.html'>initializer_lecun_normal</a></code>,
-  <code><a href='initializer_lecun_uniform.html'>initializer_lecun_uniform</a></code>,
-  <code><a href='initializer_ones.html'>initializer_ones</a></code>,
-  <code><a href='initializer_orthogonal.html'>initializer_orthogonal</a></code>,
-  <code><a href='initializer_random_normal.html'>initializer_random_normal</a></code>,
-  <code><a href='initializer_random_uniform.html'>initializer_random_uniform</a></code>,
-  <code><a href='initializer_truncated_normal.html'>initializer_truncated_normal</a></code>,
-  <code><a href='initializer_zeros.html'>initializer_zeros</a></code></p></div>
+    <div class='dont-index'><p>Other initializers: 
+<code><a href='initializer_constant.html'>initializer_constant</a>()</code>,
+<code><a href='initializer_glorot_normal.html'>initializer_glorot_normal</a>()</code>,
+<code><a href='initializer_glorot_uniform.html'>initializer_glorot_uniform</a>()</code>,
+<code><a href='initializer_he_normal.html'>initializer_he_normal</a>()</code>,
+<code><a href='initializer_he_uniform.html'>initializer_he_uniform</a>()</code>,
+<code><a href='initializer_identity.html'>initializer_identity</a>()</code>,
+<code><a href='initializer_lecun_normal.html'>initializer_lecun_normal</a>()</code>,
+<code><a href='initializer_lecun_uniform.html'>initializer_lecun_uniform</a>()</code>,
+<code><a href='initializer_ones.html'>initializer_ones</a>()</code>,
+<code><a href='initializer_orthogonal.html'>initializer_orthogonal</a>()</code>,
+<code><a href='initializer_random_normal.html'>initializer_random_normal</a>()</code>,
+<code><a href='initializer_random_uniform.html'>initializer_random_uniform</a>()</code>,
+<code><a href='initializer_truncated_normal.html'>initializer_truncated_normal</a>()</code>,
+<code><a href='initializer_zeros.html'>initializer_zeros</a>()</code></p></div>
 
 
 

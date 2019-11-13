@@ -11,9 +11,14 @@ aliases: '/reference/keras/application_resnet50.html'
     
     <p>ResNet50 model for Keras.</p>
 
-    <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>application_resnet50</span>(<span class='kw'>include_top</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>weights</span> <span class='kw'>=</span> <span class='st'>"imagenet"</span>,
-  <span class='kw'>input_tensor</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>input_shape</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>pooling</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>classes</span> <span class='kw'>=</span> <span class='fl'>1000</span>)</code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>application_resnet50</span>(
+  <span class='kw'>include_top</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='kw'>weights</span> <span class='kw'>=</span> <span class='st'>"imagenet"</span>,
+  <span class='kw'>input_tensor</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>input_shape</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>pooling</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>classes</span> <span class='kw'>=</span> <span class='fl'>1000</span>
+)</code></pre></div>
 
     <h2 id="arguments">Arguments</h2>
     <table class="ref-arguments">
@@ -95,7 +100,7 @@ preprocessing.</p>
 <span class='no'>x</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='imagenet_preprocess_input.html'>imagenet_preprocess_input</a></span>(<span class='no'>x</span>)
 
 <span class='co'># make predictions then decode and print them</span>
-<span class='no'>preds</span> <span class='kw'>&lt;-</span> <span class='no'>model</span> <span class='kw'>%&gt;%</span> <span class='fu'><a href='https://rdrr.io/r/stats/predict.html'>predict</a></span>(<span class='no'>x</span>)
+<span class='no'>preds</span> <span class='kw'>&lt;-</span> <span class='no'>model</span>
 <span class='fu'><a href='imagenet_decode_predictions.html'>imagenet_decode_predictions</a></span>(<span class='no'>preds</span>, <span class='kw'>top</span> <span class='kw'>=</span> <span class='fl'>3</span>)<span class='kw'>[[</span><span class='fl'>1</span>]]
 }</div></code></pre></div>
 

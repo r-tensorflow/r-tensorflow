@@ -12,11 +12,21 @@ aliases: '/reference/keras/layer_embedding.html'
     <p>For example, <code>list(4L, 20L) -&gt; list(c(0.25, 0.1), c(0.6, -0.2))</code> This layer
 can only be used as the first layer in a model.</p>
 
-    <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>layer_embedding</span>(<span class='no'>object</span>, <span class='no'>input_dim</span>, <span class='no'>output_dim</span>,
-  <span class='kw'>embeddings_initializer</span> <span class='kw'>=</span> <span class='st'>"uniform"</span>, <span class='kw'>embeddings_regularizer</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>activity_regularizer</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>embeddings_constraint</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>mask_zero</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>input_length</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>batch_size</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>name</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>trainable</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>weights</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>layer_embedding</span>(
+  <span class='no'>object</span>,
+  <span class='no'>input_dim</span>,
+  <span class='no'>output_dim</span>,
+  <span class='kw'>embeddings_initializer</span> <span class='kw'>=</span> <span class='st'>"uniform"</span>,
+  <span class='kw'>embeddings_regularizer</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>activity_regularizer</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>embeddings_constraint</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>mask_zero</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
+  <span class='kw'>input_length</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>batch_size</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>name</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>trainable</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>weights</span> <span class='kw'>=</span> <span class='kw'>NULL</span>
+)</code></pre></div>
 
     <h2 id="arguments">Arguments</h2>
     <table class="ref-arguments">

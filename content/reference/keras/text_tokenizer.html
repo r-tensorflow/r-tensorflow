@@ -14,9 +14,14 @@ integers (each integer being the index of a token in a dictionary) or into a
 vector where the coefficient for each token could be binary, based on word
 count, based on tf-idf...</p>
 
-    <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>text_tokenizer</span>(<span class='kw'>num_words</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+    <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>text_tokenizer</span>(
+  <span class='kw'>num_words</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
   <span class='kw'>filters</span> <span class='kw'>=</span> <span class='st'>"!\"#$%&amp;()*+,-./:;&lt;=&gt;?@[\\]^_`{|}~\t\n"</span>,
-  <span class='kw'>lower</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>split</span> <span class='kw'>=</span> <span class='st'>" "</span>, <span class='kw'>char_level</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>oov_token</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</code></pre></div>
+  <span class='kw'>lower</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='kw'>split</span> <span class='kw'>=</span> <span class='st'>" "</span>,
+  <span class='kw'>char_level</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
+  <span class='kw'>oov_token</span> <span class='kw'>=</span> <span class='kw'>NULL</span>
+)</code></pre></div>
 
     <h2 id="arguments">Arguments</h2>
     <table class="ref-arguments">
@@ -80,12 +85,13 @@ was trained on. Only set after <code><a href='fit_text_tokenizer.html'>fit_text_
 
     <h2 id="see-also">See also</h2>
 
-    <div class='dont-index'><p>Other text tokenization: <code><a href='fit_text_tokenizer.html'>fit_text_tokenizer</a></code>,
-  <code><a href='save_text_tokenizer.html'>save_text_tokenizer</a></code>,
-  <code><a href='sequences_to_matrix.html'>sequences_to_matrix</a></code>,
-  <code><a href='texts_to_matrix.html'>texts_to_matrix</a></code>,
-  <code><a href='texts_to_sequences_generator.html'>texts_to_sequences_generator</a></code>,
-  <code><a href='texts_to_sequences.html'>texts_to_sequences</a></code></p></div>
+    <div class='dont-index'><p>Other text tokenization: 
+<code><a href='fit_text_tokenizer.html'>fit_text_tokenizer</a>()</code>,
+<code><a href='save_text_tokenizer.html'>save_text_tokenizer</a>()</code>,
+<code><a href='sequences_to_matrix.html'>sequences_to_matrix</a>()</code>,
+<code><a href='texts_to_matrix.html'>texts_to_matrix</a>()</code>,
+<code><a href='texts_to_sequences_generator.html'>texts_to_sequences_generator</a>()</code>,
+<code><a href='texts_to_sequences.html'>texts_to_sequences</a>()</code></p></div>
 
 
 

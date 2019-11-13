@@ -1,0 +1,72 @@
+---
+title: "Combines input elements into a dataset of windows."
+type: docs
+repo: https://github.com/rstudio/tfdatasets
+menu:
+  main:
+    name: "Combines input elements into a dataset of windows. - tfdatasets"
+    parent: tfdatasets-reference
+aliases: '/reference/tfdatasets/dataset_window.html'
+---
+    
+    <p>Combines input elements into a dataset of windows.</p>
+
+    <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>dataset_window</span>(<span class='no'>dataset</span>, <span class='no'>size</span>, <span class='kw'>shift</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>stride</span> <span class='kw'>=</span> <span class='fl'>1</span>,
+  <span class='kw'>drop_remainder</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)</code></pre></div>
+
+    <h2 id="arguments">Arguments</h2>
+    <table class="ref-arguments">
+    
+    <colgroup>
+      <col class="name" />
+      <col class="desc" />
+    </colgroup>  
+      
+    <tr>
+      <td>dataset</td>
+      <td><p>A dataset</p></td>
+    </tr>
+    <tr>
+      <td>size</td>
+      <td><p>representing the number of elements of the input dataset to
+combine into a window.</p></td>
+    </tr>
+    <tr>
+      <td>shift</td>
+      <td><p>epresenting the forward shift of the sliding window in each
+iteration. Defaults to <code>size</code>.</p></td>
+    </tr>
+    <tr>
+      <td>stride</td>
+      <td><p>representing the stride of the input elements in the sliding
+window.</p></td>
+    </tr>
+    <tr>
+      <td>drop_remainder</td>
+      <td><p>representing whether a window should be dropped in
+case its size is smaller <code>than window_size</code>.</p></td>
+    </tr>
+    </table>
+
+    <h2 id="see-also">See also</h2>
+
+    <div class='dont-index'><p>Other dataset methods: <code><a href='dataset_batch.html'>dataset_batch</a></code>,
+  <code><a href='dataset_cache.html'>dataset_cache</a></code>,
+  <code><a href='dataset_collect.html'>dataset_collect</a></code>,
+  <code><a href='dataset_concatenate.html'>dataset_concatenate</a></code>,
+  <code><a href='dataset_decode_delim.html'>dataset_decode_delim</a></code>,
+  <code><a href='dataset_filter.html'>dataset_filter</a></code>,
+  <code><a href='dataset_interleave.html'>dataset_interleave</a></code>,
+  <code><a href='dataset_map_and_batch.html'>dataset_map_and_batch</a></code>,
+  <code><a href='dataset_map.html'>dataset_map</a></code>,
+  <code><a href='dataset_padded_batch.html'>dataset_padded_batch</a></code>,
+  <code><a href='dataset_prefetch_to_device.html'>dataset_prefetch_to_device</a></code>,
+  <code><a href='dataset_prefetch.html'>dataset_prefetch</a></code>,
+  <code><a href='dataset_repeat.html'>dataset_repeat</a></code>,
+  <code><a href='dataset_shuffle_and_repeat.html'>dataset_shuffle_and_repeat</a></code>,
+  <code><a href='dataset_shuffle.html'>dataset_shuffle</a></code>,
+  <code><a href='dataset_skip.html'>dataset_skip</a></code>, <code><a href='dataset_take.html'>dataset_take</a></code></p></div>
+
+
+
+

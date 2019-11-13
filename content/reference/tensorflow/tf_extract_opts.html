@@ -1,0 +1,94 @@
+---
+title: "Tensor extract options"
+type: docs
+repo: https://github.com/rstudio/tensorflow
+menu:
+  main:
+    name: "Tensor extract options - tensorflow"
+    parent: tensorflow-reference
+aliases: '/reference/tensorflow/tf_extract_opts.html'
+---
+    
+    <p>Tensor extract options</p>
+
+    <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>tf_extract_opts</span>(<span class='kw'>style</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/options.html'>getOption</a></span>(<span class='st'>"tensorflow.extract.style"</span>), <span class='no'>...</span>,
+  <span class='kw'>one_based</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/options.html'>getOption</a></span>(<span class='st'>"tensorflow.extract.one_based"</span>, <span class='fl'>TRUE</span>),
+  <span class='kw'>inclusive_stop</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/options.html'>getOption</a></span>(<span class='st'>"tensorflow.extract.inclusive_stop"</span>, <span class='fl'>TRUE</span>),
+  <span class='kw'>disallow_out_of_bounds</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/options.html'>getOption</a></span>(<span class='st'>"tensorflow.extract.dissallow_out_of_bounds"</span>,
+  <span class='fl'>TRUE</span>),
+  <span class='kw'>warn_tensors_passed_asis</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/options.html'>getOption</a></span>(<span class='st'>"tensorflow.extract.warn_tensors_passed_asis"</span>,
+  <span class='fl'>TRUE</span>),
+  <span class='kw'>warn_negatives_pythonic</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/options.html'>getOption</a></span>(<span class='st'>"tensorflow.extract.warn_negatives_pythonic"</span>,
+  <span class='fl'>TRUE</span>))</code></pre></div>
+
+    <h2 id="arguments">Arguments</h2>
+    <table class="ref-arguments">
+    
+    <colgroup>
+      <col class="name" />
+      <col class="desc" />
+    </colgroup>  
+      
+    <tr>
+      <td>style</td>
+      <td><p>one of <code>NULL</code> (the default) <code>"R"</code> or <code>"python"</code>. If supplied,
+this overrides all other options. <code>"python"</code> is equivalent to all the other
+arguments being <code>FALSE</code>. <code>"R"</code> is equivalent to
+<code>warn_tensors_passed_asis</code> and <code>warn_negatives_pythonic</code>
+set to <code>FALSE</code></p></td>
+    </tr>
+    <tr>
+      <td>...</td>
+      <td><p>ignored</p></td>
+    </tr>
+    <tr>
+      <td>one_based</td>
+      <td><p>TRUE or FALSE, if one-based indexing should be used</p></td>
+    </tr>
+    <tr>
+      <td>inclusive_stop</td>
+      <td><p>TRUE or FALSE, if slices like <code>start:stop</code> should be
+inclusive of <code>stop</code></p></td>
+    </tr>
+    <tr>
+      <td>disallow_out_of_bounds</td>
+      <td><p>TRUE or FALSE, whether checks are performed on
+the slicing index to ensure it is within bounds.</p></td>
+    </tr>
+    <tr>
+      <td>warn_tensors_passed_asis</td>
+      <td><p>TRUE or FALSE, whether to emit a warning the
+first time a tensor is supplied to <code>[</code> that tensors are passed as-is, with
+no R to python translation</p></td>
+    </tr>
+    <tr>
+      <td>warn_negatives_pythonic</td>
+      <td><p>TRUE or FALSE, whether to emit
+a warning the first time a negative number is supplied to <code>[</code> about the
+non-standard (python-style) interpretation</p></td>
+    </tr>
+    </table>
+
+    <h2 id="value">Value</h2>
+
+    <p>an object with class "tf_extract_opts", suitable for passing to
+<code>[.tensorflow.tensor()</code></p>
+
+    <h2 id="examples">Examples</h2>
+    <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><div class='input'><span class='kw'>if</span> (<span class='fl'>FALSE</span>) {
+<span class='no'>x</span> <span class='kw'>&lt;-</span> <span class='no'>tf</span>$<span class='fu'>constant</span>(<span class='fl'>1</span>:<span class='fl'>10</span>)
+
+<span class='no'>opts</span> <span class='kw'>&lt;-</span>  <span class='fu'>tf_extract_opts</span>(<span class='st'>"R"</span>)
+<span class='no'>x</span>[<span class='fl'>1</span>, <span class='kw'>options</span> <span class='kw'>=</span> <span class='no'>opts</span>]
+
+<span class='co'># or for more fine-grained control</span>
+<span class='no'>opts</span> <span class='kw'>&lt;-</span> <span class='fu'>tf_extract_opts</span>(
+    <span class='kw'>one_based</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
+    <span class='kw'>warn_tensors_passed_asis</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
+    <span class='kw'>warn_negatives_pythonic</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>
+)
+<span class='no'>x</span>[<span class='fl'>0</span>:<span class='fl'>2</span>, <span class='kw'>options</span> <span class='kw'>=</span> <span class='no'>opts</span>]
+}</div></code></pre></div>
+
+
+

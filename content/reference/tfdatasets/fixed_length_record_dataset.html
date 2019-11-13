@@ -1,0 +1,57 @@
+---
+title: "A dataset of fixed-length records from one or more binary files."
+type: docs
+repo: https://github.com/rstudio/tfdatasets
+menu:
+  main:
+    name: "A dataset of fixed-length records from one or more binary files. - tfdatasets"
+    parent: tfdatasets-reference
+aliases: '/reference/tfdatasets/fixed_length_record_dataset.html'
+---
+    
+    <p>A dataset of fixed-length records from one or more binary files.</p>
+
+    <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>fixed_length_record_dataset</span>(<span class='no'>filenames</span>, <span class='no'>record_bytes</span>, <span class='kw'>header_bytes</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>footer_bytes</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>buffer_size</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</code></pre></div>
+
+    <h2 id="arguments">Arguments</h2>
+    <table class="ref-arguments">
+    
+    <colgroup>
+      <col class="name" />
+      <col class="desc" />
+    </colgroup>  
+      
+    <tr>
+      <td>filenames</td>
+      <td><p>A string tensor containing one or more filenames.</p></td>
+    </tr>
+    <tr>
+      <td>record_bytes</td>
+      <td><p>An integer representing the number of bytes in each
+record.</p></td>
+    </tr>
+    <tr>
+      <td>header_bytes</td>
+      <td><p>(Optional) An integer scalar representing the number of
+bytes to skip at the start of a file.</p></td>
+    </tr>
+    <tr>
+      <td>footer_bytes</td>
+      <td><p>(Optional) A integer scalar representing the number of
+bytes to ignore at the end of a file.</p></td>
+    </tr>
+    <tr>
+      <td>buffer_size</td>
+      <td><p>(Optional) A integer scalar representing the number of
+bytes to buffer when reading.</p></td>
+    </tr>
+    </table>
+
+    <h2 id="value">Value</h2>
+
+    <p>A dataset</p>
+
+
+
+

@@ -13,11 +13,20 @@ aliases: '/reference/keras/callback_tensorboard.html'
 dynamic graphs of your training and test metrics, as well as activation
 histograms for the different layers in your model.</p>
 
-    <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>callback_tensorboard</span>(<span class='kw'>log_dir</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>histogram_freq</span> <span class='kw'>=</span> <span class='fl'>0</span>,
-  <span class='kw'>batch_size</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>write_graph</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>write_grads</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>write_images</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>embeddings_freq</span> <span class='kw'>=</span> <span class='fl'>0</span>,
-  <span class='kw'>embeddings_layer_names</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>embeddings_metadata</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>embeddings_data</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>update_freq</span> <span class='kw'>=</span> <span class='st'>"epoch"</span>, <span class='kw'>profile_batch</span> <span class='kw'>=</span> <span class='fl'>0</span>)</code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>callback_tensorboard</span>(
+  <span class='kw'>log_dir</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>histogram_freq</span> <span class='kw'>=</span> <span class='fl'>0</span>,
+  <span class='kw'>batch_size</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>write_graph</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='kw'>write_grads</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
+  <span class='kw'>write_images</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
+  <span class='kw'>embeddings_freq</span> <span class='kw'>=</span> <span class='fl'>0</span>,
+  <span class='kw'>embeddings_layer_names</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>embeddings_metadata</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>embeddings_data</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>update_freq</span> <span class='kw'>=</span> <span class='st'>"epoch"</span>,
+  <span class='kw'>profile_batch</span> <span class='kw'>=</span> <span class='fl'>0</span>
+)</code></pre></div>
 
     <h2 id="arguments">Arguments</h2>
     <table class="ref-arguments">
@@ -110,15 +119,16 @@ batch. Must run in TensorFlow eager mode. (TF &gt;= 1.14)</p></td>
 be the display of the losses and metrics plots.</p>
     <h2 id="see-also">See also</h2>
 
-    <div class='dont-index'><p>Other callbacks: <code><a href='callback_csv_logger.html'>callback_csv_logger</a></code>,
-  <code><a href='callback_early_stopping.html'>callback_early_stopping</a></code>,
-  <code><a href='callback_lambda.html'>callback_lambda</a></code>,
-  <code><a href='callback_learning_rate_scheduler.html'>callback_learning_rate_scheduler</a></code>,
-  <code><a href='callback_model_checkpoint.html'>callback_model_checkpoint</a></code>,
-  <code><a href='callback_progbar_logger.html'>callback_progbar_logger</a></code>,
-  <code><a href='callback_reduce_lr_on_plateau.html'>callback_reduce_lr_on_plateau</a></code>,
-  <code><a href='callback_remote_monitor.html'>callback_remote_monitor</a></code>,
-  <code><a href='callback_terminate_on_naan.html'>callback_terminate_on_naan</a></code></p></div>
+    <div class='dont-index'><p>Other callbacks: 
+<code><a href='callback_csv_logger.html'>callback_csv_logger</a>()</code>,
+<code><a href='callback_early_stopping.html'>callback_early_stopping</a>()</code>,
+<code><a href='callback_lambda.html'>callback_lambda</a>()</code>,
+<code><a href='callback_learning_rate_scheduler.html'>callback_learning_rate_scheduler</a>()</code>,
+<code><a href='callback_model_checkpoint.html'>callback_model_checkpoint</a>()</code>,
+<code><a href='callback_progbar_logger.html'>callback_progbar_logger</a>()</code>,
+<code><a href='callback_reduce_lr_on_plateau.html'>callback_reduce_lr_on_plateau</a>()</code>,
+<code><a href='callback_remote_monitor.html'>callback_remote_monitor</a>()</code>,
+<code><a href='callback_terminate_on_naan.html'>callback_terminate_on_naan</a>()</code></p></div>
 
 
 

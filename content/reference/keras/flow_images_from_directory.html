@@ -14,12 +14,23 @@ aliases: '/reference/keras/flow_images_from_directory.html'
     <p>Generates batches of data from images in a directory (with optional
 augmented/normalized data)</p>
 
-    <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>flow_images_from_directory</span>(<span class='no'>directory</span>, <span class='kw'>generator</span> <span class='kw'>=</span> <span class='fu'><a href='image_data_generator.html'>image_data_generator</a></span>(),
-  <span class='kw'>target_size</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>256</span>, <span class='fl'>256</span>), <span class='kw'>color_mode</span> <span class='kw'>=</span> <span class='st'>"rgb"</span>, <span class='kw'>classes</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>class_mode</span> <span class='kw'>=</span> <span class='st'>"categorical"</span>, <span class='kw'>batch_size</span> <span class='kw'>=</span> <span class='fl'>32</span>, <span class='kw'>shuffle</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='kw'>seed</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>save_to_dir</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>save_prefix</span> <span class='kw'>=</span> <span class='st'>""</span>,
-  <span class='kw'>save_format</span> <span class='kw'>=</span> <span class='st'>"png"</span>, <span class='kw'>follow_links</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>subset</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>interpolation</span> <span class='kw'>=</span> <span class='st'>"nearest"</span>)</code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>flow_images_from_directory</span>(
+  <span class='no'>directory</span>,
+  <span class='kw'>generator</span> <span class='kw'>=</span> <span class='fu'><a href='image_data_generator.html'>image_data_generator</a></span>(),
+  <span class='kw'>target_size</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>256</span>, <span class='fl'>256</span>),
+  <span class='kw'>color_mode</span> <span class='kw'>=</span> <span class='st'>"rgb"</span>,
+  <span class='kw'>classes</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>class_mode</span> <span class='kw'>=</span> <span class='st'>"categorical"</span>,
+  <span class='kw'>batch_size</span> <span class='kw'>=</span> <span class='fl'>32</span>,
+  <span class='kw'>shuffle</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='kw'>seed</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>save_to_dir</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>save_prefix</span> <span class='kw'>=</span> <span class='st'>""</span>,
+  <span class='kw'>save_format</span> <span class='kw'>=</span> <span class='st'>"png"</span>,
+  <span class='kw'>follow_links</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
+  <span class='kw'>subset</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>interpolation</span> <span class='kw'>=</span> <span class='st'>"nearest"</span>
+)</code></pre></div>
 
     <h2 id="arguments">Arguments</h2>
     <table class="ref-arguments">
@@ -126,10 +137,12 @@ is used.</p></td>
 array of corresponding labels. The generator loops indefinitely.</p>
     <h2 id="see-also">See also</h2>
 
-    <div class='dont-index'><p>Other image preprocessing: <code><a href='fit_image_data_generator.html'>fit_image_data_generator</a></code>,
-  <code><a href='flow_images_from_dataframe.html'>flow_images_from_dataframe</a></code>,
-  <code><a href='flow_images_from_data.html'>flow_images_from_data</a></code>,
-  <code><a href='image_load.html'>image_load</a></code>, <code><a href='image_to_array.html'>image_to_array</a></code></p></div>
+    <div class='dont-index'><p>Other image preprocessing: 
+<code><a href='fit_image_data_generator.html'>fit_image_data_generator</a>()</code>,
+<code><a href='flow_images_from_dataframe.html'>flow_images_from_dataframe</a>()</code>,
+<code><a href='flow_images_from_data.html'>flow_images_from_data</a>()</code>,
+<code><a href='image_load.html'>image_load</a>()</code>,
+<code><a href='image_to_array.html'>image_to_array</a>()</code></p></div>
 
 
 

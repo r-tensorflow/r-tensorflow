@@ -11,9 +11,12 @@ aliases: '/reference/keras/text_to_word_sequence.html'
     
     <p>Convert text to a sequence of words (or tokens).</p>
 
-    <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>text_to_word_sequence</span>(<span class='no'>text</span>,
+    <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>text_to_word_sequence</span>(
+  <span class='no'>text</span>,
   <span class='kw'>filters</span> <span class='kw'>=</span> <span class='st'>"!\"#$%&amp;()*+,-./:;&lt;=&gt;?@[\\]^_`{|}~\t\n"</span>,
-  <span class='kw'>lower</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>split</span> <span class='kw'>=</span> <span class='st'>" "</span>)</code></pre></div>
+  <span class='kw'>lower</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='kw'>split</span> <span class='kw'>=</span> <span class='st'>" "</span>
+)</code></pre></div>
 
     <h2 id="arguments">Arguments</h2>
     <table class="ref-arguments">
@@ -47,10 +50,12 @@ punctuation. Default includes basic punctuation, tabs, and newlines.</p></td>
     <p>Words (or tokens)</p>
     <h2 id="see-also">See also</h2>
 
-    <div class='dont-index'><p>Other text preprocessing: <code><a href='make_sampling_table.html'>make_sampling_table</a></code>,
-  <code><a href='pad_sequences.html'>pad_sequences</a></code>, <code><a href='skipgrams.html'>skipgrams</a></code>,
-  <code><a href='text_hashing_trick.html'>text_hashing_trick</a></code>,
-  <code><a href='text_one_hot.html'>text_one_hot</a></code></p></div>
+    <div class='dont-index'><p>Other text preprocessing: 
+<code><a href='make_sampling_table.html'>make_sampling_table</a>()</code>,
+<code><a href='pad_sequences.html'>pad_sequences</a>()</code>,
+<code><a href='skipgrams.html'>skipgrams</a>()</code>,
+<code><a href='text_hashing_trick.html'>text_hashing_trick</a>()</code>,
+<code><a href='text_one_hot.html'>text_one_hot</a>()</code></p></div>
 
 
 

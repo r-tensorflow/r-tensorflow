@@ -13,9 +13,19 @@ aliases: '/reference/keras/layer_alpha_dropout.html'
 original values, in order to ensure the self-normalizing property even after
 this dropout.</p>
 
-    <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>layer_alpha_dropout</span>(<span class='no'>object</span>, <span class='no'>rate</span>, <span class='kw'>noise_shape</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>seed</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>input_shape</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>batch_input_shape</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>batch_size</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>dtype</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>name</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>trainable</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>weights</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>layer_alpha_dropout</span>(
+  <span class='no'>object</span>,
+  <span class='no'>rate</span>,
+  <span class='kw'>noise_shape</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>seed</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>input_shape</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>batch_input_shape</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>batch_size</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>dtype</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>name</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>trainable</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>weights</span> <span class='kw'>=</span> <span class='kw'>NULL</span>
+)</code></pre></div>
 
     <h2 id="arguments">Arguments</h2>
     <table class="ref-arguments">
@@ -102,8 +112,9 @@ the first layer in a model.</p>
 
     <h2 id="see-also">See also</h2>
 
-    <div class='dont-index'><p>Other noise layers: <code><a href='layer_gaussian_dropout.html'>layer_gaussian_dropout</a></code>,
-  <code><a href='layer_gaussian_noise.html'>layer_gaussian_noise</a></code></p></div>
+    <div class='dont-index'><p>Other noise layers: 
+<code><a href='layer_gaussian_dropout.html'>layer_gaussian_dropout</a>()</code>,
+<code><a href='layer_gaussian_noise.html'>layer_gaussian_noise</a>()</code></p></div>
 
 
 

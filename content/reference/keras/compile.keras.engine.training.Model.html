@@ -12,9 +12,17 @@ aliases: '/reference/keras/compile.keras.engine.training.Model.html'
     <p>Configure a Keras model for training</p>
 
     <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class='co'># S3 method for keras.engine.training.Model</span>
-<span class='fu'><a href='https://rdrr.io/pkg/generics/man/compile.html'>compile</a></span>(<span class='no'>object</span>, <span class='no'>optimizer</span>, <span class='no'>loss</span>,
-  <span class='kw'>metrics</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>loss_weights</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>sample_weight_mode</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>weighted_metrics</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>target_tensors</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='no'>...</span>)</code></pre></div>
+<span class='fu'><a href='https://rdrr.io/pkg/generics/man/compile.html'>compile</a></span>(
+  <span class='no'>object</span>,
+  <span class='no'>optimizer</span>,
+  <span class='no'>loss</span>,
+  <span class='kw'>metrics</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>loss_weights</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>sample_weight_mode</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>weighted_metrics</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>target_tensors</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='no'>...</span>
+)</code></pre></div>
 
     <h2 id="arguments">Arguments</h2>
     <table class="ref-arguments">
@@ -85,20 +93,23 @@ these arguments are passed into <code>tf$Session()$run</code>.</p></td>
 
     <h2 id="see-also">See also</h2>
 
-    <div class='dont-index'><p>Other model functions: <code><a href='evaluate.keras.engine.training.Model.html'>evaluate.keras.engine.training.Model</a></code>,
-  <code><a href='evaluate_generator.html'>evaluate_generator</a></code>,
-  <code><a href='fit.keras.engine.training.Model.html'>fit.keras.engine.training.Model</a></code>,
-  <code><a href='fit_generator.html'>fit_generator</a></code>, <code><a href='get_config.html'>get_config</a></code>,
-  <code><a href='get_layer.html'>get_layer</a></code>,
-  <code><a href='keras_model_sequential.html'>keras_model_sequential</a></code>,
-  <code><a href='keras_model.html'>keras_model</a></code>, <code><a href='multi_gpu_model.html'>multi_gpu_model</a></code>,
-  <code><a href='pop_layer.html'>pop_layer</a></code>,
-  <code><a href='predict.keras.engine.training.Model.html'>predict.keras.engine.training.Model</a></code>,
-  <code><a href='predict_generator.html'>predict_generator</a></code>,
-  <code><a href='predict_on_batch.html'>predict_on_batch</a></code>,
-  <code><a href='predict_proba.html'>predict_proba</a></code>,
-  <code><a href='summary.keras.engine.training.Model.html'>summary.keras.engine.training.Model</a></code>,
-  <code><a href='train_on_batch.html'>train_on_batch</a></code></p></div>
+    <div class='dont-index'><p>Other model functions: 
+<code><a href='evaluate.keras.engine.training.Model.html'>evaluate.keras.engine.training.Model</a>()</code>,
+<code><a href='evaluate_generator.html'>evaluate_generator</a>()</code>,
+<code><a href='fit.keras.engine.training.Model.html'>fit.keras.engine.training.Model</a>()</code>,
+<code><a href='fit_generator.html'>fit_generator</a>()</code>,
+<code><a href='get_config.html'>get_config</a>()</code>,
+<code><a href='get_layer.html'>get_layer</a>()</code>,
+<code><a href='keras_model_sequential.html'>keras_model_sequential</a>()</code>,
+<code><a href='keras_model.html'>keras_model</a>()</code>,
+<code><a href='multi_gpu_model.html'>multi_gpu_model</a>()</code>,
+<code><a href='pop_layer.html'>pop_layer</a>()</code>,
+<code><a href='predict.keras.engine.training.Model.html'>predict.keras.engine.training.Model</a>()</code>,
+<code><a href='predict_generator.html'>predict_generator</a>()</code>,
+<code><a href='predict_on_batch.html'>predict_on_batch</a>()</code>,
+<code><a href='predict_proba.html'>predict_proba</a>()</code>,
+<code><a href='summary.keras.engine.training.Model.html'>summary.keras.engine.training.Model</a>()</code>,
+<code><a href='train_on_batch.html'>train_on_batch</a>()</code></p></div>
 
 
 

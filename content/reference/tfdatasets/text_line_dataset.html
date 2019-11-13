@@ -1,0 +1,53 @@
+---
+title: "A dataset comprising lines from one or more text files."
+type: docs
+repo: https://github.com/rstudio/tfdatasets
+menu:
+  main:
+    name: "A dataset comprising lines from one or more text files. - tfdatasets"
+    parent: tfdatasets-reference
+aliases: '/reference/tfdatasets/text_line_dataset.html'
+---
+    
+    <p>A dataset comprising lines from one or more text files.</p>
+
+    <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>text_line_dataset</span>(<span class='no'>filenames</span>, <span class='kw'>compression_type</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>record_spec</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>parallel_records</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</code></pre></div>
+
+    <h2 id="arguments">Arguments</h2>
+    <table class="ref-arguments">
+    
+    <colgroup>
+      <col class="name" />
+      <col class="desc" />
+    </colgroup>  
+      
+    <tr>
+      <td>filenames</td>
+      <td><p>String(s) specifying one or more filenames</p></td>
+    </tr>
+    <tr>
+      <td>compression_type</td>
+      <td><p>A string, one of: <code>NULL</code> (no compression), <code>"ZLIB"</code>, or
+<code>"GZIP"</code>.</p></td>
+    </tr>
+    <tr>
+      <td>record_spec</td>
+      <td><p>(Optional) Specification used to decode delimimted text lines
+into records (see <code><a href='delim_record_spec.html'>delim_record_spec()</a></code>).</p></td>
+    </tr>
+    <tr>
+      <td>parallel_records</td>
+      <td><p>(Optional) An integer, representing the number of
+records to decode in parallel. If not specified, records will be
+processed sequentially.</p></td>
+    </tr>
+    </table>
+
+    <h2 id="value">Value</h2>
+
+    <p>A dataset</p>
+
+
+
+

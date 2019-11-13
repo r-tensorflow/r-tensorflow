@@ -1,0 +1,53 @@
+---
+title: "Creates a list of inputs from a dataset"
+type: docs
+repo: https://github.com/rstudio/tfdatasets
+menu:
+  main:
+    name: "Creates a list of inputs from a dataset - tfdatasets"
+    parent: tfdatasets-reference
+aliases: '/reference/tfdatasets/layer_input_from_dataset.html'
+---
+    
+    <p>Create a list ok Keras input layers that can be used together
+with <code><a href='https://rdrr.io/pkg/keras/man/layer_dense_features.html'>keras::layer_dense_features()</a></code>.</p>
+
+    <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>layer_input_from_dataset</span>(<span class='no'>dataset</span>)</code></pre></div>
+
+    <h2 id="arguments">Arguments</h2>
+    <table class="ref-arguments">
+    
+    <colgroup>
+      <col class="name" />
+      <col class="desc" />
+    </colgroup>  
+      
+    <tr>
+      <td>dataset</td>
+      <td><p>a TensorFlow dataset or a data.frame</p></td>
+    </tr>
+    </table>
+
+    <h2 id="value">Value</h2>
+
+    <p>a list of Keras input layers</p>
+
+    <h2 id="examples">Examples</h2>
+    <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><div class='input'><span class='kw'>if</span> (<span class='fl'>FALSE</span>) {
+<span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='no'>tfdatasets</span>)
+<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='no'>hearts</span>)
+<span class='no'>hearts</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='tensor_slices_dataset.html'>tensor_slices_dataset</a></span>(<span class='no'>hearts</span>) <span class='kw'>%&gt;%</span> <span class='fu'><a href='dataset_batch.html'>dataset_batch</a></span>(<span class='fl'>32</span>)
+
+<span class='co'># use the formula interface</span>
+<span class='no'>spec</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='feature_spec.html'>feature_spec</a></span>(<span class='no'>hearts</span>, <span class='no'>target</span> ~ <span class='no'>age</span> + <span class='no'>slope</span>) <span class='kw'>%&gt;%</span>
+  <span class='fu'><a href='step_numeric_column.html'>step_numeric_column</a></span>(<span class='no'>age</span>, <span class='no'>slope</span>) <span class='kw'>%&gt;%</span>
+  <span class='fu'><a href='step_bucketized_column.html'>step_bucketized_column</a></span>(<span class='no'>age</span>, <span class='kw'>boundaries</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>10</span>, <span class='fl'>20</span>, <span class='fl'>30</span>))
+
+<span class='no'>spec</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/generics/man/fit.html'>fit</a></span>(<span class='no'>spec</span>)
+<span class='no'>dataset</span> <span class='kw'>&lt;-</span> <span class='no'>hearts</span> <span class='kw'>%&gt;%</span> <span class='fu'><a href='dataset_use_spec.html'>dataset_use_spec</a></span>(<span class='no'>spec</span>)
+
+<span class='no'>input</span> <span class='kw'>&lt;-</span> <span class='fu'>layer_input_from_dataset</span>(<span class='no'>dataset</span>)
+}</div></code></pre></div>
+
+
+

@@ -1,0 +1,101 @@
+---
+title: "Creates a numeric column specification"
+type: docs
+repo: https://github.com/rstudio/tfdatasets
+menu:
+  main:
+    name: "Creates a numeric column specification - tfdatasets"
+    parent: tfdatasets-reference
+aliases: '/reference/tfdatasets/step_numeric_column.html'
+---
+    
+    <p><code>step_numeric_column</code> creates a numeric column specification. It can also be
+used to normalize numeric columns.</p>
+
+    <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>step_numeric_column</span>(<span class='no'>spec</span>, <span class='no'>...</span>, <span class='kw'>shape</span> <span class='kw'>=</span> <span class='fl'>1L</span>, <span class='kw'>default_value</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>dtype</span> <span class='kw'>=</span> <span class='no'>tf</span>$<span class='no'>float32</span>, <span class='kw'>normalizer_fn</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</code></pre></div>
+
+    <h2 id="arguments">Arguments</h2>
+    <table class="ref-arguments">
+    
+    <colgroup>
+      <col class="name" />
+      <col class="desc" />
+    </colgroup>  
+      
+    <tr>
+      <td>spec</td>
+      <td><p>A feature specification created with <code><a href='feature_spec.html'>feature_spec()</a></code>.</p></td>
+    </tr>
+    <tr>
+      <td>...</td>
+      <td><p>Comma separated list of variable names to apply the step. <a href='selectors.html'>selectors</a> can also be used.</p></td>
+    </tr>
+    <tr>
+      <td>shape</td>
+      <td><p>An iterable of integers specifies the shape of the Tensor. An integer can be given
+which means a single dimension Tensor with given width. The Tensor representing the column will
+have the shape of <code>batch_size</code> + <code>shape</code>.</p></td>
+    </tr>
+    <tr>
+      <td>default_value</td>
+      <td><p>A single value compatible with <code>dtype</code> or an iterable of values compatible
+with <code>dtype</code> which the column takes on during <code>tf.Example</code> parsing if data is missing. A
+default value of <code>NULL</code> will cause <code>tf.parse_example</code> to fail if an example does not contain
+this column. If a single value is provided, the same value will be applied as
+the default value for every item. If an iterable of values is provided, the shape
+of the default_value should be equal to the given shape.</p></td>
+    </tr>
+    <tr>
+      <td>dtype</td>
+      <td><p>defines the type of values. Default value is <code>tf$float32</code>. Must be a non-quantized,
+real integer or floating point type.</p></td>
+    </tr>
+    <tr>
+      <td>normalizer_fn</td>
+      <td><p>If not <code>NULL</code>, a function that can be used to normalize the value
+of the tensor after default_value is applied for parsing. Normalizer function takes the
+input Tensor as its argument, and returns the output Tensor. (e.g. <code>function(x) (x - 3.0) / 4.2)</code>.
+Please note that even though the most common use case of this function is normalization, it
+can be used for any kind of Tensorflow transformations. You can also a pre-made <a href='scaler.html'>scaler</a>, in
+this case a function will be created after <a href='fit.FeatureSpec.html'>fit.FeatureSpec</a> is called on the feature specification.</p></td>
+    </tr>
+    </table>
+
+    <h2 id="value">Value</h2>
+
+    <p>a <code>FeatureSpec</code> object.</p>
+    <h2 id="see-also">See also</h2>
+
+    <div class='dont-index'><p><a href='steps.html'>steps</a> for a complete list of allowed steps.</p>
+<p>Other Feature Spec Functions: <code><a href='dataset_use_spec.html'>dataset_use_spec</a></code>,
+  <code><a href='feature_spec.html'>feature_spec</a></code>,
+  <code><a href='fit.FeatureSpec.html'>fit.FeatureSpec</a></code>,
+  <code><a href='step_bucketized_column.html'>step_bucketized_column</a></code>,
+  <code><a href='step_categorical_column_with_hash_bucket.html'>step_categorical_column_with_hash_bucket</a></code>,
+  <code><a href='step_categorical_column_with_identity.html'>step_categorical_column_with_identity</a></code>,
+  <code><a href='step_categorical_column_with_vocabulary_file.html'>step_categorical_column_with_vocabulary_file</a></code>,
+  <code><a href='step_categorical_column_with_vocabulary_list.html'>step_categorical_column_with_vocabulary_list</a></code>,
+  <code><a href='step_crossed_column.html'>step_crossed_column</a></code>,
+  <code><a href='step_embedding_column.html'>step_embedding_column</a></code>,
+  <code><a href='step_indicator_column.html'>step_indicator_column</a></code>,
+  <code><a href='step_remove_column.html'>step_remove_column</a></code>,
+  <code><a href='step_shared_embeddings_column.html'>step_shared_embeddings_column</a></code>,
+  <code><a href='steps.html'>steps</a></code></p></div>
+
+    <h2 id="examples">Examples</h2>
+    <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><div class='input'><span class='kw'>if</span> (<span class='fl'>FALSE</span>) {
+<span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='no'>tfdatasets</span>)
+<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='no'>hearts</span>)
+<span class='no'>hearts</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='tensor_slices_dataset.html'>tensor_slices_dataset</a></span>(<span class='no'>hearts</span>) <span class='kw'>%&gt;%</span> <span class='fu'><a href='dataset_batch.html'>dataset_batch</a></span>(<span class='fl'>32</span>)
+
+<span class='co'># use the formula interface</span>
+<span class='no'>spec</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='feature_spec.html'>feature_spec</a></span>(<span class='no'>hearts</span>, <span class='no'>target</span> ~ <span class='no'>age</span>) <span class='kw'>%&gt;%</span>
+  <span class='fu'>step_numeric_column</span>(<span class='no'>age</span>, <span class='kw'>normalizer_fn</span> <span class='kw'>=</span> <span class='fu'>standard_scaler</span>())
+
+<span class='no'>spec_fit</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/generics/man/fit.html'>fit</a></span>(<span class='no'>spec</span>)
+<span class='no'>final_dataset</span> <span class='kw'>&lt;-</span> <span class='no'>hearts</span> <span class='kw'>%&gt;%</span> <span class='fu'><a href='dataset_use_spec.html'>dataset_use_spec</a></span>(<span class='no'>spec_fit</span>)
+}</div></code></pre></div>
+
+
+

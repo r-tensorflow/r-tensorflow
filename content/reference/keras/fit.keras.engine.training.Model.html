@@ -12,14 +12,25 @@ aliases: '/reference/keras/fit.keras.engine.training.Model.html'
     <p>Trains the model for a fixed number of epochs (iterations on a dataset).</p>
 
     <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class='co'># S3 method for keras.engine.training.Model</span>
-<span class='fu'><a href='https://rdrr.io/pkg/generics/man/fit.html'>fit</a></span>(<span class='no'>object</span>, <span class='kw'>x</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>y</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>batch_size</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>epochs</span> <span class='kw'>=</span> <span class='fl'>10</span>,
+<span class='fu'><a href='https://rdrr.io/pkg/generics/man/fit.html'>fit</a></span>(
+  <span class='no'>object</span>,
+  <span class='kw'>x</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>y</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>batch_size</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>epochs</span> <span class='kw'>=</span> <span class='fl'>10</span>,
   <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/options.html'>getOption</a></span>(<span class='st'>"keras.fit_verbose"</span>, <span class='kw'>default</span> <span class='kw'>=</span> <span class='fl'>1</span>),
-  <span class='kw'>callbacks</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>view_metrics</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/options.html'>getOption</a></span>(<span class='st'>"keras.view_metrics"</span>,
-  <span class='kw'>default</span> <span class='kw'>=</span> <span class='st'>"auto"</span>), <span class='kw'>validation_split</span> <span class='kw'>=</span> <span class='fl'>0</span>, <span class='kw'>validation_data</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>shuffle</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>class_weight</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>sample_weight</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>initial_epoch</span> <span class='kw'>=</span> <span class='fl'>0</span>, <span class='kw'>steps_per_epoch</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>validation_steps</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='no'>...</span>)</code></pre></div>
+  <span class='kw'>callbacks</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>view_metrics</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/options.html'>getOption</a></span>(<span class='st'>"keras.view_metrics"</span>, <span class='kw'>default</span> <span class='kw'>=</span> <span class='st'>"auto"</span>),
+  <span class='kw'>validation_split</span> <span class='kw'>=</span> <span class='fl'>0</span>,
+  <span class='kw'>validation_data</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>shuffle</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='kw'>class_weight</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>sample_weight</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>initial_epoch</span> <span class='kw'>=</span> <span class='fl'>0</span>,
+  <span class='kw'>steps_per_epoch</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>validation_steps</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='no'>...</span>
+)</code></pre></div>
 
     <h2 id="arguments">Arguments</h2>
     <table class="ref-arguments">
@@ -146,20 +157,23 @@ Total number of steps (batches of samples) to validate before stopping.</p></td>
 during training.</p>
     <h2 id="see-also">See also</h2>
 
-    <div class='dont-index'><p>Other model functions: <code><a href='compile.keras.engine.training.Model.html'>compile.keras.engine.training.Model</a></code>,
-  <code><a href='evaluate.keras.engine.training.Model.html'>evaluate.keras.engine.training.Model</a></code>,
-  <code><a href='evaluate_generator.html'>evaluate_generator</a></code>,
-  <code><a href='fit_generator.html'>fit_generator</a></code>, <code><a href='get_config.html'>get_config</a></code>,
-  <code><a href='get_layer.html'>get_layer</a></code>,
-  <code><a href='keras_model_sequential.html'>keras_model_sequential</a></code>,
-  <code><a href='keras_model.html'>keras_model</a></code>, <code><a href='multi_gpu_model.html'>multi_gpu_model</a></code>,
-  <code><a href='pop_layer.html'>pop_layer</a></code>,
-  <code><a href='predict.keras.engine.training.Model.html'>predict.keras.engine.training.Model</a></code>,
-  <code><a href='predict_generator.html'>predict_generator</a></code>,
-  <code><a href='predict_on_batch.html'>predict_on_batch</a></code>,
-  <code><a href='predict_proba.html'>predict_proba</a></code>,
-  <code><a href='summary.keras.engine.training.Model.html'>summary.keras.engine.training.Model</a></code>,
-  <code><a href='train_on_batch.html'>train_on_batch</a></code></p></div>
+    <div class='dont-index'><p>Other model functions: 
+<code><a href='compile.keras.engine.training.Model.html'>compile.keras.engine.training.Model</a>()</code>,
+<code><a href='evaluate.keras.engine.training.Model.html'>evaluate.keras.engine.training.Model</a>()</code>,
+<code><a href='evaluate_generator.html'>evaluate_generator</a>()</code>,
+<code><a href='fit_generator.html'>fit_generator</a>()</code>,
+<code><a href='get_config.html'>get_config</a>()</code>,
+<code><a href='get_layer.html'>get_layer</a>()</code>,
+<code><a href='keras_model_sequential.html'>keras_model_sequential</a>()</code>,
+<code><a href='keras_model.html'>keras_model</a>()</code>,
+<code><a href='multi_gpu_model.html'>multi_gpu_model</a>()</code>,
+<code><a href='pop_layer.html'>pop_layer</a>()</code>,
+<code><a href='predict.keras.engine.training.Model.html'>predict.keras.engine.training.Model</a>()</code>,
+<code><a href='predict_generator.html'>predict_generator</a>()</code>,
+<code><a href='predict_on_batch.html'>predict_on_batch</a>()</code>,
+<code><a href='predict_proba.html'>predict_proba</a>()</code>,
+<code><a href='summary.keras.engine.training.Model.html'>summary.keras.engine.training.Model</a>()</code>,
+<code><a href='train_on_batch.html'>train_on_batch</a>()</code></p></div>
 
 
 

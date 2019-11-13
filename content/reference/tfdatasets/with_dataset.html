@@ -1,0 +1,57 @@
+---
+title: "Execute code that traverses a dataset"
+type: docs
+repo: https://github.com/rstudio/tfdatasets
+menu:
+  main:
+    name: "Execute code that traverses a dataset - tfdatasets"
+    parent: tfdatasets-reference
+aliases: '/reference/tfdatasets/with_dataset.html'
+---
+    
+    <p>Execute code that traverses a dataset</p>
+
+    <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>with_dataset</span>(<span class='no'>expr</span>)</code></pre></div>
+
+    <h2 id="arguments">Arguments</h2>
+    <table class="ref-arguments">
+    
+    <colgroup>
+      <col class="name" />
+      <col class="desc" />
+    </colgroup>  
+      
+    <tr>
+      <td>expr</td>
+      <td><p>Expression to execute</p></td>
+    </tr>
+    </table>
+
+    <h2 id="details">Details</h2>
+
+    <p>When a dataset iterator reaches the end, an out of range runtime error
+will occur. You can catch and ignore the error when it occurs by wrapping
+your iteration code in a call to <code>with_dataset()</code> (see the example
+below for an illustration).</p>
+
+    <h2 id="examples">Examples</h2>
+    <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><div class='input'><span class='kw'>if</span> (<span class='fl'>FALSE</span>) {
+<span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='no'>tfdatasets</span>)
+<span class='no'>dataset</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='text_line_dataset.html'>text_line_dataset</a></span>(<span class='st'>"mtcars.csv"</span>, <span class='kw'>record_spec</span> <span class='kw'>=</span> <span class='no'>mtcars_spec</span>) <span class='kw'>%&gt;%</span>
+  <span class='fu'><a href='dataset_prepare.html'>dataset_prepare</a></span>(<span class='kw'>x</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='no'>mpg</span>, <span class='no'>disp</span>), <span class='kw'>y</span> <span class='kw'>=</span> <span class='no'>cyl</span>) <span class='kw'>%&gt;%</span>
+  <span class='fu'><a href='dataset_batch.html'>dataset_batch</a></span>(<span class='fl'>128</span>) <span class='kw'>%&gt;%</span>
+  <span class='fu'><a href='dataset_repeat.html'>dataset_repeat</a></span>(<span class='fl'>10</span>)
+
+<span class='no'>iter</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='make-iterator.html'>make_iterator_one_shot</a></span>(<span class='no'>dataset</span>)
+<span class='no'>next_batch</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='iterator_get_next.html'>iterator_get_next</a></span>(<span class='no'>iter</span>)
+
+<span class='fu'>with_dataset</span>({
+  <span class='kw'>while</span>(<span class='fl'>TRUE</span>) {
+    <span class='no'>batch</span> <span class='kw'>&lt;-</span> <span class='no'>sess</span>$<span class='fu'>run</span>(<span class='no'>next_batch</span>)
+    <span class='co'># use batch$x and batch$y tensors</span>
+  }
+})
+}</div></code></pre></div>
+
+
+

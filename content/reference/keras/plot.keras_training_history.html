@@ -12,10 +12,15 @@ aliases: '/reference/keras/plot.keras_training_history.html'
     <p>Plots metrics recorded during training.</p>
 
     <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class='co'># S3 method for keras_training_history</span>
-<span class='fu'><a href='https://rdrr.io/r/graphics/plot.html'>plot</a></span>(<span class='no'>x</span>, <span class='no'>y</span>, <span class='kw'>metrics</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+<span class='fu'><a href='https://rdrr.io/r/graphics/plot.html'>plot</a></span>(
+  <span class='no'>x</span>,
+  <span class='no'>y</span>,
+  <span class='kw'>metrics</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
   <span class='kw'>method</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"auto"</span>, <span class='st'>"ggplot2"</span>, <span class='st'>"base"</span>),
   <span class='kw'>smooth</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/options.html'>getOption</a></span>(<span class='st'>"keras.plot.history.smooth"</span>, <span class='fl'>TRUE</span>),
-  <span class='kw'>theme_bw</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/options.html'>getOption</a></span>(<span class='st'>"keras.plot.history.theme_bw"</span>, <span class='fl'>FALSE</span>), <span class='no'>...</span>)</code></pre></div>
+  <span class='kw'>theme_bw</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/options.html'>getOption</a></span>(<span class='st'>"keras.plot.history.theme_bw"</span>, <span class='fl'>FALSE</span>),
+  <span class='no'>...</span>
+)</code></pre></div>
 
     <h2 id="arguments">Arguments</h2>
     <table class="ref-arguments">
