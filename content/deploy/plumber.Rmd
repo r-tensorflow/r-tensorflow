@@ -110,6 +110,7 @@ function(enc) {
 }
 ```
 
+
 Make sure to have the your SavedModel in the same folder as `api.R` and call:
 
 ```{r, eval = FALSE}
@@ -149,6 +150,33 @@ You can also access the Swagger interface by accessing [http://127.0.0.1:8000/__
 
 ![](../images/swagger.png)
 
+## More advanced models
+
+When building more advanced models you may not be able to save the entire model using the `save_model_tf` function. In this case you can use the `save_model_weights_tf` function. 
+
+For example:
+
+```{r, eval = FALSE}
+save_model_weights_tf(model, " cnn-model-weights")
+```
+
+Then, in the `api.R` file whenn loading the model you will need to rebuild the model using the exact same code that you used when training and saving and then use `load_model_weights_tf` to load
+the model weights.
+
+```{r, eval = FALSE}
+model <- keras_model_sequential() %>% 
+  layer_conv_2d(filters = 16, kernel_size = c(3,3), activation = "relu") %>% 
+  layer_max_pooling_2d(pool_size = c(2,2)) %>% 
+  layer_conv_2d(filters = 16, kernel_size = c(3,3), activation = "relu") %>% 
+  layer_max_pooling_2d(pool_size = c(2,2)) %>% 
+  layer_flatten() %>% 
+  layer_dense(units = 128, activation = "relu") %>% 
+  layer_dense(units = 10, activation = "softmax")
+
+load_model_weights_tf(model, "cnn-model-weights")
+```
+
 ## Hosting the plumber API
 
 Plumber is very flexible and allows multiple hosting options. See the plumber [Hostinng documentation](https://www.rplumber.io/docs/hosting.html) for more information.
+
