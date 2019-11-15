@@ -199,7 +199,25 @@ disqusShortname = "r-tensorflow"
 	weight = 52
 	url = "/guide/tfhub/key-concepts"
 	
-
+[[menu.main]]
+	name   = "Model saving"
+	parent = "guide-top"
+	weight = 60
+	url = ""	
+	
+[[menu.main]]
+	name   = "Checkpoints"
+	parent = "guide-top"
+	identifier = "saving-top"
+	weight = 61
+	url = "/guide/saving/checkpoints"
+	
+[[menu.main]]
+	name   = "Saved_model"
+	parent = "guide-top"
+	identifier = "saving-top"
+	weight = 62
+	url = "/guide/saving/saved_model"
 
 # Deploy
 
