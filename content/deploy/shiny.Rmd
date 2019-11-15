@@ -3,7 +3,7 @@ title: "Deploying a Shiny app with a TensorFlow model"
 type: docs
 menu:
   main:
-    name: "Shiny app"
+    name: "Shiny"
     identifier: "deploy-shiny"
     parent: "deploy-top"
     weight: 10

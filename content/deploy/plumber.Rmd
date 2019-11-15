@@ -3,7 +3,7 @@ title: "Deploying a TensorFlow API with Plumber"
 type: docs
 menu:
   main:
-    name: "Plumber API"
+    name: "Plumber"
     identifier: "deploy-plumber"
     parent: "deploy-top"
     weight: 10
