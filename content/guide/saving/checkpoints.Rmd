@@ -11,7 +11,7 @@ menu:
   main:
     name: "Checkpoints"
     identifier: "checkpoints"
-    parent: "saving-top"
+    parent: "saving-checkpoint-top"
     weight: 10
 ---
 

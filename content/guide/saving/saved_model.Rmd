@@ -1,5 +1,5 @@
 ---
-title: "Saved_model"
+title: "Saved Model"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Checkpoints}
@@ -9,9 +9,9 @@ type: docs
 repo: https://github.com/rstudio/tfhub
 menu:
   main:
-    name: "Saved_model"
+    name: "Saved Model"
     identifier: "saved_model"
-    parent: "saving-top"
+    parent: "saving-savedmodel-top"
     weight: 20
 ---
 

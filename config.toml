@@ -208,14 +208,14 @@ disqusShortname = "r-tensorflow"
 [[menu.main]]
 	name   = "Checkpoints"
 	parent = "guide-top"
-	identifier = "saving-top"
+	identifier = "saving-checkpoint-top"
 	weight = 61
 	url = "/guide/saving/checkpoints"
 	
 [[menu.main]]
-	name   = "Saved_model"
+	name   = "Saved Model"
 	parent = "guide-top"
-	identifier = "saving-top"
+	identifier = "saving-savedmodel-top"
 	weight = 62
 	url = "/guide/saving/saved_model"
 
