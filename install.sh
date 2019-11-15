@@ -1,6 +1,6 @@
 # Install R dependencies
 
-Rscript -e 'install.packages(c("remotes", "blogdown", "rprojroot", "pkgdown", "pins"),  
+Rscript -e 'install.packages(c("remotes", "blogdown", "rprojroot", "pkgdown", "pins", "magick"),  
                              repos = "https://demo.rstudiopm.com/all/__linux__/bionic/latest")'
 Rscript -e 'remotes::install_github(c("rstudio/keras",
                                       "rstudio/tensorflow",
