@@ -44,7 +44,7 @@ menu:
 <a class="sourceLine" id="cb1-16" data-line-number="16">      self<span class="op">$</span>bn &lt;-<span class="st"> </span><span class="kw"><a href="../../keras/reference/layer_batch_normalization.html">layer_batch_normalization</a></span>(<span class="dt">axis =</span> <span class="dv">-1</span>)</a>
 <a class="sourceLine" id="cb1-17" data-line-number="17">    </a>
 <a class="sourceLine" id="cb1-18" data-line-number="18">    <span class="co"># implement call (this code executes during training &amp; inference)</span></a>
-<a class="sourceLine" id="cb1-19" data-line-number="19">    <span class="cf">function</span>(inputs, <span class="dt">mask =</span> <span class="ot">NULL</span>) {</a>
+<a class="sourceLine" id="cb1-19" data-line-number="19">    <span class="cf">function</span>(inputs, <span class="dt">mask =</span> <span class="ot">NULL</span>, <span class="dt">training =</span> <span class="ot">FALSE</span>) {</a>
 <a class="sourceLine" id="cb1-20" data-line-number="20">      x &lt;-<span class="st"> </span>self<span class="op">$</span><span class="kw">dense1</span>(inputs)</a>
 <a class="sourceLine" id="cb1-21" data-line-number="21">      <span class="cf">if</span> (use_dp)</a>
 <a class="sourceLine" id="cb1-22" data-line-number="22">        x &lt;-<span class="st"> </span>self<span class="op">$</span><span class="kw">dp</span>(x)</a>
