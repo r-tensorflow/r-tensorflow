@@ -237,7 +237,7 @@ disqusShortname = "r-tensorflow"
 
 [[menu.main]]
 	name   = "Learn"
-	url    = "/learn/resources.html"
+	url    = "/learn/resources/"
 	identifier = "learn-top"
 	weight = 80	
 
