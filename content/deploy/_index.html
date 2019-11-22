@@ -1,0 +1,36 @@
+---
+title: "Overview"
+type: docs
+menu:
+  main:
+    name: "Overview"
+    identifier: "deploy-overview"
+    parent: "deploy-top"
+    weight: 1
+---
+
+
+
+<p>There are multiple ways to deploy TensorFlow models. In this section we will
+describe some of the most used ways of deploying those models.</p>
+<ul>
+<li><p><strong><a href="/deploy/plumber">Plumber API</a></strong>: Create a REST API using Plumber to deploy
+your TensorFlow model. With Plumber you will still depend on having an R runtime
+which be useful when you want to make the data pre-processing in R.</p></li>
+<li><p><strong><a href="/deploy/shiny">Shiny</a></strong>: Create a Shiny app that uses a TensorFlow model
+to generate outputs.</p></li>
+<li><p><strong><a href="/deploy/docker">TensorFlow Serving</a></strong>: This is the most performant way of deploying TensorFlow models since it’s based only inn the <a href="https://github.com/tensorflow/serving">TensorFlow serving C++ server</a>. With TF serving you don’t depend
+on an R runtime, so all pre-processing must be done in the TensorFlow graph.</p></li>
+<li><p><strong><a href="/deploy/rsconnect">RStudio Connect</a></strong>: RStudio Connect makes it easy to deploy
+TensorFlow models and uses TensorFlow serving in the backend.</p></li>
+</ul>
+<p>There are many other options to deploy TensorFlow models built with R that are not
+covered in this section. For example:</p>
+<ul>
+<li>Deploy it using a Python runtime.</li>
+<li>Deploy using a <a href="https://www.tensorflow.org/js/tutorials#convert_pretained_models_to_tensorflowjs">JavaScript runtime</a>.</li>
+<li>Deploy to a mobile phone app using <a href="https://www.tensorflow.org/lite/guide">TensorFlow Lite</a>.</li>
+<li>Deploy to a iOS app using <a href="https://developer.apple.com/documentation/coreml/converting_trained_models_to_core_ml">Apple’s Core ML tool</a>.</li>
+<li>
+<a href="https://github.com/tmobile/r-tensorflow-api">Use plumber and Docker to deploy your TensorFlow model</a> (by T-Mobile).</li>
+</ul>
