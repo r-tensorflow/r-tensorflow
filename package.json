@@ -1,0 +1,25 @@
+{
+  "name": "tensorflow.rstudio.com",
+  "version": "0.0.1",
+  "description": "This is the source for the new [tensorflow.rstudio.com](https://tensorflow.rstudio.com) site.",
+  "dependencies": {
+    "directory-tree": "^1.1.1",
+    "hugo-lunr": "0.0.4",
+    "lunr": "^0.7.1",
+    "node": "^13.1.0",
+    "remove-markdown": "^0.1.0"
+  },
+  "scripts": {
+    "index": "hugo-lunr -i \"content/**\" -o static/lunr.json"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rstudio/tensorflow.rstudio.com.v2.git"
+  },
+  "author": "",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/rstudio/tensorflow.rstudio.com.v2/issues"
+  },
+  "homepage": "https://github.com/rstudio/tensorflow.rstudio.com.v2"
+}

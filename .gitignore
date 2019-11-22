@@ -43,3 +43,4 @@ public
 r-tensorflow.Rproj
 cnn-mnist
 cnn-mnist2
+package-lock.json
