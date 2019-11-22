@@ -4,6 +4,10 @@ const fs = require('fs');
 const lunr = require('lunr');
 const removeMd = require('remove-markdown');
 
+Array.prototype.contains = function(element){
+        return this.indexOf(element) > -1;
+      };
+
 
 //Get content map
 const tree = dirTree('./content');
@@ -35,8 +39,11 @@ function transverseTree(tree) {
       
       var string_path = treeItem.path.toString();
       
-      if (string_path.substr(string_path.length - 3) != "Rmd") {
+      
+      
+      if (!["Rmd", "tml", ".md"].contains(string_path.substr(string_path.length - 3))) {
         console.log(string_path, "was skipped and not added to the index.");
+        console.log(string_path.substr(string_path.length - 3), string_path.substr(string_path.length - 3) in ["Rmd", "tml", ".md"]);
         return;
       }
       
