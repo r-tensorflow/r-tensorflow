@@ -19,6 +19,9 @@ menu:
 knitr::opts_chunk$set(echo = TRUE, eval = TRUE)
 ```
 
+> Note: This tutorial requires TensorFlow version >= 2.1
+
+
 This tutorial classifies movie reviews as positive or negative using the text of the review. This is an example of binary — or two-class — classification, an important and widely applicable kind of machine learning problem.
 
 We'll use the [IMDB dataset](https://keras.rstudio.com/reference/dataset_imdb.html) that contains the text of 50,000 movie reviews from the [Internet Movie Database](https://www.imdb.com/). These are split into 25,000 reviews for training and 25,000 reviews for testing. The training and testing sets are balanced, meaning they contain an equal number of positive and negative reviews.
@@ -34,130 +37,113 @@ library(purrr)
 ```
 
 
-## Download the IMDB dataset
+## Download the Movie Reviews dataset
 
-The IMDB dataset comes packaged with Keras. It has already been preprocessed such that the reviews (sequences of words) have been converted to sequences of integers, where each integer represents a specific word in a dictionary.
+We will use the Movie Reviews dataset created by Bo Pang and Lillian Lee. This dataset is 
+redistributed with NLTK with permission from the authors.
 
-The following code downloads the IMDB dataset to your machine (or uses a cached copy if you've already downloaded it):
+The dataset can be found [here](https://www.kaggle.com/nltkdata/movie-review#movie_review.csv)
+and can be downloaded from the Kaggle UI or using the [pins](https://github.com/rstudio/pins)
+package. 
 
-```{r}
-imdb <- dataset_imdb(num_words = 10000)
-
-c(train_data, train_labels) %<-% imdb$train
-c(test_data, test_labels) %<-% imdb$test
-```
-
-
-The argument `num_words = 10000` keeps the top 10,000 most frequently occurring words in the training data. The rare words are discarded to keep the size of the data manageable.
-
-Conveniently, the dataset comes with an index mapping words to integers, which has to be downloaded separately:
+If you are going to use [pins](https://github.copm/rstudio/pins) follow this [tutorial](https://rstudio.github.io/pins/articles/boards-kaggle.html) to register
+the Kaggle board. Then you can run:
 
 ```{r}
-word_index <- dataset_imdb_word_index()
+paths <- pins::pin_get("nltkdata/movie-review", "kaggle")
+# we only need the movie_review.csv file
+path <- paths[1]
 ```
 
+Now let's read it to R using the `read_csv` funcntion from the `readr` package.
+
+```{r}
+df <- readr::read_csv(path)
+head(df)
+```
 
 ## Explore the data
 
-Let's take a moment to understand the format of the data. The dataset comes preprocessed: each example is an array of integers representing the words of the movie review. Each label is an integer value of either 0 or 1, where 0 is a negative review, and 1 is a positive review.
+Let's take a moment to understand the format of the data. The dataset has 60k rows, each
+one representing a movie review. The `text` column has the actual review and the `tag`
+represents shows us the classified sentiment for the review.
 
 ```{r}
-paste0("Training entries: ", length(train_data), ", labels: ", length(train_labels))
+df %>% count(tag)
 ```
 
-The texts of the reviews have been converted to integers, where each integer represents a specific word in a dictionary. Here's what the first review looks like:
+Around half of the reviews are negative and the other half are positive.
+Here is an example of a review:
 
 ```{r}
-train_data[[1]]
+df$text[1]
 ```
 
-Movie reviews may be different lengths. The below code shows the number of words in the first and second reviews. Since inputs to a neural network must be the same length, we'll need to resolve this later.
+Let's also split our dataset into training and testing:
 
 ```{r}
-length(train_data[[1]])
-length(train_data[[2]])
+training_id <- sample.int(nrow(df), size = nrow(df)*0.8)
+training <- df[training_id,]
+testing <- df[-training_id,]
 ```
 
-#### Convert the integers back to words
-
-It may be useful to know how to convert integers back to text.
-We already have the `word_index` we downloaded above — a list with words as keys and integers as values. If we create a data frame from it, we can conveniently use it in both directions.
+It's also useful to find out what is the distribution of the number of words
+in each review.
 
 ```{r}
-word_index_df <- data.frame(
-  word = names(word_index),
-  idx = unlist(word_index, use.names = FALSE),
-  stringsAsFactors = FALSE
-)
-
-# The first indices are reserved  
-word_index_df <- word_index_df %>% mutate(idx = idx + 3)
-word_index_df <- word_index_df %>%
-  add_row(word = "<PAD>", idx = 0)%>%
-  add_row(word = "<START>", idx = 1)%>%
-  add_row(word = "<UNK>", idx = 2)%>%
-  add_row(word = "<UNUSED>", idx = 3)
-
-word_index_df <- word_index_df %>% arrange(idx)
-
-decode_review <- function(text){
-  paste(map(text, function(number) word_index_df %>%
-              filter(idx == number) %>%
-              select(word) %>% 
-              pull()),
-        collapse = " ")
-}
-```
-
-
-Now we can use the decode_review function to display the text for the first review:
-
-```{r}
-decode_review(train_data[[1]])
+df$text %>% 
+  strsplit(" ") %>% 
+  sapply(length) %>% 
+  summary()
 ```
 
 ## Prepare the data
 
-The reviews — the arrays of integers — must be converted to tensors before fed into the neural network. This conversion can be done a couple of ways:
+The reviews — the text — must be converted to tensors before fed into the neural network. 
+First, we create a dictionary and represent each of the 10,000 most common words by an integer. In this case, every review will be represented by a sequence of integers.
+
+Then we can represent reviews in a couple of ways:
 
  - One-hot-encode the arrays to convert them into vectors of 0s and 1s. For example, the sequence [3, 5] would become a 10,000-dimensional vector that is all zeros except for indices 3 and 5, which are ones. Then, make this the first layer in our network — a `dense` layer — that can handle floating point vector data. This approach is memory intensive, though, requiring a `num_words * num_reviews` size matrix.
 
  - Alternatively, we can pad the arrays so they all have the same length, then create an integer tensor of shape `num_examples * max_length`. We can use an embedding layer capable of handling this shape as the first layer in our network.
 
 In this tutorial, we will use the second approach.
-
-Since the movie reviews must be the same length, we will use the [pad_sequences](https://keras.rstudio.com/reference/pad_sequences.html) function to standardize the lengths:
+Now, let's define our Text Vectorization layer, it will be responsible to take
+the string input and convert it to a Tensor. 
 
 ```{r}
-train_data <- pad_sequences(
-  train_data,
-  value = word_index_df %>% filter(word == "<PAD>") %>% select(idx) %>% pull(),
-  padding = "post",
-  maxlen = 256
-)
-
-test_data <- pad_sequences(
-  test_data,
-  value = word_index_df %>% filter(word == "<PAD>") %>% select(idx) %>% pull(),
-  padding = "post",
-  maxlen = 256
+num_words <- 10000
+max_length <- 50
+text_vectorization <- layer_text_vectorization(
+  max_tokens = num_words, 
+  output_sequence_length = max_length, 
 )
 ```
 
-
-Let's look at the length of the examples now:
+Now, we need to `adapt` the Text Vectorization layer. It's when we call `adapt`
+that the layer will learn about unique words in our dataset and assign an integer
+value for each one.
 
 ```{r}
-length(train_data[1, ])
-length(train_data[2, ])
+text_vectorization %>% 
+  adapt(df$text)
+```
+
+We can now see the vocabulary is in our text vectorization layer.
+
+```{r, eval = FALSE}
+# TODO see https://github.com/tensorflow/tensorflow/pull/34529
+get_vocabulary(text_vectorization)
+```
+
+You can see how the text vectorization layer transforms it's inputs:
+
+```{r}
+text_vectorization(matrix(df$text[1], ncol = 1))
 ```
 
 
-And inspect the (now padded) first review:
-
-```{r}
-train_data[1, ]
-```
 
 ## Build the model
 
@@ -169,17 +155,17 @@ The neural network is created by stacking layers — this requires two main arch
 In this example, the input data consists of an array of word-indices. The labels to predict are either 0 or 1. Let's build a model for this problem:
 
 ```{r}
-# input shape is the vocabulary count used for the movie reviews (10,000 words)
-vocab_size <- 10000
+input <- layer_input(shape = c(1), dtype = "string")
 
-model <- keras_model_sequential()
-model %>% 
-  layer_embedding(input_dim = vocab_size, output_dim = 16) %>%
+output <- input %>% 
+  text_vectorization() %>% 
+  layer_embedding(input_dim = num_words + 1, output_dim = 16) %>%
   layer_global_average_pooling_1d() %>%
   layer_dense(units = 16, activation = "relu") %>%
+  layer_dropout(0.5) %>% 
   layer_dense(units = 1, activation = "sigmoid")
 
-summary(model)
+model <- keras_model(input, output)
 ```
 
 
@@ -218,31 +204,17 @@ model %>% compile(
 ```
 
 
-## Create a validation set
-
-When training, we want to check the accuracy of the model on data it hasn't seen before. Create a validation set by setting apart 10,000 examples from the original training data. (Why not use the testing set now? Our goal is to develop and tune our model using only the training data, then use the test data just once to evaluate our accuracy).
-
-
-```{r}
-x_val <- train_data[1:10000, ]
-partial_x_train <- train_data[10001:nrow(train_data), ]
-
-y_val <- train_labels[1:10000]
-partial_y_train <- train_labels[10001:length(train_labels)]
-```
-
-
 ## Train the model
 
 Train the model for 20 epochs in mini-batches of 512 samples. This is 20 iterations over all samples in the x_train and y_train tensors. While training, monitor the model's loss and accuracy on the 10,000 samples from the validation set:
 
 ```{r}
 history <- model %>% fit(
-  partial_x_train,
-  partial_y_train,
-  epochs = 40,
+  training$text,
+  as.numeric(training$tag == "pos"),
+  epochs = 10,
   batch_size = 512,
-  validation_data = list(x_val, y_val),
+  validation_split = 0.2,
   verbose=2
 )
 ```
@@ -253,11 +225,11 @@ history <- model %>% fit(
 And let's see how the model performs. Two values will be returned. Loss (a number which represents our error, lower values are better), and accuracy.
 
 ```{r}
-results <- model %>% evaluate(test_data, test_labels, verbose = 0)
+results <- model %>% evaluate(testing$text, as.numeric(testing$tag == "pos"), verbose = 0)
 results
 ```
 
-This fairly naive approach achieves an accuracy of about 87%. With more advanced approaches, the model should get closer to 95%.
+This fairly naive approach achieves an accuracy of about 68%. With more advanced approaches, the model should get closer to 85%.
 
 
 ## Create a graph of accuracy and loss over time
@@ -274,9 +246,6 @@ The evolution of loss and metrics can also be seen during training in the RStudi
 
 Notice the training loss decreases with each epoch and the training accuracy increases with each epoch. This is expected when using gradient descent optimization — it should minimize the desired quantity on every iteration.
 
-This isn't the case for the validation loss and accuracy — they seem to peak after about twenty epochs. This is an example of overfitting: the model performs better on the training data than it does on data it has never seen before. After this point, the model over-optimizes and learns representations specific to the training data that do not generalize to test data.
-
-For this particular case, we could prevent overfitting by simply stopping the training after twenty or so epochs. Later, you'll see how to do this automatically with a callback.
 
 
 
