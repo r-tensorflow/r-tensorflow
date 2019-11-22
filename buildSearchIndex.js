@@ -36,7 +36,7 @@ function transverseTree(tree) {
       var string_path = treeItem.path.toString();
       
       if (string_path.substr(string_path.length - 3) != "Rmd") {
-        console.log(string_path);
+        console.log(string_path, "was skipped and not added to the index.");
         return;
       }
       
