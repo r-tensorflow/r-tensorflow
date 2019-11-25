@@ -1,0 +1,112 @@
+---
+title: Text vectorization layer
+type: docs
+repo: https://github.com/rstudio/keras
+menu:
+  main:
+    name: Text vectorization layer - keras
+    parent: keras-reference
+aliases:
+- /reference/keras/layer_text_vectorization.html
+- /keras/reference/layer_text_vectorization.html
+---
+    
+    <p>This layer has basic options for managing text in a Keras model. It
+transforms a batch of strings (one sample = one string) into either a list of
+token indices (one sample = 1D tensor of integer token indices) or a dense
+representation (one sample = 1D tensor of float values representing data about
+the sample's tokens).</p>
+
+    <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>layer_text_vectorization</span>(<span class='no'>object</span>, <span class='kw'>max_tokens</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>standardize</span> <span class='kw'>=</span> <span class='st'>"lower_and_strip_punctuation"</span>, <span class='kw'>split</span> <span class='kw'>=</span> <span class='st'>"whitespace"</span>,
+  <span class='kw'>ngrams</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>output_mode</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"int"</span>, <span class='st'>"binary"</span>, <span class='st'>"count"</span>, <span class='st'>"tfidf"</span>),
+  <span class='kw'>output_sequence_length</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>pad_to_max_tokens</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='no'>...</span>)</code></pre></div>
+
+    <h2 id="arguments">Arguments</h2>
+    <table class="ref-arguments">
+    
+    <colgroup>
+      <col class="name" />
+      <col class="desc" />
+    </colgroup>  
+      
+    <tr>
+      <td>object</td>
+      <td><p>Model or layer object</p></td>
+    </tr>
+    <tr>
+      <td>max_tokens</td>
+      <td><p>The maximum size of the vocabulary for this layer. If <code>NULL</code>,
+there is no cap on the size of the vocabulary.</p></td>
+    </tr>
+    <tr>
+      <td>standardize</td>
+      <td><p>Optional specification for standardization to apply to the
+input text. Values can be <code>NULL</code> (no standardization),
+<code>"lower_and_strip_punctuation"</code> (lowercase and remove punctuation) or a
+Callable. Default is <code>"lower_and_strip_punctuation"</code>.</p></td>
+    </tr>
+    <tr>
+      <td>split</td>
+      <td><p>Optional specification for splitting the input text. Values can be
+<code>NULL</code> (no splitting), <code>"split_on_whitespace"</code> (split on ASCII whitespace), or
+a Callable. Default is <code>"split_on_whitespace"</code>.</p></td>
+    </tr>
+    <tr>
+      <td>ngrams</td>
+      <td><p>Optional specification for ngrams to create from the possibly-split
+input text. Values can be <code>NULL</code>, an integer or a list of integers; passing
+an integer will create ngrams up to that integer, and passing a list of
+integers will create ngrams for the specified values in the list. Passing
+<code>NULL</code> means that no ngrams will be created.</p></td>
+    </tr>
+    <tr>
+      <td>output_mode</td>
+      <td><p>Optional specification for the output of the layer. Values can
+be <code>"int"</code>, <code>"binary"</code>, <code>"count"</code> or <code>"tfidf"</code>, which control the outputs as follows:</p><ul>
+<li><p>"int": Outputs integer indices, one integer index per split string token.</p></li>
+<li><p>"binary": Outputs a single int array per batch, of either vocab_size or
+<code>max_tokens</code> size, containing 1s in all elements where the token mapped
+to that index exists at least once in the batch item.</p></li>
+<li><p>"count": As "binary", but the int array contains a count of the number of
+times the token at that index appeared in the batch item.</p></li>
+<li><p>"tfidf": As "binary", but the TF-IDF algorithm is applied to find the value
+in each token slot.</p></li>
+</ul></td>
+    </tr>
+    <tr>
+      <td>output_sequence_length</td>
+      <td><p>Only valid in "int" mode. If set, the output will have
+its time dimension padded or truncated to exactly <code>output_sequence_length</code>
+values, resulting in a tensor of shape (batch_size, output_sequence_length) regardless
+of how many tokens resulted from the splitting step. Defaults to <code>NULL</code>.</p></td>
+    </tr>
+    <tr>
+      <td>pad_to_max_tokens</td>
+      <td><p>Only valid in "binary", "count", and "tfidf" modes. If <code>TRUE</code>,
+the output will have its feature axis padded to <code>max_tokens</code> even if the
+number of unique tokens in the vocabulary is less than max_tokens,
+resulting in a tensor of shape (batch_size, max_tokens) regardless of
+vocabulary size. Defaults to <code>TRUE</code>.</p></td>
+    </tr>
+    <tr>
+      <td>...</td>
+      <td><p>Not used.</p></td>
+    </tr>
+    </table>
+
+    <h2 id="details">Details</h2>
+
+    <p>The processing of each sample contains the following steps:</p><ol>
+<li><p>standardize each sample (usually lowercasing + punctuation stripping)</p></li>
+<li><p>split each sample into substrings (usually words)</p></li>
+<li><p>recombine substrings into tokens (usually ngrams)</p></li>
+<li><p>index tokens (associate a unique int value with each token)</p></li>
+<li><p>transform each sample using this index, either into a vector of ints or
+a dense float vector.</p></li>
+</ol>
+
+
+
+
+

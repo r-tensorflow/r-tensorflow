@@ -13,6 +13,8 @@ menu:
     identifier: "keras-functional-api"
     parent: "keras-getting-started-top"
     weight: 20
+aliases:
+  - /keras/articles/functional_api.html
 ---
 
 ```{r setup, include = FALSE}

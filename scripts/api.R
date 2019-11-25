@@ -1,3 +1,5 @@
+library(magrittr)
+
 # Clone the package
 
 packages <- list(
@@ -34,6 +36,18 @@ rebuild_reference <- function(exdir) {
   }, args = list(exdir = exdir))
 }
 
+modify_front_matter <- function(file, front_matter) {
+  lines <- readr::read_lines(file)  
+  delim <- which(lines=="---")
+  lines <- lines[-c(delim[1]:delim[2])]
+  
+  front_matter <- yaml::as.yaml(front_matter)
+  lines <- paste(lines, collapse = "\n")
+  
+  final <- paste("---\n", front_matter, "---\n", lines, sep = "")
+  writeLines(final, file)
+}
+
 copy_reference <- function(exdir, name) {
   
   # Copy reference to the website folder
@@ -60,12 +74,27 @@ copy_reference <- function(exdir, name) {
   # a bug in the whisker package doesnt allow us to add this to hugo templating.
   fs::dir_ls(ref) %>% 
     purrr::walk(function(path) {
-      lines <- readLines(path)
-      alias <- which(stringr::str_detect(lines, "aliases:"))
-      if (length(alias) == 1) {
-        lines[alias] <- stringr::str_replace_all(lines[alias], ".Rd", ".html")
-        writeLines(lines, path)
+      
+      front_matter <- rmarkdown::yaml_front_matter(path)
+      
+      if (length(front_matter$aliases) == 1) {
+        front_matter$aliases <- stringr::str_replace_all(
+          front_matter$aliases, 
+          ".Rd", 
+          ".html"
+        )
+        
+        old_url <- stringr::str_split(front_matter$aliases, "/")[[1]]
+        old_url <- paste(old_url[c(1,3,2,4)], collapse = "/")
+        
+        front_matter$aliases <- c(front_matter$aliases, old_url)
       }
+      
+      if (stringr::str_detect(path, "_index.html"))
+        front_matter$aliases <- paste0("/", name, "/reference.html")
+      
+      modify_front_matter(path, front_matter)
+      
     })
   
 }

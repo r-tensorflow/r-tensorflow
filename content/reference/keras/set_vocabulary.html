@@ -1,0 +1,65 @@
+---
+title: Sets vocabulary (and optionally document frequency) data for the layer
+type: docs
+repo: https://github.com/rstudio/keras
+menu:
+  main:
+    name: Sets vocabulary (and optionally document frequency) data for the layer -
+      keras
+    parent: keras-reference
+aliases:
+- /reference/keras/set_vocabulary.html
+- /keras/reference/set_vocabulary.html
+---
+    
+    <p>This method sets the vocabulary and DF data for this layer directly, instead
+of analyzing a dataset through <code><a href='adapt.html'>adapt()</a></code>. It should be used whenever the <code>vocab</code>
+(and optionally document frequency) information is already known. If
+vocabulary data is already present in the layer, this method will either
+replace it, if <code>append</code> is set to <code>FALSE</code>, or append to it (if 'append' is set
+to <code>TRUE</code>)</p>
+
+    <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>set_vocabulary</span>(<span class='no'>object</span>, <span class='no'>vocab</span>, <span class='kw'>df_data</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>oov_df_value</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
+  <span class='kw'>append</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)</code></pre></div>
+
+    <h2 id="arguments">Arguments</h2>
+    <table class="ref-arguments">
+    
+    <colgroup>
+      <col class="name" />
+      <col class="desc" />
+    </colgroup>  
+      
+    <tr>
+      <td>object</td>
+      <td><p>a text vectorization layer</p></td>
+    </tr>
+    <tr>
+      <td>vocab</td>
+      <td><p>An array of string tokens.</p></td>
+    </tr>
+    <tr>
+      <td>df_data</td>
+      <td><p>An array of document frequency data. Only necessary if the layer
+output_mode is "tfidf".</p></td>
+    </tr>
+    <tr>
+      <td>oov_df_value</td>
+      <td><p>The document frequency of the OOV token. Only necessary if
+output_mode is "tfidf". OOV data is optional when appending additional
+data in "tfidf" mode; if an OOV value is supplied it will overwrite the
+existing OOV value.</p></td>
+    </tr>
+    <tr>
+      <td>append</td>
+      <td><p>Whether to overwrite or append any existing vocabulary data.</p></td>
+    </tr>
+    </table>
+
+    <h2 id="see-also">See also</h2>
+
+    <div class='dont-index'><p><code><a href='get_vocabulary.html'>get_vocabulary()</a></code></p></div>
+
+
+
+

@@ -13,6 +13,8 @@ menu:
     identifier: "keras-sequential-model"
     parent: "keras-getting-started-top"
     weight: 15
+aliases:
+  - /keras/articles/sequential_model.html
 ---
 
 ```{r setup, include=FALSE}

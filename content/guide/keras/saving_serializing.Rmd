@@ -13,6 +13,8 @@ menu:
     identifier: "keras-saving-serializing"
     parent: "keras-getting-started-top"
     weight: 30
+aliases:
+  - /keras/articles/saving_serializing.html
 ---
 
 ```{r setup, include=FALSE}

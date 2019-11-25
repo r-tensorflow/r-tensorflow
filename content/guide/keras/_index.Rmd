@@ -11,6 +11,9 @@ menu:
     identifier: "keras-keras-overview"
     parent: "keras-getting-started-top"
     weight: 5 
+aliases:
+  - /keras/
+  - /keras/articles/why_use_keras.html
 ---
 
 

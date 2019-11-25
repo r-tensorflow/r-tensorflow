@@ -1,0 +1,47 @@
+---
+title: Fits the state of the preprocessing layer to the data being passed.
+type: docs
+repo: https://github.com/rstudio/keras
+menu:
+  main:
+    name: Fits the state of the preprocessing layer to the data being passed. - keras
+    parent: keras-reference
+aliases:
+- /reference/keras/adapt.html
+- /keras/reference/adapt.html
+---
+    
+    <p>Fits the state of the preprocessing layer to the data being passed.</p>
+
+    <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>adapt</span>(<span class='no'>object</span>, <span class='no'>data</span>, <span class='kw'>reset_state</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</code></pre></div>
+
+    <h2 id="arguments">Arguments</h2>
+    <table class="ref-arguments">
+    
+    <colgroup>
+      <col class="name" />
+      <col class="desc" />
+    </colgroup>  
+      
+    <tr>
+      <td>object</td>
+      <td><p>Preprocessing layer object</p></td>
+    </tr>
+    <tr>
+      <td>data</td>
+      <td><p>The data to train on. It can be passed either as a tf.data Dataset,
+or as an R array.</p></td>
+    </tr>
+    <tr>
+      <td>reset_state</td>
+      <td><p>Optional argument specifying whether to clear the state of
+the layer at the start of the call to <code>adapt</code>, or whether to start from
+the existing state. Subclasses may choose to throw if <code>reset_state</code> is set
+to <code>FALSE</code>. <code>NULL</code> mean layer's default.</p></td>
+    </tr>
+    </table>
+
+
+
+
+
