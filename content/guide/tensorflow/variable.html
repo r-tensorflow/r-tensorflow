@@ -12,6 +12,8 @@ menu:
     identifier: "custom-basic-variables"
     parent: "custom-basic-top"
     weight: 20
+aliases:
+  - /tensorflow/articles/howto_variables.html
 ---
 
 
@@ -27,7 +29,7 @@ guide covers how to create, update, and manage <code>tf$Variable</code>s in Tens
 <h2>Create a variable</h2>
 <p>To create a variable, simply provide the initial value</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(tensorflow)</a>
-<a class="sourceLine" id="cb1-2" data-line-number="2">my_variable &lt;-<span class="st"> </span>tf<span class="op">$</span><span class="kw">Variable</span>(tf<span class="op">$</span><span class="kw">zeros</span>(<span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">3</span>)))</a></code></pre></div>
+<a class="sourceLine" id="cb1-2" data-line-number="2">my_variable &lt;-<span class="st"> </span>tf<span class="op">$</span><span class="kw">Variable</span>(tf<span class="op">$</span><span class="kw">zeros</span>(<span class="kw"><a href="../../tensorflow/reference/shape.html">shape</a></span>(<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">3</span>)))</a></code></pre></div>
 <p>This creates a variable which is a three-dimensional tensor with shape <code>[1, 2, 3]</code> filled with zeros. This variable will, by default, have the <code>dtype</code>
 <code>tf$float32</code>. The dtype is, if not specified, inferred from the initial
 value.</p>

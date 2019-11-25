@@ -11,7 +11,11 @@ menu:
     name: "Eager execution"
     identifier: "custom-basic-eager-execution"
     parent: "custom-basic-top"
-    weight: 10 
+    weight: 10
+aliases:
+  - /tensorflow/
+  - /tensorflow/articles/basic_usage.html
+  - /tensorflow/articles/using_tensorflow_api.html
 ---
 
 

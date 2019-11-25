@@ -12,6 +12,8 @@ menu:
     identifier: "custom-basic-variables"
     parent: "custom-basic-top"
     weight: 20
+aliases:
+  - /tensorflow/articles/howto_variables.html
 ---
 
 
@@ -34,7 +36,7 @@ To create a variable, simply provide the initial value
 
 ```{r}
 library(tensorflow)
-my_variable <- tf$Variable(tf$zeros(c(1,2,3)))
+my_variable <- tf$Variable(tf$zeros(shape(1,2,3)))
 ```
 
 This creates a variable which is a three-dimensional tensor with shape `[1, 2,
