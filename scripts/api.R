@@ -5,7 +5,8 @@ library(magrittr)
 packages <- list(
   keras = "rstudio/keras",
   tensorflow = "rstudio/tensorflow",
-  tfdatasets = "rstudio/tfdatasets"
+  tfdatasets = "rstudio/tfdatasets",
+  tfruns = "rstudio/tfruns"
 )
 
 download_source <- function(repo) {

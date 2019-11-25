@@ -1,0 +1,106 @@
+---
+title: Flags for a training run
+type: docs
+repo: https://github.com/rstudio/tfruns
+menu:
+  main:
+    name: Flags for a training run - tfruns
+    parent: tfruns-reference
+aliases:
+- /reference/tfruns/flags.html
+- /tfruns/reference/flags.html
+---
+    
+    <p>Define the flags (name, type, default value, description) which paramaterize
+a training run. Optionally read overrides of the default values from a
+"flags.yml" config file and/or command line arguments.</p>
+
+    <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>flags</span>(<span class='no'>...</span>, <span class='kw'>config</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/Sys.getenv.html'>Sys.getenv</a></span>(<span class='st'>"R_CONFIG_ACTIVE"</span>, <span class='kw'>unset</span> <span class='kw'>=</span> <span class='st'>"default"</span>),
+  <span class='kw'>file</span> <span class='kw'>=</span> <span class='st'>"flags.yml"</span>, <span class='kw'>arguments</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/commandArgs.html'>commandArgs</a></span>(<span class='fl'>TRUE</span>))
+
+<span class='fu'>flag_numeric</span>(<span class='no'>name</span>, <span class='no'>default</span>, <span class='kw'>description</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)
+
+<span class='fu'>flag_integer</span>(<span class='no'>name</span>, <span class='no'>default</span>, <span class='kw'>description</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)
+
+<span class='fu'>flag_boolean</span>(<span class='no'>name</span>, <span class='no'>default</span>, <span class='kw'>description</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)
+
+<span class='fu'>flag_string</span>(<span class='no'>name</span>, <span class='no'>default</span>, <span class='kw'>description</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</code></pre></div>
+
+    <h2 id="arguments">Arguments</h2>
+    <table class="ref-arguments">
+    
+    <colgroup>
+      <col class="name" />
+      <col class="desc" />
+    </colgroup>  
+      
+    <tr>
+      <td>...</td>
+      <td><p>One or more flag definitions</p></td>
+    </tr>
+    <tr>
+      <td>config</td>
+      <td><p>The configuration to use. Defaults to the active configuration
+for the current environment (as specified by the <code>R_CONFIG_ACTIVE</code>
+environment variable), or <code>default</code> when unset.</p></td>
+    </tr>
+    <tr>
+      <td>file</td>
+      <td><p>The flags YAML file to read</p></td>
+    </tr>
+    <tr>
+      <td>arguments</td>
+      <td><p>The command line arguments (as a character vector) to be
+parsed.</p></td>
+    </tr>
+    <tr>
+      <td>name</td>
+      <td><p>Flag name</p></td>
+    </tr>
+    <tr>
+      <td>default</td>
+      <td><p>Flag default value</p></td>
+    </tr>
+    <tr>
+      <td>description</td>
+      <td><p>Flag description</p></td>
+    </tr>
+    </table>
+
+    <h2 id="value">Value</h2>
+
+    <p>Named list of training flags</p>
+    <h2 id="config-file-flags">Config File Flags</h2>
+
+    
+
+
+<p>Config file flags are defined a YAML configuration file (by default
+named "flags.yml"). Flags can either appear at the top-level of
+the YAML or can be inclued in named configuration sections
+(see the <a href='https://github.com/rstudio/config'>config package</a> for
+details).</p>
+    <h2 id="command-line-flags">Command Line Flags</h2>
+
+    
+
+
+<p>Command line flags should be of the form <code>--key=value</code> or
+<code>--key value</code>. The values are assumed to be valid <code>yaml</code> and
+will be converted using <code>yaml.load()</code>.</p>
+
+    <h2 id="examples">Examples</h2>
+    <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><div class='input'><span class='kw'>if</span> (<span class='fl'>FALSE</span>) {
+<span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='no'>tfruns</span>)
+
+<span class='co'># define flags and parse flag values from flags.yml and the command line</span>
+<span class='no'>FLAGS</span> <span class='kw'>&lt;-</span> <span class='fu'>flags</span>(
+  <span class='fu'>flag_numeric</span>(<span class='st'>'learning_rate'</span>, <span class='fl'>0.01</span>, <span class='st'>'Initial learning rate.'</span>),
+  <span class='fu'>flag_integer</span>(<span class='st'>'max_steps'</span>, <span class='fl'>5000</span>, <span class='st'>'Number of steps to run trainer.'</span>),
+  <span class='fu'>flag_string</span>(<span class='st'>'data_dir'</span>, <span class='st'>'MNIST-data'</span>, <span class='st'>'Directory for training data'</span>),
+  <span class='fu'>flag_boolean</span>(<span class='st'>'fake_data'</span>, <span class='fl'>FALSE</span>, <span class='st'>'If true, use fake data for testing'</span>)
+)
+}</div></code></pre></div>
+
+
+

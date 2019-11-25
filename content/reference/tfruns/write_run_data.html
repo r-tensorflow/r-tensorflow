@@ -1,0 +1,52 @@
+---
+title: Write run data (deprecated)
+type: docs
+repo: https://github.com/rstudio/tfruns
+menu:
+  main:
+    name: Write run data (deprecated) - tfruns
+    parent: tfruns-reference
+aliases:
+- /reference/tfruns/write_run_data.html
+- /tfruns/reference/write_run_data.html
+---
+    
+    <p>Deprecated alias for <code><a href='write_run_metadata.html'>write_run_metadata()</a></code>.</p>
+
+    <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>write_run_data</span>(<span class='no'>type</span>, <span class='no'>data</span>)</code></pre></div>
+
+    <h2 id="arguments">Arguments</h2>
+    <table class="ref-arguments">
+    
+    <colgroup>
+      <col class="name" />
+      <col class="desc" />
+    </colgroup>  
+      
+    <tr>
+      <td>type</td>
+      <td><p>Type of metadata to write. Standard types include "flags",
+"sources", "properties", "metrics", and "evaluation". You can
+also specify a custom type (see <em>Custom Types</em> section below).</p></td>
+    </tr>
+    <tr>
+      <td>data</td>
+      <td><p>Metadata to write:</p><ul>
+<li><p>"flags" --- Named list of training flags</p></li>
+<li><p>"source" --- Directory to copy source files from</p></li>
+<li><p>"properties" --- Named list of arbitrary properties. Note
+that properties will be stored as strings.</p></li>
+<li><p>"metrics" --- Data frame with training run metrics
+(see <em>Metrics Data Frame</em> below).</p></li>
+<li><p>"evaluation" --- Named list of evaluation metrics.</p></li>
+<li><p>"error" --- Named list with 'message' and 'traceback'</p></li>
+<li><p>"&lt;custom&gt;" -- Function used to write the data
+(see <em>Custom Types</em> section below).</p></li>
+</ul></td>
+    </tr>
+    </table>
+
+
+
+
+

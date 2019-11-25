@@ -1,0 +1,129 @@
+---
+title: Tune hyperparameters using training flags
+type: docs
+repo: https://github.com/rstudio/tfruns
+menu:
+  main:
+    name: Tune hyperparameters using training flags - tfruns
+    parent: tfruns-reference
+aliases:
+- /reference/tfruns/tuning_run.html
+- /tfruns/reference/tuning_run.html
+---
+    
+    <p>Run all combinations of the specifed training flags. The number of
+combinations can be reduced by specifying the <code>sample</code> parameter, which
+will result in a random sample of the flag combinations being run.</p>
+
+    <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>tuning_run</span>(<span class='kw'>file</span> <span class='kw'>=</span> <span class='st'>"train.R"</span>, <span class='kw'>context</span> <span class='kw'>=</span> <span class='st'>"local"</span>,
+  <span class='kw'>config</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/Sys.getenv.html'>Sys.getenv</a></span>(<span class='st'>"R_CONFIG_ACTIVE"</span>, <span class='kw'>unset</span> <span class='kw'>=</span> <span class='st'>"default"</span>),
+  <span class='kw'>flags</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>sample</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>properties</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>runs_dir</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/options.html'>getOption</a></span>(<span class='st'>"tfruns.runs_dir"</span>, <span class='st'>"runs"</span>),
+  <span class='kw'>artifacts_dir</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/getwd.html'>getwd</a></span>(), <span class='kw'>echo</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>confirm</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/interactive.html'>interactive</a></span>(),
+  <span class='kw'>envir</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/sys.parent.html'>parent.frame</a></span>(), <span class='kw'>encoding</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/options.html'>getOption</a></span>(<span class='st'>"encoding"</span>))</code></pre></div>
+
+    <h2 id="arguments">Arguments</h2>
+    <table class="ref-arguments">
+    
+    <colgroup>
+      <col class="name" />
+      <col class="desc" />
+    </colgroup>  
+      
+    <tr>
+      <td>file</td>
+      <td><p>Path to training script (defaults to "train.R")</p></td>
+    </tr>
+    <tr>
+      <td>context</td>
+      <td><p>Run context (defaults to "local")</p></td>
+    </tr>
+    <tr>
+      <td>config</td>
+      <td><p>The configuration to use. Defaults to the active configuration
+for the current environment (as specified by the <code>R_CONFIG_ACTIVE</code>
+environment variable), or <code>default</code> when unset.</p></td>
+    </tr>
+    <tr>
+      <td>flags</td>
+      <td><p>Either a named list with flag values (multiple values can be
+provided for each flag) or a data frame that contains pre-generated
+combinations of flags (e.g. via <code><a href='https://rdrr.io/r/base/expand.grid.html'>base::expand.grid()</a></code>). The latter can
+be useful for subsetting combinations. See 'Examples'.</p></td>
+    </tr>
+    <tr>
+      <td>sample</td>
+      <td><p>Sampling rate for flag combinations (defaults to
+running all combinations).</p></td>
+    </tr>
+    <tr>
+      <td>properties</td>
+      <td><p>Named character vector with run properties. Properties are
+additional metadata about the run which will be subsequently available via
+<code><a href='ls_runs.html'>ls_runs()</a></code>.</p></td>
+    </tr>
+    <tr>
+      <td>runs_dir</td>
+      <td><p>Directory containing runs. Defaults to "runs" beneath the
+current working directory (or to the value of the <code>tfruns.runs_dir</code> R
+option if specified).</p></td>
+    </tr>
+    <tr>
+      <td>artifacts_dir</td>
+      <td><p>Directory to capture created and modified files within.
+Pass <code>NULL</code> to not capture any artifcats.</p></td>
+    </tr>
+    <tr>
+      <td>echo</td>
+      <td><p>Print expressions within training script</p></td>
+    </tr>
+    <tr>
+      <td>confirm</td>
+      <td><p>Confirm before executing tuning run.</p></td>
+    </tr>
+    <tr>
+      <td>envir</td>
+      <td><p>The environment in which the script should be evaluated</p></td>
+    </tr>
+    <tr>
+      <td>encoding</td>
+      <td><p>The encoding of the training script; see <code><a href='https://rdrr.io/r/base/connections.html'>file()</a></code>.</p></td>
+    </tr>
+    </table>
+
+    <h2 id="value">Value</h2>
+
+    <p>Data frame with summary of all training runs performed
+during tuning.</p>
+
+    <h2 id="examples">Examples</h2>
+    <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><div class='input'><span class='kw'>if</span> (<span class='fl'>FALSE</span>) {
+<span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='no'>tfruns</span>)
+
+<span class='co'># using a list as input to the flags argument</span>
+<span class='no'>runs</span> <span class='kw'>&lt;-</span> <span class='fu'>tuning_run</span>(
+  <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span>(<span class='st'>"examples/mnist_mlp/mnist_mlp.R"</span>, <span class='kw'>package</span> <span class='kw'>=</span> <span class='st'>"tfruns"</span>),
+  <span class='kw'>flags</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(
+    <span class='kw'>dropout1</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0.2</span>, <span class='fl'>0.3</span>, <span class='fl'>0.4</span>),
+    <span class='kw'>dropout2</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0.2</span>, <span class='fl'>0.3</span>, <span class='fl'>0.4</span>)
+  )
+)
+<span class='no'>runs</span>[<span class='fu'><a href='https://rdrr.io/r/base/order.html'>order</a></span>(<span class='no'>runs</span>$<span class='no'>eval_acc</span>, <span class='kw'>decreasing</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>), ]
+
+<span class='co'># using a data frame as input to the flags argument</span>
+<span class='co'># resulting in the same combinations above, but remove those</span>
+<span class='co'># where the combined dropout rate exceeds 1</span>
+<span class='no'>grid</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/expand.grid.html'>expand.grid</a></span>(
+  <span class='kw'>dropout1</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0.2</span>, <span class='fl'>0.3</span>, <span class='fl'>0.4</span>),
+  <span class='kw'>dropout2</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0.2</span>, <span class='fl'>0.3</span>, <span class='fl'>0.4</span>)
+)
+<span class='no'>grid</span>$<span class='no'>combined_droput</span> <span class='kw'>&lt;-</span> <span class='no'>grid</span>$<span class='no'>dropout1</span> + <span class='no'>grid</span>$<span class='no'>dropout2</span>
+<span class='no'>grid</span> <span class='kw'>&lt;-</span> <span class='no'>grid</span>[<span class='no'>grid</span>$<span class='no'>combined_droput</span> <span class='kw'>&lt;=</span> <span class='fl'>1</span>, ]
+<span class='no'>runs</span> <span class='kw'>&lt;-</span> <span class='fu'>tuning_run</span>(
+  <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span>(<span class='st'>"examples/mnist_mlp/mnist_mlp.R"</span>, <span class='kw'>package</span> <span class='kw'>=</span> <span class='st'>"tfruns"</span>),
+  <span class='kw'>flags</span> <span class='kw'>=</span> <span class='no'>grid</span>[, <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"dropout1"</span>, <span class='st'>"dropout2"</span>)]
+)
+}</div></code></pre></div>
+
+
+
