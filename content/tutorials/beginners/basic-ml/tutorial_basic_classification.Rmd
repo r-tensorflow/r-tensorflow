@@ -20,7 +20,7 @@ knitr::opts_chunk$set(echo = TRUE, eval = TRUE)
 ```
 
 
-In this guide, we will train a neural network model to classify images of clothing, like sneakers and shirts. It's fine if you don't understand all the details, this is a fast-paced overview of a complete Keras program with the details explained as we go.
+In this guide, we will train a neural network model to classify images of clothing, like sneakers and shirts. It's fine if you don't understand all the details, this is a fast-paced overview of a complete Keras program with the details explained as we go. 
 
 ```{r}
 library(keras)
