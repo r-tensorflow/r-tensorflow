@@ -13,6 +13,8 @@ menu:
     identifier: "keras-tutorial-basic-classification"
     parent: "tutorials-beginners-basic-ml-top"
     weight: 20
+aliases:
+  - /keras/articles/tutorial_basic_classification.html
 ---
 
 ```{r setup, include=FALSE}

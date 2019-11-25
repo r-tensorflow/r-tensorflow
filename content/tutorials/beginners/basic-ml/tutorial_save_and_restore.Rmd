@@ -13,6 +13,8 @@ menu:
     identifier: "keras-tutorial-save-and-restore"
     parent: "tutorials-beginners-basic-ml-top"
     weight: 60
+aliases:
+  - /keras/articles/tutorial_save_and_restore.html
 ---
 
 ```{r setup, include=FALSE}

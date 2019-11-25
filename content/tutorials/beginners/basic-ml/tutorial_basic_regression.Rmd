@@ -13,6 +13,8 @@ menu:
     identifier: "keras-tutorial-basic-regression"
     parent: "tutorials-beginners-basic-ml-top"
     weight: 25
+aliases:
+  - /keras/articles/tutorial_basic_regression.html
 ---
 
 ```{r setup, include=FALSE}

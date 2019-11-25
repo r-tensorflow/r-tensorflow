@@ -13,6 +13,8 @@ menu:
     identifier: "keras-tutorial-overfitting-and-underfitting"
     parent: "tutorials-beginners-basic-ml-top"
     weight: 50
+aliases:
+  - /keras/articles/tutorial_overfit_underfit.html
 ---
 
 
@@ -57,11 +59,11 @@ menu:
 <a class="sourceLine" id="cb7-10" data-line-number="10">test_data &lt;-<span class="st"> </span><span class="kw">multi_hot_sequences</span>(test_data, num_words)</a></code></pre></div>
 <p>Let’s look at one of the resulting multi-hot vectors. The word indices are sorted by frequency, so it is expected that there are more 1-values near index zero, as we can see in this plot:</p>
 <div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" data-line-number="1">first_text &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span>(<span class="dt">word =</span> <span class="dv">1</span><span class="op">:</span>num_words, <span class="dt">value =</span> train_data[<span class="dv">1</span>, ])</a>
-<a class="sourceLine" id="cb8-2" data-line-number="2"><span class="kw"><a href="https://rdrr.io/pkg/ggplot2/man/ggplot.html">ggplot</a></span>(first_text, <span class="kw"><a href="https://rdrr.io/pkg/ggplot2/man/aes.html">aes</a></span>(<span class="dt">x =</span> word, <span class="dt">y =</span> value)) <span class="op">+</span></a>
-<a class="sourceLine" id="cb8-3" data-line-number="3"><span class="st">  </span><span class="kw"><a href="https://rdrr.io/pkg/ggplot2/man/geom_path.html">geom_line</a></span>() <span class="op">+</span></a>
-<a class="sourceLine" id="cb8-4" data-line-number="4"><span class="st">  </span><span class="kw"><a href="https://rdrr.io/pkg/ggplot2/man/theme.html">theme</a></span>(<span class="dt">axis.title.y =</span> <span class="kw"><a href="https://rdrr.io/pkg/ggplot2/man/element.html">element_blank</a></span>(),</a>
-<a class="sourceLine" id="cb8-5" data-line-number="5">        <span class="dt">axis.text.y =</span> <span class="kw"><a href="https://rdrr.io/pkg/ggplot2/man/element.html">element_blank</a></span>(),</a>
-<a class="sourceLine" id="cb8-6" data-line-number="6">        <span class="dt">axis.ticks.y =</span> <span class="kw"><a href="https://rdrr.io/pkg/ggplot2/man/element.html">element_blank</a></span>())</a></code></pre></div>
+<a class="sourceLine" id="cb8-2" data-line-number="2"><span class="kw"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span>(first_text, <span class="kw"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span>(<span class="dt">x =</span> word, <span class="dt">y =</span> value)) <span class="op">+</span></a>
+<a class="sourceLine" id="cb8-3" data-line-number="3"><span class="st">  </span><span class="kw"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html">geom_line</a></span>() <span class="op">+</span></a>
+<a class="sourceLine" id="cb8-4" data-line-number="4"><span class="st">  </span><span class="kw"><a href="https://ggplot2.tidyverse.org/reference/theme.html">theme</a></span>(<span class="dt">axis.title.y =</span> <span class="kw"><a href="https://ggplot2.tidyverse.org/reference/element.html">element_blank</a></span>(),</a>
+<a class="sourceLine" id="cb8-5" data-line-number="5">        <span class="dt">axis.text.y =</span> <span class="kw"><a href="https://ggplot2.tidyverse.org/reference/element.html">element_blank</a></span>(),</a>
+<a class="sourceLine" id="cb8-6" data-line-number="6">        <span class="dt">axis.ticks.y =</span> <span class="kw"><a href="https://ggplot2.tidyverse.org/reference/element.html">element_blank</a></span>())</a></code></pre></div>
 <p><img src="/tutorials/beginners/basic-ml/tutorial_overfit_underfit_files/figure-html/unnamed-chunk-4-1.png" width="672"></p>
 </div>
 <div id="demonstrate-overfitting" class="section level2">
@@ -111,45 +113,45 @@ menu:
 <a class="sourceLine" id="cb11-8" data-line-number="8">)</a></code></pre></div>
 <pre><code>## Train on 25000 samples, validate on 25000 samples
 ## Epoch 1/20
-## 25000/25000 - 1s - loss: 0.5638 - accuracy: 0.7214 - val_loss: 0.4267 - val_accuracy: 0.8227
+## 25000/25000 - 1s - loss: 0.5966 - accuracy: 0.6998 - val_loss: 0.4544 - val_accuracy: 0.8133
 ## Epoch 2/20
-## 25000/25000 - 0s - loss: 0.3687 - accuracy: 0.8458 - val_loss: 0.3452 - val_accuracy: 0.8537
+## 25000/25000 - 0s - loss: 0.3801 - accuracy: 0.8442 - val_loss: 0.3466 - val_accuracy: 0.8547
 ## Epoch 3/20
-## 25000/25000 - 0s - loss: 0.3226 - accuracy: 0.8659 - val_loss: 0.3300 - val_accuracy: 0.8600
+## 25000/25000 - 0s - loss: 0.3243 - accuracy: 0.8650 - val_loss: 0.3322 - val_accuracy: 0.8603
 ## Epoch 4/20
-## 25000/25000 - 0s - loss: 0.3076 - accuracy: 0.8722 - val_loss: 0.3284 - val_accuracy: 0.8610
+## 25000/25000 - 0s - loss: 0.3097 - accuracy: 0.8720 - val_loss: 0.3297 - val_accuracy: 0.8601
 ## Epoch 5/20
-## 25000/25000 - 0s - loss: 0.3020 - accuracy: 0.8756 - val_loss: 0.3282 - val_accuracy: 0.8616
+## 25000/25000 - 0s - loss: 0.3041 - accuracy: 0.8752 - val_loss: 0.3286 - val_accuracy: 0.8604
 ## Epoch 6/20
-## 25000/25000 - 0s - loss: 0.2962 - accuracy: 0.8784 - val_loss: 0.3284 - val_accuracy: 0.8596
+## 25000/25000 - 0s - loss: 0.2998 - accuracy: 0.8768 - val_loss: 0.3285 - val_accuracy: 0.8604
 ## Epoch 7/20
-## 25000/25000 - 0s - loss: 0.2915 - accuracy: 0.8793 - val_loss: 0.3307 - val_accuracy: 0.8588
+## 25000/25000 - 0s - loss: 0.2971 - accuracy: 0.8779 - val_loss: 0.3297 - val_accuracy: 0.8611
 ## Epoch 8/20
-## 25000/25000 - 0s - loss: 0.2864 - accuracy: 0.8813 - val_loss: 0.3434 - val_accuracy: 0.8543
+## 25000/25000 - 0s - loss: 0.2944 - accuracy: 0.8789 - val_loss: 0.3328 - val_accuracy: 0.8583
 ## Epoch 9/20
-## 25000/25000 - 0s - loss: 0.2829 - accuracy: 0.8841 - val_loss: 0.3347 - val_accuracy: 0.8579
+## 25000/25000 - 0s - loss: 0.2910 - accuracy: 0.8805 - val_loss: 0.3301 - val_accuracy: 0.8610
 ## Epoch 10/20
-## 25000/25000 - 0s - loss: 0.2770 - accuracy: 0.8863 - val_loss: 0.3334 - val_accuracy: 0.8575
+## 25000/25000 - 0s - loss: 0.2841 - accuracy: 0.8832 - val_loss: 0.3326 - val_accuracy: 0.8605
 ## Epoch 11/20
-## 25000/25000 - 0s - loss: 0.2702 - accuracy: 0.8900 - val_loss: 0.3379 - val_accuracy: 0.8566
+## 25000/25000 - 0s - loss: 0.2784 - accuracy: 0.8858 - val_loss: 0.3321 - val_accuracy: 0.8589
 ## Epoch 12/20
-## 25000/25000 - 0s - loss: 0.2654 - accuracy: 0.8921 - val_loss: 0.3396 - val_accuracy: 0.8562
+## 25000/25000 - 0s - loss: 0.2713 - accuracy: 0.8893 - val_loss: 0.3358 - val_accuracy: 0.8576
 ## Epoch 13/20
-## 25000/25000 - 0s - loss: 0.2580 - accuracy: 0.8954 - val_loss: 0.3412 - val_accuracy: 0.8548
+## 25000/25000 - 0s - loss: 0.2631 - accuracy: 0.8929 - val_loss: 0.3433 - val_accuracy: 0.8556
 ## Epoch 14/20
-## 25000/25000 - 0s - loss: 0.2526 - accuracy: 0.8982 - val_loss: 0.3472 - val_accuracy: 0.8550
+## 25000/25000 - 0s - loss: 0.2564 - accuracy: 0.8960 - val_loss: 0.3450 - val_accuracy: 0.8529
 ## Epoch 15/20
-## 25000/25000 - 0s - loss: 0.2441 - accuracy: 0.9020 - val_loss: 0.3498 - val_accuracy: 0.8524
+## 25000/25000 - 0s - loss: 0.2481 - accuracy: 0.9007 - val_loss: 0.3502 - val_accuracy: 0.8534
 ## Epoch 16/20
-## 25000/25000 - 0s - loss: 0.2373 - accuracy: 0.9052 - val_loss: 0.3567 - val_accuracy: 0.8498
+## 25000/25000 - 0s - loss: 0.2401 - accuracy: 0.9051 - val_loss: 0.3550 - val_accuracy: 0.8516
 ## Epoch 17/20
-## 25000/25000 - 0s - loss: 0.2303 - accuracy: 0.9094 - val_loss: 0.3618 - val_accuracy: 0.8496
+## 25000/25000 - 0s - loss: 0.2330 - accuracy: 0.9086 - val_loss: 0.3634 - val_accuracy: 0.8492
 ## Epoch 18/20
-## 25000/25000 - 0s - loss: 0.2224 - accuracy: 0.9116 - val_loss: 0.3697 - val_accuracy: 0.8495
+## 25000/25000 - 0s - loss: 0.2264 - accuracy: 0.9103 - val_loss: 0.3680 - val_accuracy: 0.8476
 ## Epoch 19/20
-## 25000/25000 - 0s - loss: 0.2156 - accuracy: 0.9162 - val_loss: 0.3765 - val_accuracy: 0.8461
+## 25000/25000 - 0s - loss: 0.2201 - accuracy: 0.9133 - val_loss: 0.3747 - val_accuracy: 0.8486
 ## Epoch 20/20
-## 25000/25000 - 0s - loss: 0.2073 - accuracy: 0.9197 - val_loss: 0.3844 - val_accuracy: 0.8472</code></pre>
+## 25000/25000 - 0s - loss: 0.2143 - accuracy: 0.9160 - val_loss: 0.3927 - val_accuracy: 0.8444</code></pre>
 </div>
 <div id="create-a-smaller-model" class="section level3">
 <h3>Create a smaller model</h3>
@@ -192,45 +194,45 @@ menu:
 <a class="sourceLine" id="cb15-8" data-line-number="8">)</a></code></pre></div>
 <pre><code>## Train on 25000 samples, validate on 25000 samples
 ## Epoch 1/20
-## 25000/25000 - 1s - loss: 0.5998 - accuracy: 0.6938 - val_loss: 0.4877 - val_accuracy: 0.8007
+## 25000/25000 - 0s - loss: 0.6549 - accuracy: 0.6233 - val_loss: 0.5797 - val_accuracy: 0.7310
 ## Epoch 2/20
-## 25000/25000 - 0s - loss: 0.4245 - accuracy: 0.8296 - val_loss: 0.3876 - val_accuracy: 0.8445
+## 25000/25000 - 0s - loss: 0.4872 - accuracy: 0.7950 - val_loss: 0.4280 - val_accuracy: 0.8257
 ## Epoch 3/20
-## 25000/25000 - 0s - loss: 0.3587 - accuracy: 0.8571 - val_loss: 0.3536 - val_accuracy: 0.8544
+## 25000/25000 - 0s - loss: 0.3823 - accuracy: 0.8438 - val_loss: 0.3650 - val_accuracy: 0.8489
 ## Epoch 4/20
-## 25000/25000 - 0s - loss: 0.3317 - accuracy: 0.8655 - val_loss: 0.3398 - val_accuracy: 0.8587
+## 25000/25000 - 0s - loss: 0.3415 - accuracy: 0.8603 - val_loss: 0.3439 - val_accuracy: 0.8565
 ## Epoch 5/20
-## 25000/25000 - 0s - loss: 0.3178 - accuracy: 0.8699 - val_loss: 0.3327 - val_accuracy: 0.8590
+## 25000/25000 - 0s - loss: 0.3239 - accuracy: 0.8666 - val_loss: 0.3348 - val_accuracy: 0.8589
 ## Epoch 6/20
-## 25000/25000 - 0s - loss: 0.3100 - accuracy: 0.8733 - val_loss: 0.3317 - val_accuracy: 0.8593
+## 25000/25000 - 0s - loss: 0.3142 - accuracy: 0.8715 - val_loss: 0.3320 - val_accuracy: 0.8602
 ## Epoch 7/20
-## 25000/25000 - 0s - loss: 0.3052 - accuracy: 0.8745 - val_loss: 0.3286 - val_accuracy: 0.8608
+## 25000/25000 - 0s - loss: 0.3077 - accuracy: 0.8749 - val_loss: 0.3291 - val_accuracy: 0.8604
 ## Epoch 8/20
-## 25000/25000 - 0s - loss: 0.3026 - accuracy: 0.8752 - val_loss: 0.3285 - val_accuracy: 0.8603
+## 25000/25000 - 0s - loss: 0.3031 - accuracy: 0.8752 - val_loss: 0.3286 - val_accuracy: 0.8608
 ## Epoch 9/20
-## 25000/25000 - 0s - loss: 0.3003 - accuracy: 0.8791 - val_loss: 0.3290 - val_accuracy: 0.8599
+## 25000/25000 - 0s - loss: 0.3006 - accuracy: 0.8762 - val_loss: 0.3284 - val_accuracy: 0.8608
 ## Epoch 10/20
-## 25000/25000 - 0s - loss: 0.2996 - accuracy: 0.8771 - val_loss: 0.3291 - val_accuracy: 0.8600
+## 25000/25000 - 0s - loss: 0.2976 - accuracy: 0.8788 - val_loss: 0.3294 - val_accuracy: 0.8592
 ## Epoch 11/20
-## 25000/25000 - 0s - loss: 0.2986 - accuracy: 0.8782 - val_loss: 0.3318 - val_accuracy: 0.8583
+## 25000/25000 - 0s - loss: 0.2956 - accuracy: 0.8783 - val_loss: 0.3307 - val_accuracy: 0.8595
 ## Epoch 12/20
-## 25000/25000 - 0s - loss: 0.2985 - accuracy: 0.8774 - val_loss: 0.3299 - val_accuracy: 0.8590
+## 25000/25000 - 0s - loss: 0.2927 - accuracy: 0.8808 - val_loss: 0.3303 - val_accuracy: 0.8589
 ## Epoch 13/20
-## 25000/25000 - 0s - loss: 0.2976 - accuracy: 0.8775 - val_loss: 0.3325 - val_accuracy: 0.8578
+## 25000/25000 - 0s - loss: 0.2906 - accuracy: 0.8809 - val_loss: 0.3301 - val_accuracy: 0.8598
 ## Epoch 14/20
-## 25000/25000 - 0s - loss: 0.2987 - accuracy: 0.8777 - val_loss: 0.3303 - val_accuracy: 0.8594
+## 25000/25000 - 0s - loss: 0.2877 - accuracy: 0.8827 - val_loss: 0.3312 - val_accuracy: 0.8588
 ## Epoch 15/20
-## 25000/25000 - 0s - loss: 0.2970 - accuracy: 0.8785 - val_loss: 0.3308 - val_accuracy: 0.8591
+## 25000/25000 - 0s - loss: 0.2853 - accuracy: 0.8835 - val_loss: 0.3319 - val_accuracy: 0.8584
 ## Epoch 16/20
-## 25000/25000 - 0s - loss: 0.2966 - accuracy: 0.8794 - val_loss: 0.3328 - val_accuracy: 0.8586
+## 25000/25000 - 0s - loss: 0.2829 - accuracy: 0.8841 - val_loss: 0.3341 - val_accuracy: 0.8576
 ## Epoch 17/20
-## 25000/25000 - 0s - loss: 0.2970 - accuracy: 0.8787 - val_loss: 0.3319 - val_accuracy: 0.8590
+## 25000/25000 - 0s - loss: 0.2809 - accuracy: 0.8855 - val_loss: 0.3338 - val_accuracy: 0.8577
 ## Epoch 18/20
-## 25000/25000 - 0s - loss: 0.2971 - accuracy: 0.8774 - val_loss: 0.3320 - val_accuracy: 0.8585
+## 25000/25000 - 0s - loss: 0.2791 - accuracy: 0.8855 - val_loss: 0.3372 - val_accuracy: 0.8574
 ## Epoch 19/20
-## 25000/25000 - 0s - loss: 0.2970 - accuracy: 0.8777 - val_loss: 0.3327 - val_accuracy: 0.8580
+## 25000/25000 - 0s - loss: 0.2771 - accuracy: 0.8864 - val_loss: 0.3374 - val_accuracy: 0.8565
 ## Epoch 20/20
-## 25000/25000 - 0s - loss: 0.2967 - accuracy: 0.8782 - val_loss: 0.3327 - val_accuracy: 0.8578</code></pre>
+## 25000/25000 - 0s - loss: 0.2758 - accuracy: 0.8866 - val_loss: 0.3380 - val_accuracy: 0.8574</code></pre>
 </div>
 <div id="create-a-bigger-model" class="section level3">
 <h3>Create a bigger model</h3>
@@ -273,45 +275,45 @@ menu:
 <a class="sourceLine" id="cb19-8" data-line-number="8">)</a></code></pre></div>
 <pre><code>## Train on 25000 samples, validate on 25000 samples
 ## Epoch 1/20
-## 25000/25000 - 1s - loss: 0.4221 - accuracy: 0.8059 - val_loss: 0.3326 - val_accuracy: 0.8576
+## 25000/25000 - 1s - loss: 0.4373 - accuracy: 0.7918 - val_loss: 0.3378 - val_accuracy: 0.8525
 ## Epoch 2/20
-## 25000/25000 - 1s - loss: 0.2912 - accuracy: 0.8794 - val_loss: 0.3247 - val_accuracy: 0.8583
+## 25000/25000 - 1s - loss: 0.2895 - accuracy: 0.8804 - val_loss: 0.3211 - val_accuracy: 0.8601
 ## Epoch 3/20
-## 25000/25000 - 1s - loss: 0.2273 - accuracy: 0.9099 - val_loss: 0.3391 - val_accuracy: 0.8573
+## 25000/25000 - 1s - loss: 0.2239 - accuracy: 0.9130 - val_loss: 0.3393 - val_accuracy: 0.8568
 ## Epoch 4/20
-## 25000/25000 - 1s - loss: 0.1112 - accuracy: 0.9655 - val_loss: 0.4152 - val_accuracy: 0.8520
+## 25000/25000 - 1s - loss: 0.1063 - accuracy: 0.9676 - val_loss: 0.4218 - val_accuracy: 0.8502
 ## Epoch 5/20
-## 25000/25000 - 1s - loss: 0.0257 - accuracy: 0.9953 - val_loss: 0.5339 - val_accuracy: 0.8483
+## 25000/25000 - 1s - loss: 0.0226 - accuracy: 0.9968 - val_loss: 0.5466 - val_accuracy: 0.8498
 ## Epoch 6/20
-## 25000/25000 - 1s - loss: 0.0065 - accuracy: 0.9995 - val_loss: 0.6121 - val_accuracy: 0.8518
+## 25000/25000 - 1s - loss: 0.0040 - accuracy: 0.9998 - val_loss: 0.6352 - val_accuracy: 0.8526
 ## Epoch 7/20
-## 25000/25000 - 1s - loss: 0.0015 - accuracy: 1.0000 - val_loss: 0.6539 - val_accuracy: 0.8532
+## 25000/25000 - 1s - loss: 0.0011 - accuracy: 1.0000 - val_loss: 0.6804 - val_accuracy: 0.8523
 ## Epoch 8/20
-## 25000/25000 - 1s - loss: 6.4431e-04 - accuracy: 1.0000 - val_loss: 0.6855 - val_accuracy: 0.8538
+## 25000/25000 - 1s - loss: 5.5561e-04 - accuracy: 1.0000 - val_loss: 0.7107 - val_accuracy: 0.8532
 ## Epoch 9/20
-## 25000/25000 - 1s - loss: 4.4559e-04 - accuracy: 1.0000 - val_loss: 0.7098 - val_accuracy: 0.8544
+## 25000/25000 - 1s - loss: 3.8517e-04 - accuracy: 1.0000 - val_loss: 0.7321 - val_accuracy: 0.8536
 ## Epoch 10/20
-## 25000/25000 - 1s - loss: 3.4013e-04 - accuracy: 1.0000 - val_loss: 0.7277 - val_accuracy: 0.8546
+## 25000/25000 - 1s - loss: 2.9556e-04 - accuracy: 1.0000 - val_loss: 0.7500 - val_accuracy: 0.8532
 ## Epoch 11/20
-## 25000/25000 - 1s - loss: 2.7061e-04 - accuracy: 1.0000 - val_loss: 0.7426 - val_accuracy: 0.8544
+## 25000/25000 - 1s - loss: 2.3442e-04 - accuracy: 1.0000 - val_loss: 0.7668 - val_accuracy: 0.8533
 ## Epoch 12/20
-## 25000/25000 - 1s - loss: 2.1980e-04 - accuracy: 1.0000 - val_loss: 0.7567 - val_accuracy: 0.8545
+## 25000/25000 - 1s - loss: 1.9127e-04 - accuracy: 1.0000 - val_loss: 0.7805 - val_accuracy: 0.8533
 ## Epoch 13/20
-## 25000/25000 - 1s - loss: 1.8250e-04 - accuracy: 1.0000 - val_loss: 0.7702 - val_accuracy: 0.8547
+## 25000/25000 - 1s - loss: 1.5909e-04 - accuracy: 1.0000 - val_loss: 0.7934 - val_accuracy: 0.8534
 ## Epoch 14/20
-## 25000/25000 - 1s - loss: 1.5297e-04 - accuracy: 1.0000 - val_loss: 0.7829 - val_accuracy: 0.8550
+## 25000/25000 - 1s - loss: 1.3415e-04 - accuracy: 1.0000 - val_loss: 0.8060 - val_accuracy: 0.8532
 ## Epoch 15/20
-## 25000/25000 - 1s - loss: 1.2979e-04 - accuracy: 1.0000 - val_loss: 0.7949 - val_accuracy: 0.8546
+## 25000/25000 - 1s - loss: 1.1400e-04 - accuracy: 1.0000 - val_loss: 0.8178 - val_accuracy: 0.8532
 ## Epoch 16/20
-## 25000/25000 - 1s - loss: 1.1137e-04 - accuracy: 1.0000 - val_loss: 0.8063 - val_accuracy: 0.8548
+## 25000/25000 - 1s - loss: 9.7617e-05 - accuracy: 1.0000 - val_loss: 0.8299 - val_accuracy: 0.8533
 ## Epoch 17/20
-## 25000/25000 - 1s - loss: 9.5803e-05 - accuracy: 1.0000 - val_loss: 0.8175 - val_accuracy: 0.8544
+## 25000/25000 - 1s - loss: 8.3921e-05 - accuracy: 1.0000 - val_loss: 0.8416 - val_accuracy: 0.8536
 ## Epoch 18/20
-## 25000/25000 - 1s - loss: 8.3181e-05 - accuracy: 1.0000 - val_loss: 0.8283 - val_accuracy: 0.8542
+## 25000/25000 - 1s - loss: 7.2108e-05 - accuracy: 1.0000 - val_loss: 0.8538 - val_accuracy: 0.8536
 ## Epoch 19/20
-## 25000/25000 - 1s - loss: 7.2507e-05 - accuracy: 1.0000 - val_loss: 0.8388 - val_accuracy: 0.8544
+## 25000/25000 - 1s - loss: 6.2046e-05 - accuracy: 1.0000 - val_loss: 0.8654 - val_accuracy: 0.8535
 ## Epoch 20/20
-## 25000/25000 - 1s - loss: 6.3577e-05 - accuracy: 1.0000 - val_loss: 0.8491 - val_accuracy: 0.8545</code></pre>
+## 25000/25000 - 1s - loss: 5.3363e-05 - accuracy: 1.0000 - val_loss: 0.8779 - val_accuracy: 0.8536</code></pre>
 </div>
 <div id="plot-the-training-and-validation-loss" class="section level3">
 <h3>Plot the training and validation loss</h3>
@@ -329,10 +331,10 @@ The smaller network begins overfitting a litle later than the baseline model and
 <a class="sourceLine" id="cb21-10" data-line-number="10"><span class="st">  </span><span class="kw"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span>(<span class="dt">rowname =</span> <span class="kw"><a href="https://rdrr.io/r/base/integer.html">as.integer</a></span>(rowname)) <span class="op">%&gt;%</span></a>
 <a class="sourceLine" id="cb21-11" data-line-number="11"><span class="st">  </span><span class="kw"><a href="https://tidyr.tidyverse.org/reference/gather.html">gather</a></span>(<span class="dt">key =</span> <span class="st">"type"</span>, <span class="dt">value =</span> <span class="st">"value"</span>, <span class="op">-</span>rowname)</a>
 <a class="sourceLine" id="cb21-12" data-line-number="12">  </a>
-<a class="sourceLine" id="cb21-13" data-line-number="13"><span class="kw"><a href="https://rdrr.io/pkg/ggplot2/man/ggplot.html">ggplot</a></span>(compare_cx, <span class="kw"><a href="https://rdrr.io/pkg/ggplot2/man/aes.html">aes</a></span>(<span class="dt">x =</span> rowname, <span class="dt">y =</span> value, <span class="dt">color =</span> type)) <span class="op">+</span></a>
-<a class="sourceLine" id="cb21-14" data-line-number="14"><span class="st">  </span><span class="kw"><a href="https://rdrr.io/pkg/ggplot2/man/geom_path.html">geom_line</a></span>() <span class="op">+</span></a>
-<a class="sourceLine" id="cb21-15" data-line-number="15"><span class="st">  </span><span class="kw"><a href="https://rdrr.io/pkg/ggplot2/man/labs.html">xlab</a></span>(<span class="st">"epoch"</span>) <span class="op">+</span></a>
-<a class="sourceLine" id="cb21-16" data-line-number="16"><span class="st">  </span><span class="kw"><a href="https://rdrr.io/pkg/ggplot2/man/labs.html">ylab</a></span>(<span class="st">"loss"</span>)</a></code></pre></div>
+<a class="sourceLine" id="cb21-13" data-line-number="13"><span class="kw"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span>(compare_cx, <span class="kw"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span>(<span class="dt">x =</span> rowname, <span class="dt">y =</span> value, <span class="dt">color =</span> type)) <span class="op">+</span></a>
+<a class="sourceLine" id="cb21-14" data-line-number="14"><span class="st">  </span><span class="kw"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html">geom_line</a></span>() <span class="op">+</span></a>
+<a class="sourceLine" id="cb21-15" data-line-number="15"><span class="st">  </span><span class="kw"><a href="https://ggplot2.tidyverse.org/reference/labs.html">xlab</a></span>(<span class="st">"epoch"</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb21-16" data-line-number="16"><span class="st">  </span><span class="kw"><a href="https://ggplot2.tidyverse.org/reference/labs.html">ylab</a></span>(<span class="st">"loss"</span>)</a></code></pre></div>
 <p><img src="/tutorials/beginners/basic-ml/tutorial_overfit_underfit_files/figure-html/unnamed-chunk-11-1.png" width="672"></p>
 </div>
 </div>
@@ -371,45 +373,45 @@ The smaller network begins overfitting a litle later than the baseline model and
 <a class="sourceLine" id="cb22-22" data-line-number="22">)</a></code></pre></div>
 <pre><code>## Train on 25000 samples, validate on 25000 samples
 ## Epoch 1/20
-## 25000/25000 - 1s - loss: 0.6001 - accuracy: 0.7384 - val_loss: 0.4705 - val_accuracy: 0.8252
+## 25000/25000 - 1s - loss: 0.6101 - accuracy: 0.7228 - val_loss: 0.4664 - val_accuracy: 0.8261
 ## Epoch 2/20
-## 25000/25000 - 0s - loss: 0.4124 - accuracy: 0.8475 - val_loss: 0.3867 - val_accuracy: 0.8556
+## 25000/25000 - 0s - loss: 0.4045 - accuracy: 0.8495 - val_loss: 0.3843 - val_accuracy: 0.8546
 ## Epoch 3/20
-## 25000/25000 - 0s - loss: 0.3659 - accuracy: 0.8667 - val_loss: 0.3746 - val_accuracy: 0.8584
+## 25000/25000 - 0s - loss: 0.3595 - accuracy: 0.8669 - val_loss: 0.3688 - val_accuracy: 0.8609
 ## Epoch 4/20
-## 25000/25000 - 0s - loss: 0.3513 - accuracy: 0.8722 - val_loss: 0.3711 - val_accuracy: 0.8591
+## 25000/25000 - 0s - loss: 0.3470 - accuracy: 0.8728 - val_loss: 0.3686 - val_accuracy: 0.8596
 ## Epoch 5/20
-## 25000/25000 - 0s - loss: 0.3437 - accuracy: 0.8743 - val_loss: 0.3658 - val_accuracy: 0.8599
+## 25000/25000 - 0s - loss: 0.3401 - accuracy: 0.8745 - val_loss: 0.3614 - val_accuracy: 0.8612
 ## Epoch 6/20
-## 25000/25000 - 0s - loss: 0.3385 - accuracy: 0.8769 - val_loss: 0.3640 - val_accuracy: 0.8610
+## 25000/25000 - 0s - loss: 0.3356 - accuracy: 0.8751 - val_loss: 0.3612 - val_accuracy: 0.8592
 ## Epoch 7/20
-## 25000/25000 - 0s - loss: 0.3355 - accuracy: 0.8770 - val_loss: 0.3626 - val_accuracy: 0.8599
+## 25000/25000 - 0s - loss: 0.3329 - accuracy: 0.8763 - val_loss: 0.3576 - val_accuracy: 0.8600
 ## Epoch 8/20
-## 25000/25000 - 0s - loss: 0.3339 - accuracy: 0.8769 - val_loss: 0.3671 - val_accuracy: 0.8572
+## 25000/25000 - 0s - loss: 0.3290 - accuracy: 0.8771 - val_loss: 0.3582 - val_accuracy: 0.8592
 ## Epoch 9/20
-## 25000/25000 - 0s - loss: 0.3312 - accuracy: 0.8787 - val_loss: 0.3630 - val_accuracy: 0.8594
+## 25000/25000 - 0s - loss: 0.3253 - accuracy: 0.8780 - val_loss: 0.3601 - val_accuracy: 0.8584
 ## Epoch 10/20
-## 25000/25000 - 0s - loss: 0.3264 - accuracy: 0.8809 - val_loss: 0.3671 - val_accuracy: 0.8558
+## 25000/25000 - 0s - loss: 0.3229 - accuracy: 0.8790 - val_loss: 0.3558 - val_accuracy: 0.8594
 ## Epoch 11/20
-## 25000/25000 - 0s - loss: 0.3256 - accuracy: 0.8793 - val_loss: 0.3596 - val_accuracy: 0.8602
+## 25000/25000 - 0s - loss: 0.3196 - accuracy: 0.8812 - val_loss: 0.3560 - val_accuracy: 0.8597
 ## Epoch 12/20
-## 25000/25000 - 0s - loss: 0.3195 - accuracy: 0.8811 - val_loss: 0.3593 - val_accuracy: 0.8587
+## 25000/25000 - 0s - loss: 0.3147 - accuracy: 0.8831 - val_loss: 0.3570 - val_accuracy: 0.8588
 ## Epoch 13/20
-## 25000/25000 - 0s - loss: 0.3153 - accuracy: 0.8838 - val_loss: 0.3610 - val_accuracy: 0.8582
+## 25000/25000 - 0s - loss: 0.3099 - accuracy: 0.8856 - val_loss: 0.3589 - val_accuracy: 0.8584
 ## Epoch 14/20
-## 25000/25000 - 0s - loss: 0.3128 - accuracy: 0.8856 - val_loss: 0.3592 - val_accuracy: 0.8596
+## 25000/25000 - 0s - loss: 0.3056 - accuracy: 0.8874 - val_loss: 0.3590 - val_accuracy: 0.8577
 ## Epoch 15/20
-## 25000/25000 - 0s - loss: 0.3079 - accuracy: 0.8869 - val_loss: 0.3601 - val_accuracy: 0.8595
+## 25000/25000 - 0s - loss: 0.3002 - accuracy: 0.8919 - val_loss: 0.3596 - val_accuracy: 0.8576
 ## Epoch 16/20
-## 25000/25000 - 0s - loss: 0.3053 - accuracy: 0.8885 - val_loss: 0.3631 - val_accuracy: 0.8579
+## 25000/25000 - 0s - loss: 0.2931 - accuracy: 0.8954 - val_loss: 0.3665 - val_accuracy: 0.8558
 ## Epoch 17/20
-## 25000/25000 - 0s - loss: 0.3004 - accuracy: 0.8896 - val_loss: 0.3657 - val_accuracy: 0.8564
+## 25000/25000 - 0s - loss: 0.2880 - accuracy: 0.8993 - val_loss: 0.3683 - val_accuracy: 0.8552
 ## Epoch 18/20
-## 25000/25000 - 0s - loss: 0.2982 - accuracy: 0.8908 - val_loss: 0.3651 - val_accuracy: 0.8574
+## 25000/25000 - 0s - loss: 0.2838 - accuracy: 0.9012 - val_loss: 0.3731 - val_accuracy: 0.8540
 ## Epoch 19/20
-## 25000/25000 - 0s - loss: 0.2927 - accuracy: 0.8940 - val_loss: 0.3664 - val_accuracy: 0.8562
+## 25000/25000 - 0s - loss: 0.2781 - accuracy: 0.9044 - val_loss: 0.3830 - val_accuracy: 0.8526
 ## Epoch 20/20
-## 25000/25000 - 0s - loss: 0.2911 - accuracy: 0.8950 - val_loss: 0.3756 - val_accuracy: 0.8539</code></pre>
+## 25000/25000 - 0s - loss: 0.2754 - accuracy: 0.9070 - val_loss: 0.3877 - val_accuracy: 0.8514</code></pre>
 <p><code>l2(0.001)</code> means that every coefficient in the weight matrix of the layer will add 0.001 * <code>weight_coefficient_value</code> to the total loss of the network. Note that because this penalty is only added at training time, the loss for this network will be much higher at training than at test time.</p>
 <p>Here’s the impact of our L2 regularization penalty:</p>
 <div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb24-1" data-line-number="1">compare_cx &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span>(</a>
@@ -422,10 +424,10 @@ The smaller network begins overfitting a litle later than the baseline model and
 <a class="sourceLine" id="cb24-8" data-line-number="8"><span class="st">  </span><span class="kw"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span>(<span class="dt">rowname =</span> <span class="kw"><a href="https://rdrr.io/r/base/integer.html">as.integer</a></span>(rowname)) <span class="op">%&gt;%</span></a>
 <a class="sourceLine" id="cb24-9" data-line-number="9"><span class="st">  </span><span class="kw"><a href="https://tidyr.tidyverse.org/reference/gather.html">gather</a></span>(<span class="dt">key =</span> <span class="st">"type"</span>, <span class="dt">value =</span> <span class="st">"value"</span>, <span class="op">-</span>rowname)</a>
 <a class="sourceLine" id="cb24-10" data-line-number="10">  </a>
-<a class="sourceLine" id="cb24-11" data-line-number="11"><span class="kw"><a href="https://rdrr.io/pkg/ggplot2/man/ggplot.html">ggplot</a></span>(compare_cx, <span class="kw"><a href="https://rdrr.io/pkg/ggplot2/man/aes.html">aes</a></span>(<span class="dt">x =</span> rowname, <span class="dt">y =</span> value, <span class="dt">color =</span> type)) <span class="op">+</span></a>
-<a class="sourceLine" id="cb24-12" data-line-number="12"><span class="st">  </span><span class="kw"><a href="https://rdrr.io/pkg/ggplot2/man/geom_path.html">geom_line</a></span>() <span class="op">+</span></a>
-<a class="sourceLine" id="cb24-13" data-line-number="13"><span class="st">  </span><span class="kw"><a href="https://rdrr.io/pkg/ggplot2/man/labs.html">xlab</a></span>(<span class="st">"epoch"</span>) <span class="op">+</span></a>
-<a class="sourceLine" id="cb24-14" data-line-number="14"><span class="st">  </span><span class="kw"><a href="https://rdrr.io/pkg/ggplot2/man/labs.html">ylab</a></span>(<span class="st">"loss"</span>)</a></code></pre></div>
+<a class="sourceLine" id="cb24-11" data-line-number="11"><span class="kw"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span>(compare_cx, <span class="kw"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span>(<span class="dt">x =</span> rowname, <span class="dt">y =</span> value, <span class="dt">color =</span> type)) <span class="op">+</span></a>
+<a class="sourceLine" id="cb24-12" data-line-number="12"><span class="st">  </span><span class="kw"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html">geom_line</a></span>() <span class="op">+</span></a>
+<a class="sourceLine" id="cb24-13" data-line-number="13"><span class="st">  </span><span class="kw"><a href="https://ggplot2.tidyverse.org/reference/labs.html">xlab</a></span>(<span class="st">"epoch"</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb24-14" data-line-number="14"><span class="st">  </span><span class="kw"><a href="https://ggplot2.tidyverse.org/reference/labs.html">ylab</a></span>(<span class="st">"loss"</span>)</a></code></pre></div>
 <p><img src="/tutorials/beginners/basic-ml/tutorial_overfit_underfit_files/figure-html/unnamed-chunk-13-1.png" width="672"></p>
 <p>As you can see, the L2 regularized model has become much more resistant to overfitting than the baseline model, even though both models have the same number of parameters.</p>
 </div>
@@ -458,45 +460,45 @@ The smaller network begins overfitting a litle later than the baseline model and
 <a class="sourceLine" id="cb25-22" data-line-number="22">)</a></code></pre></div>
 <pre><code>## Train on 25000 samples, validate on 25000 samples
 ## Epoch 1/20
-## 25000/25000 - 1s - loss: 0.6918 - accuracy: 0.5286 - val_loss: 0.6619 - val_accuracy: 0.6799
+## 25000/25000 - 1s - loss: 0.6934 - accuracy: 0.5353 - val_loss: 0.6712 - val_accuracy: 0.6958
 ## Epoch 2/20
-## 25000/25000 - 0s - loss: 0.6382 - accuracy: 0.6246 - val_loss: 0.5595 - val_accuracy: 0.8045
+## 25000/25000 - 0s - loss: 0.6501 - accuracy: 0.6097 - val_loss: 0.5780 - val_accuracy: 0.7938
 ## Epoch 3/20
-## 25000/25000 - 0s - loss: 0.5659 - accuracy: 0.6966 - val_loss: 0.4541 - val_accuracy: 0.8354
+## 25000/25000 - 0s - loss: 0.5877 - accuracy: 0.6693 - val_loss: 0.4819 - val_accuracy: 0.8246
 ## Epoch 4/20
-## 25000/25000 - 0s - loss: 0.5221 - accuracy: 0.7331 - val_loss: 0.4089 - val_accuracy: 0.8465
+## 25000/25000 - 0s - loss: 0.5306 - accuracy: 0.7283 - val_loss: 0.4093 - val_accuracy: 0.8453
 ## Epoch 5/20
-## 25000/25000 - 0s - loss: 0.4847 - accuracy: 0.7568 - val_loss: 0.3726 - val_accuracy: 0.8534
+## 25000/25000 - 0s - loss: 0.4874 - accuracy: 0.7715 - val_loss: 0.3806 - val_accuracy: 0.8492
 ## Epoch 6/20
-## 25000/25000 - 0s - loss: 0.4584 - accuracy: 0.7793 - val_loss: 0.3539 - val_accuracy: 0.8549
+## 25000/25000 - 0s - loss: 0.4545 - accuracy: 0.8026 - val_loss: 0.3476 - val_accuracy: 0.8573
 ## Epoch 7/20
-## 25000/25000 - 0s - loss: 0.4371 - accuracy: 0.7982 - val_loss: 0.3470 - val_accuracy: 0.8548
+## 25000/25000 - 0s - loss: 0.4322 - accuracy: 0.8235 - val_loss: 0.3407 - val_accuracy: 0.8574
 ## Epoch 8/20
-## 25000/25000 - 0s - loss: 0.4227 - accuracy: 0.8085 - val_loss: 0.3312 - val_accuracy: 0.8593
+## 25000/25000 - 0s - loss: 0.4163 - accuracy: 0.8289 - val_loss: 0.3311 - val_accuracy: 0.8594
 ## Epoch 9/20
-## 25000/25000 - 0s - loss: 0.4084 - accuracy: 0.8240 - val_loss: 0.3303 - val_accuracy: 0.8595
+## 25000/25000 - 0s - loss: 0.4061 - accuracy: 0.8338 - val_loss: 0.3323 - val_accuracy: 0.8583
 ## Epoch 10/20
-## 25000/25000 - 0s - loss: 0.3979 - accuracy: 0.8314 - val_loss: 0.3259 - val_accuracy: 0.8588
+## 25000/25000 - 0s - loss: 0.3927 - accuracy: 0.8413 - val_loss: 0.3268 - val_accuracy: 0.8592
 ## Epoch 11/20
-## 25000/25000 - 0s - loss: 0.3870 - accuracy: 0.8369 - val_loss: 0.3243 - val_accuracy: 0.8594
+## 25000/25000 - 0s - loss: 0.3893 - accuracy: 0.8441 - val_loss: 0.3278 - val_accuracy: 0.8586
 ## Epoch 12/20
-## 25000/25000 - 0s - loss: 0.3846 - accuracy: 0.8417 - val_loss: 0.3235 - val_accuracy: 0.8596
+## 25000/25000 - 0s - loss: 0.3829 - accuracy: 0.8460 - val_loss: 0.3242 - val_accuracy: 0.8602
 ## Epoch 13/20
-## 25000/25000 - 0s - loss: 0.3783 - accuracy: 0.8399 - val_loss: 0.3231 - val_accuracy: 0.8590
+## 25000/25000 - 0s - loss: 0.3800 - accuracy: 0.8467 - val_loss: 0.3254 - val_accuracy: 0.8582
 ## Epoch 14/20
-## 25000/25000 - 0s - loss: 0.3734 - accuracy: 0.8450 - val_loss: 0.3233 - val_accuracy: 0.8619
+## 25000/25000 - 0s - loss: 0.3749 - accuracy: 0.8538 - val_loss: 0.3265 - val_accuracy: 0.8581
 ## Epoch 15/20
-## 25000/25000 - 0s - loss: 0.3724 - accuracy: 0.8455 - val_loss: 0.3273 - val_accuracy: 0.8599
+## 25000/25000 - 0s - loss: 0.3706 - accuracy: 0.8533 - val_loss: 0.3259 - val_accuracy: 0.8586
 ## Epoch 16/20
-## 25000/25000 - 0s - loss: 0.3640 - accuracy: 0.8478 - val_loss: 0.3242 - val_accuracy: 0.8601
+## 25000/25000 - 0s - loss: 0.3689 - accuracy: 0.8546 - val_loss: 0.3263 - val_accuracy: 0.8591
 ## Epoch 17/20
-## 25000/25000 - 0s - loss: 0.3561 - accuracy: 0.8534 - val_loss: 0.3262 - val_accuracy: 0.8613
+## 25000/25000 - 0s - loss: 0.3626 - accuracy: 0.8580 - val_loss: 0.3265 - val_accuracy: 0.8574
 ## Epoch 18/20
-## 25000/25000 - 0s - loss: 0.3606 - accuracy: 0.8508 - val_loss: 0.3270 - val_accuracy: 0.8603
+## 25000/25000 - 0s - loss: 0.3644 - accuracy: 0.8555 - val_loss: 0.3272 - val_accuracy: 0.8581
 ## Epoch 19/20
-## 25000/25000 - 0s - loss: 0.3542 - accuracy: 0.8561 - val_loss: 0.3288 - val_accuracy: 0.8573
+## 25000/25000 - 0s - loss: 0.3600 - accuracy: 0.8590 - val_loss: 0.3284 - val_accuracy: 0.8558
 ## Epoch 20/20
-## 25000/25000 - 0s - loss: 0.3504 - accuracy: 0.8560 - val_loss: 0.3300 - val_accuracy: 0.8606</code></pre>
+## 25000/25000 - 0s - loss: 0.3569 - accuracy: 0.8591 - val_loss: 0.3294 - val_accuracy: 0.8591</code></pre>
 <p>How well did it work?</p>
 <div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb27-1" data-line-number="1">compare_cx &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span>(</a>
 <a class="sourceLine" id="cb27-2" data-line-number="2">  <span class="dt">baseline_train =</span> baseline_history<span class="op">$</span>metrics<span class="op">$</span>loss,</a>
@@ -508,10 +510,10 @@ The smaller network begins overfitting a litle later than the baseline model and
 <a class="sourceLine" id="cb27-8" data-line-number="8"><span class="st">  </span><span class="kw"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span>(<span class="dt">rowname =</span> <span class="kw"><a href="https://rdrr.io/r/base/integer.html">as.integer</a></span>(rowname)) <span class="op">%&gt;%</span></a>
 <a class="sourceLine" id="cb27-9" data-line-number="9"><span class="st">  </span><span class="kw"><a href="https://tidyr.tidyverse.org/reference/gather.html">gather</a></span>(<span class="dt">key =</span> <span class="st">"type"</span>, <span class="dt">value =</span> <span class="st">"value"</span>, <span class="op">-</span>rowname)</a>
 <a class="sourceLine" id="cb27-10" data-line-number="10">  </a>
-<a class="sourceLine" id="cb27-11" data-line-number="11"><span class="kw"><a href="https://rdrr.io/pkg/ggplot2/man/ggplot.html">ggplot</a></span>(compare_cx, <span class="kw"><a href="https://rdrr.io/pkg/ggplot2/man/aes.html">aes</a></span>(<span class="dt">x =</span> rowname, <span class="dt">y =</span> value, <span class="dt">color =</span> type)) <span class="op">+</span></a>
-<a class="sourceLine" id="cb27-12" data-line-number="12"><span class="st">  </span><span class="kw"><a href="https://rdrr.io/pkg/ggplot2/man/geom_path.html">geom_line</a></span>() <span class="op">+</span></a>
-<a class="sourceLine" id="cb27-13" data-line-number="13"><span class="st">  </span><span class="kw"><a href="https://rdrr.io/pkg/ggplot2/man/labs.html">xlab</a></span>(<span class="st">"epoch"</span>) <span class="op">+</span></a>
-<a class="sourceLine" id="cb27-14" data-line-number="14"><span class="st">  </span><span class="kw"><a href="https://rdrr.io/pkg/ggplot2/man/labs.html">ylab</a></span>(<span class="st">"loss"</span>)</a></code></pre></div>
+<a class="sourceLine" id="cb27-11" data-line-number="11"><span class="kw"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span>(compare_cx, <span class="kw"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span>(<span class="dt">x =</span> rowname, <span class="dt">y =</span> value, <span class="dt">color =</span> type)) <span class="op">+</span></a>
+<a class="sourceLine" id="cb27-12" data-line-number="12"><span class="st">  </span><span class="kw"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html">geom_line</a></span>() <span class="op">+</span></a>
+<a class="sourceLine" id="cb27-13" data-line-number="13"><span class="st">  </span><span class="kw"><a href="https://ggplot2.tidyverse.org/reference/labs.html">xlab</a></span>(<span class="st">"epoch"</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb27-14" data-line-number="14"><span class="st">  </span><span class="kw"><a href="https://ggplot2.tidyverse.org/reference/labs.html">ylab</a></span>(<span class="st">"loss"</span>)</a></code></pre></div>
 <p><img src="/tutorials/beginners/basic-ml/tutorial_overfit_underfit_files/figure-html/unnamed-chunk-15-1.png" width="672"></p>
 <p>Adding dropout is a clear improvement over the baseline model.</p>
 <p>To recap: here the most common ways to prevent overfitting in neural networks:</p>
