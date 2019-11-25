@@ -228,6 +228,19 @@ disqusShortname = "r-tensorflow"
 	weight = 60
 	
 [[menu.main]]
+	name   = "Tools"
+	url    = "/tools/"
+	identifier = "tools-top"
+	weight = 60
+	
+[[menu.main]]
+	name   = "Training Runs"
+	url    = "/tools/tfruns/"
+	identifier = "tfruns-top"
+	parent = "tools-top"
+	weight = 10
+	
+[[menu.main]]
 	name   = "API"
 	url    = "/reference/keras"
 	identifier = "reference-top"

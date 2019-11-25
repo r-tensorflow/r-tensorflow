@@ -1,0 +1,46 @@
+---
+title: "Managing Runs"
+output: 
+  rmarkdown::html_vignette: default
+vignette: >
+  %\VignetteIndexEntry{Managing Runs}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+type: docs
+repo: https://github.com/rstudio/tfruns
+menu:
+  main:
+    name: "Managing Training Runs"
+    identifier: "tools-tfruns-managing"
+    parent: "tfruns-top"
+    weight: 30
+aliases:
+  - /tools/tfruns/articles/managing.html
+---
+
+
+
+<div id="run-output" class="section level2">
+<h2>Run Output</h2>
+<p>Any graphical or console output as well as file artifacts created by a training run (e.g. saved models or saved model weights) can be viewed from the <strong>Output</strong> tab of the run view:</p>
+<p><kbd><img src="../images/view_run_output.png" width="675/"></kbd></p>
+<p>You can use the <code>copy_run_files()</code> function to export file artifacts from runs into another directory. For example:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="kw">copy_run_files</span>(<span class="st">"runs/2017-09-24T10-54-00Z"</span>, <span class="dt">to =</span> <span class="st">"saved-model"</span>)</a></code></pre></div>
+<p>You can also use the <code>copy_run()</code> function to export a run directory in it’s entirety. For example, this code exports the specified run to a “best-run” directory:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" data-line-number="1"><span class="kw">copy_run</span>(<span class="st">"runs/2017-09-24T10-54-00Z"</span>, <span class="dt">to =</span> <span class="st">"best-run"</span>)</a></code></pre></div>
+<p>Note that <code>copy_run()</code> will accept any number of runs. For example, this code exports all run directories with an evaluation accuracy greater than 0.98 to a “best-runs” directory:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1"><span class="kw">copy_run</span>(<span class="kw">ls_runs</span>(eval_acc <span class="op">&gt;=</span><span class="st"> </span><span class="fl">0.98</span>), <span class="dt">to =</span> <span class="st">"best-runs"</span>)</a></code></pre></div>
+</div>
+<div id="cleaning-runs" class="section level2">
+<h2>Cleaning Runs</h2>
+<p>You can use the <code>clean_runs()</code> function to archive a set of runs you no longer need the data from. For example, this code archives all runs with an eval accuracy less than 0.98:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" data-line-number="1"><span class="kw">clean_runs</span>(<span class="kw">ls_runs</span>(eval_acc <span class="op">&lt;</span><span class="st"> </span><span class="fl">0.98</span>))</a></code></pre></div>
+<p>If you don’t specify a set of runs to clean then all runs will be archived:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" data-line-number="1"><span class="kw">clean_runs</span>() <span class="co"># archives all runs in the "runs" directory</span></a></code></pre></div>
+<p>Note that you’ll always get a confirmation prompt before the runs are actually archived.</p>
+</div>
+<div id="purging-runs" class="section level2">
+<h2>Purging Runs</h2>
+<p>When runs are archived they are moved to the “archive” subdirectory of the “runs” directory. If you want to permanently remove runs from the archive you call the <code>purge_runs()</code> function:</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" data-line-number="1"><span class="kw">purge_runs</span>()</a></code></pre></div>
+</div>
