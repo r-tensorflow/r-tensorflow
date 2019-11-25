@@ -7,6 +7,8 @@ menu:
     identifier: "installation-gpu-quick"
     parent: "installation-gpu"
     weight: 10
+aliases: 
+  - /tools/gpu.html
 ---
 
 ```{r setup, include=FALSE}

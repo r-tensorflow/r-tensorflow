@@ -16,6 +16,7 @@ menu:
     weight: 20
 aliases:
   - /tools/tfdatasets/feature-spec
+  - /tools/tfdatasets/articles/feature_columns.html
 ---
 
 ```{r setup, include=FALSE}

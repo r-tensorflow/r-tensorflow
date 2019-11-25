@@ -18,7 +18,7 @@ aliases:
   - /tensorflow/articles/installation_gpu.html
   - /tools/installation_gpu.html
   - /tools/local_gpu
-
+  - /tools/local_gpu.html
 ---
 
 
@@ -238,5 +238,3 @@ pip install keras h5py pyyaml requests Pillow scipy
 If you have any trouble with locating the system-wide version of TensorFlow from within R please see the section on [locating TensorFlow](installation.html#locating-tensorflow).
 
 
-    
-    

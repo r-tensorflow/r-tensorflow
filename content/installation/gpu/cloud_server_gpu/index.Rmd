@@ -12,6 +12,8 @@ menu:
     identifier: "tools-cloud-server-gpu"
     parent: "installation-gpu"
     weight: 40
+aliases:
+  - /tools/cloud_server_gpu.html
 ---
 
 
