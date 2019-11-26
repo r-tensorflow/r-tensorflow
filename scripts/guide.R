@@ -1,3 +1,5 @@
+library(magrittr)
+
 packages <- list(
   keras = "dfalbel/keras@newdocs"
 )
@@ -14,6 +16,10 @@ download_source <- function(repo) {
 
 modify_image_path <- function(path) {
   
+  # only modify if the file is not the index.
+  if (fs::path_file(path) == "index.Rmd")
+    return(NULL)
+  
   file <- readr::read_file(path)
   file <- stringr::str_replace_all(
     file, 
@@ -23,8 +29,6 @@ modify_image_path <- function(path) {
   readr::write_file(file, path)
   
 }
-
-path <- download_source(repo = packages$keras)
 
 copy_vignette_dir <- function(name, path) {
   
@@ -69,6 +73,11 @@ copy_vignette_dir <- function(name, path) {
     overwrite = TRUE
   )
 }
+
+purrr::iwalk(packages, function(repo, name) {
+  exdir <- download_source(repo)
+  copy_vignette_dir(name, exdir)
+})
 
 
 
