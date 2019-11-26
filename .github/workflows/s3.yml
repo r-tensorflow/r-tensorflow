@@ -15,6 +15,8 @@ jobs:
         uses: peaceiris/actions-hugo@v2.3.0
         with:
           hugo-version: 0.58.3
+      - name: "Hugo build"
+        run: hugo --minify
   deploy:
     name: 'Deploy to S3 bucket'
     runs-on: ubuntu-latest
