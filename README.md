@@ -16,3 +16,10 @@ The API reference can be built with:
 Rscript /scripts/api.R
 ```
 
+## Updating the guides
+
+You can update the Guide section with:
+
+```
+Rscript /scripts/guide.R
+```
