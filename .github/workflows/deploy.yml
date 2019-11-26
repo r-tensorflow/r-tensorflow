@@ -1,0 +1,26 @@
+name: "Deploy"
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build-deploy:
+    name: 'Build the webiste'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+      - name: "Hugo setup"
+        uses: peaceiris/actions-hugo@v2.3.0
+        with:
+          hugo-version: 0.58.3
+      - name: "Hugo build"
+        run: hugo --minify
+      - name: "Deploy to Github Pages"
+        uses: peaceiris/actions-gh-pages@v2.5.0
+        env:
+          ACTIONS_DEPLOY_KEY: ${{ secrets.ACTIONS_DEPLOY_KEY }}
+          PUBLISH_BRANCH: gh-pages
+          PUBLISH_DIR: ./public
+      
