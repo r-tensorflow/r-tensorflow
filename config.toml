@@ -15,7 +15,7 @@ disqusShortname = "r-tensorflow"
 	# General information
 	author = "J.J. Allaire"
 	description = "Documentation for the TensorFlow for R interface"
-	copyright = "Copyright 2017, RStudio, Inc."
+	copyright = "Copyright 2019, RStudio, Inc."
 	repo = "https://github.com/rstudio/tensorflow"
 
 [[menu.main]]
