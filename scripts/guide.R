@@ -2,7 +2,8 @@ library(magrittr)
 
 packages <- list(
   keras = "dfalbel/keras@newdocs",
-  tfdatasets = "rstudio/tfdatasets#60"
+  tfdatasets = "rstudio/tfdatasets#60",
+  tfhub = "rstudio/tfhub#9"
 )
 
 download_source <- function(repo) {
@@ -24,7 +25,7 @@ modify_image_path <- function(path) {
   file <- readr::read_file(path)
   file <- stringr::str_replace_all(
     file, 
-    stringr::fixed("images/"), 
+    stringr::fixed("[^_]images/"), 
     "../images/"
   )
   readr::write_file(file, path)
