@@ -150,17 +150,17 @@ for the categorical variables.</p>
 <p>After preparing we can see the list of dense features that were defined:</p>
 <div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb18-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/utils/str.html">str</a></span>(spec_prep<span class="op">$</span><span class="kw"><a href="../../tools/tfdatasets/reference/dense_features.html">dense_features</a></span>())</a></code></pre></div>
 <pre><code>## List of 11
-##  $ age                                  :NumericColumn(key='age', shape=(1,), default_value=None, dtype=tf.float32, normalizer_fn=&lt;function make_python_function.&lt;locals&gt;.python_function at 0x1325f8c80&gt;)
-##  $ trestbps                             :NumericColumn(key='trestbps', shape=(1,), default_value=None, dtype=tf.float32, normalizer_fn=&lt;function make_python_function.&lt;locals&gt;.python_function at 0x12ee810d0&gt;)
-##  $ chol                                 :NumericColumn(key='chol', shape=(1,), default_value=None, dtype=tf.float32, normalizer_fn=&lt;function make_python_function.&lt;locals&gt;.python_function at 0x12ee81400&gt;)
-##  $ thalach                              :NumericColumn(key='thalach', shape=(1,), default_value=None, dtype=tf.float32, normalizer_fn=&lt;function make_python_function.&lt;locals&gt;.python_function at 0x12ee81048&gt;)
-##  $ oldpeak                              :NumericColumn(key='oldpeak', shape=(1,), default_value=None, dtype=tf.float32, normalizer_fn=&lt;function make_python_function.&lt;locals&gt;.python_function at 0x12ee81268&gt;)
-##  $ slope                                :NumericColumn(key='slope', shape=(1,), default_value=None, dtype=tf.float32, normalizer_fn=&lt;function make_python_function.&lt;locals&gt;.python_function at 0x12ee812f0&gt;)
-##  $ ca                                   :NumericColumn(key='ca', shape=(1,), default_value=None, dtype=tf.float32, normalizer_fn=&lt;function make_python_function.&lt;locals&gt;.python_function at 0x12ee81378&gt;)
-##  $ bucketized_age                       :BucketizedColumn(source_column=NumericColumn(key='age', shape=(1,), default_value=None, dtype=tf.float32, normalizer_fn=&lt;function make_python_function.&lt;locals&gt;.python_function at 0x1325f8c80&gt;), boundaries=(18.0, 25.0, 30.0, 35.0, 40.0, 45.0, 50.0, 55.0, 60.0, 65.0))
-##  $ indicator_thal                       :IndicatorColumn(categorical_column=VocabularyListCategoricalColumn(key='thal', vocabulary_list=('fixed', 'normal', 'reversible'), dtype=tf.string, default_value=-1, num_oov_buckets=0))
-##  $ embedding_thal                       :EmbeddingColumn(categorical_column=VocabularyListCategoricalColumn(key='thal', vocabulary_list=('fixed', 'normal', 'reversible'), dtype=tf.string, default_value=-1, num_oov_buckets=0), dimension=2, combiner='mean', initializer=&lt;tensorflow.python.ops.init_ops.TruncatedNormal&gt;, ckpt_to_load_from=None, tensor_name_in_ckpt=None, max_norm=None, trainable=True)
-##  $ indicator_crossed_thal_bucketized_age:IndicatorColumn(categorical_column=CrossedColumn(keys=(VocabularyListCategoricalColumn(key='thal', vocabulary_list=('fixed', 'normal', 'reversible'), dtype=tf.string, default_value=-1, num_oov_buckets=0), BucketizedColumn(source_column=NumericColumn(key='age', shape=(1,), default_value=None, dtype=tf.float32, normalizer_fn=&lt;function make_python_function.&lt;locals&gt;.python_function at 0x1325f8c80&gt;), boundaries=(18.0, 25.0, 30.0, 35.0, 40.0, 45.0, 50.0, 55.0, 60.0, 65.0))), hash_bucket_size=10.0, hash_key=None))</code></pre>
+##  $ age                                  :NumericColumn(key='age', shape=(1,), default_value=None, dtype=tf.float32, normalizer_fn=&lt;function make_python_function.&lt;locals&gt;.python_function at 0x142463ae8&gt;)
+##  $ trestbps                             :NumericColumn(key='trestbps', shape=(1,), default_value=None, dtype=tf.float32, normalizer_fn=&lt;function make_python_function.&lt;locals&gt;.python_function at 0x142463c80&gt;)
+##  $ chol                                 :NumericColumn(key='chol', shape=(1,), default_value=None, dtype=tf.float32, normalizer_fn=&lt;function make_python_function.&lt;locals&gt;.python_function at 0x142463048&gt;)
+##  $ thalach                              :NumericColumn(key='thalach', shape=(1,), default_value=None, dtype=tf.float32, normalizer_fn=&lt;function make_python_function.&lt;locals&gt;.python_function at 0x1424637b8&gt;)
+##  $ oldpeak                              :NumericColumn(key='oldpeak', shape=(1,), default_value=None, dtype=tf.float32, normalizer_fn=&lt;function make_python_function.&lt;locals&gt;.python_function at 0x1424632f0&gt;)
+##  $ slope                                :NumericColumn(key='slope', shape=(1,), default_value=None, dtype=tf.float32, normalizer_fn=&lt;function make_python_function.&lt;locals&gt;.python_function at 0x142463598&gt;)
+##  $ ca                                   :NumericColumn(key='ca', shape=(1,), default_value=None, dtype=tf.float32, normalizer_fn=&lt;function make_python_function.&lt;locals&gt;.python_function at 0x142463d90&gt;)
+##  $ bucketized_age                       :BucketizedColumn(source_column=NumericColumn(key='age', shape=(1,), default_value=None, dtype=tf.float32, normalizer_fn=&lt;function make_python_function.&lt;locals&gt;.python_function at 0x142463ae8&gt;), boundaries=(18.0, 25.0, 30.0, 35.0, 40.0, 45.0, 50.0, 55.0, 60.0, 65.0))
+##  $ indicator_thal                       :IndicatorColumn(categorical_column=VocabularyListCategoricalColumn(key='thal', vocabulary_list=('1', '2', 'fixed', 'normal', 'reversible'), dtype=tf.string, default_value=-1, num_oov_buckets=0))
+##  $ embedding_thal                       :EmbeddingColumn(categorical_column=VocabularyListCategoricalColumn(key='thal', vocabulary_list=('1', '2', 'fixed', 'normal', 'reversible'), dtype=tf.string, default_value=-1, num_oov_buckets=0), dimension=2, combiner='mean', initializer=&lt;tensorflow.python.ops.init_ops.TruncatedNormal&gt;, ckpt_to_load_from=None, tensor_name_in_ckpt=None, max_norm=None, trainable=True)
+##  $ indicator_crossed_thal_bucketized_age:IndicatorColumn(categorical_column=CrossedColumn(keys=(VocabularyListCategoricalColumn(key='thal', vocabulary_list=('1', '2', 'fixed', 'normal', 'reversible'), dtype=tf.string, default_value=-1, num_oov_buckets=0), BucketizedColumn(source_column=NumericColumn(key='age', shape=(1,), default_value=None, dtype=tf.float32, normalizer_fn=&lt;function make_python_function.&lt;locals&gt;.python_function at 0x142463ae8&gt;), boundaries=(18.0, 25.0, 30.0, 35.0, 40.0, 45.0, 50.0, 55.0, 60.0, 65.0))), hash_bucket_size=10.0, hash_key=None))</code></pre>
 <p>Now we are ready to define our model in Keras. We will use a specialized <code>layer_dense_features</code> that
 knows what to do with the feature columns specification.</p>
 <p>We also use a new <code>layer_input_from_dataset</code> that is useful to create a Keras input object copying the structure from a <code>data.frame</code> or TensorFlow dataset.</p>
@@ -191,69 +191,69 @@ knows what to do with the feature columns specification.</p>
 <pre><code>## Train on 181 samples, validate on 46 samples
 ## Epoch 1/15
 ## 
- 32/181 [====&gt;.........................] - ETA: 4s - loss: 0.6473 - binary_accuracy: 0.6562
-181/181 [==============================] - 1s 8ms/sample - loss: 0.6429 - binary_accuracy: 0.6409 - val_loss: 0.6040 - val_binary_accuracy: 0.7391
+ 32/181 [====&gt;.........................] - ETA: 4s - loss: 0.6473 - binary_accuracy: 0.7188
+181/181 [==============================] - 1s 7ms/sample - loss: 0.6124 - binary_accuracy: 0.7238 - val_loss: 0.5466 - val_binary_accuracy: 0.8261
 ## Epoch 2/15
 ## 
- 32/181 [====&gt;.........................] - ETA: 0s - loss: 0.5818 - binary_accuracy: 0.7500
-181/181 [==============================] - 0s 270us/sample - loss: 0.6027 - binary_accuracy: 0.7238 - val_loss: 0.5725 - val_binary_accuracy: 0.7609
+ 32/181 [====&gt;.........................] - ETA: 0s - loss: 0.5793 - binary_accuracy: 0.7812
+181/181 [==============================] - 0s 195us/sample - loss: 0.5682 - binary_accuracy: 0.7348 - val_loss: 0.5048 - val_binary_accuracy: 0.8261
 ## Epoch 3/15
 ## 
- 32/181 [====&gt;.........................] - ETA: 0s - loss: 0.5221 - binary_accuracy: 0.8438
-181/181 [==============================] - 0s 182us/sample - loss: 0.5700 - binary_accuracy: 0.7624 - val_loss: 0.5442 - val_binary_accuracy: 0.7391
+ 32/181 [====&gt;.........................] - ETA: 0s - loss: 0.5619 - binary_accuracy: 0.6875
+181/181 [==============================] - 0s 149us/sample - loss: 0.5313 - binary_accuracy: 0.7459 - val_loss: 0.4711 - val_binary_accuracy: 0.8261
 ## Epoch 4/15
 ## 
- 32/181 [====&gt;.........................] - ETA: 0s - loss: 0.5903 - binary_accuracy: 0.7500
-181/181 [==============================] - 0s 171us/sample - loss: 0.5377 - binary_accuracy: 0.7790 - val_loss: 0.5199 - val_binary_accuracy: 0.7174
+ 32/181 [====&gt;.........................] - ETA: 0s - loss: 0.4983 - binary_accuracy: 0.7812
+181/181 [==============================] - 0s 144us/sample - loss: 0.5012 - binary_accuracy: 0.7514 - val_loss: 0.4426 - val_binary_accuracy: 0.8261
 ## Epoch 5/15
 ## 
- 32/181 [====&gt;.........................] - ETA: 0s - loss: 0.5387 - binary_accuracy: 0.7812
-181/181 [==============================] - 0s 177us/sample - loss: 0.5112 - binary_accuracy: 0.7956 - val_loss: 0.4993 - val_binary_accuracy: 0.7391
+ 32/181 [====&gt;.........................] - ETA: 0s - loss: 0.5948 - binary_accuracy: 0.6875
+181/181 [==============================] - 0s 147us/sample - loss: 0.4765 - binary_accuracy: 0.7624 - val_loss: 0.4193 - val_binary_accuracy: 0.8478
 ## Epoch 6/15
 ## 
- 32/181 [====&gt;.........................] - ETA: 0s - loss: 0.4161 - binary_accuracy: 0.8750
-181/181 [==============================] - 0s 180us/sample - loss: 0.4866 - binary_accuracy: 0.8066 - val_loss: 0.4812 - val_binary_accuracy: 0.7826
+ 32/181 [====&gt;.........................] - ETA: 0s - loss: 0.4236 - binary_accuracy: 0.7812
+181/181 [==============================] - 0s 144us/sample - loss: 0.4564 - binary_accuracy: 0.7624 - val_loss: 0.3993 - val_binary_accuracy: 0.8478
 ## Epoch 7/15
 ## 
- 32/181 [====&gt;.........................] - ETA: 0s - loss: 0.5420 - binary_accuracy: 0.7500
-181/181 [==============================] - 0s 179us/sample - loss: 0.4644 - binary_accuracy: 0.8177 - val_loss: 0.4657 - val_binary_accuracy: 0.8043
+ 32/181 [====&gt;.........................] - ETA: 0s - loss: 0.4800 - binary_accuracy: 0.6250
+181/181 [==============================] - 0s 146us/sample - loss: 0.4392 - binary_accuracy: 0.7735 - val_loss: 0.3853 - val_binary_accuracy: 0.8696
 ## Epoch 8/15
 ## 
- 32/181 [====&gt;.........................] - ETA: 0s - loss: 0.4529 - binary_accuracy: 0.8750
-181/181 [==============================] - 0s 206us/sample - loss: 0.4454 - binary_accuracy: 0.8177 - val_loss: 0.4524 - val_binary_accuracy: 0.8043
+ 32/181 [====&gt;.........................] - ETA: 0s - loss: 0.3958 - binary_accuracy: 0.8125
+181/181 [==============================] - 0s 143us/sample - loss: 0.4238 - binary_accuracy: 0.8011 - val_loss: 0.3721 - val_binary_accuracy: 0.8696
 ## Epoch 9/15
 ## 
- 32/181 [====&gt;.........................] - ETA: 0s - loss: 0.4331 - binary_accuracy: 0.8125
-181/181 [==============================] - 0s 183us/sample - loss: 0.4282 - binary_accuracy: 0.8232 - val_loss: 0.4414 - val_binary_accuracy: 0.8043
+ 32/181 [====&gt;.........................] - ETA: 0s - loss: 0.4194 - binary_accuracy: 0.7500
+181/181 [==============================] - 0s 153us/sample - loss: 0.4116 - binary_accuracy: 0.8122 - val_loss: 0.3610 - val_binary_accuracy: 0.8478
 ## Epoch 10/15
 ## 
- 32/181 [====&gt;.........................] - ETA: 0s - loss: 0.3982 - binary_accuracy: 0.8125
-181/181 [==============================] - 0s 178us/sample - loss: 0.4121 - binary_accuracy: 0.8398 - val_loss: 0.4317 - val_binary_accuracy: 0.8043
+ 32/181 [====&gt;.........................] - ETA: 0s - loss: 0.5857 - binary_accuracy: 0.6250
+181/181 [==============================] - 0s 139us/sample - loss: 0.4011 - binary_accuracy: 0.8122 - val_loss: 0.3536 - val_binary_accuracy: 0.8478
 ## Epoch 11/15
 ## 
- 32/181 [====&gt;.........................] - ETA: 0s - loss: 0.4141 - binary_accuracy: 0.8438
-181/181 [==============================] - 0s 195us/sample - loss: 0.3992 - binary_accuracy: 0.8398 - val_loss: 0.4243 - val_binary_accuracy: 0.8043
+ 32/181 [====&gt;.........................] - ETA: 0s - loss: 0.3489 - binary_accuracy: 0.8750
+181/181 [==============================] - 0s 143us/sample - loss: 0.3918 - binary_accuracy: 0.8287 - val_loss: 0.3448 - val_binary_accuracy: 0.8478
 ## Epoch 12/15
 ## 
- 32/181 [====&gt;.........................] - ETA: 0s - loss: 0.4859 - binary_accuracy: 0.7188
-181/181 [==============================] - 0s 180us/sample - loss: 0.3861 - binary_accuracy: 0.8398 - val_loss: 0.4178 - val_binary_accuracy: 0.8043
+ 32/181 [====&gt;.........................] - ETA: 0s - loss: 0.3137 - binary_accuracy: 0.8438
+181/181 [==============================] - 0s 140us/sample - loss: 0.3842 - binary_accuracy: 0.8287 - val_loss: 0.3358 - val_binary_accuracy: 0.8478
 ## Epoch 13/15
 ## 
- 32/181 [====&gt;.........................] - ETA: 0s - loss: 0.3767 - binary_accuracy: 0.8750
-181/181 [==============================] - 0s 174us/sample - loss: 0.3763 - binary_accuracy: 0.8564 - val_loss: 0.4117 - val_binary_accuracy: 0.8043
+ 32/181 [====&gt;.........................] - ETA: 0s - loss: 0.3659 - binary_accuracy: 0.8438
+181/181 [==============================] - 0s 144us/sample - loss: 0.3762 - binary_accuracy: 0.8287 - val_loss: 0.3292 - val_binary_accuracy: 0.8696
 ## Epoch 14/15
 ## 
- 32/181 [====&gt;.........................] - ETA: 0s - loss: 0.3181 - binary_accuracy: 0.8750
-181/181 [==============================] - 0s 176us/sample - loss: 0.3666 - binary_accuracy: 0.8508 - val_loss: 0.4064 - val_binary_accuracy: 0.8043
+ 32/181 [====&gt;.........................] - ETA: 0s - loss: 0.3289 - binary_accuracy: 0.8750
+181/181 [==============================] - 0s 142us/sample - loss: 0.3705 - binary_accuracy: 0.8343 - val_loss: 0.3234 - val_binary_accuracy: 0.8696
 ## Epoch 15/15
 ## 
- 32/181 [====&gt;.........................] - ETA: 0s - loss: 0.3101 - binary_accuracy: 0.9062
-181/181 [==============================] - 0s 171us/sample - loss: 0.3576 - binary_accuracy: 0.8508 - val_loss: 0.4031 - val_binary_accuracy: 0.8043</code></pre>
+ 32/181 [====&gt;.........................] - ETA: 0s - loss: 0.3148 - binary_accuracy: 0.8750
+181/181 [==============================] - 0s 137us/sample - loss: 0.3648 - binary_accuracy: 0.8398 - val_loss: 0.3186 - val_binary_accuracy: 0.8696</code></pre>
 <div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb23-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/graphics/plot.html">plot</a></span>(history)</a></code></pre></div>
 <p><img src="/guide/tfdatasets/feature_spec_files/figure-html/unnamed-chunk-14-1.png" width="672"></p>
 <p>Finally we can make predictions in the test set and calculate performance
 metrics like the AUC of the ROC curve:</p>
 <div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb24-1" data-line-number="1">hearts_test<span class="op">$</span>pred &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/stats/predict.html">predict</a></span>(model, hearts_test)</a>
 <a class="sourceLine" id="cb24-2" data-line-number="2">Metrics<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/Metrics/man/auc.html">auc</a></span>(hearts_test<span class="op">$</span>target, hearts_test<span class="op">$</span>pred)</a></code></pre></div>
-<pre><code>## [1] 0.8840792</code></pre>
+<pre><code>## [1] 0.9285714</code></pre>
 </div>
