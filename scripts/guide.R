@@ -25,8 +25,8 @@ modify_image_path <- function(path) {
   file <- readr::read_file(path)
   file <- stringr::str_replace_all(
     file, 
-    stringr::fixed("[^_]images/"), 
-    "../images/"
+    "([^_])(images/)", 
+    "\\1../images/"
   )
   readr::write_file(file, path)
   
