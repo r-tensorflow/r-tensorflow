@@ -1,7 +1,8 @@
 library(magrittr)
 
 packages <- list(
-  keras = "dfalbel/keras@newdocs"
+  keras = "dfalbel/keras@newdocs",
+  tfdatasets = "rstudio/tfdatasets#60"
 )
 
 download_source <- function(repo) {
