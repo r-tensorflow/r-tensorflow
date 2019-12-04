@@ -71,3 +71,6 @@ video {
   margin-left: 0;
 }
 
+a.st-ui-result .st-ui-type-detail {
+    max-height: 1000px !important;
+}
