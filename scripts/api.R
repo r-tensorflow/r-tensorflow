@@ -100,12 +100,30 @@ copy_reference <- function(exdir, name) {
   
 }
 
+fix_reference_links <- function() {
+  
+  files <- fs::dir_ls("content/reference/", type = "file", recurse = TRUE)
+  index <- fs::path_file(files) == "_index.html"
+  files <- files[!index]
+  
+  purrr::walk(
+    files,
+    function(fname) {
+      f <- readr::read_file(fname)
+      f <- stringr::str_replace_all(f, "href='([^\\/]*)'", "href='../\\1'")
+      readr::write_file(f, fname)
+    }
+  )
+}
+
 purrr::iwalk(packages, function(repo, name) {
   exdir <- download_source(repo)
   modify_pkgdown_config(exdir)
   rebuild_reference(exdir)
   copy_reference(exdir, name)
 })
+
+fix_reference_links()
 
 
 

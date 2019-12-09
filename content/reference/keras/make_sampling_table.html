@@ -39,7 +39,7 @@ aliases:
 probability that a word of rank i should be sampled.</p>
     <h2 id="details">Details</h2>
 
-    <p>Used for generating the <code>sampling_table</code> argument for <code><a href='skipgrams.html'>skipgrams()</a></code>.
+    <p>Used for generating the <code>sampling_table</code> argument for <code><a href='../skipgrams.html'>skipgrams()</a></code>.
 <code>sampling_table[[i]]</code> is the probability of sampling the word i-th most common
 word in a dataset (more common words should be sampled less frequently, for balance).</p>
 <p>The sampling probabilities are generated according to the sampling distribution used in word2vec:</p>
@@ -55,11 +55,11 @@ sqrt(word.frequency/sampling_factor) / (word.frequency/sampling_factor))</p>
     <h2 id="see-also">See also</h2>
 
     <div class='dont-index'><p>Other text preprocessing: 
-<code><a href='pad_sequences.html'>pad_sequences</a>()</code>,
-<code><a href='skipgrams.html'>skipgrams</a>()</code>,
-<code><a href='text_hashing_trick.html'>text_hashing_trick</a>()</code>,
-<code><a href='text_one_hot.html'>text_one_hot</a>()</code>,
-<code><a href='text_to_word_sequence.html'>text_to_word_sequence</a>()</code></p></div>
+<code><a href='../pad_sequences.html'>pad_sequences</a>()</code>,
+<code><a href='../skipgrams.html'>skipgrams</a>()</code>,
+<code><a href='../text_hashing_trick.html'>text_hashing_trick</a>()</code>,
+<code><a href='../text_one_hot.html'>text_one_hot</a>()</code>,
+<code><a href='../text_to_word_sequence.html'>text_to_word_sequence</a>()</code></p></div>
 
 
 

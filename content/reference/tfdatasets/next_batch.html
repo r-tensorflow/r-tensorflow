@@ -49,7 +49,7 @@ use another mechanism like a global step counter or detecting a learning plateau
 <p>Another approach is to detect when all batches have been yielded
 from the dataset. When the tensor reaches the end of iteration a runtime
 error will occur. You can catch and ignore the error when it occurs by wrapping
-your iteration code in the <code><a href='with_dataset.html'>with_dataset()</a></code> function.</p>
+your iteration code in the <code><a href='../with_dataset.html'>with_dataset()</a></code> function.</p>
 <p>See the examples below for a demonstration of each of these methods of iteration.</p>
 
     <h2 id="examples">Examples</h2>
@@ -58,11 +58,11 @@ your iteration code in the <code><a href='with_dataset.html'>with_dataset()</a><
 <span class='co'># iteration with 'infinite' dataset and explicit step counter</span>
 
 <span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='no'>tfdatasets</span>)
-<span class='no'>dataset</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='text_line_dataset.html'>text_line_dataset</a></span>(<span class='st'>"mtcars.csv"</span>, <span class='kw'>record_spec</span> <span class='kw'>=</span> <span class='no'>mtcars_spec</span>) <span class='kw'>%&gt;%</span>
-  <span class='fu'><a href='dataset_prepare.html'>dataset_prepare</a></span>(<span class='kw'>x</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='no'>mpg</span>, <span class='no'>disp</span>), <span class='kw'>y</span> <span class='kw'>=</span> <span class='no'>cyl</span>) <span class='kw'>%&gt;%</span>
-  <span class='fu'><a href='dataset_shuffle.html'>dataset_shuffle</a></span>(<span class='fl'>5000</span>) <span class='kw'>%&gt;%</span>
-  <span class='fu'><a href='dataset_batch.html'>dataset_batch</a></span>(<span class='fl'>128</span>) <span class='kw'>%&gt;%</span>
-  <span class='fu'><a href='dataset_repeat.html'>dataset_repeat</a></span>() <span class='co'># repeat infinitely</span>
+<span class='no'>dataset</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='../text_line_dataset.html'>text_line_dataset</a></span>(<span class='st'>"mtcars.csv"</span>, <span class='kw'>record_spec</span> <span class='kw'>=</span> <span class='no'>mtcars_spec</span>) <span class='kw'>%&gt;%</span>
+  <span class='fu'><a href='../dataset_prepare.html'>dataset_prepare</a></span>(<span class='kw'>x</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='no'>mpg</span>, <span class='no'>disp</span>), <span class='kw'>y</span> <span class='kw'>=</span> <span class='no'>cyl</span>) <span class='kw'>%&gt;%</span>
+  <span class='fu'><a href='../dataset_shuffle.html'>dataset_shuffle</a></span>(<span class='fl'>5000</span>) <span class='kw'>%&gt;%</span>
+  <span class='fu'><a href='../dataset_batch.html'>dataset_batch</a></span>(<span class='fl'>128</span>) <span class='kw'>%&gt;%</span>
+  <span class='fu'><a href='../dataset_repeat.html'>dataset_repeat</a></span>() <span class='co'># repeat infinitely</span>
 <span class='no'>batch</span> <span class='kw'>&lt;-</span> <span class='fu'>next_batch</span>(<span class='no'>dataset</span>)
 <span class='no'>steps</span> <span class='kw'>&lt;-</span> <span class='fl'>200</span>
 <span class='kw'>for</span> (<span class='no'>i</span> <span class='kw'>in</span> <span class='fl'>1</span>:<span class='no'>steps</span>) {
@@ -72,12 +72,12 @@ your iteration code in the <code><a href='with_dataset.html'>with_dataset()</a><
 <span class='co'># iteration that detects and ignores end of iteration error</span>
 
 <span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='no'>tfdatasets</span>)
-<span class='no'>dataset</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='text_line_dataset.html'>text_line_dataset</a></span>(<span class='st'>"mtcars.csv"</span>, <span class='kw'>record_spec</span> <span class='kw'>=</span> <span class='no'>mtcars_spec</span>) <span class='kw'>%&gt;%</span>
-  <span class='fu'><a href='dataset_prepare.html'>dataset_prepare</a></span>(<span class='kw'>x</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='no'>mpg</span>, <span class='no'>disp</span>), <span class='kw'>y</span> <span class='kw'>=</span> <span class='no'>cyl</span>) <span class='kw'>%&gt;%</span>
-  <span class='fu'><a href='dataset_batch.html'>dataset_batch</a></span>(<span class='fl'>128</span>) <span class='kw'>%&gt;%</span>
-  <span class='fu'><a href='dataset_repeat.html'>dataset_repeat</a></span>(<span class='fl'>10</span>)
+<span class='no'>dataset</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='../text_line_dataset.html'>text_line_dataset</a></span>(<span class='st'>"mtcars.csv"</span>, <span class='kw'>record_spec</span> <span class='kw'>=</span> <span class='no'>mtcars_spec</span>) <span class='kw'>%&gt;%</span>
+  <span class='fu'><a href='../dataset_prepare.html'>dataset_prepare</a></span>(<span class='kw'>x</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='no'>mpg</span>, <span class='no'>disp</span>), <span class='kw'>y</span> <span class='kw'>=</span> <span class='no'>cyl</span>) <span class='kw'>%&gt;%</span>
+  <span class='fu'><a href='../dataset_batch.html'>dataset_batch</a></span>(<span class='fl'>128</span>) <span class='kw'>%&gt;%</span>
+  <span class='fu'><a href='../dataset_repeat.html'>dataset_repeat</a></span>(<span class='fl'>10</span>)
 <span class='no'>batch</span> <span class='kw'>&lt;-</span> <span class='fu'>next_batch</span>(<span class='no'>dataset</span>)
-<span class='fu'><a href='with_dataset.html'>with_dataset</a></span>({
+<span class='fu'><a href='../with_dataset.html'>with_dataset</a></span>({
   <span class='kw'>while</span>(<span class='fl'>TRUE</span>) {
     <span class='co'># use batch$x and batch$y tensors</span>
   }

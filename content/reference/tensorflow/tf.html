@@ -27,7 +27,7 @@ and functions as well as sub-modules (e.g. <code>tf$nn</code>,
 <span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='no'>tensorflow</span>)
 
 <span class='no'>hello</span> <span class='kw'>&lt;-</span> <span class='no'>tf</span>$<span class='fu'>constant</span>(<span class='st'>'Hello, TensorFlow!'</span>)
-<span class='no'>zeros</span> <span class='kw'>&lt;-</span> <span class='no'>tf</span>$<span class='fu'>Variable</span>(<span class='no'>tf</span>$<span class='fu'>zeros</span>(<span class='fu'><a href='shape.html'>shape</a></span>(<span class='fl'>1L</span>)))
+<span class='no'>zeros</span> <span class='kw'>&lt;-</span> <span class='no'>tf</span>$<span class='fu'>Variable</span>(<span class='no'>tf</span>$<span class='fu'>zeros</span>(<span class='fu'><a href='../shape.html'>shape</a></span>(<span class='fl'>1L</span>)))
 
 <span class='no'>sess</span> <span class='kw'>&lt;-</span> <span class='no'>tf</span>$<span class='fu'>Session</span>()
 <span class='no'>sess</span>$<span class='fu'>run</span>(<span class='no'>tf</span>$<span class='fu'>global_variables_initializer</span>())

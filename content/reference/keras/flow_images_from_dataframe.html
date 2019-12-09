@@ -21,7 +21,7 @@ augmented/normalized data.</p>
   <span class='kw'>directory</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
   <span class='kw'>x_col</span> <span class='kw'>=</span> <span class='st'>"filename"</span>,
   <span class='kw'>y_col</span> <span class='kw'>=</span> <span class='st'>"class"</span>,
-  <span class='kw'>generator</span> <span class='kw'>=</span> <span class='fu'><a href='image_data_generator.html'>image_data_generator</a></span>(),
+  <span class='kw'>generator</span> <span class='kw'>=</span> <span class='fu'><a href='../image_data_generator.html'>image_data_generator</a></span>(),
   <span class='kw'>target_size</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>256</span>, <span class='fl'>256</span>),
   <span class='kw'>color_mode</span> <span class='kw'>=</span> <span class='st'>"rgb"</span>,
   <span class='kw'>classes</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
@@ -108,7 +108,7 @@ Default: "categorical". Mode for yielding the targets:</p><ul>
 <li><p>"input": images identical to input images (mainly used to work with autoencoders),</p></li>
 <li><p>"other": array of y_col data,
 <code>NULL</code>, no targets are returned (the generator will only yield batches of
-image data, which is useful to use in  <code><a href='predict_generator.html'>predict_generator()</a></code>).</p></li>
+image data, which is useful to use in  <code><a href='../predict_generator.html'>predict_generator()</a></code>).</p></li>
 </ul></td>
     </tr>
     <tr>
@@ -142,7 +142,7 @@ set). Default: "png".</p></td>
     <tr>
       <td>subset</td>
       <td><p>Subset of data (<code>"training"</code> or <code>"validation"</code>) if
-<code>validation_split</code> is set in <code><a href='image_data_generator.html'>image_data_generator()</a></code>.</p></td>
+<code>validation_split</code> is set in <code><a href='../image_data_generator.html'>image_data_generator()</a></code>.</p></td>
     </tr>
     <tr>
       <td>interpolation</td>
@@ -178,11 +178,11 @@ array of corresponding labels. The generator loops indefinitely.</p>
     <h2 id="see-also">See also</h2>
 
     <div class='dont-index'><p>Other image preprocessing: 
-<code><a href='fit_image_data_generator.html'>fit_image_data_generator</a>()</code>,
-<code><a href='flow_images_from_data.html'>flow_images_from_data</a>()</code>,
-<code><a href='flow_images_from_directory.html'>flow_images_from_directory</a>()</code>,
-<code><a href='image_load.html'>image_load</a>()</code>,
-<code><a href='image_to_array.html'>image_to_array</a>()</code></p></div>
+<code><a href='../fit_image_data_generator.html'>fit_image_data_generator</a>()</code>,
+<code><a href='../flow_images_from_data.html'>flow_images_from_data</a>()</code>,
+<code><a href='../flow_images_from_directory.html'>flow_images_from_directory</a>()</code>,
+<code><a href='../image_load.html'>image_load</a>()</code>,
+<code><a href='../image_to_array.html'>image_to_array</a>()</code></p></div>
 
 
 

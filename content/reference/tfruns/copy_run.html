@@ -28,7 +28,7 @@ aliases:
     <tr>
       <td>run_dir</td>
       <td><p>Training run directory or data frame returned from
-<code><a href='ls_runs.html'>ls_runs()</a></code>.</p></td>
+<code><a href='../ls_runs.html'>ls_runs()</a></code>.</p></td>
     </tr>
     <tr>
       <td>to</td>
@@ -54,7 +54,7 @@ run directories specified.</p>
 scripts (e.g. saved models, checkpoints, etc.).</p>
     <h2 id="see-also">See also</h2>
 
-    <div class='dont-index'><p>Other run management: <code><a href='clean_runs.html'>clean_runs</a></code></p></div>
+    <div class='dont-index'><p>Other run management: <code><a href='../clean_runs.html'>clean_runs</a></code></p></div>
 
     <h2 id="examples">Examples</h2>
     <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><div class='input'><span class='kw'>if</span> (<span class='fl'>FALSE</span>) {
@@ -69,7 +69,7 @@ scripts (e.g. saved models, checkpoints, etc.).</p>
 <span class='fu'>copy_run_files</span>(<span class='st'>"runs/2017-09-24T10-54-00Z"</span>, <span class='kw'>rename</span> <span class='kw'>=</span> <span class='st'>"best-model"</span>)
 
 <span class='co'># export 3 best eval_acc to a "best-runs" directory</span>
-<span class='fu'>copy_run</span>(<span class='fu'><a href='ls_runs.html'>ls_runs</a></span>(<span class='kw'>order</span> <span class='kw'>=</span> <span class='no'>eval_acc</span>)[<span class='fl'>1</span>:<span class='fl'>3</span>,], <span class='kw'>to</span> <span class='kw'>=</span> <span class='st'>"best-runs"</span>)
+<span class='fu'>copy_run</span>(<span class='fu'><a href='../ls_runs.html'>ls_runs</a></span>(<span class='kw'>order</span> <span class='kw'>=</span> <span class='no'>eval_acc</span>)[<span class='fl'>1</span>:<span class='fl'>3</span>,], <span class='kw'>to</span> <span class='kw'>=</span> <span class='st'>"best-runs"</span>)
 
 }</div></code></pre></div>
 

@@ -76,8 +76,8 @@ hidden unit to have the norm between a lower bound and an upper bound.</p></li>
 
 <p>You can implement your own constraint functions in R. A custom
 constraint is an R function that takes weights (<code>w</code>) as input
-and returns modified weights. Note that keras <code><a href='backend.html'>backend()</a></code> tensor
-functions (e.g. <code><a href='k_greater_equal.html'>k_greater_equal()</a></code>) should be used in the
+and returns modified weights. Note that keras <code><a href='../backend.html'>backend()</a></code> tensor
+functions (e.g. <code><a href='../k_greater_equal.html'>k_greater_equal()</a></code>) should be used in the
 implementation of custom constraints. For example:<div class="r"></p><pre>nonneg_constraint &lt;- function(w) {
   w * k_cast(k_greater_equal(w, 0), k_floatx())
 }
@@ -86,12 +86,12 @@ layer_dense(units = 32, input_shape = c(784),
             kernel_constraint = nonneg_constraint)
 </pre><p></div></p>
 <p>Note that models which use custom constraints cannot be serialized using
-<code><a href='save_model_hdf5.html'>save_model_hdf5()</a></code>. Rather, the weights of the model should be saved
-and restored using <code><a href='save_model_weights_hdf5.html'>save_model_weights_hdf5()</a></code>.</p>
+<code><a href='../save_model_hdf5.html'>save_model_hdf5()</a></code>. Rather, the weights of the model should be saved
+and restored using <code><a href='../save_model_weights_hdf5.html'>save_model_weights_hdf5()</a></code>.</p>
     <h2 id="see-also">See also</h2>
 
     <div class='dont-index'><p><a href='http://www.cs.toronto.edu/~rsalakhu/papers/srivastava14a.pdf'>Dropout: A Simple Way to Prevent Neural Networks from Overfitting Srivastava, Hinton, et al. 2014</a></p>
-<p><a href='KerasConstraint.html'>KerasConstraint</a></p></div>
+<p><a href='../KerasConstraint.html'>KerasConstraint</a></p></div>
 
 
 

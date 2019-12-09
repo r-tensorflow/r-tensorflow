@@ -48,7 +48,7 @@ aliases:
     </tr>
     <tr>
       <td>options</td>
-      <td><p>An object returned by <code><a href='tf_extract_opts.html'>tf_extract_opts()</a></code></p></td>
+      <td><p>An object returned by <code><a href='../tf_extract_opts.html'>tf_extract_opts()</a></code></p></td>
     </tr>
     </table>
 
@@ -81,7 +81,7 @@ aliases:
 <span class='co'># a all_dims() expands to the shape of the tensor</span>
 <span class='no'>y</span> <span class='kw'>&lt;-</span> <span class='no'>tf</span>$<span class='fu'>constant</span>(<span class='fl'>1</span>:(<span class='fl'>3</span>^<span class='fl'>5</span>), <span class='kw'>shape</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>3</span>,<span class='fl'>3</span>,<span class='fl'>3</span>,<span class='fl'>3</span>,<span class='fl'>3</span>))
 <span class='fu'><a href='https://rdrr.io/r/base/identical.html'>identical</a></span>(
-  <span class='no'>sess</span>$<span class='fu'>run</span>( <span class='no'>y</span>[<span class='fu'><a href='all_dims.html'>all_dims</a></span>(), <span class='fl'>1</span>] ),
+  <span class='no'>sess</span>$<span class='fu'>run</span>( <span class='no'>y</span>[<span class='fu'><a href='../all_dims.html'>all_dims</a></span>(), <span class='fl'>1</span>] ),
   <span class='no'>sess</span>$<span class='fu'>run</span>( <span class='no'>y</span>[,,,,<span class='fl'>1</span>] )
   )
 

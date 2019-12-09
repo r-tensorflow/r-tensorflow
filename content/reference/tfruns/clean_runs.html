@@ -13,7 +13,7 @@ aliases:
     
     <p>Remove run directories from the filesystem.</p>
 
-    <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>clean_runs</span>(<span class='kw'>runs</span> <span class='kw'>=</span> <span class='fu'><a href='ls_runs.html'>ls_runs</a></span>(<span class='kw'>runs_dir</span> <span class='kw'>=</span> <span class='no'>runs_dir</span>),
+    <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>clean_runs</span>(<span class='kw'>runs</span> <span class='kw'>=</span> <span class='fu'><a href='../ls_runs.html'>ls_runs</a></span>(<span class='kw'>runs_dir</span> <span class='kw'>=</span> <span class='no'>runs_dir</span>),
   <span class='kw'>runs_dir</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/options.html'>getOption</a></span>(<span class='st'>"tfruns.runs_dir"</span>, <span class='st'>"runs"</span>),
   <span class='kw'>confirm</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/interactive.html'>interactive</a></span>())
 
@@ -31,7 +31,7 @@ aliases:
     <tr>
       <td>runs</td>
       <td><p>Runs to clean. Can be specified as a data frame
-(as returned by <code><a href='ls_runs.html'>ls_runs()</a></code>) or as a character vector of
+(as returned by <code><a href='../ls_runs.html'>ls_runs()</a></code>) or as a character vector of
 run directories.</p></td>
     </tr>
     <tr>
@@ -54,11 +54,11 @@ all runs) into an "archive" subdirectory of the "runs" directory.</p>
 subdirectory.</p>
     <h2 id="see-also">See also</h2>
 
-    <div class='dont-index'><p>Other run management: <code><a href='copy_run.html'>copy_run</a></code></p></div>
+    <div class='dont-index'><p>Other run management: <code><a href='../copy_run.html'>copy_run</a></code></p></div>
 
     <h2 id="examples">Examples</h2>
     <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><div class='input'><span class='kw'>if</span> (<span class='fl'>FALSE</span>) {
-<span class='fu'>clean_runs</span>(<span class='fu'><a href='ls_runs.html'>ls_runs</a></span>(<span class='no'>completed</span> <span class='kw'>==</span> <span class='fl'>FALSE</span>))
+<span class='fu'>clean_runs</span>(<span class='fu'><a href='../ls_runs.html'>ls_runs</a></span>(<span class='no'>completed</span> <span class='kw'>==</span> <span class='fl'>FALSE</span>))
 }</div></code></pre></div>
 
 
