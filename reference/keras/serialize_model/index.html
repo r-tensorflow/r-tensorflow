@@ -42,12 +42,12 @@ R objects for persistence within R data files.</p><div class=sourceCode><pre cla
 <span class=fu>unserialize_model</span>(<span class=no>model</span>, <span class=kw>custom_objects</span> <span class=kw>=</span> <span class=kw>NULL</span>, <span class=kw>compile</span> <span class=kw>=</span> <span class=fl>TRUE</span>)</code></pre></div><h2 id=arguments>Arguments</h2><table class=ref-arguments><col class=name><col class=desc><tr><td>model</td><td><p>Keras model or R "raw" object containing serialized Keras model.</p></td></tr><tr><td>include_optimizer</td><td><p>If <code>TRUE</code>, save optimizer's state.</p></td></tr><tr><td>custom_objects</td><td><p>Mapping class names (or function names) of custom
 (non-Keras) objects to class/functions (for example, custom metrics
 or custom loss functions).</p></td></tr><tr><td>compile</td><td><p>Whether to compile the model after loading.</p></td></tr></table><h2 id=value>Value</h2><p><code>serialize_model()</code> returns an R "raw" object containing an hdf5
-version of the Keras model. <code>unserialize_model()</code> returns a Keras model.</p><h2 id=note>Note</h2><p>The <code><a href=save_model_hdf5.html>save_model_hdf5()</a></code> function enables saving Keras models to
+version of the Keras model. <code>unserialize_model()</code> returns a Keras model.</p><h2 id=note>Note</h2><p>The <code><a href=../save_model_hdf5.html>save_model_hdf5()</a></code> function enables saving Keras models to
 external hdf5 files.</p><h2 id=see-also>See also</h2><div class=dont-index><p>Other model persistence:
-<code><a href=get_weights.html>get_weights</a>()</code>,
-<code><a href=model_to_json.html>model_to_json</a>()</code>,
-<code><a href=model_to_yaml.html>model_to_yaml</a>()</code>,
-<code><a href=save_model_hdf5.html>save_model_hdf5</a>()</code>,
-<code><a href=save_model_tf.html>save_model_tf</a>()</code>,
-<code><a href=save_model_weights_hdf5.html>save_model_weights_hdf5</a>()</code></p></div></div></div></div><footer>Copyright © 2015-2019 The TensorFlow Authors and RStudio, Inc.
+<code><a href=../get_weights.html>get_weights</a>()</code>,
+<code><a href=../model_to_json.html>model_to_json</a>()</code>,
+<code><a href=../model_to_yaml.html>model_to_yaml</a>()</code>,
+<code><a href=../save_model_hdf5.html>save_model_hdf5</a>()</code>,
+<code><a href=../save_model_tf.html>save_model_tf</a>()</code>,
+<code><a href=../save_model_weights_hdf5.html>save_model_weights_hdf5</a>()</code></p></div></div></div></div><footer>Copyright © 2015-2019 The TensorFlow Authors and RStudio, Inc.
 <script type=text/javascript>(function(w,d,t,u,n,s,e){w['SwiftypeObject']=n;w[n]=w[n]||function(){(w[n].q=w[n].q||[]).push(arguments);};s=d.createElement(t);e=d.getElementsByTagName(t)[0];s.async=1;s.src=u;e.parentNode.insertBefore(s,e);})(window,document,'script','//s.swiftypecdn.com/install/v2/st.js','_st');_st('install','Ne8tbLfE121Pkj3xMr_G','2.0.0');</script></footer></div></div></body></html>

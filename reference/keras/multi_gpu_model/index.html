@@ -49,24 +49,24 @@ is executed on a dedicated GPU.</p></li><li><p>Concatenate the results (on CPU) 
 then we will divide the input into 2 sub-batches of 32 samples,
 process each sub-batch on one GPU, then return the full
 batch of 64 processed samples.</p><p>This induces quasi-linear speedup on up to 8 GPUs.</p><p>This function is only available with the TensorFlow backend
-for the time being.</p><h2 id=model-saving>Model Saving</h2><p>To save the multi-gpu model, use <code><a href=save_model_hdf5.html>save_model_hdf5()</a></code> or
-<code><a href=save_model_weights_hdf5.html>save_model_weights_hdf5()</a></code> with the template model (the argument you
+for the time being.</p><h2 id=model-saving>Model Saving</h2><p>To save the multi-gpu model, use <code><a href=../save_model_hdf5.html>save_model_hdf5()</a></code> or
+<code><a href=../save_model_weights_hdf5.html>save_model_weights_hdf5()</a></code> with the template model (the argument you
 passed to <code>multi_gpu_model</code>), rather than the model returned
 by <code>multi_gpu_model</code>.</p><h2 id=see-also>See also</h2><div class=dont-index><p>Other model functions:
-<code><a href=compile.keras.engine.training.Model.html>compile.keras.engine.training.Model</a>()</code>,
-<code><a href=evaluate.keras.engine.training.Model.html>evaluate.keras.engine.training.Model</a>()</code>,
-<code><a href=evaluate_generator.html>evaluate_generator</a>()</code>,
-<code><a href=fit.keras.engine.training.Model.html>fit.keras.engine.training.Model</a>()</code>,
-<code><a href=fit_generator.html>fit_generator</a>()</code>,
-<code><a href=get_config.html>get_config</a>()</code>,
-<code><a href=get_layer.html>get_layer</a>()</code>,
-<code><a href=keras_model_sequential.html>keras_model_sequential</a>()</code>,
-<code><a href=keras_model.html>keras_model</a>()</code>,
-<code><a href=pop_layer.html>pop_layer</a>()</code>,
-<code><a href=predict.keras.engine.training.Model.html>predict.keras.engine.training.Model</a>()</code>,
-<code><a href=predict_generator.html>predict_generator</a>()</code>,
-<code><a href=predict_on_batch.html>predict_on_batch</a>()</code>,
-<code><a href=predict_proba.html>predict_proba</a>()</code>,
-<code><a href=summary.keras.engine.training.Model.html>summary.keras.engine.training.Model</a>()</code>,
-<code><a href=train_on_batch.html>train_on_batch</a>()</code></p></div><h2 id=examples>Examples</h2><div class=sourceCode><pre class="sourceCode r"><code class="sourceCode r"></code></pre></div></div></div></div><footer>Copyright © 2015-2019 The TensorFlow Authors and RStudio, Inc.
+<code><a href=../compile.keras.engine.training.Model.html>compile.keras.engine.training.Model</a>()</code>,
+<code><a href=../evaluate.keras.engine.training.Model.html>evaluate.keras.engine.training.Model</a>()</code>,
+<code><a href=../evaluate_generator.html>evaluate_generator</a>()</code>,
+<code><a href=../fit.keras.engine.training.Model.html>fit.keras.engine.training.Model</a>()</code>,
+<code><a href=../fit_generator.html>fit_generator</a>()</code>,
+<code><a href=../get_config.html>get_config</a>()</code>,
+<code><a href=../get_layer.html>get_layer</a>()</code>,
+<code><a href=../keras_model_sequential.html>keras_model_sequential</a>()</code>,
+<code><a href=../keras_model.html>keras_model</a>()</code>,
+<code><a href=../pop_layer.html>pop_layer</a>()</code>,
+<code><a href=../predict.keras.engine.training.Model.html>predict.keras.engine.training.Model</a>()</code>,
+<code><a href=../predict_generator.html>predict_generator</a>()</code>,
+<code><a href=../predict_on_batch.html>predict_on_batch</a>()</code>,
+<code><a href=../predict_proba.html>predict_proba</a>()</code>,
+<code><a href=../summary.keras.engine.training.Model.html>summary.keras.engine.training.Model</a>()</code>,
+<code><a href=../train_on_batch.html>train_on_batch</a>()</code></p></div><h2 id=examples>Examples</h2><div class=sourceCode><pre class="sourceCode r"><code class="sourceCode r"></code></pre></div></div></div></div><footer>Copyright © 2015-2019 The TensorFlow Authors and RStudio, Inc.
 <script type=text/javascript>(function(w,d,t,u,n,s,e){w['SwiftypeObject']=n;w[n]=w[n]||function(){(w[n].q=w[n].q||[]).push(arguments);};s=d.createElement(t);e=d.getElementsByTagName(t)[0];s.async=1;s.src=u;e.parentNode.insertBefore(s,e);})(window,document,'script','//s.swiftypecdn.com/install/v2/st.js','_st');_st('install','Ne8tbLfE121Pkj3xMr_G','2.0.0');</script></footer></div></div></body></html>

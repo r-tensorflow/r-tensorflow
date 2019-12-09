@@ -67,15 +67,15 @@
 <span class=fu>metric_sparse_top_k_categorical_accuracy</span>(<span class=no>y_true</span>, <span class=no>y_pred</span>, <span class=kw>k</span> <span class=kw>=</span> <span class=fl>5</span>)
 
 <span class=fu>custom_metric</span>(<span class=no>name</span>, <span class=no>metric_fn</span>)</code></pre></div><h2 id=arguments>Arguments</h2><table class=ref-arguments><col class=name><col class=desc><tr><td>y_true</td><td><p>True labels (tensor)</p></td></tr><tr><td>y_pred</td><td><p>Predictions (tensor of the same shape as y_true).</p></td></tr><tr><td>k</td><td><p>An integer, number of top elements to consider.</p></td></tr><tr><td>name</td><td><p>Name of custom metric</p></td></tr><tr><td>metric_fn</td><td><p>Custom metric function</p></td></tr></table><h2 id=note>Note</h2><p>Metric functions are to be supplied in the <code>metrics</code> parameter of the
-<code><a href=compile.keras.engine.training.Model.html>compile.keras.engine.training.Model()</a></code> function.</p><h2 id=custom-metrics>Custom Metrics</h2><p>You can provide an arbitrary R function as a custom metric. Note that
+<code><a href=../compile.keras.engine.training.Model.html>compile.keras.engine.training.Model()</a></code> function.</p><h2 id=custom-metrics>Custom Metrics</h2><p>You can provide an arbitrary R function as a custom metric. Note that
 the <code>y_true</code> and <code>y_pred</code> parameters are tensors, so computations on
 them should use backend tensor functions.</p><p>Use the <code>custom_metric()</code> function to define a custom metric.
 Note that a name ('mean_pred') is provided for the custom metric
 function: this name is used within training progress output.
 See below for an example.</p><p>If you want to save and load a model with custom metrics, you should
-also specify the metric in the call the <code><a href=save_model_hdf5.html>load_model_hdf5()</a></code>. For example:
-<code><a href=save_model_hdf5.html>load_model_hdf5("my_model.h5", c('mean_pred' = metric_mean_pred))</a></code>.</p><p>Alternatively, you can wrap all of your code in a call to
-<code><a href=with_custom_object_scope.html>with_custom_object_scope()</a></code> which will allow you to refer to the
+also specify the metric in the call the <code><a href=../save_model_hdf5.html>load_model_hdf5()</a></code>. For example:
+<code><a href=../save_model_hdf5.html>load_model_hdf5("my_model.h5", c('mean_pred' = metric_mean_pred))</a></code>.</p><p>Alternatively, you can wrap all of your code in a call to
+<code><a href=../with_custom_object_scope.html>with_custom_object_scope()</a></code> which will allow you to refer to the
 metric by name just like you do with built in keras metrics.</p><p>Documentation on the available backend tensor functions can be
 found at <a href=https://keras.rstudio.com/articles/backend.html#backend-functions>https://keras.rstudio.com/articles/backend.html#backend-functions</a>.</p><h2 id=metrics-with-parameters>Metrics with Parameters</h2><p>To use metrics with parameters (e.g. <code>metric_top_k_categorical_accurary()</code>)
 you should create a custom metric that wraps the call with the parameter.

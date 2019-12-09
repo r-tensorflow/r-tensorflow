@@ -43,13 +43,13 @@
 <code>"GZIP"</code>.</p></td></tr><tr><td>buffer_size</td><td><p>An integer representing the number of bytes in the read buffer. (0
 means no buffering).</p></td></tr><tr><td>num_parallel_reads</td><td><p>An integer representing the number of files to read in
 parallel. Defaults to reading files sequentially.</p></td></tr></table><h2 id=details>Details</h2><p>If the dataset encodes a set of TFExample instances, then they can be decoded
-into named records using the <code><a href=dataset_map.html>dataset_map()</a></code> function (see example below).</p><h2 id=examples>Examples</h2><div class=sourceCode><pre class="sourceCode r"><code class="sourceCode r"><div class=input><span class=kw>if</span> (<span class=fl>FALSE</span>) {
+into named records using the <code><a href=../dataset_map.html>dataset_map()</a></code> function (see example below).</p><h2 id=examples>Examples</h2><div class=sourceCode><pre class="sourceCode r"><code class="sourceCode r"><div class=input><span class=kw>if</span> (<span class=fl>FALSE</span>) {
 
 <span class=co># Creates a dataset that reads all of the examples from two files, and extracts</span>
 <span class=co># the image and label features.</span>
 <span class=no>filenames</span> <span class=kw>&lt;-</span> <span class=fu><a href=https://rdrr.io/r/base/c.html>c</a></span>(<span class=st>"/var/data/file1.tfrecord"</span>, <span class=st>"/var/data/file2.tfrecord"</span>)
 <span class=no>dataset</span> <span class=kw>&lt;-</span> <span class=fu>tfrecord_dataset</span>(<span class=no>filenames</span>) <span class=kw>%&gt;%</span>
-  <span class=fu><a href=dataset_map.html>dataset_map</a></span>(<span class=kw>function</span>(<span class=no>example_proto</span>) {
+  <span class=fu><a href=../dataset_map.html>dataset_map</a></span>(<span class=kw>function</span>(<span class=no>example_proto</span>) {
     <span class=no>features</span> <span class=kw>&lt;-</span> <span class=fu><a href=https://rdrr.io/r/base/list.html>list</a></span>(
       <span class=kw>image</span> <span class=kw>=</span> <span class=no>tf</span>$<span class=fu>FixedLenFeature</span>(<span class=fu><a href=https://rdrr.io/pkg/tensorflow/man/shape.html>shape</a></span>(), <span class=no>tf</span>$<span class=no>string</span>, <span class=kw>default_value</span> <span class=kw>=</span> <span class=st>""</span>),
       <span class=kw>label</span> <span class=kw>=</span> <span class=no>tf</span>$<span class=fu>FixedLenFeature</span>(<span class=fu><a href=https://rdrr.io/pkg/tensorflow/man/shape.html>shape</a></span>(), <span class=no>tf</span>$<span class=no>int32</span>, <span class=kw>default_value</span> <span class=kw>=</span> <span class=fl>0L</span>)

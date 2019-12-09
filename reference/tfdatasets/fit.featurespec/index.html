@@ -38,29 +38,29 @@
 on the steps added to the specification it will compute
 for example, the levels of categorical features, normalization
 constants, etc.</p><div class=sourceCode><pre class="sourceCode r"><code class="sourceCode r"><span class=co># S3 method for FeatureSpec</span>
-<span class=fu><a href=https://rdrr.io/pkg/generics/man/fit.html>fit</a></span>(<span class=no>object</span>, <span class=kw>dataset</span> <span class=kw>=</span> <span class=kw>NULL</span>, <span class=no>...</span>)</code></pre></div><h2 id=arguments>Arguments</h2><table class=ref-arguments><col class=name><col class=desc><tr><td>object</td><td><p>A feature specification created with <code><a href=feature_spec.html>feature_spec()</a></code>.</p></td></tr><tr><td>dataset</td><td><p>(Optional) A TensorFlow dataset. If <code>NULL</code> it will use
-the dataset provided when initilializing the <code>feature_spec</code>.</p></td></tr><tr><td>...</td><td><p>(unused)</p></td></tr></table><h2 id=value>Value</h2><p>a fitted <code>FeatureSpec</code> object.</p><h2 id=see-also>See also</h2><div class=dont-index><ul><li><p><code><a href=feature_spec.html>feature_spec()</a></code> to initialize the feature specification.</p></li><li><p><code><a href=dataset_use_spec.html>dataset_use_spec()</a></code> to create a tensorflow dataset prepared to modeling.</p></li><li><p><a href=steps.html>steps</a> to a list of all implemented steps.</p></li></ul><p>Other Feature Spec Functions:
-<code><a href=dataset_use_spec.html>dataset_use_spec</a>()</code>,
-<code><a href=feature_spec.html>feature_spec</a>()</code>,
-<code><a href=step_bucketized_column.html>step_bucketized_column</a>()</code>,
-<code><a href=step_categorical_column_with_hash_bucket.html>step_categorical_column_with_hash_bucket</a>()</code>,
-<code><a href=step_categorical_column_with_identity.html>step_categorical_column_with_identity</a>()</code>,
-<code><a href=step_categorical_column_with_vocabulary_file.html>step_categorical_column_with_vocabulary_file</a>()</code>,
-<code><a href=step_categorical_column_with_vocabulary_list.html>step_categorical_column_with_vocabulary_list</a>()</code>,
-<code><a href=step_crossed_column.html>step_crossed_column</a>()</code>,
-<code><a href=step_embedding_column.html>step_embedding_column</a>()</code>,
-<code><a href=step_indicator_column.html>step_indicator_column</a>()</code>,
-<code><a href=step_numeric_column.html>step_numeric_column</a>()</code>,
-<code><a href=step_remove_column.html>step_remove_column</a>()</code>,
-<code><a href=step_shared_embeddings_column.html>step_shared_embeddings_column</a>()</code>,
-<code><a href=steps.html>steps</a></code></p></div><h2 id=examples>Examples</h2><div class=sourceCode><pre class="sourceCode r"><code class="sourceCode r"><div class=input><span class=kw>if</span> (<span class=fl>FALSE</span>) {
+<span class=fu><a href=https://rdrr.io/pkg/generics/man/fit.html>fit</a></span>(<span class=no>object</span>, <span class=kw>dataset</span> <span class=kw>=</span> <span class=kw>NULL</span>, <span class=no>...</span>)</code></pre></div><h2 id=arguments>Arguments</h2><table class=ref-arguments><col class=name><col class=desc><tr><td>object</td><td><p>A feature specification created with <code><a href=../feature_spec.html>feature_spec()</a></code>.</p></td></tr><tr><td>dataset</td><td><p>(Optional) A TensorFlow dataset. If <code>NULL</code> it will use
+the dataset provided when initilializing the <code>feature_spec</code>.</p></td></tr><tr><td>...</td><td><p>(unused)</p></td></tr></table><h2 id=value>Value</h2><p>a fitted <code>FeatureSpec</code> object.</p><h2 id=see-also>See also</h2><div class=dont-index><ul><li><p><code><a href=../feature_spec.html>feature_spec()</a></code> to initialize the feature specification.</p></li><li><p><code><a href=../dataset_use_spec.html>dataset_use_spec()</a></code> to create a tensorflow dataset prepared to modeling.</p></li><li><p><a href=../steps.html>steps</a> to a list of all implemented steps.</p></li></ul><p>Other Feature Spec Functions:
+<code><a href=../dataset_use_spec.html>dataset_use_spec</a>()</code>,
+<code><a href=../feature_spec.html>feature_spec</a>()</code>,
+<code><a href=../step_bucketized_column.html>step_bucketized_column</a>()</code>,
+<code><a href=../step_categorical_column_with_hash_bucket.html>step_categorical_column_with_hash_bucket</a>()</code>,
+<code><a href=../step_categorical_column_with_identity.html>step_categorical_column_with_identity</a>()</code>,
+<code><a href=../step_categorical_column_with_vocabulary_file.html>step_categorical_column_with_vocabulary_file</a>()</code>,
+<code><a href=../step_categorical_column_with_vocabulary_list.html>step_categorical_column_with_vocabulary_list</a>()</code>,
+<code><a href=../step_crossed_column.html>step_crossed_column</a>()</code>,
+<code><a href=../step_embedding_column.html>step_embedding_column</a>()</code>,
+<code><a href=../step_indicator_column.html>step_indicator_column</a>()</code>,
+<code><a href=../step_numeric_column.html>step_numeric_column</a>()</code>,
+<code><a href=../step_remove_column.html>step_remove_column</a>()</code>,
+<code><a href=../step_shared_embeddings_column.html>step_shared_embeddings_column</a>()</code>,
+<code><a href=../steps.html>steps</a></code></p></div><h2 id=examples>Examples</h2><div class=sourceCode><pre class="sourceCode r"><code class="sourceCode r"><div class=input><span class=kw>if</span> (<span class=fl>FALSE</span>) {
 <span class=fu><a href=https://rdrr.io/r/base/library.html>library</a></span>(<span class=no>tfdatasets</span>)
 <span class=fu><a href=https://rdrr.io/r/utils/data.html>data</a></span>(<span class=no>hearts</span>)
-<span class=no>hearts</span> <span class=kw>&lt;-</span> <span class=fu><a href=tensor_slices_dataset.html>tensor_slices_dataset</a></span>(<span class=no>hearts</span>) <span class=kw>%&gt;%</span> <span class=fu><a href=dataset_batch.html>dataset_batch</a></span>(<span class=fl>32</span>)
+<span class=no>hearts</span> <span class=kw>&lt;-</span> <span class=fu><a href=../tensor_slices_dataset.html>tensor_slices_dataset</a></span>(<span class=no>hearts</span>) <span class=kw>%&gt;%</span> <span class=fu><a href=../dataset_batch.html>dataset_batch</a></span>(<span class=fl>32</span>)
 
 <span class=co># use the formula interface</span>
-<span class=no>spec</span> <span class=kw>&lt;-</span> <span class=fu><a href=feature_spec.html>feature_spec</a></span>(<span class=no>hearts</span>, <span class=no>target</span> ~ <span class=no>age</span>) <span class=kw>%&gt;%</span>
-  <span class=fu><a href=step_numeric_column.html>step_numeric_column</a></span>(<span class=no>age</span>)
+<span class=no>spec</span> <span class=kw>&lt;-</span> <span class=fu><a href=../feature_spec.html>feature_spec</a></span>(<span class=no>hearts</span>, <span class=no>target</span> ~ <span class=no>age</span>) <span class=kw>%&gt;%</span>
+  <span class=fu><a href=../step_numeric_column.html>step_numeric_column</a></span>(<span class=no>age</span>)
 
 <span class=no>spec_fit</span> <span class=kw>&lt;-</span> <span class=fu><a href=https://rdrr.io/pkg/generics/man/fit.html>fit</a></span>(<span class=no>spec</span>)
 <span class=no>spec_fit</span>

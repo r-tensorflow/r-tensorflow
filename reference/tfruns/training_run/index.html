@@ -40,10 +40,10 @@
   <span class=kw>artifacts_dir</span> <span class=kw>=</span> <span class=fu><a href=https://rdrr.io/r/base/getwd.html>getwd</a></span>(), <span class=kw>echo</span> <span class=kw>=</span> <span class=fl>TRUE</span>, <span class=kw>view</span> <span class=kw>=</span> <span class=st>"auto"</span>,
   <span class=kw>envir</span> <span class=kw>=</span> <span class=fu><a href=https://rdrr.io/r/base/sys.parent.html>parent.frame</a></span>(), <span class=kw>encoding</span> <span class=kw>=</span> <span class=fu><a href=https://rdrr.io/r/base/options.html>getOption</a></span>(<span class=st>"encoding"</span>))</code></pre></div><h2 id=arguments>Arguments</h2><table class=ref-arguments><col class=name><col class=desc><tr><td>file</td><td><p>Path to training script (defaults to "train.R")</p></td></tr><tr><td>context</td><td><p>Run context (defaults to "local")</p></td></tr><tr><td>config</td><td><p>The configuration to use. Defaults to the active configuration
 for the current environment (as specified by the <code>R_CONFIG_ACTIVE</code>
-environment variable), or <code>default</code> when unset.</p></td></tr><tr><td>flags</td><td><p>Named list with flag values (see <code><a href=flags.html>flags()</a></code>) or path
+environment variable), or <code>default</code> when unset.</p></td></tr><tr><td>flags</td><td><p>Named list with flag values (see <code><a href=../flags.html>flags()</a></code>) or path
 to YAML file containing flag values.</p></td></tr><tr><td>properties</td><td><p>Named character vector with run properties. Properties are
 additional metadata about the run which will be subsequently available via
-<code><a href=ls_runs.html>ls_runs()</a></code>.</p></td></tr><tr><td>run_dir</td><td><p>Directory to store run data within</p></td></tr><tr><td>artifacts_dir</td><td><p>Directory to capture created and modified files within.
+<code><a href=../ls_runs.html>ls_runs()</a></code>.</p></td></tr><tr><td>run_dir</td><td><p>Directory to store run data within</p></td></tr><tr><td>artifacts_dir</td><td><p>Directory to capture created and modified files within.
 Pass <code>NULL</code> to not capture any artifcats.</p></td></tr><tr><td>echo</td><td><p>Print expressions within training script</p></td></tr><tr><td>view</td><td><p>View the results of the run after training. The default "auto"
 will view the run when executing a top-level (printed) statement in an
 interactive session. Pass <code>TRUE</code> or <code>FALSE</code> to control whether the view is
@@ -53,6 +53,6 @@ within the "runs" sub-directory of the current working directory (or to the
 value of the <code>tfruns.runs_dir</code> R option if specified).</p><p>The directory name will be a timestamp (in GMT time). If a duplicate name is
 generated then the function will wait long enough to return a unique one.</p><p>If you want to use an alternate directory to store run data you can either
 set the global <code>tfruns.runs_dir</code> R option, or you can pass a <code>run_dir</code>
-explicitly to <code>training_run()</code>, optionally using the <code><a href=unique_run_dir.html>unique_run_dir()</a></code>
+explicitly to <code>training_run()</code>, optionally using the <code><a href=../unique_run_dir.html>unique_run_dir()</a></code>
 function to generate a timestamp-based directory name.</p></div></div></div><footer>Copyright © 2015-2019 The TensorFlow Authors and RStudio, Inc.
 <script type=text/javascript>(function(w,d,t,u,n,s,e){w['SwiftypeObject']=n;w[n]=w[n]||function(){(w[n].q=w[n].q||[]).push(arguments);};s=d.createElement(t);e=d.getElementsByTagName(t)[0];s.async=1;s.src=u;e.parentNode.insertBefore(s,e);})(window,document,'script','//s.swiftypecdn.com/install/v2/st.js','_st');_st('install','Ne8tbLfE121Pkj3xMr_G','2.0.0');</script></footer></div></div></body></html>

@@ -41,7 +41,7 @@
   drop = TRUE,
   style = getOption("tensorflow.extract.style"),
   options = tf_extract_opts(style)
-)</code></pre></div><h2 id=arguments>Arguments</h2><table class=ref-arguments><col class=name><col class=desc><tr><td>x</td><td><p>Tensorflow tensor</p></td></tr><tr><td>...</td><td><p>slicing specs. See examples and details.</p></td></tr><tr><td>drop</td><td><p>whether to drop scalar dimensions</p></td></tr><tr><td>style</td><td><p>One of <code>"python"</code> or <code>"R"</code>.</p></td></tr><tr><td>options</td><td><p>An object returned by <code><a href=tf_extract_opts.html>tf_extract_opts()</a></code></p></td></tr></table><h2 id=examples>Examples</h2><div class=sourceCode><pre class="sourceCode r"><code class="sourceCode r"><div class=input><span class=kw>if</span> (<span class=fl>FALSE</span>) {
+)</code></pre></div><h2 id=arguments>Arguments</h2><table class=ref-arguments><col class=name><col class=desc><tr><td>x</td><td><p>Tensorflow tensor</p></td></tr><tr><td>...</td><td><p>slicing specs. See examples and details.</p></td></tr><tr><td>drop</td><td><p>whether to drop scalar dimensions</p></td></tr><tr><td>style</td><td><p>One of <code>"python"</code> or <code>"R"</code>.</p></td></tr><tr><td>options</td><td><p>An object returned by <code><a href=../tf_extract_opts.html>tf_extract_opts()</a></code></p></td></tr></table><h2 id=examples>Examples</h2><div class=sourceCode><pre class="sourceCode r"><code class="sourceCode r"><div class=input><span class=kw>if</span> (<span class=fl>FALSE</span>) {
 <span class=no>sess</span> <span class=kw>&lt;-</span> <span class=no>tf</span>$<span class=fu>Session</span>()
 
 <span class=no>x</span> <span class=kw>&lt;-</span> <span class=no>tf</span>$<span class=fu>constant</span>(<span class=fl>1</span>:<span class=fl>15</span>, <span class=kw>shape</span> <span class=kw>=</span> <span class=fu><a href=https://rdrr.io/r/base/c.html>c</a></span>(<span class=fl>3</span>, <span class=fl>5</span>))
@@ -68,7 +68,7 @@
 <span class=co># a all_dims() expands to the shape of the tensor</span>
 <span class=no>y</span> <span class=kw>&lt;-</span> <span class=no>tf</span>$<span class=fu>constant</span>(<span class=fl>1</span>:(<span class=fl>3</span>^<span class=fl>5</span>), <span class=kw>shape</span> <span class=kw>=</span> <span class=fu><a href=https://rdrr.io/r/base/c.html>c</a></span>(<span class=fl>3</span>,<span class=fl>3</span>,<span class=fl>3</span>,<span class=fl>3</span>,<span class=fl>3</span>))
 <span class=fu><a href=https://rdrr.io/r/base/identical.html>identical</a></span>(
-  <span class=no>sess</span>$<span class=fu>run</span>( <span class=no>y</span>[<span class=fu><a href=all_dims.html>all_dims</a></span>(), <span class=fl>1</span>] ),
+  <span class=no>sess</span>$<span class=fu>run</span>( <span class=no>y</span>[<span class=fu><a href=../all_dims.html>all_dims</a></span>(), <span class=fl>1</span>] ),
   <span class=no>sess</span>$<span class=fu>run</span>( <span class=no>y</span>[,,,,<span class=fl>1</span>] )
   )
 

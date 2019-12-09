@@ -54,15 +54,15 @@ devices (e.g. when using a remote server).</p></td></tr><tr><td>output_types</td
 each component of an element of this iterator.</p></td></tr><tr><td>output_shapes</td><td><p>(Optional) A nested structure of tf$TensorShape objects
 corresponding to each component of an element of this dataset. If omitted,
 each component will have an unconstrainted shape.</p></td></tr><tr><td>string_handle</td><td><p>A scalar tensor of type string that evaluates
-to a handle produced by the <code><a href=iterator_string_handle.html>iterator_string_handle()</a></code> method.</p></td></tr></table><h2 id=value>Value</h2><p>An Iterator over the elements of this dataset.</p><h2 id=initialization>Initialization</h2><p>For <code>make_iterator_one_shot()</code>, the returned
+to a handle produced by the <code><a href=../iterator_string_handle.html>iterator_string_handle()</a></code> method.</p></td></tr></table><h2 id=value>Value</h2><p>An Iterator over the elements of this dataset.</p><h2 id=initialization>Initialization</h2><p>For <code>make_iterator_one_shot()</code>, the returned
 iterator will be initialized automatically. A "one-shot" iterator does not
 currently support re-initialization.</p><p>For <code>make_iterator_initializable()</code>,
 the returned iterator will be in an uninitialized state, and you must run
-the object returned from <code><a href=iterator_initializer.html>iterator_initializer()</a></code> before using it.</p><p>For <code>make_iterator_from_structure()</code>, the returned iterator is not bound
+the object returned from <code><a href=../iterator_initializer.html>iterator_initializer()</a></code> before using it.</p><p>For <code>make_iterator_from_structure()</code>, the returned iterator is not bound
 to a particular dataset, and it has no initializer. To initialize the
-iterator, run the operation returned by <code><a href=iterator_make_initializer.html>iterator_make_initializer()</a></code>.</p><h2 id=see-also>See also</h2><div class=dont-index><p>Other iterator functions:
-<code><a href=iterator_get_next.html>iterator_get_next</a>()</code>,
-<code><a href=iterator_initializer.html>iterator_initializer</a>()</code>,
-<code><a href=iterator_make_initializer.html>iterator_make_initializer</a>()</code>,
-<code><a href=iterator_string_handle.html>iterator_string_handle</a>()</code></p></div></div></div></div><footer>Copyright © 2015-2019 The TensorFlow Authors and RStudio, Inc.
+iterator, run the operation returned by <code><a href=../iterator_make_initializer.html>iterator_make_initializer()</a></code>.</p><h2 id=see-also>See also</h2><div class=dont-index><p>Other iterator functions:
+<code><a href=../iterator_get_next.html>iterator_get_next</a>()</code>,
+<code><a href=../iterator_initializer.html>iterator_initializer</a>()</code>,
+<code><a href=../iterator_make_initializer.html>iterator_make_initializer</a>()</code>,
+<code><a href=../iterator_string_handle.html>iterator_string_handle</a>()</code></p></div></div></div></div><footer>Copyright © 2015-2019 The TensorFlow Authors and RStudio, Inc.
 <script type=text/javascript>(function(w,d,t,u,n,s,e){w['SwiftypeObject']=n;w[n]=w[n]||function(){(w[n].q=w[n].q||[]).push(arguments);};s=d.createElement(t);e=d.getElementsByTagName(t)[0];s.async=1;s.src=u;e.parentNode.insertBefore(s,e);})(window,document,'script','//s.swiftypecdn.com/install/v2/st.js','_st');_st('install','Ne8tbLfE121Pkj3xMr_G','2.0.0');</script></footer></div></div></body></html>

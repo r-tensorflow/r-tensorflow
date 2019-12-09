@@ -49,7 +49,7 @@ combinations of flags (e.g. via <code><a href=https://rdrr.io/r/base/expand.grid
 be useful for subsetting combinations. See 'Examples'.</p></td></tr><tr><td>sample</td><td><p>Sampling rate for flag combinations (defaults to
 running all combinations).</p></td></tr><tr><td>properties</td><td><p>Named character vector with run properties. Properties are
 additional metadata about the run which will be subsequently available via
-<code><a href=ls_runs.html>ls_runs()</a></code>.</p></td></tr><tr><td>runs_dir</td><td><p>Directory containing runs. Defaults to "runs" beneath the
+<code><a href=../ls_runs.html>ls_runs()</a></code>.</p></td></tr><tr><td>runs_dir</td><td><p>Directory containing runs. Defaults to "runs" beneath the
 current working directory (or to the value of the <code>tfruns.runs_dir</code> R
 option if specified).</p></td></tr><tr><td>artifacts_dir</td><td><p>Directory to capture created and modified files within.
 Pass <code>NULL</code> to not capture any artifcats.</p></td></tr><tr><td>echo</td><td><p>Print expressions within training script</p></td></tr><tr><td>confirm</td><td><p>Confirm before executing tuning run.</p></td></tr><tr><td>envir</td><td><p>The environment in which the script should be evaluated</p></td></tr><tr><td>encoding</td><td><p>The encoding of the training script; see <code><a href=https://rdrr.io/r/base/connections.html>file()</a></code>.</p></td></tr></table><h2 id=value>Value</h2><p>Data frame with summary of all training runs performed

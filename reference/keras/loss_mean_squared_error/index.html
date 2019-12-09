@@ -63,7 +63,7 @@
 <span class=fu>loss_cosine_proximity</span>(<span class=no>y_true</span>, <span class=no>y_pred</span>)
 
 <span class=fu>loss_cosine_similarity</span>(<span class=no>y_true</span>, <span class=no>y_pred</span>)</code></pre></div><h2 id=arguments>Arguments</h2><table class=ref-arguments><col class=name><col class=desc><tr><td>y_true</td><td><p>True labels (Tensor)</p></td></tr><tr><td>y_pred</td><td><p>Predictions (Tensor of the same shape as <code>y_true</code>)</p></td></tr></table><h2 id=details>Details</h2><p>Loss functions are to be supplied in the <code>loss</code> parameter of the
-<code><a href=compile.keras.engine.training.Model.html>compile.keras.engine.training.Model()</a></code> function.</p><p>Loss functions can be specified either using the name of a built in loss
+<code><a href=../compile.keras.engine.training.Model.html>compile.keras.engine.training.Model()</a></code> function.</p><p>Loss functions can be specified either using the name of a built in loss
 function (e.g. 'loss = binary_crossentropy'), a reference to a built in loss
 function (e.g. 'loss = loss_binary_crossentropy()') or by passing an
 artitrary function that returns a scalar for each data-point and takes the
@@ -73,10 +73,10 @@ categorical format (e.g. if you have 10 classes, the target for each sample
 should be a 10-dimensional vector that is all-zeros except for a 1 at the
 index corresponding to the class of the sample). In order to convert
 integer targets into categorical targets, you can use the Keras utility
-function <code><a href=to_categorical.html>to_categorical()</a></code>:</p><p><code>categorical_labels &lt;- to_categorical(int_labels, num_classes = NULL)</code></p><h2 id=loss-logcosh>loss_logcosh</h2><p><code><a href=https://rdrr.io/r/base/Log.html>log(cosh(x))</a></code> is approximately equal to <code>(x ** 2) / 2</code> for small <code>x</code> and
+function <code><a href=../to_categorical.html>to_categorical()</a></code>:</p><p><code>categorical_labels &lt;- to_categorical(int_labels, num_classes = NULL)</code></p><h2 id=loss-logcosh>loss_logcosh</h2><p><code><a href=https://rdrr.io/r/base/Log.html>log(cosh(x))</a></code> is approximately equal to <code>(x ** 2) / 2</code> for small <code>x</code> and
 to <code>abs(x) - log(2)</code> for large <code>x</code>. This means that 'logcosh' works mostly
 like the mean squared error, but will not be so strongly affected by the
 occasional wildly incorrect prediction. However, it may return NaNs if the
 intermediate value <code><a href=https://rdrr.io/r/base/Hyperbolic.html>cosh(y_pred - y_true)</a></code> is too large to be represented
-in the chosen precision.</p><h2 id=see-also>See also</h2><div class=dont-index><p><code><a href=compile.keras.engine.training.Model.html>compile.keras.engine.training.Model()</a></code></p></div></div></div></div><footer>Copyright © 2015-2019 The TensorFlow Authors and RStudio, Inc.
+in the chosen precision.</p><h2 id=see-also>See also</h2><div class=dont-index><p><code><a href=../compile.keras.engine.training.Model.html>compile.keras.engine.training.Model()</a></code></p></div></div></div></div><footer>Copyright © 2015-2019 The TensorFlow Authors and RStudio, Inc.
 <script type=text/javascript>(function(w,d,t,u,n,s,e){w['SwiftypeObject']=n;w[n]=w[n]||function(){(w[n].q=w[n].q||[]).push(arguments);};s=d.createElement(t);e=d.getElementsByTagName(t)[0];s.async=1;s.src=u;e.parentNode.insertBefore(s,e);})(window,document,'script','//s.swiftypecdn.com/install/v2/st.js','_st');_st('install','Ne8tbLfE121Pkj3xMr_G','2.0.0');</script></footer></div></div></body></html>
