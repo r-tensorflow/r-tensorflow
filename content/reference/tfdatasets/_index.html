@@ -93,6 +93,12 @@ aliases: /tfdatasets/reference.html
           <p><code><a href="delim_record_spec.html">delim_record_spec()</a></code> <code><a href="delim_record_spec.html">csv_record_spec()</a></code> <code><a href="delim_record_spec.html">tsv_record_spec()</a></code> </p>
         </td>
         <td><p>Specification for reading a record from a text file with delimited values</p></td>
+      </tr><tr>
+        <!--  -->
+        <td>
+          <p><code><a href="make_csv_dataset.html">make_csv_dataset()</a></code> </p>
+        </td>
+        <td><p>Reads CSV files into a batched dataset</p></td>
       </tr>
     </tbody><tbody>
       <tr>
@@ -219,9 +225,33 @@ columns</p></td>
       </tr><tr>
         <!--  -->
         <td>
+          <p><code><a href="dataset_window.html">dataset_window()</a></code> </p>
+        </td>
+        <td><p>Combines input elements into a dataset of windows.</p></td>
+      </tr><tr>
+        <!--  -->
+        <td>
+          <p><code><a href="dataset_collect.html">dataset_collect()</a></code> </p>
+        </td>
+        <td><p>Collects a dataset</p></td>
+      </tr><tr>
+        <!--  -->
+        <td>
           <p><code><a href="zip_datasets.html">zip_datasets()</a></code> </p>
         </td>
         <td><p>Creates a dataset by zipping together the given datasets.</p></td>
+      </tr><tr>
+        <!--  -->
+        <td>
+          <p><code><a href="sample_from_datasets.html">sample_from_datasets()</a></code> </p>
+        </td>
+        <td><p>Samples elements at random from the datasets in <code>datasets</code>.</p></td>
+      </tr><tr>
+        <!--  -->
+        <td>
+          <p><code><a href="with_dataset.html">with_dataset()</a></code> </p>
+        </td>
+        <td><p>Execute code that traverses a dataset</p></td>
       </tr>
     </tbody><tbody>
       <tr>
@@ -286,6 +316,190 @@ columns</p></td>
           <p><code><a href="until_out_of_range.html">until_out_of_range()</a></code> <code><a href="until_out_of_range.html">out_of_range_handler()</a></code> </p>
         </td>
         <td><p>Execute code that traverses a dataset until an out of range condition occurs</p></td>
+      </tr><tr>
+        <!--  -->
+        <td>
+          <p><code><a href="next_batch.html">next_batch()</a></code> </p>
+        </td>
+        <td><p>Tensor(s) for retreiving the next batch from a dataset</p></td>
+      </tr>
+    </tbody><tbody>
+      <tr>
+        <th colspan="2">
+          <h2 id="section-feature-spec-api" class="hasAnchor"><a href="#section-feature-spec-api" class="anchor"></a>Feature Spec API</h2>
+          <p class="section-desc"></p>
+        </th>
+      </tr>
+      <tr>
+        <!--  -->
+        <td>
+          <p><code><a href="feature_spec.html">feature_spec()</a></code> </p>
+        </td>
+        <td><p>Creates a feature specification.</p></td>
+      </tr><tr>
+        <!--  -->
+        <td>
+          <p><code><a href="dense_features.html">dense_features()</a></code> </p>
+        </td>
+        <td><p>Dense Features</p></td>
+      </tr><tr>
+        <!--  -->
+        <td>
+          <p><code><a href="dataset_use_spec.html">dataset_use_spec()</a></code> </p>
+        </td>
+        <td><p>Transform the dataset using the provided spec.</p></td>
+      </tr><tr>
+        <!--  -->
+        <td>
+          <p><code><a href="fit.FeatureSpec.html">fit(<i>&lt;FeatureSpec&gt;</i>)</a></code> </p>
+        </td>
+        <td><p>Fits a feature specification.</p></td>
+      </tr><tr>
+        <!--  -->
+        <td>
+          <p><code><a href="scaler.html">scaler</a></code> </p>
+        </td>
+        <td><p>List of pre-made scalers</p></td>
+      </tr><tr>
+        <!--  -->
+        <td>
+          <p><code><a href="scaler_min_max.html">scaler_min_max()</a></code> </p>
+        </td>
+        <td><p>Creates an instance of a min max scaler</p></td>
+      </tr><tr>
+        <!--  -->
+        <td>
+          <p><code><a href="scaler_standard.html">scaler_standard()</a></code> </p>
+        </td>
+        <td><p>Creates an instance of a standard scaler</p></td>
+      </tr><tr>
+        <!--  -->
+        <td>
+          <p><code><a href="step_bucketized_column.html">step_bucketized_column()</a></code> </p>
+        </td>
+        <td><p>Creates bucketized columns</p></td>
+      </tr><tr>
+        <!--  -->
+        <td>
+          <p><code><a href="step_categorical_column_with_hash_bucket.html">step_categorical_column_with_hash_bucket()</a></code> </p>
+        </td>
+        <td><p>Creates a categorical column with hash buckets specification</p></td>
+      </tr><tr>
+        <!--  -->
+        <td>
+          <p><code><a href="step_categorical_column_with_identity.html">step_categorical_column_with_identity()</a></code> </p>
+        </td>
+        <td><p>Create a categorical column with identity</p></td>
+      </tr><tr>
+        <!--  -->
+        <td>
+          <p><code><a href="step_categorical_column_with_vocabulary_file.html">step_categorical_column_with_vocabulary_file()</a></code> </p>
+        </td>
+        <td><p>Creates a categorical column with vocabulary file</p></td>
+      </tr><tr>
+        <!--  -->
+        <td>
+          <p><code><a href="step_categorical_column_with_vocabulary_list.html">step_categorical_column_with_vocabulary_list()</a></code> </p>
+        </td>
+        <td><p>Creates a categorical column specification</p></td>
+      </tr><tr>
+        <!--  -->
+        <td>
+          <p><code><a href="step_crossed_column.html">step_crossed_column()</a></code> </p>
+        </td>
+        <td><p>Creates crosses of categorical columns</p></td>
+      </tr><tr>
+        <!--  -->
+        <td>
+          <p><code><a href="step_embedding_column.html">step_embedding_column()</a></code> </p>
+        </td>
+        <td><p>Creates embeddings columns</p></td>
+      </tr><tr>
+        <!--  -->
+        <td>
+          <p><code><a href="step_image_embedding_column.html">step_image_embedding_column()</a></code> </p>
+        </td>
+        <td><p>Creates Image embeddings columns</p></td>
+      </tr><tr>
+        <!--  -->
+        <td>
+          <p><code><a href="step_indicator_column.html">step_indicator_column()</a></code> </p>
+        </td>
+        <td><p>Creates Indicator Columns</p></td>
+      </tr><tr>
+        <!--  -->
+        <td>
+          <p><code><a href="step_numeric_column.html">step_numeric_column()</a></code> </p>
+        </td>
+        <td><p>Creates a numeric column specification</p></td>
+      </tr><tr>
+        <!--  -->
+        <td>
+          <p><code><a href="step_remove_column.html">step_remove_column()</a></code> </p>
+        </td>
+        <td><p>Creates a step that can remove columns</p></td>
+      </tr><tr>
+        <!--  -->
+        <td>
+          <p><code><a href="step_shared_embeddings_column.html">step_shared_embeddings_column()</a></code> </p>
+        </td>
+        <td><p>Creates shared embeddings for categorical columns</p></td>
+      </tr><tr>
+        <!--  -->
+        <td>
+          <p><code><a href="step_text_embedding_column.html">step_text_embedding_column()</a></code> </p>
+        </td>
+        <td><p>Creates text embeddings columns</p></td>
+      </tr><tr>
+        <!--  -->
+        <td>
+          <p><code><a href="steps.html">steps</a></code> </p>
+        </td>
+        <td><p>Steps for feature columns specification.</p></td>
+      </tr><tr>
+        <!--  -->
+        <td>
+          <p><code><a href="all_nominal.html">all_nominal()</a></code> </p>
+        </td>
+        <td><p>Find all nominal variables.</p></td>
+      </tr><tr>
+        <!--  -->
+        <td>
+          <p><code><a href="all_numeric.html">all_numeric()</a></code> </p>
+        </td>
+        <td><p>Speciy all numeric variables.</p></td>
+      </tr><tr>
+        <!--  -->
+        <td>
+          <p><code><a href="has_type.html">has_type()</a></code> </p>
+        </td>
+        <td><p>Identify the type of the variable.</p></td>
+      </tr><tr>
+        <!--  -->
+        <td>
+          <p><code><a href="selectors.html">cur_info_env</a></code> </p>
+        </td>
+        <td><p>Selectors</p></td>
+      </tr><tr>
+        <!--  -->
+        <td>
+          <p><code><a href="layer_input_from_dataset.html">layer_input_from_dataset()</a></code> </p>
+        </td>
+        <td><p>Creates a list of inputs from a dataset</p></td>
+      </tr>
+    </tbody><tbody>
+      <tr>
+        <th colspan="2">
+          <h2 id="section-data" class="hasAnchor"><a href="#section-data" class="anchor"></a>Data</h2>
+          <p class="section-desc"></p>
+        </th>
+      </tr>
+      <tr>
+        <!--  -->
+        <td>
+          <p><code><a href="hearts.html">hearts</a></code> </p>
+        </td>
+        <td><p>Heart Disease Data Set</p></td>
       </tr>
     </tbody>
     </table>

@@ -15,9 +15,14 @@ aliases:
 them into a batch. Functionally, it is equivalent to map followed by batch. However, by
 fusing the two transformations together, the implementation can be more efficient.</p>
 
-    <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>dataset_map_and_batch</span>(<span class='no'>dataset</span>, <span class='no'>map_func</span>, <span class='no'>batch_size</span>,
-  <span class='kw'>num_parallel_batches</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>drop_remainder</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>num_parallel_calls</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>dataset_map_and_batch</span>(
+  <span class='no'>dataset</span>,
+  <span class='no'>map_func</span>,
+  <span class='no'>batch_size</span>,
+  <span class='kw'>num_parallel_batches</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>drop_remainder</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
+  <span class='kw'>num_parallel_calls</span> <span class='kw'>=</span> <span class='kw'>NULL</span>
+)</code></pre></div>
 
     <h2 id="arguments">Arguments</h2>
     <table class="ref-arguments">
@@ -66,22 +71,24 @@ be processed sequentially.</p></td>
 
     <h2 id="see-also">See also</h2>
 
-    <div class='dont-index'><p>Other dataset methods: <code><a href='dataset_batch.html'>dataset_batch</a></code>,
-  <code><a href='dataset_cache.html'>dataset_cache</a></code>,
-  <code><a href='dataset_collect.html'>dataset_collect</a></code>,
-  <code><a href='dataset_concatenate.html'>dataset_concatenate</a></code>,
-  <code><a href='dataset_decode_delim.html'>dataset_decode_delim</a></code>,
-  <code><a href='dataset_filter.html'>dataset_filter</a></code>,
-  <code><a href='dataset_interleave.html'>dataset_interleave</a></code>,
-  <code><a href='dataset_map.html'>dataset_map</a></code>,
-  <code><a href='dataset_padded_batch.html'>dataset_padded_batch</a></code>,
-  <code><a href='dataset_prefetch_to_device.html'>dataset_prefetch_to_device</a></code>,
-  <code><a href='dataset_prefetch.html'>dataset_prefetch</a></code>,
-  <code><a href='dataset_repeat.html'>dataset_repeat</a></code>,
-  <code><a href='dataset_shuffle_and_repeat.html'>dataset_shuffle_and_repeat</a></code>,
-  <code><a href='dataset_shuffle.html'>dataset_shuffle</a></code>,
-  <code><a href='dataset_skip.html'>dataset_skip</a></code>, <code><a href='dataset_take.html'>dataset_take</a></code>,
-  <code><a href='dataset_window.html'>dataset_window</a></code></p></div>
+    <div class='dont-index'><p>Other dataset methods: 
+<code><a href='dataset_batch.html'>dataset_batch</a>()</code>,
+<code><a href='dataset_cache.html'>dataset_cache</a>()</code>,
+<code><a href='dataset_collect.html'>dataset_collect</a>()</code>,
+<code><a href='dataset_concatenate.html'>dataset_concatenate</a>()</code>,
+<code><a href='dataset_decode_delim.html'>dataset_decode_delim</a>()</code>,
+<code><a href='dataset_filter.html'>dataset_filter</a>()</code>,
+<code><a href='dataset_interleave.html'>dataset_interleave</a>()</code>,
+<code><a href='dataset_map.html'>dataset_map</a>()</code>,
+<code><a href='dataset_padded_batch.html'>dataset_padded_batch</a>()</code>,
+<code><a href='dataset_prefetch_to_device.html'>dataset_prefetch_to_device</a>()</code>,
+<code><a href='dataset_prefetch.html'>dataset_prefetch</a>()</code>,
+<code><a href='dataset_repeat.html'>dataset_repeat</a>()</code>,
+<code><a href='dataset_shuffle_and_repeat.html'>dataset_shuffle_and_repeat</a>()</code>,
+<code><a href='dataset_shuffle.html'>dataset_shuffle</a>()</code>,
+<code><a href='dataset_skip.html'>dataset_skip</a>()</code>,
+<code><a href='dataset_take.html'>dataset_take</a>()</code>,
+<code><a href='dataset_window.html'>dataset_window</a>()</code></p></div>
 
 
 

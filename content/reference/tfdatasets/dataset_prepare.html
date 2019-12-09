@@ -14,9 +14,17 @@ aliases:
     <p>Transform a dataset with named columns into a list with features (<code>x</code>) and
 response (<code>y</code>) elements.</p>
 
-    <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>dataset_prepare</span>(<span class='no'>dataset</span>, <span class='no'>x</span>, <span class='kw'>y</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>named</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='kw'>named_features</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>parallel_records</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>batch_size</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>num_parallel_batches</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>drop_remainder</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)</code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>dataset_prepare</span>(
+  <span class='no'>dataset</span>,
+  <span class='no'>x</span>,
+  <span class='kw'>y</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>named</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='kw'>named_features</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
+  <span class='kw'>parallel_records</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>batch_size</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>num_parallel_batches</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>drop_remainder</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>
+)</code></pre></div>
 
     <h2 id="arguments">Arguments</h2>
     <table class="ref-arguments">

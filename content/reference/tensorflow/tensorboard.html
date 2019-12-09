@@ -14,10 +14,15 @@ aliases:
     <p>TensorBoard is a tool inspecting and understanding your TensorFlow runs and
 graphs.</p>
 
-    <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>tensorboard</span>(<span class='no'>log_dir</span>, <span class='kw'>action</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"start"</span>, <span class='st'>"stop"</span>), <span class='kw'>host</span> <span class='kw'>=</span> <span class='st'>"127.0.0.1"</span>,
+    <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>tensorboard</span>(
+  <span class='no'>log_dir</span>,
+  <span class='kw'>action</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"start"</span>, <span class='st'>"stop"</span>),
+  <span class='kw'>host</span> <span class='kw'>=</span> <span class='st'>"127.0.0.1"</span>,
   <span class='kw'>port</span> <span class='kw'>=</span> <span class='st'>"auto"</span>,
-  <span class='kw'>launch_browser</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/options.html'>getOption</a></span>(<span class='st'>"tensorflow.tensorboard.browser"</span>,
-  <span class='fu'><a href='https://rdrr.io/r/base/interactive.html'>interactive</a></span>()), <span class='kw'>reload_interval</span> <span class='kw'>=</span> <span class='fl'>5</span>, <span class='kw'>purge_orphaned_data</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</code></pre></div>
+  <span class='kw'>launch_browser</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/options.html'>getOption</a></span>(<span class='st'>"tensorflow.tensorboard.browser"</span>, <span class='fu'><a href='https://rdrr.io/r/base/interactive.html'>interactive</a></span>()),
+  <span class='kw'>reload_interval</span> <span class='kw'>=</span> <span class='fl'>5</span>,
+  <span class='kw'>purge_orphaned_data</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>
+)</code></pre></div>
 
     <h2 id="arguments">Arguments</h2>
     <table class="ref-arguments">

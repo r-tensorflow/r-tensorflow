@@ -16,14 +16,27 @@ corresponds to a batch of CSV rows. The features dictionary maps feature column 
 to tensors containing the corresponding feature data, and labels is a tensor
 containing the batch's label data.</p>
 
-    <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>make_csv_dataset</span>(<span class='no'>file_pattern</span>, <span class='no'>batch_size</span>, <span class='kw'>column_names</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>column_defaults</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>label_name</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>select_columns</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>field_delim</span> <span class='kw'>=</span> <span class='st'>","</span>, <span class='kw'>use_quote_delim</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>na_value</span> <span class='kw'>=</span> <span class='st'>""</span>,
-  <span class='kw'>header</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>num_epochs</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>shuffle</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='kw'>shuffle_buffer_size</span> <span class='kw'>=</span> <span class='fl'>10000</span>, <span class='kw'>shuffle_seed</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>prefetch_buffer_size</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>num_parallel_reads</span> <span class='kw'>=</span> <span class='fl'>1</span>,
-  <span class='kw'>num_parallel_parser_calls</span> <span class='kw'>=</span> <span class='fl'>2</span>, <span class='kw'>sloppy</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>num_rows_for_inference</span> <span class='kw'>=</span> <span class='fl'>100</span>)</code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>make_csv_dataset</span>(
+  <span class='no'>file_pattern</span>,
+  <span class='no'>batch_size</span>,
+  <span class='kw'>column_names</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>column_defaults</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>label_name</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>select_columns</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>field_delim</span> <span class='kw'>=</span> <span class='st'>","</span>,
+  <span class='kw'>use_quote_delim</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='kw'>na_value</span> <span class='kw'>=</span> <span class='st'>""</span>,
+  <span class='kw'>header</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='kw'>num_epochs</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>shuffle</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='kw'>shuffle_buffer_size</span> <span class='kw'>=</span> <span class='fl'>10000</span>,
+  <span class='kw'>shuffle_seed</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>prefetch_buffer_size</span> <span class='kw'>=</span> <span class='fl'>1</span>,
+  <span class='kw'>num_parallel_reads</span> <span class='kw'>=</span> <span class='fl'>1</span>,
+  <span class='kw'>num_parallel_parser_calls</span> <span class='kw'>=</span> <span class='fl'>2</span>,
+  <span class='kw'>sloppy</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
+  <span class='kw'>num_rows_for_inference</span> <span class='kw'>=</span> <span class='fl'>100</span>
+)</code></pre></div>
 
     <h2 id="arguments">Arguments</h2>
     <table class="ref-arguments">

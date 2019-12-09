@@ -13,8 +13,15 @@ aliases:
     
     <p>Read files into a dataset, optionally processing them in parallel.</p>
 
-    <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>read_files</span>(<span class='no'>files</span>, <span class='no'>reader</span>, <span class='no'>...</span>, <span class='kw'>parallel_files</span> <span class='kw'>=</span> <span class='fl'>1</span>,
-  <span class='kw'>parallel_interleave</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>num_shards</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>shard_index</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>read_files</span>(
+  <span class='no'>files</span>,
+  <span class='no'>reader</span>,
+  <span class='no'>...</span>,
+  <span class='kw'>parallel_files</span> <span class='kw'>=</span> <span class='fl'>1</span>,
+  <span class='kw'>parallel_interleave</span> <span class='kw'>=</span> <span class='fl'>1</span>,
+  <span class='kw'>num_shards</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>shard_index</span> <span class='kw'>=</span> <span class='kw'>NULL</span>
+)</code></pre></div>
 
     <h2 id="arguments">Arguments</h2>
     <table class="ref-arguments">

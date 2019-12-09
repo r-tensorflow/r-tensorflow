@@ -13,10 +13,16 @@ aliases:
     
     <p>Install TensorFlow and its dependencies</p>
 
-    <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>install_tensorflow</span>(<span class='kw'>method</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"auto"</span>, <span class='st'>"virtualenv"</span>, <span class='st'>"conda"</span>),
-  <span class='kw'>conda</span> <span class='kw'>=</span> <span class='st'>"auto"</span>, <span class='kw'>version</span> <span class='kw'>=</span> <span class='st'>"default"</span>, <span class='kw'>envname</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>extra_packages</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>restart_session</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='kw'>conda_python_version</span> <span class='kw'>=</span> <span class='st'>"3.6"</span>, <span class='no'>...</span>)</code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>install_tensorflow</span>(
+  <span class='kw'>method</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"auto"</span>, <span class='st'>"virtualenv"</span>, <span class='st'>"conda"</span>),
+  <span class='kw'>conda</span> <span class='kw'>=</span> <span class='st'>"auto"</span>,
+  <span class='kw'>version</span> <span class='kw'>=</span> <span class='st'>"default"</span>,
+  <span class='kw'>envname</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>extra_packages</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>restart_session</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='kw'>conda_python_version</span> <span class='kw'>=</span> <span class='st'>"3.6"</span>,
+  <span class='no'>...</span>
+)</code></pre></div>
 
     <h2 id="arguments">Arguments</h2>
     <table class="ref-arguments">
@@ -42,9 +48,11 @@ PATH and other conventional install locations).</p></td>
     </tr>
     <tr>
       <td>version</td>
-      <td><p>TensorFlow version to install. Specify "default" to install
-the CPU version of the latest release. Specify "gpu" to install the GPU
-version of the latest release.</p>
+      <td><p>TensorFlow version to install. Up to and including TensorFlow 2.0,
+specify "default" to install the CPU version of the latest release;
+specify "gpu" to install the GPU version of the latest release.
+Starting from TensorFlow 2.1, by default a version is installed that works
+on both GPU- and CPU-only systems. Specify "cpu" to install a CPU-only version.</p>
 <p>You can also provide a full major.minor.patch specification (e.g. "1.1.0"),
 appending "-gpu" if you want the GPU version (e.g. "1.1.0-gpu").</p>
 <p>Alternatively, you can provide the full URL to an installer binary (e.g.

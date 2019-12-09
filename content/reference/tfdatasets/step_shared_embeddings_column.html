@@ -14,10 +14,18 @@ aliases:
     <p>This is similar to <a href='step_embedding_column.html'>step_embedding_column</a>, except that it produces a list of
 embedding columns that share the same embedding weights.</p>
 
-    <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>step_shared_embeddings_column</span>(<span class='no'>spec</span>, <span class='no'>...</span>, <span class='no'>dimension</span>, <span class='kw'>combiner</span> <span class='kw'>=</span> <span class='st'>"mean"</span>,
-  <span class='kw'>initializer</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>shared_embedding_collection_name</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>ckpt_to_load_from</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>tensor_name_in_ckpt</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>max_norm</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>trainable</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>step_shared_embeddings_column</span>(
+  <span class='no'>spec</span>,
+  <span class='no'>...</span>,
+  <span class='no'>dimension</span>,
+  <span class='kw'>combiner</span> <span class='kw'>=</span> <span class='st'>"mean"</span>,
+  <span class='kw'>initializer</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>shared_embedding_collection_name</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>ckpt_to_load_from</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>tensor_name_in_ckpt</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>max_norm</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>trainable</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>
+)</code></pre></div>
 
     <h2 id="arguments">Arguments</h2>
     <table class="ref-arguments">
@@ -91,19 +99,21 @@ restore the column weights. Required if <code>ckpt_to_load_from</code> is not <c
     <h2 id="see-also">See also</h2>
 
     <div class='dont-index'><p><a href='steps.html'>steps</a> for a complete list of allowed steps.</p>
-<p>Other Feature Spec Functions: <code><a href='dataset_use_spec.html'>dataset_use_spec</a></code>,
-  <code><a href='feature_spec.html'>feature_spec</a></code>,
-  <code><a href='fit.FeatureSpec.html'>fit.FeatureSpec</a></code>,
-  <code><a href='step_bucketized_column.html'>step_bucketized_column</a></code>,
-  <code><a href='step_categorical_column_with_hash_bucket.html'>step_categorical_column_with_hash_bucket</a></code>,
-  <code><a href='step_categorical_column_with_identity.html'>step_categorical_column_with_identity</a></code>,
-  <code><a href='step_categorical_column_with_vocabulary_file.html'>step_categorical_column_with_vocabulary_file</a></code>,
-  <code><a href='step_categorical_column_with_vocabulary_list.html'>step_categorical_column_with_vocabulary_list</a></code>,
-  <code><a href='step_crossed_column.html'>step_crossed_column</a></code>,
-  <code><a href='step_embedding_column.html'>step_embedding_column</a></code>,
-  <code><a href='step_indicator_column.html'>step_indicator_column</a></code>,
-  <code><a href='step_numeric_column.html'>step_numeric_column</a></code>,
-  <code><a href='step_remove_column.html'>step_remove_column</a></code>, <code><a href='steps.html'>steps</a></code></p></div>
+<p>Other Feature Spec Functions: 
+<code><a href='dataset_use_spec.html'>dataset_use_spec</a>()</code>,
+<code><a href='feature_spec.html'>feature_spec</a>()</code>,
+<code><a href='fit.FeatureSpec.html'>fit.FeatureSpec</a>()</code>,
+<code><a href='step_bucketized_column.html'>step_bucketized_column</a>()</code>,
+<code><a href='step_categorical_column_with_hash_bucket.html'>step_categorical_column_with_hash_bucket</a>()</code>,
+<code><a href='step_categorical_column_with_identity.html'>step_categorical_column_with_identity</a>()</code>,
+<code><a href='step_categorical_column_with_vocabulary_file.html'>step_categorical_column_with_vocabulary_file</a>()</code>,
+<code><a href='step_categorical_column_with_vocabulary_list.html'>step_categorical_column_with_vocabulary_list</a>()</code>,
+<code><a href='step_crossed_column.html'>step_crossed_column</a>()</code>,
+<code><a href='step_embedding_column.html'>step_embedding_column</a>()</code>,
+<code><a href='step_indicator_column.html'>step_indicator_column</a>()</code>,
+<code><a href='step_numeric_column.html'>step_numeric_column</a>()</code>,
+<code><a href='step_remove_column.html'>step_remove_column</a>()</code>,
+<code><a href='steps.html'>steps</a></code></p></div>
 
 
 

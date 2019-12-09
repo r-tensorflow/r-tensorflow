@@ -16,8 +16,12 @@ TensorFlow operations in <code>f</code>.
 This allows the TensorFlow runtime to apply optimizations and exploit parallelism in the
 computation defined by <code>f</code>.</p>
 
-    <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>tf_function</span>(<span class='no'>f</span>, <span class='kw'>input_signature</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>autograph</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>experimental_autograph_options</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>tf_function</span>(
+  <span class='no'>f</span>,
+  <span class='kw'>input_signature</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>autograph</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
+  <span class='kw'>experimental_autograph_options</span> <span class='kw'>=</span> <span class='kw'>NULL</span>
+)</code></pre></div>
 
     <h2 id="arguments">Arguments</h2>
     <table class="ref-arguments">

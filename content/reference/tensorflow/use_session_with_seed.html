@@ -16,8 +16,12 @@ provided <code>seed</code> value will establish a new random seed for R, Python,
 and TensorFlow. GPU computations and CPU parallelism will also be disabled by
 default.</p>
 
-    <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>use_session_with_seed</span>(<span class='no'>seed</span>, <span class='kw'>disable_gpu</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='kw'>disable_parallel_cpu</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>quiet</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)</code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>use_session_with_seed</span>(
+  <span class='no'>seed</span>,
+  <span class='kw'>disable_gpu</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='kw'>disable_parallel_cpu</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='kw'>quiet</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>
+)</code></pre></div>
 
     <h2 id="arguments">Arguments</h2>
     <table class="ref-arguments">

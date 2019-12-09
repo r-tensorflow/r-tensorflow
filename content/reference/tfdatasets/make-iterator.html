@@ -17,11 +17,17 @@ aliases:
 
 <span class='fu'>make_iterator_initializable</span>(<span class='no'>dataset</span>, <span class='kw'>shared_name</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)
 
-<span class='fu'>make_iterator_from_structure</span>(<span class='no'>output_types</span>, <span class='kw'>output_shapes</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>shared_name</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)
+<span class='fu'>make_iterator_from_structure</span>(
+  <span class='no'>output_types</span>,
+  <span class='kw'>output_shapes</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>shared_name</span> <span class='kw'>=</span> <span class='kw'>NULL</span>
+)
 
-<span class='fu'>make_iterator_from_string_handle</span>(<span class='no'>string_handle</span>, <span class='no'>output_types</span>,
-  <span class='kw'>output_shapes</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</code></pre></div>
+<span class='fu'>make_iterator_from_string_handle</span>(
+  <span class='no'>string_handle</span>,
+  <span class='no'>output_types</span>,
+  <span class='kw'>output_shapes</span> <span class='kw'>=</span> <span class='kw'>NULL</span>
+)</code></pre></div>
 
     <h2 id="arguments">Arguments</h2>
     <table class="ref-arguments">
@@ -77,10 +83,11 @@ to a particular dataset, and it has no initializer. To initialize the
 iterator, run the operation returned by <code><a href='iterator_make_initializer.html'>iterator_make_initializer()</a></code>.</p>
     <h2 id="see-also">See also</h2>
 
-    <div class='dont-index'><p>Other iterator functions: <code><a href='iterator_get_next.html'>iterator_get_next</a></code>,
-  <code><a href='iterator_initializer.html'>iterator_initializer</a></code>,
-  <code><a href='iterator_make_initializer.html'>iterator_make_initializer</a></code>,
-  <code><a href='iterator_string_handle.html'>iterator_string_handle</a></code></p></div>
+    <div class='dont-index'><p>Other iterator functions: 
+<code><a href='iterator_get_next.html'>iterator_get_next</a>()</code>,
+<code><a href='iterator_initializer.html'>iterator_initializer</a>()</code>,
+<code><a href='iterator_make_initializer.html'>iterator_make_initializer</a>()</code>,
+<code><a href='iterator_string_handle.html'>iterator_string_handle</a>()</code></p></div>
 
 
 

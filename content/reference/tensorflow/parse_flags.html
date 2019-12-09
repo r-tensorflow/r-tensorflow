@@ -16,8 +16,11 @@ this to parse and unify the configuration(s) specified through
 a <code>flags.yml</code> configuration file, alongside other arguments
 set through the command line.</p>
 
-    <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>parse_flags</span>(<span class='kw'>config</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/Sys.getenv.html'>Sys.getenv</a></span>(<span class='st'>"R_CONFIG_ACTIVE"</span>, <span class='kw'>unset</span> <span class='kw'>=</span> <span class='st'>"default"</span>),
-  <span class='kw'>file</span> <span class='kw'>=</span> <span class='st'>"flags.yml"</span>, <span class='kw'>arguments</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/commandArgs.html'>commandArgs</a></span>(<span class='fl'>TRUE</span>))</code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>parse_flags</span>(
+  <span class='kw'>config</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/Sys.getenv.html'>Sys.getenv</a></span>(<span class='st'>"R_CONFIG_ACTIVE"</span>, <span class='kw'>unset</span> <span class='kw'>=</span> <span class='st'>"default"</span>),
+  <span class='kw'>file</span> <span class='kw'>=</span> <span class='st'>"flags.yml"</span>,
+  <span class='kw'>arguments</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/commandArgs.html'>commandArgs</a></span>(<span class='fl'>TRUE</span>)
+)</code></pre></div>
 
     <h2 id="arguments">Arguments</h2>
     <table class="ref-arguments">

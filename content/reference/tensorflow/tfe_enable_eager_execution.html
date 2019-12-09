@@ -14,8 +14,10 @@ aliases:
     
     <p>If not called immediately on startup risks creating breakage and bugs.</p>
 
-    <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>tfe_enable_eager_execution</span>(<span class='kw'>config</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>device_policy</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"explicit"</span>,
-  <span class='st'>"warn"</span>, <span class='st'>"silent"</span>))</code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>tfe_enable_eager_execution</span>(
+  <span class='kw'>config</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>device_policy</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"explicit"</span>, <span class='st'>"warn"</span>, <span class='st'>"silent"</span>)
+)</code></pre></div>
 
     <h2 id="arguments">Arguments</h2>
     <table class="ref-arguments">

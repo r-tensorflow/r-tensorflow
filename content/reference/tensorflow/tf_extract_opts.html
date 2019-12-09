@@ -13,15 +13,17 @@ aliases:
     
     <p>Tensor extract options</p>
 
-    <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>tf_extract_opts</span>(<span class='kw'>style</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/options.html'>getOption</a></span>(<span class='st'>"tensorflow.extract.style"</span>), <span class='no'>...</span>,
+    <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>tf_extract_opts</span>(
+  <span class='kw'>style</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/options.html'>getOption</a></span>(<span class='st'>"tensorflow.extract.style"</span>),
+  <span class='no'>...</span>,
   <span class='kw'>one_based</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/options.html'>getOption</a></span>(<span class='st'>"tensorflow.extract.one_based"</span>, <span class='fl'>TRUE</span>),
   <span class='kw'>inclusive_stop</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/options.html'>getOption</a></span>(<span class='st'>"tensorflow.extract.inclusive_stop"</span>, <span class='fl'>TRUE</span>),
-  <span class='kw'>disallow_out_of_bounds</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/options.html'>getOption</a></span>(<span class='st'>"tensorflow.extract.dissallow_out_of_bounds"</span>,
-  <span class='fl'>TRUE</span>),
+  <span class='kw'>disallow_out_of_bounds</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/options.html'>getOption</a></span>(<span class='st'>"tensorflow.extract.dissallow_out_of_bounds"</span>, <span class='fl'>TRUE</span>),
   <span class='kw'>warn_tensors_passed_asis</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/options.html'>getOption</a></span>(<span class='st'>"tensorflow.extract.warn_tensors_passed_asis"</span>,
-  <span class='fl'>TRUE</span>),
+    <span class='fl'>TRUE</span>),
   <span class='kw'>warn_negatives_pythonic</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/options.html'>getOption</a></span>(<span class='st'>"tensorflow.extract.warn_negatives_pythonic"</span>,
-  <span class='fl'>TRUE</span>))</code></pre></div>
+    <span class='fl'>TRUE</span>)
+)</code></pre></div>
 
     <h2 id="arguments">Arguments</h2>
     <table class="ref-arguments">
