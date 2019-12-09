@@ -38,11 +38,17 @@
 
 <span class=fu>make_iterator_initializable</span>(<span class=no>dataset</span>, <span class=kw>shared_name</span> <span class=kw>=</span> <span class=kw>NULL</span>)
 
-<span class=fu>make_iterator_from_structure</span>(<span class=no>output_types</span>, <span class=kw>output_shapes</span> <span class=kw>=</span> <span class=kw>NULL</span>,
-  <span class=kw>shared_name</span> <span class=kw>=</span> <span class=kw>NULL</span>)
+<span class=fu>make_iterator_from_structure</span>(
+  <span class=no>output_types</span>,
+  <span class=kw>output_shapes</span> <span class=kw>=</span> <span class=kw>NULL</span>,
+  <span class=kw>shared_name</span> <span class=kw>=</span> <span class=kw>NULL</span>
+)
 
-<span class=fu>make_iterator_from_string_handle</span>(<span class=no>string_handle</span>, <span class=no>output_types</span>,
-  <span class=kw>output_shapes</span> <span class=kw>=</span> <span class=kw>NULL</span>)</code></pre></div><h2 id=arguments>Arguments</h2><table class=ref-arguments><col class=name><col class=desc><tr><td>dataset</td><td><p>A dataset</p></td></tr><tr><td>shared_name</td><td><p>(Optional) If non-empty, the returned iterator will be
+<span class=fu>make_iterator_from_string_handle</span>(
+  <span class=no>string_handle</span>,
+  <span class=no>output_types</span>,
+  <span class=kw>output_shapes</span> <span class=kw>=</span> <span class=kw>NULL</span>
+)</code></pre></div><h2 id=arguments>Arguments</h2><table class=ref-arguments><col class=name><col class=desc><tr><td>dataset</td><td><p>A dataset</p></td></tr><tr><td>shared_name</td><td><p>(Optional) If non-empty, the returned iterator will be
 shared under the given name across multiple sessions that share the same
 devices (e.g. when using a remote server).</p></td></tr><tr><td>output_types</td><td><p>A nested structure of tf$DType objects corresponding to
 each component of an element of this iterator.</p></td></tr><tr><td>output_shapes</td><td><p>(Optional) A nested structure of tf$TensorShape objects
@@ -54,8 +60,9 @@ currently support re-initialization.</p><p>For <code>make_iterator_initializable
 the returned iterator will be in an uninitialized state, and you must run
 the object returned from <code><a href=iterator_initializer.html>iterator_initializer()</a></code> before using it.</p><p>For <code>make_iterator_from_structure()</code>, the returned iterator is not bound
 to a particular dataset, and it has no initializer. To initialize the
-iterator, run the operation returned by <code><a href=iterator_make_initializer.html>iterator_make_initializer()</a></code>.</p><h2 id=see-also>See also</h2><div class=dont-index><p>Other iterator functions: <code><a href=iterator_get_next.html>iterator_get_next</a></code>,
-<code><a href=iterator_initializer.html>iterator_initializer</a></code>,
-<code><a href=iterator_make_initializer.html>iterator_make_initializer</a></code>,
-<code><a href=iterator_string_handle.html>iterator_string_handle</a></code></p></div></div></div></div><footer>Copyright © 2015-2019 The TensorFlow Authors and RStudio, Inc.
+iterator, run the operation returned by <code><a href=iterator_make_initializer.html>iterator_make_initializer()</a></code>.</p><h2 id=see-also>See also</h2><div class=dont-index><p>Other iterator functions:
+<code><a href=iterator_get_next.html>iterator_get_next</a>()</code>,
+<code><a href=iterator_initializer.html>iterator_initializer</a>()</code>,
+<code><a href=iterator_make_initializer.html>iterator_make_initializer</a>()</code>,
+<code><a href=iterator_string_handle.html>iterator_string_handle</a>()</code></p></div></div></div></div><footer>Copyright © 2015-2019 The TensorFlow Authors and RStudio, Inc.
 <script type=text/javascript>(function(w,d,t,u,n,s,e){w['SwiftypeObject']=n;w[n]=w[n]||function(){(w[n].q=w[n].q||[]).push(arguments);};s=d.createElement(t);e=d.getElementsByTagName(t)[0];s.async=1;s.src=u;e.parentNode.insertBefore(s,e);})(window,document,'script','//s.swiftypecdn.com/install/v2/st.js','_st');_st('install','Ne8tbLfE121Pkj3xMr_G','2.0.0');</script></footer></div></div></body></html>
