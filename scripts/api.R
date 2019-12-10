@@ -89,7 +89,10 @@ copy_reference <- function(exdir, name) {
         old_url <- stringr::str_split(front_matter$aliases, "/")[[1]]
         old_url <- paste(old_url[c(1,3,2,4)], collapse = "/")
         
-        front_matter$aliases <- c(front_matter$aliases, old_url)
+        guide_url <- paste0("/guide", old_url)
+        tools_url <- paste0("/tools/tools", old_url)
+        
+        front_matter$aliases <- c(front_matter$aliases, old_url, guide_url, tools_url)
       }
       
       if (stringr::str_detect(path, "_index.html"))
