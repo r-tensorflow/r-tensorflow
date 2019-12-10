@@ -2,8 +2,9 @@ library(magrittr)
 
 packages <- list(
   keras = "dfalbel/keras@newdocs",
-  tfdatasets = "rstudio/tfdatasets#60",
-  tfhub = "rstudio/tfhub#9"
+  tfdatasets = "rstudio/tfdatasets",
+  tfhub = "rstudio/tfhub",
+  cloudml = "rstudio/cloudml"
 )
 
 download_source <- function(repo) {
@@ -46,7 +47,13 @@ copy_vignette_dir <- function(name, path) {
     purrr::walk(modify_image_path)
   
   # copy vignette dir to guide folder
-  guide_dir <- file.path("content/guide", name)
+  if (name != "cloudml")
+    guide_dir <- file.path("content/guide", name)
+  else
+    guide_dir <- file.path("content/tools", name)
+  
+  if (!fs::dir_exists(guide_dir))
+    fs::dir_create(guide_dir)
   
   fs::dir_ls(guide_dir, recurse = TRUE, type = "file") %>% 
     fs::file_delete()
