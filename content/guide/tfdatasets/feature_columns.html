@@ -73,12 +73,12 @@ vignette for more information.</p>
 <p>We use <code>step_numeric_column</code> to add numeric columns to our <code>spec</code>.</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" data-line-number="1">spec <span class="op">%&gt;%</span><span class="st"> </span></a>
 <a class="sourceLine" id="cb2-2" data-line-number="2"><span class="st">  </span><span class="kw"><a href="../../tools/tfdatasets/reference/step_numeric_column.html">step_numeric_column</a></span>(age)</a></code></pre></div>
-<pre><code>## ── Feature Spec ───────────────────────────────────────────────────────────────────────────────────── 
+<pre><code>## ── Feature Spec ────────────────────────────────────────────────────────────────────────────── 
 ## A feature_spec with 1 steps.
 ## Fitted: FALSE 
-## ── Steps ──────────────────────────────────────────────────────────────────────────────────────────── 
+## ── Steps ───────────────────────────────────────────────────────────────────────────────────── 
 ## StepNumericColumn: age 
-## ── Dense features ─────────────────────────────────────────────────────────────────────────────────── 
+## ── Dense features ──────────────────────────────────────────────────────────────────────────── 
 ## Feature spec must be fitted before we can detect the dense features.</code></pre>
 <p>By default, a numeric column creates a single value (scalar). Use the shape argument
 to specify another shape. For example:</p>
@@ -375,42 +375,42 @@ function from Keras to create a layer that will automatically initialize values.
 <pre><code>## Train on 242 samples, validate on 61 samples
 ## Epoch 1/10
 ## 
- 32/242 [==&gt;...........................] - ETA: 5s - loss: 0.6547 - accuracy: 0.6562
-242/242 [==============================] - 1s 5ms/sample - loss: 0.6735 - accuracy: 0.6198 - val_loss: 0.6463 - val_accuracy: 0.5902
+ 32/242 [==&gt;...........................] - ETA: 6s - loss: 0.7090 - accuracy: 0.4375
+242/242 [==============================] - 1s 5ms/sample - loss: 0.7694 - accuracy: 0.4876 - val_loss: 0.7361 - val_accuracy: 0.4754
 ## Epoch 2/10
 ## 
- 32/242 [==&gt;...........................] - ETA: 0s - loss: 0.6883 - accuracy: 0.5938
-242/242 [==============================] - 0s 154us/sample - loss: 0.6567 - accuracy: 0.6364 - val_loss: 0.6344 - val_accuracy: 0.6230
+ 32/242 [==&gt;...........................] - ETA: 0s - loss: 0.8507 - accuracy: 0.4688
+242/242 [==============================] - 0s 168us/sample - loss: 0.7522 - accuracy: 0.5083 - val_loss: 0.7240 - val_accuracy: 0.5082
 ## Epoch 3/10
 ## 
- 32/242 [==&gt;...........................] - ETA: 0s - loss: 0.7277 - accuracy: 0.4688
-242/242 [==============================] - 0s 120us/sample - loss: 0.6412 - accuracy: 0.6570 - val_loss: 0.6228 - val_accuracy: 0.6393
+ 32/242 [==&gt;...........................] - ETA: 0s - loss: 0.7433 - accuracy: 0.5312
+242/242 [==============================] - 0s 118us/sample - loss: 0.7354 - accuracy: 0.5496 - val_loss: 0.7124 - val_accuracy: 0.5082
 ## Epoch 4/10
 ## 
- 32/242 [==&gt;...........................] - ETA: 0s - loss: 0.6178 - accuracy: 0.7188
-242/242 [==============================] - 0s 113us/sample - loss: 0.6263 - accuracy: 0.6942 - val_loss: 0.6119 - val_accuracy: 0.6885
+ 32/242 [==&gt;...........................] - ETA: 0s - loss: 0.7578 - accuracy: 0.4688
+242/242 [==============================] - 0s 111us/sample - loss: 0.7189 - accuracy: 0.5537 - val_loss: 0.7016 - val_accuracy: 0.5246
 ## Epoch 5/10
 ## 
- 32/242 [==&gt;...........................] - ETA: 0s - loss: 0.5960 - accuracy: 0.6875
-242/242 [==============================] - 0s 118us/sample - loss: 0.6119 - accuracy: 0.7025 - val_loss: 0.6013 - val_accuracy: 0.6885
+ 32/242 [==&gt;...........................] - ETA: 0s - loss: 0.6576 - accuracy: 0.5625
+242/242 [==============================] - 0s 114us/sample - loss: 0.7035 - accuracy: 0.5579 - val_loss: 0.6914 - val_accuracy: 0.5410
 ## Epoch 6/10
 ## 
- 32/242 [==&gt;...........................] - ETA: 0s - loss: 0.6362 - accuracy: 0.6562
-242/242 [==============================] - 0s 112us/sample - loss: 0.5979 - accuracy: 0.7314 - val_loss: 0.5915 - val_accuracy: 0.7049
+ 32/242 [==&gt;...........................] - ETA: 0s - loss: 0.7414 - accuracy: 0.4688
+242/242 [==============================] - 0s 116us/sample - loss: 0.6888 - accuracy: 0.5826 - val_loss: 0.6816 - val_accuracy: 0.5410
 ## Epoch 7/10
 ## 
- 32/242 [==&gt;...........................] - ETA: 0s - loss: 0.6135 - accuracy: 0.7188
-242/242 [==============================] - 0s 113us/sample - loss: 0.5850 - accuracy: 0.7438 - val_loss: 0.5821 - val_accuracy: 0.7049
+ 32/242 [==&gt;...........................] - ETA: 0s - loss: 0.6904 - accuracy: 0.6250
+242/242 [==============================] - 0s 119us/sample - loss: 0.6744 - accuracy: 0.6074 - val_loss: 0.6721 - val_accuracy: 0.5410
 ## Epoch 8/10
 ## 
- 32/242 [==&gt;...........................] - ETA: 0s - loss: 0.5262 - accuracy: 0.8438
-242/242 [==============================] - 0s 110us/sample - loss: 0.5726 - accuracy: 0.7479 - val_loss: 0.5731 - val_accuracy: 0.7049
+ 32/242 [==&gt;...........................] - ETA: 0s - loss: 0.7391 - accuracy: 0.5625
+242/242 [==============================] - 0s 121us/sample - loss: 0.6616 - accuracy: 0.6198 - val_loss: 0.6627 - val_accuracy: 0.5410
 ## Epoch 9/10
 ## 
- 32/242 [==&gt;...........................] - ETA: 0s - loss: 0.5443 - accuracy: 0.8125
-242/242 [==============================] - 0s 112us/sample - loss: 0.5610 - accuracy: 0.7521 - val_loss: 0.5645 - val_accuracy: 0.7049
+ 32/242 [==&gt;...........................] - ETA: 0s - loss: 0.5875 - accuracy: 0.7188
+242/242 [==============================] - 0s 114us/sample - loss: 0.6479 - accuracy: 0.6364 - val_loss: 0.6541 - val_accuracy: 0.5410
 ## Epoch 10/10
 ## 
- 32/242 [==&gt;...........................] - ETA: 0s - loss: 0.5770 - accuracy: 0.7812
-242/242 [==============================] - 0s 113us/sample - loss: 0.5499 - accuracy: 0.7603 - val_loss: 0.5565 - val_accuracy: 0.7049</code></pre>
+ 32/242 [==&gt;...........................] - ETA: 0s - loss: 0.7074 - accuracy: 0.5625
+242/242 [==============================] - 0s 116us/sample - loss: 0.6357 - accuracy: 0.6529 - val_loss: 0.6460 - val_accuracy: 0.5410</code></pre>
 </div>
