@@ -1,0 +1,117 @@
+---
+title: "Google Cloud Storage"
+output: 
+  rmarkdown::html_vignette: default
+vignette: >
+  %\VignetteIndexEntry{Google Cloud Storage}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+type: docs
+repo: https://github.com/rstudio/cloudml
+menu:
+  main:
+    name: "Google Cloud Storage"
+    identifier: "tools-cloudml-storage"
+    parent: "cloudml-top"
+    weight: 40
+---
+
+
+
+<div id="overview" class="section level2">
+<h2>Overview</h2>
+<p><a href="https://cloud.google.com/storage/">Google Cloud Storage</a> is often used along with CloudML to manage and serve training data. This article provides details on:</p>
+<ul>
+<li><p>Copying and synchronizing files between your local workstation and Google Cloud.</p></li>
+<li><p>Reading data from Google Cloud Storage buckets from within a training script.</p></li>
+<li><p>Varying data source configuration between local script development and CloudML training.</p></li>
+</ul>
+</div>
+<div id="copying-data" class="section level2">
+<h2>Copying Data</h2>
+<p>Google Cloud Storage is organized around storage units named “buckets”, which are roughly analogous to filesystem directories. You can copy data between your local system and cloud storage using the <code><a href="../../tools/cloudml/reference/gs_copy.html">gs_copy()</a></code> function. For example:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(cloudml)</a>
+<a class="sourceLine" id="cb1-2" data-line-number="2"></a>
+<a class="sourceLine" id="cb1-3" data-line-number="3"><span class="co"># copy from a local directory to a bucket</span></a>
+<a class="sourceLine" id="cb1-4" data-line-number="4"><span class="kw"><a href="../../tools/cloudml/reference/gs_copy.html">gs_copy</a></span>(<span class="st">"training-data"</span>, <span class="st">"gs://quarter-deck-529/training-data"</span>)</a>
+<a class="sourceLine" id="cb1-5" data-line-number="5"></a>
+<a class="sourceLine" id="cb1-6" data-line-number="6"><span class="co"># copy from a bucket to a local directory </span></a>
+<a class="sourceLine" id="cb1-7" data-line-number="7"><span class="kw"><a href="../../tools/cloudml/reference/gs_copy.html">gs_copy</a></span>(<span class="st">"gs://quarter-deck-529/training-data"</span>, <span class="st">"training-data"</span>)</a></code></pre></div>
+<p>You can also use the <code><a href="../../tools/cloudml/reference/gs_rsync.html">gs_rsync()</a></code> function to syncrhonize a local directory and a bucket in Google Storage (this is much more efficient than copying the data each time):</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" data-line-number="1"><span class="co"># synchronize a bucket and a local directory</span></a>
+<a class="sourceLine" id="cb2-2" data-line-number="2"><span class="kw"><a href="../../tools/cloudml/reference/gs_rsync.html">gs_rsync</a></span>(<span class="st">"gs://quarter-deck-529/training-data"</span>, <span class="st">"training-data"</span>)</a></code></pre></div>
+<p>Note that to use these functions you need to import the cloudml package with <code><a href="https://rdrr.io/r/base/library.html">library(cloudml)</a></code> as illustrated above.</p>
+</div>
+<div id="reading-data" class="section level2">
+<h2>Reading Data</h2>
+<p>There are two distinct ways to read data from Google Storage. Which you use will depend on whether the TensorFlow API you are using supports direct references to <code>gs://</code> bucket URLs.</p>
+<p>If you are using the <a href="https://tensorflow.rstudio.com/tools/tfdatasets/articles/introduction.html">TensorFlow Datasets</a> API, then you can use <code>gs://</code> bucket URLs directly. In this case you’ll want to use the <code>gs://</code> URL when running on CloudML, and a synchonized copy of the bucket when running locally. You can use the <code><a href="../../tools/cloudml/reference/gs_data_dir.html">gs_data_dir()</a></code> function to accomplish this. For example:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(tfdatasets)</a>
+<a class="sourceLine" id="cb3-2" data-line-number="2"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(cloudml)</a>
+<a class="sourceLine" id="cb3-3" data-line-number="3"></a>
+<a class="sourceLine" id="cb3-4" data-line-number="4">data_dir &lt;-<span class="st"> </span><span class="kw"><a href="../../tools/cloudml/reference/gs_data_dir.html">gs_data_dir</a></span>(<span class="st">"gs://mtcars-data"</span>)</a>
+<a class="sourceLine" id="cb3-5" data-line-number="5">mtcars_csv &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/file.path.html">file.path</a></span>(data_dir, <span class="st">"mtcars.csv"</span>)</a>
+<a class="sourceLine" id="cb3-6" data-line-number="6"></a>
+<a class="sourceLine" id="cb3-7" data-line-number="7">mtcars_dataset &lt;-<span class="st"> </span><span class="kw">csv_dataset</span>(mtcars_csv) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb3-8" data-line-number="8"><span class="st">  </span><span class="kw"><a href="../../tools/tfdatasets/reference/dataset_prepare.html">dataset_prepare</a></span>(<span class="dt">x =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(mpg, disp), <span class="dt">y =</span> cyl)</a></code></pre></div>
+<p>While some TensorFlow APIs can take <code>gs://</code> URLs directly, in many cases a local filesystem path will be required. If you want to store data in Google Storage but still use it with APIs that require local paths you can use the <code><a href="../../tools/cloudml/reference/gs_data_dir_local.html">gs_data_dir_local()</a></code> function to provide the local path.</p>
+<p>For example, this code reads CSV files from Google Storage:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(cloudml)</a>
+<a class="sourceLine" id="cb4-2" data-line-number="2"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(readr)</a>
+<a class="sourceLine" id="cb4-3" data-line-number="3">data_dir &lt;-<span class="st"> </span><span class="kw"><a href="../../tools/cloudml/reference/gs_data_dir_local.html">gs_data_dir_local</a></span>(<span class="st">"gs://quarter-deck-529/training-data"</span>)</a>
+<a class="sourceLine" id="cb4-4" data-line-number="4">train_data &lt;-<span class="st"> </span><span class="kw"><a href="https://readr.tidyverse.org/reference/read_delim.html">read_csv</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/file.path.html">file.path</a></span>(data_dir, <span class="st">"train.csv"</span>))</a>
+<a class="sourceLine" id="cb4-5" data-line-number="5">test_data &lt;-<span class="st"> </span><span class="kw"><a href="https://readr.tidyverse.org/reference/read_delim.html">read_csv</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/file.path.html">file.path</a></span>(data_dir, <span class="st">"test.csv"</span>))</a></code></pre></div>
+<p>Under the hood this function will rsync data from Google Storage as required to provide the local filesystem interface to it.</p>
+<p>Here’s another example which creates a Keras image data generator from a bucket:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" data-line-number="1">train_generator &lt;-<span class="st"> </span><span class="kw">flow_images_from_directory</span>(</a>
+<a class="sourceLine" id="cb5-2" data-line-number="2">  <span class="kw"><a href="../../tools/cloudml/reference/gs_data_dir_local.html">gs_data_dir_local</a></span>(<span class="st">"gs://quarter-deck-529/../images/train"</span>),</a>
+<a class="sourceLine" id="cb5-3" data-line-number="3">  <span class="kw">image_data_generator</span>(<span class="dt">rescale =</span> <span class="dv">1</span><span class="op">/</span><span class="dv">255</span>),</a>
+<a class="sourceLine" id="cb5-4" data-line-number="4">  <span class="dt">target_size =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="dv">150</span>, <span class="dv">150</span>),</a>
+<a class="sourceLine" id="cb5-5" data-line-number="5">  <span class="dt">batch_size =</span> <span class="dv">32</span>,</a>
+<a class="sourceLine" id="cb5-6" data-line-number="6">  <span class="dt">class_mode =</span> <span class="st">"binary"</span></a>
+<a class="sourceLine" id="cb5-7" data-line-number="7">)</a></code></pre></div>
+<p>Note that if the path passed to <code><a href="../../tools/cloudml/reference/gs_data_dir_local.html">gs_data_dir_local()</a></code> is from the local filesystem it will be returned unmodified.</p>
+</div>
+<div id="data-source-configuration" class="section level2">
+<h2>Data Source Configuration</h2>
+<p>It’s often useful to do training script development with a local subsample of data that you’ve extracted from the complete set of training data. In this configuration, you’ll want your training script to dynamically use the local subsample during development then use the complete dataset stored in Google Cloud Storage when running on CloudML. You can accomplish this with a combination of <a href="https://tensorflow.rstudio.com/tools/training_flags.html">training flags</a> and the <code><a href="../../tools/cloudml/reference/gs_local_dir.html">gs_local_dir()</a></code> function described above.</p>
+<p>Here’s a complete example. We start with a training script that declares a flag for the location of the training data:</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(keras)</a>
+<a class="sourceLine" id="cb6-2" data-line-number="2"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(cloudml)</a>
+<a class="sourceLine" id="cb6-3" data-line-number="3"></a>
+<a class="sourceLine" id="cb6-4" data-line-number="4"><span class="co"># define a flag for the location of the data directory</span></a>
+<a class="sourceLine" id="cb6-5" data-line-number="5">FLAGS &lt;-<span class="st"> </span><span class="kw"><a href="../../keras/reference/reexports.html">flags</a></span>(</a>
+<a class="sourceLine" id="cb6-6" data-line-number="6">  <span class="kw"><a href="../../keras/reference/reexports.html">flag_string</a></span>(<span class="st">"data_dir"</span>, <span class="st">"data"</span>)</a>
+<a class="sourceLine" id="cb6-7" data-line-number="7">)</a>
+<a class="sourceLine" id="cb6-8" data-line-number="8"></a>
+<a class="sourceLine" id="cb6-9" data-line-number="9"><span class="co"># determine the location of the directory (during local development this will</span></a>
+<a class="sourceLine" id="cb6-10" data-line-number="10"><span class="co"># be the default "data" subdirectory specified in the FLAGS declaration above)</span></a>
+<a class="sourceLine" id="cb6-11" data-line-number="11">data_dir &lt;-<span class="st"> </span><span class="kw"><a href="../../tools/cloudml/reference/gs_data_dir_local.html">gs_data_dir_local</a></span>(FLAGS<span class="op">$</span>data_dir)</a>
+<a class="sourceLine" id="cb6-12" data-line-number="12"></a>
+<a class="sourceLine" id="cb6-13" data-line-number="13"><span class="co"># read the data</span></a>
+<a class="sourceLine" id="cb6-14" data-line-number="14">train_data &lt;-<span class="st"> </span><span class="kw"><a href="https://readr.tidyverse.org/reference/read_delim.html">read_csv</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/file.path.html">file.path</a></span>(FLAGS<span class="op">$</span>data_dir, <span class="st">"train.csv"</span>))</a></code></pre></div>
+<p>Note that the <code>data_dir</code> R variable is computed by passing <code>FLAGS$data_dir</code> to the <code><a href="../../tools/cloudml/reference/gs_data_dir_local.html">gs_data_dir_local()</a></code> function. This enables it to take on a dynamic value depending upon the training environment.</p>
+<p>The way to vary this value when running on CloudML is by adding a <code>flags.yml</code> configuration file to your project directory. For example:</p>
+<p><strong>flags.yml</strong></p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode yaml"><code class="sourceCode yaml"><a class="sourceLine" id="cb7-1" data-line-number="1"><span class="fu">cloudml:</span></a>
+<a class="sourceLine" id="cb7-2" data-line-number="2">  <span class="fu">data_dir:</span><span class="at"> </span><span class="st">"gs://quarter-deck-529/training-data"</span></a></code></pre></div>
+<p>With the addition of this config file, your script will resolve the <code>data_dir</code> flag to specified the Google Storage bucket, but only when it is running on CloudML.</p>
+</div>
+<div id="managing-storage" class="section level2">
+<h2>Managing Storage</h2>
+<p>You can view and manage data within Google Cloud Storage buckets using either a web based user-interface or via command line utilities included with the Google Cloud SDK.</p>
+<div id="google-storage-browser" class="section level3">
+<h3>Google Storage Browser</h3>
+<p>To access the web-bqsed UI, navigate to <a href="https://console.cloud.google.com/storage/browser" class="uri">https://console.cloud.google.com/storage/browser</a>.</p>
+<p>Here’s what the storage browser looks like for a sample project:</p>
+<p><img src="../images/google-storage-browser.png" class="screenshot" width="725"></p>
+</div>
+<div id="google-cloud-sdk" class="section level3">
+<h3>Google Cloud SDK</h3>
+<p>The Google Cloud SDK includes the <code>gsutil</code> utility program for managing cloud storage buckets. Documentation for <code>gsutil</code> can be found here: <a href="https://cloud.google.com/storage/docs/gsutil" class="uri">https://cloud.google.com/storage/docs/gsutil</a>.</p>
+<p>You use <code>gsutil</code> from within a terminal. If you are running within RStudio v1.1 or higher you can activate a terminal with the <code><a href="../../tools/cloudml/reference/gcloud_terminal.html">gcloud_terminal()</a></code> function:</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" data-line-number="1"><span class="kw"><a href="../../tools/cloudml/reference/gcloud_terminal.html">gcloud_terminal</a></span>()</a></code></pre></div>
+<p>Here is an example of using the <code>gsutil ls</code> command to list the contents of a bucket within a terminal:</p>
+<p><img src="../images/google-storage-terminal.png" class="screenshot" width="725"></p>
+</div>
+</div>

@@ -1,0 +1,121 @@
+---
+title: "R Interface to Google CloudML"
+output: 
+  rmarkdown::html_vignette: default
+vignette: >
+  %\VignetteIndexEntry{Getting Started}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+type: docs
+repo: https://github.com/rstudio/cloudml
+menu:
+  main:
+    name: "Getting Started"
+    identifier: "tools-cloudml-overview"
+    parent: "cloudml-top"
+    weight: 10
+aliases:
+  - /tools/cloudml/
+---
+
+
+
+<div id="overview" class="section level2">
+<h2>Overview</h2>
+<p><img src="../images/cloudml.png" align="right" style="margin-left: 10px;" width="200"></p>
+<p>The <strong>cloudml</strong> package provides an R interface to <a href="https://cloud.google.com/ml-engine/">Google Cloud Machine Learning Engine</a>, a managed service that enables:</p>
+<ul>
+<li><p>Scalable training of models built with the <a href="https://keras.rstudio.com/">keras</a>, <a href="https://tensorflow.rstudio.com/tfestimators">tfestimators</a>, and <a href="https://tensorflow.rstudio.com/">tensorflow</a> R packages.</p></li>
+<li><p>On-demand access to training on GPUs, including the new <a href="http://www.nvidia.com/object/tesla-p100.html">Tesla P100 GPUs</a> from NVIDIA®.</p></li>
+<li><p>Hyperparameter tuning to optmize key attributes of model architectures in order to maximize predictive accuracy.</p></li>
+<li><p>Deployment of trained models to the Google global prediction platform that can support thousands of users and TBs of data.</p></li>
+</ul>
+<p>CloudML is a managed service where you pay only for the hardware resources that you use. Prices vary depending on configuration (e.g. CPU vs. GPU vs. multiple GPUs). See <a href="https://cloud.google.com/ml-engine/pricing" class="uri">https://cloud.google.com/ml-engine/pricing</a> for additional details.</p>
+<div style="height: 25px;">
+
+</div>
+</div>
+<div id="google-cloud-account" class="section level2">
+<h2>Google Cloud Account</h2>
+<p>Before you can begin training models with CloudML you need to have a <em>Google Cloud Account</em>. If you don’t already have an account you can create one at <a href="https://console.cloud.google.com" class="uri">https://console.cloud.google.com</a>.</p>
+<p>If you are a new customer of Google Cloud you will receive a <a href="https://cloud.google.com/free/docs/frequently-asked-questions#free-trial">12-month, $300 credit</a> that can be applied to your use of CloudML. In addition, Google is providing a $200 credit for users of the R interface to CloudML (this credit applies to both new and existing customers). Use this link to <a href="https://goo.gl/mhQKHB">apply for the $200 credit</a>.</p>
+<p>The account creation process will lead you through creating a new project. To enable the Machine Learning API for this project navigate to the “ML Engine” menu on the left. Doing this for the first time will enable the ML API and allow you to submit ML jobs.</p>
+</div>
+<div id="installation" class="section level2">
+<h2>Installation</h2>
+<p>Start by installing the cloudml R package from CRAN as follows:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span>(<span class="st">"cloudml"</span>)</a></code></pre></div>
+<p>Then, install the <em>Google Cloud SDK</em>, a set of utilties that enable you to interact with your Google Cloud account from within R. You can install the SDK using the <code><a href="../../tools/cloudml/reference/gcloud_install.html">gcloud_install()</a></code> function.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(cloudml)</a>
+<a class="sourceLine" id="cb2-2" data-line-number="2"><span class="kw"><a href="../../tools/cloudml/reference/gcloud_install.html">gcloud_install</a></span>()</a></code></pre></div>
+<p>Note that in order to ensure that the <strong>cloudml</strong> package can find your installation of the SDK you should accept the default installation location (<code>~/</code>) suggested within the installer.</p>
+<p>As part of the installation you are asked to specify a default account, project, and compute region for Google Cloud. These settings are then used automatically for all CloudML jobs. To change the default account, project, or region you can use the <code><a href="../../tools/cloudml/reference/gcloud_init.html">gcloud_init()</a></code> function:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1"><span class="kw"><a href="../../tools/cloudml/reference/gcloud_init.html">gcloud_init</a></span>()</a></code></pre></div>
+<p>Note that you don’t need to execute <code><a href="../../tools/cloudml/reference/gcloud_init.html">gcloud_init()</a></code> now as this was done automatically as part of <code><a href="../../tools/cloudml/reference/gcloud_install.html">gcloud_install()</a></code>.</p>
+<p>Once you’ve completed these steps you are ready to train models with CloudML!</p>
+</div>
+<div id="training-on-cloudml" class="section level2">
+<h2>Training on CloudML</h2>
+<p>To train a model on CloudML, first work the training script locally (perhaps with a smaller sample of your dataset). The script can contain arbitrary R code which trains and/or evaluates a model. Once you’ve confirmed that things work as expected, you can submit a CloudML job to perform training in the cloud.</p>
+<div id="submitting-a-job" class="section level3">
+<h3>Submitting a Job</h3>
+<p>To submit a job, call the <code><a href="../../tools/cloudml/reference/cloudml_train.html">cloudml_train()</a></code> function, specifying the R script to execute for training:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(cloudml)</a>
+<a class="sourceLine" id="cb4-2" data-line-number="2"><span class="kw"><a href="../../tools/cloudml/reference/cloudml_train.html">cloudml_train</a></span>(<span class="st">"train.R"</span>)</a></code></pre></div>
+<p>All of the files within the current working directory will be bundled up and sent along with the script to CloudML.</p>
+<div class="bs-callout bs-callout-warning">
+<p>Note that the very first time you submit a job to CloudML the various packages required to run your script will be compiled from source. This will make the execution time of the job considerably longer that you might expect. It’s only the first job that incurs this overhead though (since the package installations are cached), and subsequent jobs will run more quickly.</p>
+</div>
+<p>If you are using <a href="https://www.rstudio.com/products/rstudio/download/">RStudio v1.1</a> or higher, then the CloudML training job is monitored (and it’s results collected) using a background terminal:</p>
+<p><img src="../images/rstudio-terminal.png" class="screenshot" width="725"></p>
+</div>
+<div id="collecting-results" class="section level3">
+<h3>Collecting Results</h3>
+<p>When the job is complete, training results can be collected back to your local system (this is done automatically when monitoring the job using a background terminal in RStudio). A run report is displayed after the job is collected:</p>
+<p><img src="../images/training-run.png" class="screenshot" width="725"></p>
+<p>You can list all previous runs as a data frame using the <code>ls_runs()</code> function:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" data-line-number="1"><span class="kw">ls_runs</span>()</a></code></pre></div>
+<pre><code>Data frame: 6 x 37 
+                            run_dir eval_loss eval_acc metric_loss metric_acc metric_val_loss metric_val_acc
+6 runs/cloudml_2018_01_26_135812740    0.1049   0.9789      0.0852     0.9760          0.1093         0.9770
+2 runs/cloudml_2018_01_26_140015601    0.1402   0.9664      0.1708     0.9517          0.1379         0.9687
+5 runs/cloudml_2018_01_26_135848817    0.1159   0.9793      0.0378     0.9887          0.1130         0.9792
+3 runs/cloudml_2018_01_26_135936130    0.0963   0.9780      0.0701     0.9792          0.0969         0.9790
+1 runs/cloudml_2018_01_26_140045584    0.1486   0.9682      0.1860     0.9504          0.1453         0.9693
+4 runs/cloudml_2018_01_26_135912819    0.1141   0.9759      0.1272     0.9655          0.1087         0.9762
+# ... with 30 more columns:
+#   flag_dense_units1, flag_dropout1, flag_dense_units2, flag_dropout2, samples, validation_samples,
+#   batch_size, epochs, epochs_completed, metrics, model, loss_function, optimizer, learning_rate,
+#   script, start, end, completed, output, source_code, context, type, cloudml_console_url,
+#   cloudml_created, cloudml_end, cloudml_job, cloudml_log_url, cloudml_ml_units, cloudml_start,
+#   cloudml_state</code></pre>
+<p>You can view run reports using the <code>view_run()</code> function:</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" data-line-number="1"><span class="co"># view the latest run</span></a>
+<a class="sourceLine" id="cb7-2" data-line-number="2"><span class="kw">view_run</span>()</a>
+<a class="sourceLine" id="cb7-3" data-line-number="3"></a>
+<a class="sourceLine" id="cb7-4" data-line-number="4"><span class="co"># view a specific run</span></a>
+<a class="sourceLine" id="cb7-5" data-line-number="5"><span class="kw">view_run</span>(<span class="st">"runs/cloudml_2017_12_15_182614794"</span>)</a></code></pre></div>
+<p>There are many tools available to list, filter, and compare training runs. For additional information see the documentation for the <a href="https://tensorflow.rstudio.com/tools/tfruns/articles/overview.html">tfruns package</a>.</p>
+</div>
+</div>
+<div id="training-with-a-gpu" class="section level2">
+<h2>Training with a GPU</h2>
+<p>By default, CloudML utilizes “standard” CPU-based instances suitable for training simple models with small to moderate datasets. You can request the use of other machine types, including ones with GPUs, using the <code>master_type</code> parameter of <code><a href="../../tools/cloudml/reference/cloudml_train.html">cloudml_train()</a></code>.</p>
+<p>For example, the following would train the same model as above but with a <a href="http://www.nvidia.com/object/tesla-k80.html">Tesla K80 GPU</a>:</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" data-line-number="1"><span class="kw"><a href="../../tools/cloudml/reference/cloudml_train.html">cloudml_train</a></span>(<span class="st">"train.R"</span>, <span class="dt">master_type =</span> <span class="st">"standard_gpu"</span>)</a></code></pre></div>
+<p>To train using a <a href="http://www.nvidia.com/object/tesla-p100.html">Tesla P100 GPU</a> you would specify <code>"standard_p100"</code>:</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" data-line-number="1"><span class="kw"><a href="../../tools/cloudml/reference/cloudml_train.html">cloudml_train</a></span>(<span class="st">"train.R"</span>, <span class="dt">master_type =</span> <span class="st">"standard_p100"</span>)</a></code></pre></div>
+<p>To train on a machine with 4 Tesla P100 GPU’s you would specify <code>"complex_model_m_p100"</code>:</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" data-line-number="1"><span class="kw"><a href="../../tools/cloudml/reference/cloudml_train.html">cloudml_train</a></span>(<span class="st">"train.R"</span>, <span class="dt">master_type =</span> <span class="st">"complex_model_m_p100"</span>)</a></code></pre></div>
+<p>See the CloudML website for documentation on <a href="https://cloud.google.com/ml-engine/docs/training-overview#machine_type_table">available machine types</a>. Also note that GPU instances can be considerably more expensive that CPU ones! See the documentation on <a href="https://cloud.google.com/ml-engine/pricing">CloudML Pricing</a> for details.</p>
+</div>
+<div id="learning-more" class="section level2">
+<h2>Learning More</h2>
+<p>To learn more about using CloudML with R, see the following articles:</p>
+<ul>
+<li><p><a href="training.html">Training with CloudML</a> goes into additional depth on managing training jobs and their output.</p></li>
+<li><p><a href="tuning.html">Hyperparameter Tuning</a> explores how you can improve the performance of your models by running many trials with distinct hyperparameters (e.g. number and size of layers) to determine their optimal values.</p></li>
+<li><p><a href="storage.html">Google Cloud Storage</a> provides information on copying data between your local machine and Google Storage and also describes how to use data within Google Storage during training.</p></li>
+<li><p><a href="deployment.html">Deploying Models</a> describes how to deploy trained models and generate predictions from them.</p></li>
+</ul>
+</div>

@@ -239,6 +239,13 @@ disqusShortname = "r-tensorflow"
 	identifier = "tfruns-top"
 	parent = "tools-top"
 	weight = 10
+
+[[menu.main]]
+	name   = "Cloud ML"
+	url    = "/tools/cloudml/"
+	identifier = "cloudml-top"
+	parent = "tools-top"
+	weight = 20
 	
 [[menu.main]]
 	name   = "API"
