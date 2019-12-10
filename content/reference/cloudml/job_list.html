@@ -1,0 +1,64 @@
+---
+title: List all jobs
+type: docs
+repo: https://github.com/rstudio/cloudml
+menu:
+  main:
+    name: List all jobs - cloudml
+    parent: cloudml-reference
+aliases:
+- /reference/cloudml/job_list.html
+- /cloudml/reference/job_list.html
+---
+    
+    <p>List existing Google Cloud ML jobs.</p>
+
+    <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>job_list</span>(<span class='kw'>filter</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>limit</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>page_size</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>sort_by</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>uri</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)</code></pre></div>
+
+    <h2 id="arguments">Arguments</h2>
+    <table class="ref-arguments">
+    
+    <colgroup>
+      <col class="name" />
+      <col class="desc" />
+    </colgroup>  
+      
+    <tr>
+      <td>filter</td>
+      <td><p>Filter the set of jobs to be returned.</p></td>
+    </tr>
+    <tr>
+      <td>limit</td>
+      <td><p>The maximum number of resources to list. By default,
+all jobs will be listed.</p></td>
+    </tr>
+    <tr>
+      <td>page_size</td>
+      <td><p>Some services group resource list output into pages.
+This flag specifies the maximum number of resources per
+page. The default is determined by the service if it
+supports paging, otherwise it is unlimited (no paging).</p></td>
+    </tr>
+    <tr>
+      <td>sort_by</td>
+      <td><p>A comma-separated list of resource field key names to
+sort by. The default order is ascending. Prefix a field
+with <code>~</code> for descending order on that field.</p></td>
+    </tr>
+    <tr>
+      <td>uri</td>
+      <td><p>Print a list of resource URIs instead of the default
+output.</p></td>
+    </tr>
+    </table>
+
+    <h2 id="see-also">See also</h2>
+
+    <div class='dont-index'><p>Other job management functions: <code><a href='../job_cancel.html'>job_cancel</a></code>,
+  <code><a href='../job_collect.html'>job_collect</a></code>, <code><a href='../job_status.html'>job_status</a></code>,
+  <code><a href='../job_stream_logs.html'>job_stream_logs</a></code>, <code><a href='../job_trials.html'>job_trials</a></code></p></div>
+
+
+
+

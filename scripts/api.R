@@ -6,7 +6,8 @@ packages <- list(
   keras = "rstudio/keras",
   tensorflow = "rstudio/tensorflow",
   tfdatasets = "rstudio/tfdatasets",
-  tfruns = "rstudio/tfruns"
+  tfruns = "rstudio/tfruns",
+  cloudml = "rstudio/cloudml"
 )
 
 download_source <- function(repo) {

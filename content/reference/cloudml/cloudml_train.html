@@ -1,0 +1,82 @@
+---
+title: Train a model using Cloud ML
+type: docs
+repo: https://github.com/rstudio/cloudml
+menu:
+  main:
+    name: Train a model using Cloud ML - cloudml
+    parent: cloudml-reference
+aliases:
+- /reference/cloudml/cloudml_train.html
+- /cloudml/reference/cloudml_train.html
+---
+    
+    <p>Upload a TensorFlow application to Google Cloud, and use that application to
+train a model.</p>
+
+    <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>cloudml_train</span>(<span class='kw'>file</span> <span class='kw'>=</span> <span class='st'>"train.R"</span>, <span class='kw'>master_type</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>flags</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>region</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>config</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>collect</span> <span class='kw'>=</span> <span class='st'>"ask"</span>, <span class='kw'>dry_run</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)</code></pre></div>
+
+    <h2 id="arguments">Arguments</h2>
+    <table class="ref-arguments">
+    
+    <colgroup>
+      <col class="name" />
+      <col class="desc" />
+    </colgroup>  
+      
+    <tr>
+      <td>file</td>
+      <td><p>File to be used as entrypoint for training.</p></td>
+    </tr>
+    <tr>
+      <td>master_type</td>
+      <td><p>Training master node machine type. "standard" provides a
+basic machine configuration suitable for training simple models with small
+to moderate datasets. See the documentation at
+<a href='https://cloud.google.com/ml-engine/docs/tensorflow/machine-types#machine_type_table'>https://cloud.google.com/ml-engine/docs/tensorflow/machine-types#machine_type_table</a>
+for details on available machine types.</p></td>
+    </tr>
+    <tr>
+      <td>flags</td>
+      <td><p>Named list with flag values (see <code>flags()</code>) or path
+to YAML file containing flag values.</p></td>
+    </tr>
+    <tr>
+      <td>region</td>
+      <td><p>The region to be used for training.</p></td>
+    </tr>
+    <tr>
+      <td>config</td>
+      <td><p>A list, <code>YAML</code> or <code>JSON</code> configuration file as described
+<a href='https://cloud.google.com/ml-engine/reference/rest/v1/projects.jobs'>https://cloud.google.com/ml-engine/reference/rest/v1/projects.jobs</a>.</p></td>
+    </tr>
+    <tr>
+      <td>collect</td>
+      <td><p>Logical. If TRUE, collect job when training is completed
+(blocks waiting for the job to complete). The default (<code>"ask"</code>) will
+interactively prompt the user whether to collect the results or not.</p></td>
+    </tr>
+    <tr>
+      <td>dry_run</td>
+      <td><p>Triggers a local dry run over the deployment phase to
+validate packages and packing work as expected.</p></td>
+    </tr>
+    </table>
+
+    <h2 id="see-also">See also</h2>
+
+    <div class='dont-index'><p><code><a href='../job_status.html'>job_status()</a></code>, <code><a href='../job_collect.html'>job_collect()</a></code>, <code><a href='../job_cancel.html'>job_cancel()</a></code></p>
+<p>Other CloudML functions: <code><a href='../cloudml_deploy.html'>cloudml_deploy</a></code>,
+  <code><a href='../cloudml_predict.html'>cloudml_predict</a></code></p></div>
+
+    <h2 id="examples">Examples</h2>
+    <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><div class='input'><span class='kw'>if</span> (<span class='fl'>FALSE</span>) {
+<span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='no'>cloudml</span>)
+
+<span class='fu'><a href='../gcloud_install.html'>gcloud_install</a></span>()
+<span class='no'>job</span> <span class='kw'>&lt;-</span> <span class='fu'>cloudml_train</span>(<span class='st'>"train.R"</span>)
+}</div></code></pre></div>
+
+
+
