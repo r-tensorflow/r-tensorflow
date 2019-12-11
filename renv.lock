@@ -8,6 +8,11 @@
       }
     ]
   },
+  "Python": {
+    "Version": "3.6.9",
+    "Type": "conda",
+    "Name": null
+  },
   "Packages": {
     "BH": {
       "Package": "BH",
@@ -1383,8 +1388,14 @@
     "tfhub": {
       "Package": "tfhub",
       "Version": "0.7.0",
-      "Source": "unknown",
-      "Hash": "d81f13b35a9e2599f445f62e10699dc1"
+      "Source": "GitHub",
+      "RemoteType": "github",
+      "RemoteHost": "api.github.com",
+      "RemoteRepo": "tfhub",
+      "RemoteUsername": "rstudio",
+      "RemoteRef": "master",
+      "RemoteSha": "5a041b658400904c1a7d57e8a3be71f4e51ecfd7",
+      "Hash": "a6132aa623fa6d4563cc3ba1fb79fd67"
     },
     "tfruns": {
       "Package": "tfruns",
@@ -1611,9 +1622,5 @@
       "Repository": "CRAN",
       "Hash": "d6d8d8c2b5f0c309dfa8caf9a27a61e2"
     }
-  },
-  "Python": {
-    "Version": "3.7.3",
-    "Type": "virtualenv"
   }
 }
