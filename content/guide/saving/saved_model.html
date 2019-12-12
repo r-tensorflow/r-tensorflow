@@ -33,13 +33,13 @@ menu:
 <a class="sourceLine" id="cb2-2" data-line-number="2">    <span class="st">"grace_hopper.jpg"</span>,</a>
 <a class="sourceLine" id="cb2-3" data-line-number="3">    <span class="st">"https://storage.googleapis.com/download.tensorflow.org/example_images/grace_hopper.jpg"</span>)</a>
 <a class="sourceLine" id="cb2-4" data-line-number="4"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(magick)</a>
-<a class="sourceLine" id="cb2-5" data-line-number="5"><span class="co">#&gt; Linking to ImageMagick 6.9.9.39</span></a>
-<a class="sourceLine" id="cb2-6" data-line-number="6"><span class="co">#&gt; Enabled features: cairo, fontconfig, freetype, lcms, pango, rsvg, webp</span></a>
-<a class="sourceLine" id="cb2-7" data-line-number="7"><span class="co">#&gt; Disabled features: fftw, ghostscript, x11</span></a>
+<a class="sourceLine" id="cb2-5" data-line-number="5"><span class="co">#&gt; Linking to ImageMagick 6.9.10.74</span></a>
+<a class="sourceLine" id="cb2-6" data-line-number="6"><span class="co">#&gt; Enabled features: freetype, lcms, webp</span></a>
+<a class="sourceLine" id="cb2-7" data-line-number="7"><span class="co">#&gt; Disabled features: cairo, fontconfig, fftw, ghostscript, pango, rsvg, x11</span></a>
 <a class="sourceLine" id="cb2-8" data-line-number="8">img &lt;-<span class="st"> </span><span class="kw"><a href="https://docs.ropensci.org/magick/reference/editing.html">image_read</a></span>(file)</a>
 <a class="sourceLine" id="cb2-9" data-line-number="9">img &lt;-<span class="st"> </span><span class="kw"><a href="https://docs.ropensci.org/magick/reference/device.html">image_draw</a></span>(img)</a>
 <a class="sourceLine" id="cb2-10" data-line-number="10">img</a></code></pre></div>
-<p><img src="/guide/saving/saved_model_files/figure-html/unnamed-chunk-3-1.png" width="256"></p>
+<p><img src="/guide/saving/saved_model_files/figure-html/unnamed-chunk-3-1.png"><!-- --></p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1">x &lt;-<span class="st"> </span><span class="kw"><a href="../../keras/reference/image_load.html">image_load</a></span>(file, <span class="dt">target_size =</span> <span class="kw"><a href="https://rdrr.io/r/base/list.html">list</a></span>(<span class="dv">224</span>, <span class="dv">224</span>)) <span class="op">%&gt;%</span></a>
 <a class="sourceLine" id="cb3-2" data-line-number="2"><span class="st">  </span><span class="kw"><a href="../../keras/reference/image_to_array.html">image_to_array</a></span>() <span class="op">%&gt;%</span><span class="st"> </span></a>
 <a class="sourceLine" id="cb3-3" data-line-number="3"><span class="st">  </span>mobilenet_preprocess_input</a>

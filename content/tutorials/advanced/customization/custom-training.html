@@ -92,14 +92,14 @@ we will suggest using an R6 class.</p>
 <a class="sourceLine" id="cb15-7" data-line-number="7">outputs &lt;-<span class="st"> </span>inputs <span class="op">*</span><span class="st"> </span>TRUE_W <span class="op">+</span><span class="st"> </span>TRUE_b <span class="op">+</span><span class="st"> </span>noise</a></code></pre></div>
 <p>Before training the model, visualize the loss value by plotting the model’s predictions in red and the training data in blue:</p>
 <div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb16-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(tidyverse)</a></code></pre></div>
-<pre><code>## ── Attaching packages ───────────────────────────────────────────────────────────── tidyverse 1.2.1 ──</code></pre>
-<pre><code>## ✔ ggplot2 3.2.0     ✔ purrr   0.3.2
-## ✔ tibble  2.1.3     ✔ dplyr   0.8.3
-## ✔ tidyr   1.0.0     ✔ stringr 1.4.0
-## ✔ readr   1.3.1     ✔ forcats 0.4.0</code></pre>
-<pre><code>## ── Conflicts ──────────────────────────────────────────────────────────────── tidyverse_conflicts() ──
-## ✖ dplyr::filter() masks stats::filter()
-## ✖ dplyr::lag()    masks stats::lag()</code></pre>
+<pre><code>## ── Attaching packages ───────────────────────────────────────────────── tidyverse 1.2.1 ──</code></pre>
+<pre><code>## ✓ ggplot2 3.2.1     ✓ purrr   0.3.3
+## ✓ tibble  2.1.3     ✓ dplyr   0.8.3
+## ✓ tidyr   1.0.0     ✓ stringr 1.4.0
+## ✓ readr   1.3.1     ✓ forcats 0.4.0</code></pre>
+<pre><code>## ── Conflicts ──────────────────────────────────────────────────── tidyverse_conflicts() ──
+## x dplyr::filter() masks stats::filter()
+## x dplyr::lag()    masks stats::lag()</code></pre>
 <div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb20-1" data-line-number="1"><span class="kw">tibble</span>(</a>
 <a class="sourceLine" id="cb20-2" data-line-number="2">  <span class="dt">inputs =</span> <span class="kw"><a href="https://rdrr.io/r/base/numeric.html">as.numeric</a></span>(inputs), </a>
 <a class="sourceLine" id="cb20-3" data-line-number="3">  <span class="dt">outputs =</span> <span class="kw"><a href="https://rdrr.io/r/base/numeric.html">as.numeric</a></span>(outputs),</a>
@@ -138,26 +138,26 @@ we will suggest using an R6 class.</p>
 <a class="sourceLine" id="cb22-10" data-line-number="10">  current_loss &lt;-<span class="st"> </span><span class="kw"><a href="../../../tensorflow/reference/train.html">train</a></span>(model, inputs, outputs, <span class="dt">learning_rate =</span> <span class="fl">0.1</span>)</a>
 <a class="sourceLine" id="cb22-11" data-line-number="11">  <span class="kw"><a href="https://rdrr.io/r/base/cat.html">cat</a></span>(glue<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/glue/man/glue.html">glue</a></span>(<span class="st">"Epoch: {epoch}, Loss: {as.numeric(current_loss)}"</span>), <span class="st">"</span><span class="ch">\n</span><span class="st">"</span>)</a>
 <a class="sourceLine" id="cb22-12" data-line-number="12">} </a></code></pre></div>
-<pre><code>## Epoch: 1, Loss: 9.22420692443848 
-## Epoch: 2, Loss: 6.19532537460327 
-## Epoch: 3, Loss: 4.27906942367554 
-## Epoch: 4, Loss: 3.06672716140747 
-## Epoch: 5, Loss: 2.29972267150879 
-## Epoch: 6, Loss: 1.81446659564972 
-## Epoch: 7, Loss: 1.50746238231659 
-## Epoch: 8, Loss: 1.31323146820068 
-## Epoch: 9, Loss: 1.19034790992737 
-## Epoch: 10, Loss: 1.11260342597961 
-## Epoch: 11, Loss: 1.06341695785522 
-## Epoch: 12, Loss: 1.03229808807373 
-## Epoch: 13, Loss: 1.01261019706726 
-## Epoch: 14, Loss: 1.0001540184021 
-## Epoch: 15, Loss: 0.992273688316345 
-## Epoch: 16, Loss: 0.987287759780884 
-## Epoch: 17, Loss: 0.984133422374725 
-## Epoch: 18, Loss: 0.982137799263 
-## Epoch: 19, Loss: 0.9808748960495 
-## Epoch: 20, Loss: 0.980076193809509</code></pre>
+<pre><code>## Epoch: 1, Loss: 8.92996788024902 
+## Epoch: 2, Loss: 6.1584095954895 
+## Epoch: 3, Loss: 4.35054683685303 
+## Epoch: 4, Loss: 3.17103171348572 
+## Epoch: 5, Loss: 2.40130186080933 
+## Epoch: 6, Loss: 1.89888119697571 
+## Epoch: 7, Loss: 1.5708681344986 
+## Epoch: 8, Loss: 1.35667383670807 
+## Epoch: 9, Loss: 1.21677386760712 
+## Epoch: 10, Loss: 1.12538027763367 
+## Epoch: 11, Loss: 1.06566190719604 
+## Epoch: 12, Loss: 1.02663290500641 
+## Epoch: 13, Loss: 1.00112020969391 
+## Epoch: 14, Loss: 0.984439790248871 
+## Epoch: 15, Loss: 0.973531723022461 
+## Epoch: 16, Loss: 0.966396987438202 
+## Epoch: 17, Loss: 0.96172958612442 
+## Epoch: 18, Loss: 0.958675682544708 
+## Epoch: 19, Loss: 0.9566770195961 
+## Epoch: 20, Loss: 0.95536869764328</code></pre>
 <div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb24-1" data-line-number="1"><span class="kw">tibble</span>(</a>
 <a class="sourceLine" id="cb24-2" data-line-number="2">  <span class="dt">epoch =</span> <span class="dv">1</span><span class="op">:</span><span class="dv">20</span>,</a>
 <a class="sourceLine" id="cb24-3" data-line-number="3">  <span class="dt">Ws =</span> Ws,</a>

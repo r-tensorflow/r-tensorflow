@@ -58,23 +58,23 @@ network.</p>
 <a class="sourceLine" id="cb3-8" data-line-number="8">  )</a></code></pre></div>
 <pre><code>## Train on 60000 samples
 ## Epoch 1/5
-## 60000/60000 - 16s - loss: 0.1834 - accuracy: 0.9454
+## 60000/60000 - 13s - loss: 0.1817 - accuracy: 0.9456
 ## Epoch 2/5
-## 60000/60000 - 15s - loss: 0.0585 - accuracy: 0.9815
+## 60000/60000 - 14s - loss: 0.0598 - accuracy: 0.9814
 ## Epoch 3/5
-## 60000/60000 - 15s - loss: 0.0409 - accuracy: 0.9874
+## 60000/60000 - 16s - loss: 0.0408 - accuracy: 0.9872
 ## Epoch 4/5
-## 60000/60000 - 15s - loss: 0.0316 - accuracy: 0.9902
+## 60000/60000 - 14s - loss: 0.0322 - accuracy: 0.9899
 ## Epoch 5/5
-## 60000/60000 - 16s - loss: 0.0255 - accuracy: 0.9920</code></pre>
+## 60000/60000 - 14s - loss: 0.0261 - accuracy: 0.9915</code></pre>
 <p>When we are happy with our model accuracy in the validation dataset we can <code>evaluate</code>
 the results on the test dataset with:</p>
 <div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" data-line-number="1">model <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../keras/reference/reexports.html">evaluate</a></span>(<span class="dt">x =</span> mnist<span class="op">$</span>test<span class="op">$</span>x, <span class="dt">y =</span> mnist<span class="op">$</span>test<span class="op">$</span>y, <span class="dt">verbose =</span> <span class="dv">0</span>)</a></code></pre></div>
 <pre><code>## $loss
-## [1] 0.03205821
+## [1] 0.03470025
 ## 
 ## $accuracy
-## [1] 0.9886</code></pre>
+## [1] 0.9878</code></pre>
 <p>OK, we have 99% accuracy on the test dataset and we want to deploy that model.
 First, let’s save the model in the <code>SavedModel</code> format using:</p>
 <div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" data-line-number="1"><span class="kw"><a href="../keras/reference/save_model_tf.html">save_model_tf</a></span>(model, <span class="st">"cnn-mnist"</span>)</a></code></pre></div>

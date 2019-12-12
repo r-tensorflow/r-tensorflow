@@ -128,13 +128,13 @@ menu:
 <a class="sourceLine" id="cb6-6" data-line-number="6"><span class="kw">train_and_checkpoint</span>(net, manager, toy_dataset)</a></code></pre></div>
 <p>The <code>tf$train$CheckpointManager</code> object deletes old checkpoints. Above it’s configured to keep only the three most recent checkpoints.</p>
 <div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" data-line-number="1">manager<span class="op">$</span>checkpoints  <span class="co"># List the three remaining checkpoints</span></a>
-<a class="sourceLine" id="cb7-2" data-line-number="2"><span class="co">#&gt; [1] "./tf_ckpts/ckpt-18" "./tf_ckpts/ckpt-19" "./tf_ckpts/ckpt-20"</span></a></code></pre></div>
+<a class="sourceLine" id="cb7-2" data-line-number="2"><span class="co">#&gt; [1] "./tf_ckpts/ckpt-118" "./tf_ckpts/ckpt-119" "./tf_ckpts/ckpt-120"</span></a></code></pre></div>
 <p>These paths, e.g. ‘./tf_ckpts/ckpt-10’, are not files on disk. Instead they are prefixes for an index file and one or more data files which contain the variable values. These prefixes are grouped together in a single checkpoint file (‘./tf_ckpts/checkpoint’) where the <code>CheckpointManager</code> saves its state.</p>
 <div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/base/list.files.html">list.files</a></span>(<span class="st">"./tf_ckpts/"</span>)</a>
-<a class="sourceLine" id="cb8-2" data-line-number="2"><span class="co">#&gt; [1] "checkpoint"                  "ckpt-18.data-00000-of-00001"</span></a>
-<a class="sourceLine" id="cb8-3" data-line-number="3"><span class="co">#&gt; [3] "ckpt-18.index"               "ckpt-19.data-00000-of-00001"</span></a>
-<a class="sourceLine" id="cb8-4" data-line-number="4"><span class="co">#&gt; [5] "ckpt-19.index"               "ckpt-20.data-00000-of-00001"</span></a>
-<a class="sourceLine" id="cb8-5" data-line-number="5"><span class="co">#&gt; [7] "ckpt-20.index"</span></a></code></pre></div>
+<a class="sourceLine" id="cb8-2" data-line-number="2"><span class="co">#&gt; [1] "checkpoint"                   "ckpt-118.data-00000-of-00001"</span></a>
+<a class="sourceLine" id="cb8-3" data-line-number="3"><span class="co">#&gt; [3] "ckpt-118.index"               "ckpt-119.data-00000-of-00001"</span></a>
+<a class="sourceLine" id="cb8-4" data-line-number="4"><span class="co">#&gt; [5] "ckpt-119.index"               "ckpt-120.data-00000-of-00001"</span></a>
+<a class="sourceLine" id="cb8-5" data-line-number="5"><span class="co">#&gt; [7] "ckpt-120.index"</span></a></code></pre></div>
 <p>TensorFlow matches variables to checkpointed values by traversing a directed graph with named edges, starting from the object being loaded. Edge names typically come from attribute names in objects, for example the “l1” in <code>self$l1 &lt;- layer_dense(units = size)</code>. <code>tf$train$Checkpoint</code> uses its keyword argument names, as in the “step” in <code>tf$train$CheckpointManager(step = ...)</code>.</p>
 <p>The dependency graph from the example above looks like this:</p>
 <p><img src="graph.svg"><!-- --></p>
@@ -149,7 +149,7 @@ menu:
 <a class="sourceLine" id="cb9-6" data-line-number="6">new_root &lt;-<span class="st"> </span>tf<span class="op">$</span>train<span class="op">$</span><span class="kw">Checkpoint</span>(<span class="dt">net =</span> fake_net)</a>
 <a class="sourceLine" id="cb9-7" data-line-number="7">status &lt;-<span class="st"> </span>new_root<span class="op">$</span><span class="kw">restore</span>(tf<span class="op">$</span>train<span class="op">$</span><span class="kw">latest_checkpoint</span>(<span class="st">'./tf_ckpts/'</span>))</a>
 <a class="sourceLine" id="cb9-8" data-line-number="8"><span class="kw"><a href="https://rdrr.io/r/base/numeric.html">as.numeric</a></span>(to_restore)  <span class="co"># We get the restored value now</span></a>
-<a class="sourceLine" id="cb9-9" data-line-number="9"><span class="co">#&gt; [1] 0.0308778 1.0408185 1.9840808 2.9422886 3.9628119</span></a></code></pre></div>
+<a class="sourceLine" id="cb9-9" data-line-number="9"><span class="co">#&gt; [1] -0.03513785  1.01876795  1.96332729  3.02965999  4.02992153</span></a></code></pre></div>
 <p>The dependency graph for these new objects is a much smaller subgraph of the larger checkpoint we wrote above. It includes only the bias and a save counter that <code>tf$train$Checkpoint</code> uses to number checkpoints.</p>
 <p><img src="small_graph.svg"><!-- --></p>
 <p><code>restore()</code> returns a status object, which has optional assertions. All of the objects we’ve created in our new <code>Checkpoint</code> have been restored, so <code>status.assert_existing_objects_matched()</code> passes.</p>
@@ -166,7 +166,7 @@ menu:
 <a class="sourceLine" id="cb11-3" data-line-number="3"><span class="co">#&gt; [1] 0 0 0 0 0</span></a>
 <a class="sourceLine" id="cb11-4" data-line-number="4">fake_layer<span class="op">$</span>kernel &lt;-<span class="st"> </span>delayed_restore</a>
 <a class="sourceLine" id="cb11-5" data-line-number="5"><span class="kw"><a href="https://rdrr.io/r/base/numeric.html">as.numeric</a></span>(delayed_restore)  <span class="co"># Restored</span></a>
-<a class="sourceLine" id="cb11-6" data-line-number="6"><span class="co">#&gt; [1] 4.995093 4.982657 5.014721 5.007162 5.001130</span></a></code></pre></div>
+<a class="sourceLine" id="cb11-6" data-line-number="6"><span class="co">#&gt; [1] 5.005430 5.001183 4.996069 5.004859 5.003870</span></a></code></pre></div>
 </div>
 <div id="manually-inspecting-checkpoints" class="section level4">
 <h4>Manually inspecting checkpoints</h4>
