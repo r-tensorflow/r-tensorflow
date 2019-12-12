@@ -37,23 +37,23 @@ and <a href="https://github.com/rstudio/tfhub">tfhub</a> for Transfer Learning. 
 <a class="sourceLine" id="cb2-5" data-line-number="5">)</a>
 <a class="sourceLine" id="cb2-6" data-line-number="6"><span class="kw"><a href="https://rdrr.io/r/base/summary.html">summary</a></span>(imdb)</a></code></pre></div>
 <pre><code>## ── Large Movie Review Dataset.
-## This is a dataset for binary sentiment classification containing
-## ❯ Name: imdb_reviews
-## ❯ Version: 1.0.0
-## ❯ URLs: http://ai.stanford.edu/~amaas/data/sentiment/</code></pre>
+## This is a dataset for binary sentiment classification conta
+## &gt; Name: imdb_reviews
+## &gt; Version: 1.0.0
+## &gt; URLs: http://ai.stanford.edu/~amaas/data/sentiment/</code></pre>
 <pre><code>## Registered S3 method overwritten by 'R.oo':
 ##   method        from       
 ##   throw.default R.methodsS3</code></pre>
-<pre><code>## ❯ Size: 80.2 MiB
-## ❯ Splits:
+<pre><code>## &gt; Size: 80.2 MiB
+## &gt; Splits:
 ##  — test (25000 examples)
 ##  — train (25000 examples)
 ##  — unsupervised (50000 examples)
-## ❯ Schema:
+## &gt; Schema:
 ##  — label [] INT
 ##  — text [] BYTES</code></pre>
 <p><code>tfds_load</code> returns a TensorFlow Dataset, an abstraction that represents a sequence of elements, in which each element consists of one or more components.</p>
-<p>To access individual elements, of a Dataset you can use:</p>
+<p>To access individual elements of a dataset you can use:</p>
 <div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" data-line-number="1">first &lt;-<span class="st"> </span>imdb[[<span class="dv">1</span>]] <span class="op">%&gt;%</span><span class="st"> </span></a>
 <a class="sourceLine" id="cb6-2" data-line-number="2"><span class="st">  </span><span class="kw"><a href="../../../tools/tfdatasets/reference/dataset_batch.html">dataset_batch</a></span>(<span class="dv">1</span>) <span class="op">%&gt;%</span><span class="st"> </span><span class="co"># Used to get only the first example</span></a>
 <a class="sourceLine" id="cb6-3" data-line-number="3"><span class="st">  </span>reticulate<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/reticulate/man/iterate.html">as_iterator</a></span>() <span class="op">%&gt;%</span><span class="st"> </span></a>
@@ -63,23 +63,23 @@ and <a href="https://github.com/rstudio/tfhub">tfhub</a> for Transfer Learning. 
 ##  $ :tf.Tensor([b"This was an absolutely terrible movie. Don't be lured in by Christopher Walken or Michael Ironside. Both are great actors, but this must simply be their worst role in history. Even their great acting could not redeem this movie's ridiculous storyline. This movie is an early nineties US propaganda piece. The most pathetic scenes were those when the Columbian rebels were making their cases for revolutions. Maria Conchita Alonso appeared phony, and her pseudo-love affair with Walken was nothing but a pathetic emotional plug in a movie that was devoid of any real meaning. I am disappointed that there are movies like this, ruining actor's like Christopher Walken's good name. I could barely sit through it."], shape=(1,), dtype=string)
 ##  $ :tf.Tensor([0], shape=(1,), dtype=int64)</code></pre>
 <p>We will see next that Keras knows how to extract elements from TensorFlow Datasets
-automatically making it a much more memory efficient alterantive than loading the entire dataset to RAM before passing to Keras.</p>
+automatically, making it a much more memory efficient alternative than loading the entire dataset into RAM before passing it to Keras.</p>
 </div>
 <div id="build-the-model" class="section level2">
 <h2>Build the model</h2>
-<p>The neural network is created by stacking layers—this requires three main architectural decisions:</p>
+<p>The neural network is created by stacking layers — this requires three main architectural decisions:</p>
 <ol style="list-style-type: decimal">
 <li>How to represent the text?</li>
 <li>How many layers to use in the model?</li>
 <li>How many hidden units to use for each layer?</li>
 </ol>
 <p>In this example, the input data consists of sentences. The labels to predict are either 0 or 1.</p>
-<p>One way to represent the text is to convert sentences into embeddings vectors. We can use a pre-trained text embedding as the first layer, which will have three advantages: * we don’t have to worry about text preprocessing, * we can benefit from transfer learning, * the embedding has a fixed size, so it’s simpler to process.</p>
+<p>One way to represent the text is to convert sentences into embedding vectors. We can use a pre-trained text embedding as the first layer, which will have three advantages: * we don’t have to worry about text preprocessing, * we can benefit from transfer learning, * the embedding has a fixed size, so it’s simpler to process.</p>
 <p>For this example we will use a pre-trained text embedding model from <a href="https://github.com/rstudio/tfhub">TensorFlow Hub</a> called <a href="https://tfhub.dev/google/tf2-preview/gnews-swivel-20dim/1">google/tf2-preview/gnews-swivel-20dim/1</a>.</p>
 <p>There are three other pre-trained models to test for the sake of this tutorial:</p>
 <ul>
 <li>
-<a href="https://tfhub.dev/google/tf2-preview/gnews-swivel-20dim-with-oov/1">google/tf2-preview/gnews-swivel-20dim-with-oov/1</a> - same as google/tf2-preview/gnews-swivel-20dim/1, but with 2.5% vocabulary converted to OOV buckets. This can help if vocabulary of the task and vocabulary of the model don’t fully overlap.</li>
+<a href="https://tfhub.dev/google/tf2-preview/gnews-swivel-20dim-with-oov/1">google/tf2-preview/gnews-swivel-20dim-with-oov/1</a> - same as google/tf2-preview/gnews-swivel-20dim/1, but with 2.5% vocabulary converted to OOV buckets. This can help if the vocabulary of the task and the vocabulary of the model don’t fully overlap.</li>
 <li>
 <a href="https://tfhub.dev/google/tf2-preview/nnlm-en-dim50/1">google/tf2-preview/nnlm-en-dim50/1</a> - A much larger model with ~1M vocabulary size and 50 dimensions.</li>
 <li>
@@ -122,7 +122,7 @@ automatically making it a much more memory efficient alterantive than loading th
 <p>The layers are stacked sequentially to build the classifier:</p>
 <ol style="list-style-type: decimal">
 <li>The first layer is a TensorFlow Hub layer. This layer uses a pre-trained Saved Model to map a sentence into its embedding vector. The pre-trained text embedding model that we are using (<a href="https://tfhub.dev/google/tf2-preview/gnews-swivel-20dim/1">google/tf2-preview/gnews-swivel-20dim/1</a>) splits the sentence into tokens, embeds each token and then combines the embedding. The resulting dimensions are: (num_examples, embedding_dimension).</li>
-<li>This fixed-length output vector is piped through a fully-connected (Dense) layer with 16 hidden units.</li>
+<li>This fixed-length output vector is piped through a fully-connected (dense) layer with 16 hidden units.</li>
 <li>The last layer is densely connected with a single output node. Using the sigmoid activation function, this value is a float between 0 and 1, representing a probability, or confidence level.</li>
 </ol>
 <p>Let’s compile the model.</p>
@@ -130,8 +130,7 @@ automatically making it a much more memory efficient alterantive than loading th
 <div id="loss-function-and-optimizer" class="section level2">
 <h2>Loss function and optimizer</h2>
 <p>A model needs a loss function and an optimizer for training. Since this is a binary classification problem and the model outputs a probability (a single-unit layer with a sigmoid activation), we’ll use the <code>binary_crossentropy</code> loss function.</p>
-<p>This isn’t the only choice for a loss function, you could, for instance, choose mean_squared_error. But, generally, <code>binary_crossentropy</code> is better for dealing with probabilities—it measures the “distance” between probability distributions, or in our case, between the ground-truth distribution and the predictions.</p>
-<p>Later, when we are exploring regression problems (say, to predict the price of a house), we will see how to use another loss function called mean squared error.</p>
+<p>This isn’t the only choice for a loss function, you could, for instance, choose mean_squared_error. But, generally, <code>binary_crossentropy</code> is better for dealing with probabilities — it measures the “distance” between probability distributions, or in our case, between the ground-truth distribution and the predictions.</p>
 <p>Now, configure the model to use an optimizer and a loss function:</p>
 <div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb12-1" data-line-number="1">model <span class="op">%&gt;%</span><span class="st"> </span></a>
 <a class="sourceLine" id="cb12-2" data-line-number="2"><span class="st">  </span><span class="kw"><a href="../../../keras/reference/reexports.html">compile</a></span>(</a>
@@ -151,45 +150,45 @@ automatically making it a much more memory efficient alterantive than loading th
 <a class="sourceLine" id="cb13-6" data-line-number="6">    <span class="dt">verbose =</span> <span class="dv">2</span></a>
 <a class="sourceLine" id="cb13-7" data-line-number="7">  )</a></code></pre></div>
 <pre><code>## Epoch 1/20
-## 30/30 - 3s - loss: 0.8245 - accuracy: 0.5371 - val_loss: 0.0000e+00 - val_accuracy: 0.0000e+00
+## 30/30 - 3s - loss: 0.6612 - accuracy: 0.6316 - val_loss: 0.0000e+00 - val_accuracy: 0.0000e+00
 ## Epoch 2/20
-## 30/30 - 2s - loss: 0.6803 - accuracy: 0.5983 - val_loss: 0.6597 - val_accuracy: 0.6131
+## 30/30 - 2s - loss: 0.5886 - accuracy: 0.6961 - val_loss: 0.5626 - val_accuracy: 0.7188
 ## Epoch 3/20
-## 30/30 - 2s - loss: 0.6277 - accuracy: 0.6553 - val_loss: 0.6107 - val_accuracy: 0.6708
+## 30/30 - 2s - loss: 0.5386 - accuracy: 0.7411 - val_loss: 0.5197 - val_accuracy: 0.7522
 ## Epoch 4/20
-## 30/30 - 3s - loss: 0.5771 - accuracy: 0.7061 - val_loss: 0.5655 - val_accuracy: 0.7175
+## 30/30 - 2s - loss: 0.4955 - accuracy: 0.7746 - val_loss: 0.4831 - val_accuracy: 0.7816
 ## Epoch 5/20
-## 30/30 - 3s - loss: 0.5298 - accuracy: 0.7503 - val_loss: 0.5250 - val_accuracy: 0.7506
+## 30/30 - 2s - loss: 0.4540 - accuracy: 0.8056 - val_loss: 0.4519 - val_accuracy: 0.8000
 ## Epoch 6/20
-## 30/30 - 3s - loss: 0.4901 - accuracy: 0.7849 - val_loss: 0.4887 - val_accuracy: 0.7748
+## 30/30 - 2s - loss: 0.4172 - accuracy: 0.8287 - val_loss: 0.4219 - val_accuracy: 0.8173
 ## Epoch 7/20
-## 30/30 - 3s - loss: 0.4484 - accuracy: 0.8079 - val_loss: 0.4583 - val_accuracy: 0.7945
+## 30/30 - 2s - loss: 0.3773 - accuracy: 0.8466 - val_loss: 0.3966 - val_accuracy: 0.8307
 ## Epoch 8/20
-## 30/30 - 4s - loss: 0.4121 - accuracy: 0.8288 - val_loss: 0.4290 - val_accuracy: 0.8144
+## 30/30 - 2s - loss: 0.3496 - accuracy: 0.8634 - val_loss: 0.3779 - val_accuracy: 0.8386
 ## Epoch 9/20
-## 30/30 - 3s - loss: 0.3824 - accuracy: 0.8455 - val_loss: 0.4071 - val_accuracy: 0.8246
+## 30/30 - 2s - loss: 0.3205 - accuracy: 0.8774 - val_loss: 0.3573 - val_accuracy: 0.8493
 ## Epoch 10/20
-## 30/30 - 3s - loss: 0.3523 - accuracy: 0.8587 - val_loss: 0.3852 - val_accuracy: 0.8376
+## 30/30 - 2s - loss: 0.2967 - accuracy: 0.8887 - val_loss: 0.3428 - val_accuracy: 0.8541
 ## Epoch 11/20
-## 30/30 - 3s - loss: 0.3263 - accuracy: 0.8709 - val_loss: 0.3682 - val_accuracy: 0.8442
+## 30/30 - 2s - loss: 0.2700 - accuracy: 0.9020 - val_loss: 0.3298 - val_accuracy: 0.8617
 ## Epoch 12/20
-## 30/30 - 3s - loss: 0.3019 - accuracy: 0.8829 - val_loss: 0.3539 - val_accuracy: 0.8496
+## 30/30 - 2s - loss: 0.2486 - accuracy: 0.9081 - val_loss: 0.3197 - val_accuracy: 0.8662
 ## Epoch 13/20
-## 30/30 - 3s - loss: 0.2847 - accuracy: 0.8923 - val_loss: 0.3458 - val_accuracy: 0.8512
+## 30/30 - 2s - loss: 0.2305 - accuracy: 0.9169 - val_loss: 0.3130 - val_accuracy: 0.8688
 ## Epoch 14/20
-## 30/30 - 3s - loss: 0.2622 - accuracy: 0.9007 - val_loss: 0.3320 - val_accuracy: 0.8591
+## 30/30 - 3s - loss: 0.2164 - accuracy: 0.9247 - val_loss: 0.3060 - val_accuracy: 0.8712
 ## Epoch 15/20
-## 30/30 - 3s - loss: 0.2476 - accuracy: 0.9111 - val_loss: 0.3236 - val_accuracy: 0.8625
+## 30/30 - 3s - loss: 0.1999 - accuracy: 0.9319 - val_loss: 0.3019 - val_accuracy: 0.8747
 ## Epoch 16/20
-## 30/30 - 3s - loss: 0.2309 - accuracy: 0.9167 - val_loss: 0.3175 - val_accuracy: 0.8663
+## 30/30 - 3s - loss: 0.1840 - accuracy: 0.9374 - val_loss: 0.3022 - val_accuracy: 0.8741
 ## Epoch 17/20
-## 30/30 - 3s - loss: 0.2145 - accuracy: 0.9230 - val_loss: 0.3130 - val_accuracy: 0.8677
+## 30/30 - 3s - loss: 0.1745 - accuracy: 0.9426 - val_loss: 0.2976 - val_accuracy: 0.8763
 ## Epoch 18/20
-## 30/30 - 3s - loss: 0.2023 - accuracy: 0.9288 - val_loss: 0.3086 - val_accuracy: 0.8698
+## 30/30 - 3s - loss: 0.1639 - accuracy: 0.9487 - val_loss: 0.2976 - val_accuracy: 0.8768
 ## Epoch 19/20
-## 30/30 - 3s - loss: 0.1894 - accuracy: 0.9349 - val_loss: 0.3057 - val_accuracy: 0.8711
+## 30/30 - 2s - loss: 0.1508 - accuracy: 0.9513 - val_loss: 0.2980 - val_accuracy: 0.8756
 ## Epoch 20/20
-## 30/30 - 3s - loss: 0.1804 - accuracy: 0.9382 - val_loss: 0.3037 - val_accuracy: 0.8724</code></pre>
+## 30/30 - 2s - loss: 0.1418 - accuracy: 0.9573 - val_loss: 0.2970 - val_accuracy: 0.8762</code></pre>
 </div>
 <div id="evaluate-the-model" class="section level2">
 <h2>Evaluate the model</h2>
@@ -197,9 +196,9 @@ automatically making it a much more memory efficient alterantive than loading th
 <div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb15-1" data-line-number="1">model <span class="op">%&gt;%</span><span class="st"> </span></a>
 <a class="sourceLine" id="cb15-2" data-line-number="2"><span class="st">  </span><span class="kw"><a href="../../../keras/reference/reexports.html">evaluate</a></span>(imdb[[<span class="dv">3</span>]] <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../../../tools/tfdatasets/reference/dataset_batch.html">dataset_batch</a></span>(<span class="dv">512</span>), <span class="dt">verbose =</span> <span class="dv">0</span>)</a></code></pre></div>
 <pre><code>## $loss
-## [1] 0.3144187
+## [1] 0.3107659
 ## 
 ## $accuracy
-## [1] 0.86488</code></pre>
+## [1] 0.86812</code></pre>
 <p>This fairly naive approach achieves an accuracy of about 87%. With more advanced approaches, the model should get closer to 95%.</p>
 </div>

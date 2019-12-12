@@ -133,14 +133,14 @@ editor_options:
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(keras)</a>
 <a class="sourceLine" id="cb1-2" data-line-number="2"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(tfdatasets)</a>
 <a class="sourceLine" id="cb1-3" data-line-number="3"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(tidyverse)</a></code></pre></div>
-<pre><code>## ── Attaching packages ─────────────────────────────────────────────────────────────── tidyverse 1.2.1 ──</code></pre>
-<pre><code>## ✔ ggplot2 3.2.0     ✔ purrr   0.3.2
-## ✔ tibble  2.1.3     ✔ dplyr   0.8.3
-## ✔ tidyr   1.0.0     ✔ stringr 1.4.0
-## ✔ readr   1.3.1     ✔ forcats 0.4.0</code></pre>
-<pre><code>## ── Conflicts ────────────────────────────────────────────────────────────────── tidyverse_conflicts() ──
-## ✖ dplyr::filter() masks stats::filter()
-## ✖ dplyr::lag()    masks stats::lag()</code></pre>
+<pre><code>## ── Attaching packages ───────────────────────────────────────────────── tidyverse 1.2.1 ──</code></pre>
+<pre><code>## ✓ ggplot2 3.2.1     ✓ purrr   0.3.3
+## ✓ tibble  2.1.3     ✓ dplyr   0.8.3
+## ✓ tidyr   1.0.0     ✓ stringr 1.4.0
+## ✓ readr   1.3.1     ✓ forcats 0.4.0</code></pre>
+<pre><code>## ── Conflicts ──────────────────────────────────────────────────── tidyverse_conflicts() ──
+## x dplyr::filter() masks stats::filter()
+## x dplyr::lag()    masks stats::lag()</code></pre>
 <div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(rsample)</a></code></pre></div>
 </div>
 <div id="read-the-data" class="section level2">
@@ -229,20 +229,20 @@ and test sets.</p>
 <a class="sourceLine" id="cb19-3" data-line-number="3"><span class="st">  </span>reticulate<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/reticulate/man/iterate.html">iter_next</a></span>() <span class="op">%&gt;%</span><span class="st"> </span></a>
 <a class="sourceLine" id="cb19-4" data-line-number="4"><span class="st">  </span><span class="kw"><a href="https://rdrr.io/r/utils/str.html">str</a></span>()</a></code></pre></div>
 <pre><code>## List of 14
-##  $ age     :tf.Tensor([54. 60. 52. 66. 54.], shape=(5,), dtype=float32)
-##  $ sex     :tf.Tensor([0. 0. 1. 1. 1.], shape=(5,), dtype=float32)
-##  $ cp      :tf.Tensor([2. 3. 4. 4. 4.], shape=(5,), dtype=float32)
-##  $ trestbps:tf.Tensor([132. 102. 128. 112. 110.], shape=(5,), dtype=float32)
-##  $ chol    :tf.Tensor([288. 318. 255. 212. 239.], shape=(5,), dtype=float32)
-##  $ fbs     :tf.Tensor([1. 0. 0. 0. 0.], shape=(5,), dtype=float32)
-##  $ restecg :tf.Tensor([2. 0. 0. 2. 0.], shape=(5,), dtype=float32)
-##  $ thalach :tf.Tensor([159. 160. 161. 132. 126.], shape=(5,), dtype=float32)
-##  $ exang   :tf.Tensor([1. 0. 1. 1. 1.], shape=(5,), dtype=float32)
-##  $ oldpeak :tf.Tensor([0.  0.  0.  0.1 2.8], shape=(5,), dtype=float32)
-##  $ slope   :tf.Tensor([1. 1. 1. 1. 2.], shape=(5,), dtype=float32)
-##  $ ca      :tf.Tensor([1. 1. 1. 1. 1.], shape=(5,), dtype=float32)
-##  $ thal    :tf.Tensor([b'normal' b'normal' b'reversible' b'normal' b'reversible'], shape=(5,), dtype=string)
-##  $ target  :tf.Tensor([0. 0. 0. 1. 1.], shape=(5,), dtype=float32)</code></pre>
+##  $ age     :tf.Tensor([62. 51. 51. 46. 40.], shape=(5,), dtype=float32)
+##  $ sex     :tf.Tensor([0. 0. 1. 0. 1.], shape=(5,), dtype=float32)
+##  $ cp      :tf.Tensor([3. 3. 3. 4. 4.], shape=(5,), dtype=float32)
+##  $ trestbps:tf.Tensor([130. 140. 100. 138. 110.], shape=(5,), dtype=float32)
+##  $ chol    :tf.Tensor([263. 308. 222. 243. 167.], shape=(5,), dtype=float32)
+##  $ fbs     :tf.Tensor([0. 0. 0. 0. 0.], shape=(5,), dtype=float32)
+##  $ restecg :tf.Tensor([0. 2. 0. 2. 2.], shape=(5,), dtype=float32)
+##  $ thalach :tf.Tensor([ 97. 142. 143. 152. 114.], shape=(5,), dtype=float32)
+##  $ exang   :tf.Tensor([0. 0. 1. 1. 1.], shape=(5,), dtype=float32)
+##  $ oldpeak :tf.Tensor([1.2 1.5 1.2 0.  2. ], shape=(5,), dtype=float32)
+##  $ slope   :tf.Tensor([2. 1. 2. 2. 2.], shape=(5,), dtype=float32)
+##  $ ca      :tf.Tensor([1. 1. 0. 0. 0.], shape=(5,), dtype=float32)
+##  $ thal    :tf.Tensor([b'reversible' b'normal' b'normal' b'normal' b'reversible'], shape=(5,), dtype=string)
+##  $ target  :tf.Tensor([1. 0. 0. 0. 1.], shape=(5,), dtype=float32)</code></pre>
 <p>We can see that the dataset returns a list of column names (from the dataframe) that map to column values from rows in the dataframe.</p>
 </div>
 <div id="create-the-feature-spec" class="section level2">
@@ -294,13 +294,13 @@ compute the normalizing function during the recipe preparation.</p>
 </ul>
 <p>Now we can print the recipe:</p>
 <div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb23-1" data-line-number="1">spec</a></code></pre></div>
-<pre><code>## ── Feature Spec ──────────────────────────────────────────────────────────────────────────────────────── 
+<pre><code>## ── Feature Spec ────────────────────────────────────────────────────────────────────────── 
 ## A feature_spec with 8 steps.
 ## Fitted: FALSE 
-## ── Steps ─────────────────────────────────────────────────────────────────────────────────────────────── 
+## ── Steps ───────────────────────────────────────────────────────────────────────────────── 
 ## StepCategoricalColumnWithVocabularyList: thal 
 ## StepNumericColumn: age, trestbps, chol, thalach, oldpeak, slope, ca 
-## ── Dense features ────────────────────────────────────────────────────────────────────────────────────── 
+## ── Dense features ──────────────────────────────────────────────────────────────────────── 
 ## Feature spec must be fitted before we can detect the dense features.</code></pre>
 <p>After specifying the types of the columns you can add transformation steps.
 For example you may want to bucketize a numeric column:</p>
@@ -340,83 +340,102 @@ your columns are already normalized you can skip the fitting step (TODO).</p>
 <p>In our case, we will fit the feature spec, since we didn’t specify the vocabulary list
 for the categorical variables.</p>
 <div class="sourceCode" id="cb29"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb29-1" data-line-number="1">spec_prep &lt;-<span class="st"> </span><span class="kw"><a href="../../../keras/reference/reexports.html">fit</a></span>(spec)</a></code></pre></div>
+<pre><code>## - Preparing 61 batches/s [13 batches in 00:00:00] \ Preparing 59 batches/
+## s [14 batches in 00:00:00] | Preparing 59 batches/s [15 batches in
+## 00:00:00] / Preparing 59 batches/s [16 batches in 00:00:00] - Preparing 59
+## batches/s [17 batches in 00:00:00] \ Preparing 59 batches/s [18 batches in
+## 00:00:00] | Preparing 59 batches/s [19 batches in 00:00:00] / Preparing 58
+## batches/s [20 batches in 00:00:00] - Preparing 58 batches/s [21 batches in
+## 00:00:00] \ Preparing 58 batches/s [22 batches in 00:00:00] | Preparing 59
+## batches/s [23 batches in 00:00:00] / Preparing 59 batches/s [24 batches in
+## 00:00:00] - Preparing 59 batches/s [25 batches in 00:00:00] \ Preparing 58
+## batches/s [26 batches in 00:00:00] | Preparing 58 batches/s [27 batches in
+## 00:00:00] / Preparing 58 batches/s [28 batches in 00:00:00] - Preparing 59
+## batches/s [29 batches in 00:00:00] \ Preparing 59 batches/s [30 batches in
+## 00:00:00] | Preparing 59 batches/s [31 batches in 00:00:00] / Preparing 59
+## batches/s [32 batches in 00:00:00] - Preparing 58 batches/s [33 batches in
+## 00:00:00] \ Preparing 58 batches/s [34 batches in 00:00:00] | Preparing 58
+## batches/s [35 batches in 00:00:00] / Preparing 58 batches/s [36 batches in
+## 00:00:00] - Preparing 58 batches/s [37 batches in 00:00:00] \ Preparing 58
+## batches/s [38 batches in 00:00:00] | Preparing 58 batches/s [39 batches in
+## 00:00:00]</code></pre>
 <p>After preparing we can see the list of dense features that were defined:</p>
-<div class="sourceCode" id="cb30"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb30-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/utils/str.html">str</a></span>(spec_prep<span class="op">$</span><span class="kw"><a href="../../../tools/tfdatasets/reference/dense_features.html">dense_features</a></span>())</a></code></pre></div>
+<div class="sourceCode" id="cb31"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb31-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/utils/str.html">str</a></span>(spec_prep<span class="op">$</span><span class="kw"><a href="../../../tools/tfdatasets/reference/dense_features.html">dense_features</a></span>())</a></code></pre></div>
 <pre><code>## List of 11
-##  $ age                                  :NumericColumn(key='age', shape=(1,), default_value=None, dtype=tf.float32, normalizer_fn=&lt;function make_python_function.&lt;locals&gt;.python_function at 0x136510ea0&gt;)
-##  $ trestbps                             :NumericColumn(key='trestbps', shape=(1,), default_value=None, dtype=tf.float32, normalizer_fn=&lt;function make_python_function.&lt;locals&gt;.python_function at 0x1311f2ea0&gt;)
-##  $ chol                                 :NumericColumn(key='chol', shape=(1,), default_value=None, dtype=tf.float32, normalizer_fn=&lt;function make_python_function.&lt;locals&gt;.python_function at 0x1311f2158&gt;)
-##  $ thalach                              :NumericColumn(key='thalach', shape=(1,), default_value=None, dtype=tf.float32, normalizer_fn=&lt;function make_python_function.&lt;locals&gt;.python_function at 0x1311f2f28&gt;)
-##  $ oldpeak                              :NumericColumn(key='oldpeak', shape=(1,), default_value=None, dtype=tf.float32, normalizer_fn=&lt;function make_python_function.&lt;locals&gt;.python_function at 0x1311ec048&gt;)
-##  $ slope                                :NumericColumn(key='slope', shape=(1,), default_value=None, dtype=tf.float32, normalizer_fn=&lt;function make_python_function.&lt;locals&gt;.python_function at 0x1311ec0d0&gt;)
-##  $ ca                                   :NumericColumn(key='ca', shape=(1,), default_value=None, dtype=tf.float32, normalizer_fn=&lt;function make_python_function.&lt;locals&gt;.python_function at 0x1311ec158&gt;)
-##  $ bucketized_age                       :BucketizedColumn(source_column=NumericColumn(key='age', shape=(1,), default_value=None, dtype=tf.float32, normalizer_fn=&lt;function make_python_function.&lt;locals&gt;.python_function at 0x136510ea0&gt;), boundaries=(18.0, 25.0, 30.0, 35.0, 40.0, 45.0, 50.0, 55.0, 60.0, 65.0))
-##  $ indicator_thal                       :IndicatorColumn(categorical_column=VocabularyListCategoricalColumn(key='thal', vocabulary_list=('fixed', 'normal', 'reversible'), dtype=tf.string, default_value=-1, num_oov_buckets=0))
-##  $ embedding_thal                       :EmbeddingColumn(categorical_column=VocabularyListCategoricalColumn(key='thal', vocabulary_list=('fixed', 'normal', 'reversible'), dtype=tf.string, default_value=-1, num_oov_buckets=0), dimension=2, combiner='mean', initializer=&lt;tensorflow.python.ops.init_ops.TruncatedNormal&gt;, ckpt_to_load_from=None, tensor_name_in_ckpt=None, max_norm=None, trainable=True)
-##  $ indicator_crossed_thal_bucketized_age:IndicatorColumn(categorical_column=CrossedColumn(keys=(VocabularyListCategoricalColumn(key='thal', vocabulary_list=('fixed', 'normal', 'reversible'), dtype=tf.string, default_value=-1, num_oov_buckets=0), BucketizedColumn(source_column=NumericColumn(key='age', shape=(1,), default_value=None, dtype=tf.float32, normalizer_fn=&lt;function make_python_function.&lt;locals&gt;.python_function at 0x136510ea0&gt;), boundaries=(18.0, 25.0, 30.0, 35.0, 40.0, 45.0, 50.0, 55.0, 60.0, 65.0))), hash_bucket_size=10.0, hash_key=None))</code></pre>
+##  $ age                                  :NumericColumn(key='age', shape=(1,), default_value=None, dtype=tf.float32, normalizer_fn=&lt;function make_python_function.&lt;locals&gt;.python_function at 0x130925e18&gt;)
+##  $ trestbps                             :NumericColumn(key='trestbps', shape=(1,), default_value=None, dtype=tf.float32, normalizer_fn=&lt;function make_python_function.&lt;locals&gt;.python_function at 0x12be31400&gt;)
+##  $ chol                                 :NumericColumn(key='chol', shape=(1,), default_value=None, dtype=tf.float32, normalizer_fn=&lt;function make_python_function.&lt;locals&gt;.python_function at 0x12be317b8&gt;)
+##  $ thalach                              :NumericColumn(key='thalach', shape=(1,), default_value=None, dtype=tf.float32, normalizer_fn=&lt;function make_python_function.&lt;locals&gt;.python_function at 0x12be310d0&gt;)
+##  $ oldpeak                              :NumericColumn(key='oldpeak', shape=(1,), default_value=None, dtype=tf.float32, normalizer_fn=&lt;function make_python_function.&lt;locals&gt;.python_function at 0x12be316a8&gt;)
+##  $ slope                                :NumericColumn(key='slope', shape=(1,), default_value=None, dtype=tf.float32, normalizer_fn=&lt;function make_python_function.&lt;locals&gt;.python_function at 0x12be31268&gt;)
+##  $ ca                                   :NumericColumn(key='ca', shape=(1,), default_value=None, dtype=tf.float32, normalizer_fn=&lt;function make_python_function.&lt;locals&gt;.python_function at 0x12be31598&gt;)
+##  $ bucketized_age                       :BucketizedColumn(source_column=NumericColumn(key='age', shape=(1,), default_value=None, dtype=tf.float32, normalizer_fn=&lt;function make_python_function.&lt;locals&gt;.python_function at 0x130925e18&gt;), boundaries=(18.0, 25.0, 30.0, 35.0, 40.0, 45.0, 50.0, 55.0, 60.0, 65.0))
+##  $ indicator_thal                       :IndicatorColumn(categorical_column=VocabularyListCategoricalColumn(key='thal', vocabulary_list=('1', '2', 'fixed', 'normal', 'reversible'), dtype=tf.string, default_value=-1, num_oov_buckets=0))
+##  $ embedding_thal                       :EmbeddingColumn(categorical_column=VocabularyListCategoricalColumn(key='thal', vocabulary_list=('1', '2', 'fixed', 'normal', 'reversible'), dtype=tf.string, default_value=-1, num_oov_buckets=0), dimension=2, combiner='mean', initializer=&lt;tensorflow.python.ops.init_ops.TruncatedNormal&gt;, ckpt_to_load_from=None, tensor_name_in_ckpt=None, max_norm=None, trainable=True)
+##  $ indicator_crossed_thal_bucketized_age:IndicatorColumn(categorical_column=CrossedColumn(keys=(VocabularyListCategoricalColumn(key='thal', vocabulary_list=('1', '2', 'fixed', 'normal', 'reversible'), dtype=tf.string, default_value=-1, num_oov_buckets=0), BucketizedColumn(source_column=NumericColumn(key='age', shape=(1,), default_value=None, dtype=tf.float32, normalizer_fn=&lt;function make_python_function.&lt;locals&gt;.python_function at 0x130925e18&gt;), boundaries=(18.0, 25.0, 30.0, 35.0, 40.0, 45.0, 50.0, 55.0, 60.0, 65.0))), hash_bucket_size=10.0, hash_key=None))</code></pre>
 </div>
 <div id="build-the-model" class="section level2">
 <h2>Build the model</h2>
 <p>Now we are ready to define our model in Keras. We will use a specialized <code>layer_dense_features</code> that
 knows what to do with the feature columns specification.</p>
 <p>We also use a new <code>layer_input_from_dataset</code> that is useful to create a Keras input object copying the structure from a <code>data.frame</code> or TensorFlow dataset.</p>
-<div class="sourceCode" id="cb32"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb32-1" data-line-number="1">model &lt;-<span class="st"> </span><span class="kw"><a href="../../../keras/reference/keras_model_sequential.html">keras_model_sequential</a></span>() <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb32-2" data-line-number="2"><span class="st">  </span><span class="kw"><a href="../../../keras/reference/layer_dense_features.html">layer_dense_features</a></span>(<span class="kw"><a href="../../../tools/tfdatasets/reference/dense_features.html">dense_features</a></span>(spec_prep)) <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb32-3" data-line-number="3"><span class="st">  </span><span class="kw"><a href="../../../keras/reference/layer_dense.html">layer_dense</a></span>(<span class="dt">units =</span> <span class="dv">32</span>, <span class="dt">activation =</span> <span class="st">"relu"</span>) <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb32-4" data-line-number="4"><span class="st">  </span><span class="kw"><a href="../../../keras/reference/layer_dense.html">layer_dense</a></span>(<span class="dt">units =</span> <span class="dv">1</span>, <span class="dt">activation =</span> <span class="st">"sigmoid"</span>)</a>
-<a class="sourceLine" id="cb32-5" data-line-number="5"></a>
-<a class="sourceLine" id="cb32-6" data-line-number="6"></a>
-<a class="sourceLine" id="cb32-7" data-line-number="7">model <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../../../keras/reference/reexports.html">compile</a></span>(</a>
-<a class="sourceLine" id="cb32-8" data-line-number="8">  <span class="dt">loss =</span> loss_binary_crossentropy, </a>
-<a class="sourceLine" id="cb32-9" data-line-number="9">  <span class="dt">optimizer =</span> <span class="st">"adam"</span>, </a>
-<a class="sourceLine" id="cb32-10" data-line-number="10">  <span class="dt">metrics =</span> <span class="st">"binary_accuracy"</span></a>
-<a class="sourceLine" id="cb32-11" data-line-number="11">)</a></code></pre></div>
+<div class="sourceCode" id="cb33"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb33-1" data-line-number="1">model &lt;-<span class="st"> </span><span class="kw"><a href="../../../keras/reference/keras_model_sequential.html">keras_model_sequential</a></span>() <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb33-2" data-line-number="2"><span class="st">  </span><span class="kw"><a href="../../../keras/reference/layer_dense_features.html">layer_dense_features</a></span>(<span class="kw"><a href="../../../tools/tfdatasets/reference/dense_features.html">dense_features</a></span>(spec_prep)) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb33-3" data-line-number="3"><span class="st">  </span><span class="kw"><a href="../../../keras/reference/layer_dense.html">layer_dense</a></span>(<span class="dt">units =</span> <span class="dv">32</span>, <span class="dt">activation =</span> <span class="st">"relu"</span>) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb33-4" data-line-number="4"><span class="st">  </span><span class="kw"><a href="../../../keras/reference/layer_dense.html">layer_dense</a></span>(<span class="dt">units =</span> <span class="dv">1</span>, <span class="dt">activation =</span> <span class="st">"sigmoid"</span>)</a>
+<a class="sourceLine" id="cb33-5" data-line-number="5"></a>
+<a class="sourceLine" id="cb33-6" data-line-number="6"></a>
+<a class="sourceLine" id="cb33-7" data-line-number="7">model <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../../../keras/reference/reexports.html">compile</a></span>(</a>
+<a class="sourceLine" id="cb33-8" data-line-number="8">  <span class="dt">loss =</span> loss_binary_crossentropy, </a>
+<a class="sourceLine" id="cb33-9" data-line-number="9">  <span class="dt">optimizer =</span> <span class="st">"adam"</span>, </a>
+<a class="sourceLine" id="cb33-10" data-line-number="10">  <span class="dt">metrics =</span> <span class="st">"binary_accuracy"</span></a>
+<a class="sourceLine" id="cb33-11" data-line-number="11">)</a></code></pre></div>
 </div>
 <div id="train-the-model" class="section level2">
 <h2>Train the model</h2>
 <p>We can finally train the model on the dataset:</p>
-<div class="sourceCode" id="cb33"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb33-1" data-line-number="1">history &lt;-<span class="st"> </span>model <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb33-2" data-line-number="2"><span class="st">  </span><span class="kw"><a href="../../../keras/reference/reexports.html">fit</a></span>(</a>
-<a class="sourceLine" id="cb33-3" data-line-number="3">    <span class="kw"><a href="../../../tools/tfdatasets/reference/dataset_use_spec.html">dataset_use_spec</a></span>(train_ds, <span class="dt">spec =</span> spec_prep),</a>
-<a class="sourceLine" id="cb33-4" data-line-number="4">    <span class="dt">epochs =</span> <span class="dv">15</span>, </a>
-<a class="sourceLine" id="cb33-5" data-line-number="5">    <span class="dt">validation_data =</span> <span class="kw"><a href="../../../tools/tfdatasets/reference/dataset_use_spec.html">dataset_use_spec</a></span>(val_ds, spec_prep),</a>
-<a class="sourceLine" id="cb33-6" data-line-number="6">    <span class="dt">verbose =</span> <span class="dv">2</span></a>
-<a class="sourceLine" id="cb33-7" data-line-number="7">  )</a></code></pre></div>
+<div class="sourceCode" id="cb34"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb34-1" data-line-number="1">history &lt;-<span class="st"> </span>model <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb34-2" data-line-number="2"><span class="st">  </span><span class="kw"><a href="../../../keras/reference/reexports.html">fit</a></span>(</a>
+<a class="sourceLine" id="cb34-3" data-line-number="3">    <span class="kw"><a href="../../../tools/tfdatasets/reference/dataset_use_spec.html">dataset_use_spec</a></span>(train_ds, <span class="dt">spec =</span> spec_prep),</a>
+<a class="sourceLine" id="cb34-4" data-line-number="4">    <span class="dt">epochs =</span> <span class="dv">15</span>, </a>
+<a class="sourceLine" id="cb34-5" data-line-number="5">    <span class="dt">validation_data =</span> <span class="kw"><a href="../../../tools/tfdatasets/reference/dataset_use_spec.html">dataset_use_spec</a></span>(val_ds, spec_prep),</a>
+<a class="sourceLine" id="cb34-6" data-line-number="6">    <span class="dt">verbose =</span> <span class="dv">2</span></a>
+<a class="sourceLine" id="cb34-7" data-line-number="7">  )</a></code></pre></div>
 <pre><code>## Epoch 1/15
-## 39/39 - 1s - loss: 0.6738 - binary_accuracy: 0.6513 - val_loss: 0.0000e+00 - val_binary_accuracy: 0.0000e+00
+## 39/39 - 1s - loss: 0.5393 - binary_accuracy: 0.7846 - val_loss: 0.0000e+00 - val_binary_accuracy: 0.0000e+00
 ## Epoch 2/15
-## 39/39 - 0s - loss: 0.5535 - binary_accuracy: 0.7692 - val_loss: 0.5300 - val_binary_accuracy: 0.7708
+## 39/39 - 0s - loss: 0.4452 - binary_accuracy: 0.7949 - val_loss: 0.3601 - val_binary_accuracy: 0.8750
 ## Epoch 3/15
-## 39/39 - 0s - loss: 0.4731 - binary_accuracy: 0.8103 - val_loss: 0.4800 - val_binary_accuracy: 0.7917
+## 39/39 - 0s - loss: 0.3970 - binary_accuracy: 0.8154 - val_loss: 0.3284 - val_binary_accuracy: 0.8750
 ## Epoch 4/15
-## 39/39 - 0s - loss: 0.4254 - binary_accuracy: 0.8359 - val_loss: 0.4566 - val_binary_accuracy: 0.7917
+## 39/39 - 0s - loss: 0.3574 - binary_accuracy: 0.8256 - val_loss: 0.3079 - val_binary_accuracy: 0.8750
 ## Epoch 5/15
-## 39/39 - 0s - loss: 0.3922 - binary_accuracy: 0.8410 - val_loss: 0.4395 - val_binary_accuracy: 0.8125
+## 39/39 - 0s - loss: 0.3317 - binary_accuracy: 0.8462 - val_loss: 0.2987 - val_binary_accuracy: 0.8958
 ## Epoch 6/15
-## 39/39 - 0s - loss: 0.3678 - binary_accuracy: 0.8564 - val_loss: 0.4326 - val_binary_accuracy: 0.7917
+## 39/39 - 0s - loss: 0.3290 - binary_accuracy: 0.8513 - val_loss: 0.2941 - val_binary_accuracy: 0.8958
 ## Epoch 7/15
-## 39/39 - 0s - loss: 0.3600 - binary_accuracy: 0.8615 - val_loss: 0.4208 - val_binary_accuracy: 0.8125
+## 39/39 - 0s - loss: 0.3190 - binary_accuracy: 0.8564 - val_loss: 0.2896 - val_binary_accuracy: 0.9167
 ## Epoch 8/15
-## 39/39 - 0s - loss: 0.3469 - binary_accuracy: 0.8615 - val_loss: 0.4167 - val_binary_accuracy: 0.7917
+## 39/39 - 0s - loss: 0.3129 - binary_accuracy: 0.8564 - val_loss: 0.2864 - val_binary_accuracy: 0.8958
 ## Epoch 9/15
-## 39/39 - 0s - loss: 0.3404 - binary_accuracy: 0.8615 - val_loss: 0.4076 - val_binary_accuracy: 0.7917
+## 39/39 - 0s - loss: 0.3034 - binary_accuracy: 0.8667 - val_loss: 0.2854 - val_binary_accuracy: 0.8958
 ## Epoch 10/15
-## 39/39 - 0s - loss: 0.3308 - binary_accuracy: 0.8667 - val_loss: 0.4115 - val_binary_accuracy: 0.7917
+## 39/39 - 0s - loss: 0.2916 - binary_accuracy: 0.8615 - val_loss: 0.2819 - val_binary_accuracy: 0.8750
 ## Epoch 11/15
-## 39/39 - 0s - loss: 0.3109 - binary_accuracy: 0.8615 - val_loss: 0.4136 - val_binary_accuracy: 0.7917
+## 39/39 - 0s - loss: 0.2852 - binary_accuracy: 0.8513 - val_loss: 0.2808 - val_binary_accuracy: 0.8750
 ## Epoch 12/15
-## 39/39 - 0s - loss: 0.3239 - binary_accuracy: 0.8667 - val_loss: 0.4033 - val_binary_accuracy: 0.7917
+## 39/39 - 0s - loss: 0.2860 - binary_accuracy: 0.8564 - val_loss: 0.2834 - val_binary_accuracy: 0.8750
 ## Epoch 13/15
-## 39/39 - 0s - loss: 0.3176 - binary_accuracy: 0.8564 - val_loss: 0.4046 - val_binary_accuracy: 0.7917
+## 39/39 - 0s - loss: 0.2842 - binary_accuracy: 0.8615 - val_loss: 0.2770 - val_binary_accuracy: 0.8750
 ## Epoch 14/15
-## 39/39 - 0s - loss: 0.3171 - binary_accuracy: 0.8615 - val_loss: 0.3979 - val_binary_accuracy: 0.7917
+## 39/39 - 0s - loss: 0.2742 - binary_accuracy: 0.8769 - val_loss: 0.2768 - val_binary_accuracy: 0.8750
 ## Epoch 15/15
-## 39/39 - 0s - loss: 0.3040 - binary_accuracy: 0.8615 - val_loss: 0.3967 - val_binary_accuracy: 0.7917</code></pre>
-<div class="sourceCode" id="cb35"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb35-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/graphics/plot.html">plot</a></span>(history)</a></code></pre></div>
+## 39/39 - 0s - loss: 0.2763 - binary_accuracy: 0.8667 - val_loss: 0.2795 - val_binary_accuracy: 0.8750</code></pre>
+<div class="sourceCode" id="cb36"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb36-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/graphics/plot.html">plot</a></span>(history)</a></code></pre></div>
 <p><img src="/tutorials/advanced/structured/classify_files/figure-html/unnamed-chunk-18-1.png" width="672"></p>
 <p>Finally we can make predictions in the test set and calculate performance
 metrics like the AUC of the ROC curve:</p>
-<div class="sourceCode" id="cb36"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb36-1" data-line-number="1">pred &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/stats/predict.html">predict</a></span>(model, test)</a>
-<a class="sourceLine" id="cb36-2" data-line-number="2">Metrics<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/Metrics/man/auc.html">auc</a></span>(test<span class="op">$</span>target, pred)</a></code></pre></div>
-<pre><code>## [1] 0.890538</code></pre>
+<div class="sourceCode" id="cb37"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb37-1" data-line-number="1">pred &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/stats/predict.html">predict</a></span>(model, test)</a>
+<a class="sourceLine" id="cb37-2" data-line-number="2">Metrics<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/Metrics/man/auc.html">auc</a></span>(test<span class="op">$</span>target, pred)</a></code></pre></div>
+<pre><code>## [1] 0.8547009</code></pre>
 </div>

@@ -56,31 +56,33 @@ to scale up to a large set of files, or need a loader that integrates with Tenso
 <a class="sourceLine" id="cb4-3" data-line-number="3"><span class="st">  </span>reticulate<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/reticulate/man/iterate.html">iter_next</a></span>() <span class="op">%&gt;%</span><span class="st"> </span></a>
 <a class="sourceLine" id="cb4-4" data-line-number="4"><span class="st">  </span>reticulate<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/reticulate/man/r-py-conversion.html">py_to_r</a></span>()</a></code></pre></div>
 <pre><code>## $survived
-## tf.Tensor([0 0 1 1 0], shape=(5,), dtype=int32)
+## tf.Tensor([0 1 0 1 1], shape=(5,), dtype=int32)
 ## 
 ## $sex
-## tf.Tensor([b'male' b'male' b'female' b'female' b'male'], shape=(5,), dtype=string)
+## tf.Tensor([b'male' b'female' b'female' b'male' b'female'], shape=(5,), dtype=string)
 ## 
 ## $age
-## tf.Tensor([20.  54.  28.  29.  45.5], shape=(5,), dtype=float32)
+## tf.Tensor([28.   21.    6.    0.83 18.  ], shape=(5,), dtype=float32)
 ## 
 ## $n_siblings_spouses
-## tf.Tensor([0 0 1 0 0], shape=(5,), dtype=int32)
+## tf.Tensor([0 0 4 1 0], shape=(5,), dtype=int32)
 ## 
 ## $parch
-## tf.Tensor([0 0 0 2 0], shape=(5,), dtype=int32)
+## tf.Tensor([0 0 2 1 0], shape=(5,), dtype=int32)
 ## 
 ## $fare
-## tf.Tensor([ 7.925  51.8625 26.     15.2458 28.5   ], shape=(5,), dtype=float32)
+## tf.Tensor([13.5     7.65   31.275  18.75    7.4958], shape=(5,), dtype=float32)
 ## 
 ## $class
-## tf.Tensor([b'Third' b'First' b'Second' b'Third' b'First'], shape=(5,), dtype=string)
+## tf.Tensor([b'Second' b'Third' b'Third' b'Second' b'Third'], shape=(5,), dtype=string)
 ## 
 ## $deck
-## tf.Tensor([b'unknown' b'E' b'unknown' b'unknown' b'C'], shape=(5,), dtype=string)
+## tf.Tensor([b'unknown' b'unknown' b'unknown' b'unknown' b'unknown'], shape=(5,), dtype=string)
 ## 
 ## $embark_town
-## tf.Tensor([b'Southampton' b'Southampton' b'Southampton' b'Cherbourg' b'Southampton'], shape=(5,), dtype=string)
+## tf.Tensor(
+## [b'Southampton' b'Southampton' b'Southampton' b'Southampton'
+##  b'Southampton'], shape=(5,), dtype=string)
 ## 
 ## $alone
 ## tf.Tensor([b'y' b'y' b'n' b'n' b'y'], shape=(5,), dtype=string)</code></pre>
@@ -113,28 +115,47 @@ called <code>feature_spec</code>.</p>
 <a class="sourceLine" id="cb9-4" data-line-number="4"><span class="st">  </span>reticulate<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/reticulate/man/iterate.html">iter_next</a></span>() <span class="op">%&gt;%</span><span class="st"> </span></a>
 <a class="sourceLine" id="cb9-5" data-line-number="5"><span class="st">  </span><span class="kw">layer</span>()</a></code></pre></div>
 <pre><code>## tf.Tensor(
-## [[48.     34.375   1.      3.    ]
-##  [40.      7.225   0.      0.    ]
+## [[24.      7.7958  0.      0.    ]
+##  [28.     22.525   0.      0.    ]
 ##  [28.      8.7125  0.      0.    ]
-##  [42.      8.4042  0.      1.    ]
-##  [33.      7.8958  0.      0.    ]], shape=(5, 4), dtype=float32)</code></pre>
+##  [19.     14.5     0.      0.    ]
+##  [10.     24.15    0.      2.    ]], shape=(5, 4), dtype=float32)</code></pre>
 <p>It’s usually a good idea to normalize all numeric features in a neural network. We can use the same <code>step_numeric_column</code> with an additional argument ``:</p>
 <div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb11-1" data-line-number="1">spec &lt;-<span class="st"> </span><span class="kw"><a href="../../../tools/tfdatasets/reference/feature_spec.html">feature_spec</a></span>(train_dataset, survived <span class="op">~</span><span class="st"> </span>.)</a>
 <a class="sourceLine" id="cb11-2" data-line-number="2">spec &lt;-<span class="st"> </span>spec <span class="op">%&gt;%</span><span class="st"> </span></a>
 <a class="sourceLine" id="cb11-3" data-line-number="3"><span class="st">  </span><span class="kw"><a href="../../../tools/tfdatasets/reference/step_numeric_column.html">step_numeric_column</a></span>(<span class="kw"><a href="../../../tools/tfdatasets/reference/all_numeric.html">all_numeric</a></span>(), <span class="dt">normalizer_fn =</span> <span class="kw"><a href="../../../tools/tfdatasets/reference/scaler_standard.html">scaler_standard</a></span>())</a></code></pre></div>
 <p>We can then fit and creat the <code>layer_dense_features</code> to take a look at the output:</p>
-<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb12-1" data-line-number="1">spec &lt;-<span class="st"> </span><span class="kw"><a href="../../../keras/reference/reexports.html">fit</a></span>(spec)</a>
-<a class="sourceLine" id="cb12-2" data-line-number="2">layer &lt;-<span class="st"> </span><span class="kw"><a href="../../../keras/reference/layer_dense_features.html">layer_dense_features</a></span>(<span class="dt">feature_columns =</span> <span class="kw"><a href="../../../tools/tfdatasets/reference/dense_features.html">dense_features</a></span>(spec))</a>
-<a class="sourceLine" id="cb12-3" data-line-number="3">train_dataset <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb12-4" data-line-number="4"><span class="st">  </span>reticulate<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/reticulate/man/iterate.html">as_iterator</a></span>() <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb12-5" data-line-number="5"><span class="st">  </span>reticulate<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/reticulate/man/iterate.html">iter_next</a></span>() <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb12-6" data-line-number="6"><span class="st">  </span><span class="kw">layer</span>()</a></code></pre></div>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb12-1" data-line-number="1">spec &lt;-<span class="st"> </span><span class="kw"><a href="../../../keras/reference/reexports.html">fit</a></span>(spec)</a></code></pre></div>
+<pre><code>## - Preparing 129 batches/s [28 batches in 00:00:00] \ Preparing 129 batches/
+## s [29 batches in 00:00:00] | Preparing 128 batches/s [30 batches in
+## 00:00:00] / Preparing 128 batches/s [31 batches in 00:00:00] - Preparing
+## 128 batches/s [32 batches in 00:00:00] \ Preparing 127 batches/s [33
+## batches in 00:00:00] | Preparing 127 batches/s [34 batches in 00:00:00] /
+## Preparing 127 batches/s [35 batches in 00:00:00] - Preparing 126 batches/s
+## [36 batches in 00:00:00] \ Preparing 124 batches/s [37 batches in 00:00:00]
+## | Preparing 124 batches/s [38 batches in 00:00:00] / Preparing 124 batches/
+## s [39 batches in 00:00:00] - Preparing 124 batches/s [40 batches in
+## 00:00:00] \ Preparing 124 batches/s [41 batches in 00:00:00] | Preparing
+## 124 batches/s [42 batches in 00:00:00] / Preparing 124 batches/s [43
+## batches in 00:00:00] - Preparing 124 batches/s [44 batches in 00:00:00] \
+## Preparing 124 batches/s [45 batches in 00:00:00] | Preparing 123 batches/s
+## [46 batches in 00:00:00] / Preparing 123 batches/s [47 batches in 00:00:00]
+## - Preparing 123 batches/s [48 batches in 00:00:00] \ Preparing 123 batches/
+## s [49 batches in 00:00:00] | Preparing 123 batches/s [50 batches in
+## 00:00:00] / Preparing 123 batches/s [51 batches in 00:00:00] - Preparing
+## 123 batches/s [52 batches in 00:00:00] \ Preparing 123 batches/s [53
+## batches in 00:00:00]</code></pre>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb14-1" data-line-number="1">layer &lt;-<span class="st"> </span><span class="kw"><a href="../../../keras/reference/layer_dense_features.html">layer_dense_features</a></span>(<span class="dt">feature_columns =</span> <span class="kw"><a href="../../../tools/tfdatasets/reference/dense_features.html">dense_features</a></span>(spec))</a>
+<a class="sourceLine" id="cb14-2" data-line-number="2">train_dataset <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb14-3" data-line-number="3"><span class="st">  </span>reticulate<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/reticulate/man/iterate.html">as_iterator</a></span>() <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb14-4" data-line-number="4"><span class="st">  </span>reticulate<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/reticulate/man/iterate.html">iter_next</a></span>() <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb14-5" data-line-number="5"><span class="st">  </span><span class="kw">layer</span>()</a></code></pre></div>
 <pre><code>## tf.Tensor(
-## [[-1.6755021   0.02076224  0.54201424  1.9260981 ]
-##  [-0.0509259  -0.13340482  0.54201424  0.73245984]
-##  [ 1.8561853  -0.3152102  -0.48006976 -0.4611784 ]
-##  [ 1.644284   -0.38669372 -0.48006976 -0.4611784 ]
-##  [-0.26282716  0.4161861   0.54201424  1.9260981 ]], shape=(5, 4), dtype=float32)</code></pre>
+## [[ 1.8561853  -0.3152102  -0.48006976 -0.4611784 ]
+##  [-0.6159959  -0.4917744   0.54201424 -0.4611784 ]
+##  [ 0.01970785 -0.55110574 -0.48006976 -0.4611784 ]
+##  [-0.47472838 -0.55110574 -0.48006976 -0.4611784 ]
+##  [ 0.93794656 -0.4009904  -0.48006976 -0.4611784 ]], shape=(5, 4), dtype=float32)</code></pre>
 <p>Now, the outputs are scaled.</p>
 </div>
 <div id="categorical-data" class="section level3">
@@ -142,17 +163,27 @@ called <code>feature_spec</code>.</p>
 <p>Categorical data can’t be directly included in the model matrix - we need to perform some kind of transformation in order to represent them as numbers. Representing categorical variables as a set of one-hot encoded columns is very common in practice.</p>
 <p>We can also perform this transformation using the <code>feature_spec</code> API:</p>
 <p>Let’s again define our <code>spec</code> and add some steps:</p>
-<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb14-1" data-line-number="1">spec &lt;-<span class="st"> </span><span class="kw"><a href="../../../tools/tfdatasets/reference/feature_spec.html">feature_spec</a></span>(train_dataset, survived <span class="op">~</span><span class="st"> </span>.)</a>
-<a class="sourceLine" id="cb14-2" data-line-number="2">spec &lt;-<span class="st"> </span>spec <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb14-3" data-line-number="3"><span class="st">  </span><span class="kw"><a href="../../../tools/tfdatasets/reference/step_categorical_column_with_vocabulary_list.html">step_categorical_column_with_vocabulary_list</a></span>(sex) <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb14-4" data-line-number="4"><span class="st">  </span><span class="kw"><a href="../../../tools/tfdatasets/reference/step_indicator_column.html">step_indicator_column</a></span>(sex)</a></code></pre></div>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb16-1" data-line-number="1">spec &lt;-<span class="st"> </span><span class="kw"><a href="../../../tools/tfdatasets/reference/feature_spec.html">feature_spec</a></span>(train_dataset, survived <span class="op">~</span><span class="st"> </span>.)</a>
+<a class="sourceLine" id="cb16-2" data-line-number="2">spec &lt;-<span class="st"> </span>spec <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb16-3" data-line-number="3"><span class="st">  </span><span class="kw"><a href="../../../tools/tfdatasets/reference/step_categorical_column_with_vocabulary_list.html">step_categorical_column_with_vocabulary_list</a></span>(sex) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb16-4" data-line-number="4"><span class="st">  </span><span class="kw"><a href="../../../tools/tfdatasets/reference/step_indicator_column.html">step_indicator_column</a></span>(sex)</a></code></pre></div>
 <p>We can now see the output with:</p>
-<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb15-1" data-line-number="1">spec &lt;-<span class="st"> </span><span class="kw"><a href="../../../keras/reference/reexports.html">fit</a></span>(spec)</a>
-<a class="sourceLine" id="cb15-2" data-line-number="2">layer &lt;-<span class="st"> </span><span class="kw"><a href="../../../keras/reference/layer_dense_features.html">layer_dense_features</a></span>(<span class="dt">feature_columns =</span> <span class="kw"><a href="../../../tools/tfdatasets/reference/dense_features.html">dense_features</a></span>(spec))</a>
-<a class="sourceLine" id="cb15-3" data-line-number="3">train_dataset <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb15-4" data-line-number="4"><span class="st">  </span>reticulate<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/reticulate/man/iterate.html">as_iterator</a></span>() <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb15-5" data-line-number="5"><span class="st">  </span>reticulate<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/reticulate/man/iterate.html">iter_next</a></span>() <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb15-6" data-line-number="6"><span class="st">  </span><span class="kw">layer</span>()</a></code></pre></div>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb17-1" data-line-number="1">spec &lt;-<span class="st"> </span><span class="kw"><a href="../../../keras/reference/reexports.html">fit</a></span>(spec)</a></code></pre></div>
+<pre><code>## - Preparing 196 batches/s [40 batches in 00:00:00] \ Preparing 195 batches/
+## s [41 batches in 00:00:00] | Preparing 194 batches/s [42 batches in
+## 00:00:00] / Preparing 193 batches/s [43 batches in 00:00:00] - Preparing
+## 192 batches/s [44 batches in 00:00:00] \ Preparing 191 batches/s [45
+## batches in 00:00:00] | Preparing 191 batches/s [46 batches in 00:00:00] /
+## Preparing 190 batches/s [47 batches in 00:00:00] - Preparing 190 batches/s
+## [48 batches in 00:00:00] \ Preparing 189 batches/s [49 batches in 00:00:00]
+## | Preparing 189 batches/s [50 batches in 00:00:00] / Preparing 187 batches/
+## s [51 batches in 00:00:00] - Preparing 186 batches/s [52 batches in
+## 00:00:00] \ Preparing 186 batches/s [53 batches in 00:00:00]</code></pre>
+<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb19-1" data-line-number="1">layer &lt;-<span class="st"> </span><span class="kw"><a href="../../../keras/reference/layer_dense_features.html">layer_dense_features</a></span>(<span class="dt">feature_columns =</span> <span class="kw"><a href="../../../tools/tfdatasets/reference/dense_features.html">dense_features</a></span>(spec))</a>
+<a class="sourceLine" id="cb19-2" data-line-number="2">train_dataset <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb19-3" data-line-number="3"><span class="st">  </span>reticulate<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/reticulate/man/iterate.html">as_iterator</a></span>() <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb19-4" data-line-number="4"><span class="st">  </span>reticulate<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/reticulate/man/iterate.html">iter_next</a></span>() <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb19-5" data-line-number="5"><span class="st">  </span><span class="kw">layer</span>()</a></code></pre></div>
 <pre><code>## tf.Tensor(
 ## [[0. 1.]
 ##  [0. 1.]
@@ -161,59 +192,129 @@ called <code>feature_spec</code>.</p>
 ##  [0. 1.]], shape=(5, 2), dtype=float32)</code></pre>
 <p>We can see that this generates 2 columns, one for each different category in the column <code>sex</code> of the dataset.</p>
 <p>It’s straightforward to make this transformation for all the categorical features in the dataset:</p>
-<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb17-1" data-line-number="1">spec &lt;-<span class="st"> </span><span class="kw"><a href="../../../tools/tfdatasets/reference/feature_spec.html">feature_spec</a></span>(train_dataset, survived <span class="op">~</span><span class="st"> </span>.)</a>
-<a class="sourceLine" id="cb17-2" data-line-number="2">spec &lt;-<span class="st"> </span>spec <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb17-3" data-line-number="3"><span class="st">  </span><span class="kw"><a href="../../../tools/tfdatasets/reference/step_categorical_column_with_vocabulary_list.html">step_categorical_column_with_vocabulary_list</a></span>(<span class="kw"><a href="../../../tools/tfdatasets/reference/all_nominal.html">all_nominal</a></span>()) <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb17-4" data-line-number="4"><span class="st">  </span><span class="kw"><a href="../../../tools/tfdatasets/reference/step_indicator_column.html">step_indicator_column</a></span>(<span class="kw"><a href="../../../tools/tfdatasets/reference/all_nominal.html">all_nominal</a></span>())</a></code></pre></div>
+<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb21-1" data-line-number="1">spec &lt;-<span class="st"> </span><span class="kw"><a href="../../../tools/tfdatasets/reference/feature_spec.html">feature_spec</a></span>(train_dataset, survived <span class="op">~</span><span class="st"> </span>.)</a>
+<a class="sourceLine" id="cb21-2" data-line-number="2">spec &lt;-<span class="st"> </span>spec <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb21-3" data-line-number="3"><span class="st">  </span><span class="kw"><a href="../../../tools/tfdatasets/reference/step_categorical_column_with_vocabulary_list.html">step_categorical_column_with_vocabulary_list</a></span>(<span class="kw"><a href="../../../tools/tfdatasets/reference/all_nominal.html">all_nominal</a></span>()) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb21-4" data-line-number="4"><span class="st">  </span><span class="kw"><a href="../../../tools/tfdatasets/reference/step_indicator_column.html">step_indicator_column</a></span>(<span class="kw"><a href="../../../tools/tfdatasets/reference/all_nominal.html">all_nominal</a></span>())</a></code></pre></div>
 <p>Now let’s see the output:</p>
-<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb18-1" data-line-number="1">spec &lt;-<span class="st"> </span><span class="kw"><a href="../../../keras/reference/reexports.html">fit</a></span>(spec)</a>
-<a class="sourceLine" id="cb18-2" data-line-number="2">layer &lt;-<span class="st"> </span><span class="kw"><a href="../../../keras/reference/layer_dense_features.html">layer_dense_features</a></span>(<span class="dt">feature_columns =</span> <span class="kw"><a href="../../../tools/tfdatasets/reference/dense_features.html">dense_features</a></span>(spec))</a>
-<a class="sourceLine" id="cb18-3" data-line-number="3">train_dataset <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb18-4" data-line-number="4"><span class="st">  </span>reticulate<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/reticulate/man/iterate.html">as_iterator</a></span>() <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb18-5" data-line-number="5"><span class="st">  </span>reticulate<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/reticulate/man/iterate.html">iter_next</a></span>() <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb18-6" data-line-number="6"><span class="st">  </span><span class="kw">layer</span>()</a></code></pre></div>
+<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb22-1" data-line-number="1">spec &lt;-<span class="st"> </span><span class="kw"><a href="../../../keras/reference/reexports.html">fit</a></span>(spec)</a></code></pre></div>
+<pre><code>## - Preparing 56 batches/s [12 batches in 00:00:00] \ Preparing 55 batches/
+## s [13 batches in 00:00:00] | Preparing 54 batches/s [14 batches in
+## 00:00:00] / Preparing 54 batches/s [15 batches in 00:00:00] - Preparing 54
+## batches/s [16 batches in 00:00:00] \ Preparing 53 batches/s [17 batches in
+## 00:00:00] | Preparing 53 batches/s [18 batches in 00:00:00] / Preparing 53
+## batches/s [19 batches in 00:00:00] - Preparing 52 batches/s [20 batches in
+## 00:00:00] \ Preparing 52 batches/s [21 batches in 00:00:00] | Preparing 52
+## batches/s [22 batches in 00:00:00] / Preparing 52 batches/s [23 batches in
+## 00:00:00] - Preparing 52 batches/s [24 batches in 00:00:00] \ Preparing 52
+## batches/s [25 batches in 00:00:00] | Preparing 52 batches/s [26 batches in
+## 00:00:00] / Preparing 51 batches/s [27 batches in 00:00:00] - Preparing 51
+## batches/s [28 batches in 00:00:00] \ Preparing 51 batches/s [29 batches in
+## 00:00:00] | Preparing 51 batches/s [30 batches in 00:00:00] / Preparing 51
+## batches/s [31 batches in 00:00:00] - Preparing 51 batches/s [32 batches in
+## 00:00:00] \ Preparing 51 batches/s [33 batches in 00:00:00] | Preparing 51
+## batches/s [34 batches in 00:00:00] / Preparing 51 batches/s [35 batches in
+## 00:00:00] - Preparing 50 batches/s [36 batches in 00:00:00] \ Preparing 50
+## batches/s [37 batches in 00:00:00] | Preparing 50 batches/s [38 batches in
+## 00:00:00] / Preparing 50 batches/s [39 batches in 00:00:00] - Preparing 50
+## batches/s [40 batches in 00:00:00] \ Preparing 50 batches/s [41 batches in
+## 00:00:00] | Preparing 50 batches/s [42 batches in 00:00:00] / Preparing 49
+## batches/s [43 batches in 00:00:00] - Preparing 49 batches/s [44 batches in
+## 00:00:00] \ Preparing 49 batches/s [45 batches in 00:00:00] | Preparing 49
+## batches/s [46 batches in 00:00:00] / Preparing 49 batches/s [47 batches in
+## 00:00:00] - Preparing 49 batches/s [48 batches in 00:00:00] \ Preparing 49
+## batches/s [49 batches in 00:00:00] | Preparing 49 batches/s [50 batches in
+## 00:00:01] / Preparing 49 batches/s [51 batches in 00:00:01] - Preparing 49
+## batches/s [52 batches in 00:00:01] \ Preparing 49 batches/s [53 batches in
+## 00:00:01]</code></pre>
+<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb24-1" data-line-number="1">layer &lt;-<span class="st"> </span><span class="kw"><a href="../../../keras/reference/layer_dense_features.html">layer_dense_features</a></span>(<span class="dt">feature_columns =</span> <span class="kw"><a href="../../../tools/tfdatasets/reference/dense_features.html">dense_features</a></span>(spec))</a>
+<a class="sourceLine" id="cb24-2" data-line-number="2">train_dataset <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb24-3" data-line-number="3"><span class="st">  </span>reticulate<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/reticulate/man/iterate.html">as_iterator</a></span>() <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb24-4" data-line-number="4"><span class="st">  </span>reticulate<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/reticulate/man/iterate.html">iter_next</a></span>() <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb24-5" data-line-number="5"><span class="st">  </span><span class="kw">layer</span>()</a></code></pre></div>
 <pre><code>## tf.Tensor(
-## [[0. 1. 1. 0. 0. 0. 0. 0. 0. 1. 0. 0. 0. 0. 1. 0. 0. 1.]
-##  [1. 0. 0. 0. 1. 0. 0. 0. 0. 1. 0. 0. 0. 0. 1. 0. 1. 0.]
-##  [0. 1. 0. 0. 1. 0. 0. 0. 0. 0. 0. 1. 0. 1. 0. 0. 0. 1.]
-##  [0. 1. 0. 0. 1. 0. 0. 0. 0. 0. 0. 1. 0. 0. 1. 0. 0. 1.]
-##  [0. 1. 1. 0. 0. 0. 0. 1. 0. 0. 0. 0. 1. 0. 0. 0. 0. 1.]], shape=(5, 18), dtype=float32)</code></pre>
+## [[1. 0. 0. 0. 1. 0. 0. 0. 0. 0. 0. 1. 0. 0. 1. 0. 0. 1.]
+##  [1. 0. 0. 1. 0. 0. 0. 0. 0. 0. 0. 1. 0. 0. 1. 0. 0. 1.]
+##  [0. 1. 0. 0. 1. 0. 0. 0. 0. 0. 0. 1. 0. 1. 0. 0. 1. 0.]
+##  [0. 1. 1. 0. 0. 0. 0. 1. 0. 0. 0. 0. 0. 0. 1. 0. 1. 0.]
+##  [0. 1. 0. 0. 1. 0. 0. 0. 0. 0. 0. 1. 0. 0. 1. 0. 0. 1.]], shape=(5, 18), dtype=float32)</code></pre>
 </div>
 <div id="combining-everything" class="section level3">
 <h3>Combining everything</h3>
 <p>We demonstrated how to use the <code>feature_spec</code> interface both for continuous and categorical data separetedly. It’s also possible to combine all transformations in a single <code>spec</code>:</p>
-<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb20-1" data-line-number="1">spec &lt;-<span class="st"> </span><span class="kw"><a href="../../../tools/tfdatasets/reference/feature_spec.html">feature_spec</a></span>(train_dataset, survived <span class="op">~</span><span class="st"> </span>.) <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb20-2" data-line-number="2"><span class="st">  </span><span class="kw"><a href="../../../tools/tfdatasets/reference/step_numeric_column.html">step_numeric_column</a></span>(<span class="kw"><a href="../../../tools/tfdatasets/reference/all_numeric.html">all_numeric</a></span>(), <span class="dt">normalizer_fn =</span> <span class="kw"><a href="../../../tools/tfdatasets/reference/scaler_standard.html">scaler_standard</a></span>()) <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb20-3" data-line-number="3"><span class="st">  </span><span class="kw"><a href="../../../tools/tfdatasets/reference/step_categorical_column_with_vocabulary_list.html">step_categorical_column_with_vocabulary_list</a></span>(<span class="kw"><a href="../../../tools/tfdatasets/reference/all_nominal.html">all_nominal</a></span>()) <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb20-4" data-line-number="4"><span class="st">  </span><span class="kw"><a href="../../../tools/tfdatasets/reference/step_indicator_column.html">step_indicator_column</a></span>(<span class="kw"><a href="../../../tools/tfdatasets/reference/all_nominal.html">all_nominal</a></span>())</a></code></pre></div>
+<div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb26-1" data-line-number="1">spec &lt;-<span class="st"> </span><span class="kw"><a href="../../../tools/tfdatasets/reference/feature_spec.html">feature_spec</a></span>(train_dataset, survived <span class="op">~</span><span class="st"> </span>.) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb26-2" data-line-number="2"><span class="st">  </span><span class="kw"><a href="../../../tools/tfdatasets/reference/step_numeric_column.html">step_numeric_column</a></span>(<span class="kw"><a href="../../../tools/tfdatasets/reference/all_numeric.html">all_numeric</a></span>(), <span class="dt">normalizer_fn =</span> <span class="kw"><a href="../../../tools/tfdatasets/reference/scaler_standard.html">scaler_standard</a></span>()) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb26-3" data-line-number="3"><span class="st">  </span><span class="kw"><a href="../../../tools/tfdatasets/reference/step_categorical_column_with_vocabulary_list.html">step_categorical_column_with_vocabulary_list</a></span>(<span class="kw"><a href="../../../tools/tfdatasets/reference/all_nominal.html">all_nominal</a></span>()) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb26-4" data-line-number="4"><span class="st">  </span><span class="kw"><a href="../../../tools/tfdatasets/reference/step_indicator_column.html">step_indicator_column</a></span>(<span class="kw"><a href="../../../tools/tfdatasets/reference/all_nominal.html">all_nominal</a></span>())</a></code></pre></div>
 <p>Now, let’s fit the <code>spec</code> and take a look at the output:</p>
-<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb21-1" data-line-number="1">spec &lt;-<span class="st"> </span><span class="kw"><a href="../../../keras/reference/reexports.html">fit</a></span>(spec)</a>
-<a class="sourceLine" id="cb21-2" data-line-number="2">layer &lt;-<span class="st"> </span><span class="kw"><a href="../../../keras/reference/layer_dense_features.html">layer_dense_features</a></span>(<span class="dt">feature_columns =</span> <span class="kw"><a href="../../../tools/tfdatasets/reference/dense_features.html">dense_features</a></span>(spec))</a>
-<a class="sourceLine" id="cb21-3" data-line-number="3">train_dataset <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb21-4" data-line-number="4"><span class="st">  </span>reticulate<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/reticulate/man/iterate.html">as_iterator</a></span>() <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb21-5" data-line-number="5"><span class="st">  </span>reticulate<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/reticulate/man/iterate.html">iter_next</a></span>() <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb21-6" data-line-number="6"><span class="st">  </span><span class="kw">layer</span>()</a></code></pre></div>
+<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb27-1" data-line-number="1">spec &lt;-<span class="st"> </span><span class="kw"><a href="../../../keras/reference/reexports.html">fit</a></span>(spec)</a></code></pre></div>
+<pre><code>## - Preparing 43 batches/s [9 batches in 00:00:00] \ Preparing 42 batches/
+## s [10 batches in 00:00:00] | Preparing 41 batches/s [11 batches in
+## 00:00:00] / Preparing 41 batches/s [12 batches in 00:00:00] - Preparing 41
+## batches/s [13 batches in 00:00:00] \ Preparing 40 batches/s [14 batches in
+## 00:00:00] | Preparing 40 batches/s [15 batches in 00:00:00] / Preparing 40
+## batches/s [16 batches in 00:00:00] - Preparing 40 batches/s [17 batches in
+## 00:00:00] \ Preparing 40 batches/s [18 batches in 00:00:00] | Preparing 39
+## batches/s [19 batches in 00:00:00] / Preparing 39 batches/s [20 batches in
+## 00:00:00] - Preparing 39 batches/s [21 batches in 00:00:00] \ Preparing 39
+## batches/s [22 batches in 00:00:00] | Preparing 39 batches/s [23 batches in
+## 00:00:00] / Preparing 39 batches/s [24 batches in 00:00:00] - Preparing 39
+## batches/s [25 batches in 00:00:00] \ Preparing 39 batches/s [26 batches in
+## 00:00:00] | Preparing 38 batches/s [27 batches in 00:00:00] / Preparing 38
+## batches/s [28 batches in 00:00:00] - Preparing 38 batches/s [29 batches in
+## 00:00:00] \ Preparing 38 batches/s [30 batches in 00:00:00] | Preparing 38
+## batches/s [31 batches in 00:00:00] / Preparing 38 batches/s [32 batches in
+## 00:00:00] - Preparing 38 batches/s [33 batches in 00:00:00] \ Preparing 38
+## batches/s [34 batches in 00:00:00] | Preparing 38 batches/s [35 batches in
+## 00:00:00] / Preparing 38 batches/s [36 batches in 00:00:00] - Preparing 38
+## batches/s [37 batches in 00:00:00] \ Preparing 38 batches/s [38 batches in
+## 00:00:01] | Preparing 38 batches/s [39 batches in 00:00:01] / Preparing 36
+## batches/s [40 batches in 00:00:01] - Preparing 36 batches/s [41 batches in
+## 00:00:01] \ Preparing 36 batches/s [42 batches in 00:00:01] | Preparing 36
+## batches/s [43 batches in 00:00:01] / Preparing 36 batches/s [44 batches in
+## 00:00:01] - Preparing 36 batches/s [45 batches in 00:00:01] \ Preparing 36
+## batches/s [46 batches in 00:00:01] | Preparing 36 batches/s [47 batches in
+## 00:00:01] / Preparing 36 batches/s [48 batches in 00:00:01] - Preparing 36
+## batches/s [49 batches in 00:00:01] \ Preparing 37 batches/s [50 batches in
+## 00:00:01] | Preparing 37 batches/s [51 batches in 00:00:01] / Preparing 37
+## batches/s [52 batches in 00:00:01] - Preparing 37 batches/s [53 batches in
+## 00:00:01]</code></pre>
+<div class="sourceCode" id="cb29"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb29-1" data-line-number="1">layer &lt;-<span class="st"> </span><span class="kw"><a href="../../../keras/reference/layer_dense_features.html">layer_dense_features</a></span>(<span class="dt">feature_columns =</span> <span class="kw"><a href="../../../tools/tfdatasets/reference/dense_features.html">dense_features</a></span>(spec))</a>
+<a class="sourceLine" id="cb29-2" data-line-number="2">train_dataset <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb29-3" data-line-number="3"><span class="st">  </span>reticulate<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/reticulate/man/iterate.html">as_iterator</a></span>() <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb29-4" data-line-number="4"><span class="st">  </span>reticulate<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/reticulate/man/iterate.html">iter_next</a></span>() <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb29-5" data-line-number="5"><span class="st">  </span><span class="kw">layer</span>()</a></code></pre></div>
 <pre><code>## tf.Tensor(
-## [[ 0.93794656  0.          1.          0.          0.          1.
-##    0.          0.          0.          0.          0.          1.
-##    0.          0.          0.          1.          0.         -0.5539651
-##   -0.48006976 -0.4611784   0.          1.        ]
-##  [-0.0509259   0.          1.          0.          0.          1.
-##    0.          0.          0.          0.          0.          0.
-##    1.          1.          0.          0.          0.         -0.5659972
-##   -0.48006976 -0.4611784   0.          1.        ]
-##  [-1.9700449   1.          0.          0.          1.          0.
-##    0.          0.          0.          0.          0.          0.
-##    1.          0.          0.          1.          0.         -0.23657836
-##    0.54201424  0.73245984  0.          1.        ]
-##  [-0.5453621   0.          1.          0.          0.          1.
-##    0.          0.          0.          0.          0.          0.
-##    1.          0.          0.          1.          0.         -0.5461019
-##   -0.48006976 -0.4611784   0.          1.        ]
-##  [-0.8985309   1.          0.          0.          0.          1.
-##    0.          0.          0.          0.          0.          0.
-##    1.          0.          0.          1.          0.          0.5683259
-##    4.63035     1.9260981   1.          0.        ]], shape=(5, 22), dtype=float32)</code></pre>
+## [[ 9.0341590e-02  0.0000000e+00  1.0000000e+00  0.0000000e+00
+##    0.0000000e+00  1.0000000e+00  0.0000000e+00  0.0000000e+00
+##    0.0000000e+00  0.0000000e+00  0.0000000e+00  0.0000000e+00
+##    1.0000000e+00  0.0000000e+00  0.0000000e+00  1.0000000e+00
+##    0.0000000e+00 -5.6540245e-01 -4.8006976e-01 -4.6117839e-01
+##    0.0000000e+00  1.0000000e+00]
+##  [ 1.0085803e+00  0.0000000e+00  1.0000000e+00  0.0000000e+00
+##    0.0000000e+00  1.0000000e+00  0.0000000e+00  0.0000000e+00
+##    0.0000000e+00  0.0000000e+00  0.0000000e+00  0.0000000e+00
+##    1.0000000e+00  0.0000000e+00  0.0000000e+00  1.0000000e+00
+##    0.0000000e+00 -5.8827716e-01 -4.8006976e-01 -4.6117839e-01
+##    0.0000000e+00  1.0000000e+00]
+##  [-3.3346090e-01  1.0000000e+00  0.0000000e+00  0.0000000e+00
+##    1.0000000e+00  0.0000000e+00  0.0000000e+00  0.0000000e+00
+##    0.0000000e+00  0.0000000e+00  0.0000000e+00  0.0000000e+00
+##    1.0000000e+00  0.0000000e+00  0.0000000e+00  1.0000000e+00
+##    0.0000000e+00 -6.8281050e-04  1.5640982e+00  7.3245984e-01
+##    1.0000000e+00  0.0000000e+00]
+##  [ 6.5541160e-01  0.0000000e+00  1.0000000e+00  1.0000000e+00
+##    0.0000000e+00  0.0000000e+00  0.0000000e+00  0.0000000e+00
+##    0.0000000e+00  0.0000000e+00  0.0000000e+00  0.0000000e+00
+##    1.0000000e+00  0.0000000e+00  0.0000000e+00  1.0000000e+00
+##    0.0000000e+00 -7.7270460e-01 -4.8006976e-01 -4.6117839e-01
+##    0.0000000e+00  1.0000000e+00]
+##  [-5.0925903e-02  0.0000000e+00  1.0000000e+00  1.0000000e+00
+##    0.0000000e+00  0.0000000e+00  0.0000000e+00  0.0000000e+00
+##    0.0000000e+00  1.0000000e+00  0.0000000e+00  0.0000000e+00
+##    0.0000000e+00  0.0000000e+00  0.0000000e+00  1.0000000e+00
+##    0.0000000e+00  8.5097387e-02 -4.8006976e-01 -4.6117839e-01
+##    0.0000000e+00  1.0000000e+00]], shape=(5, 22), dtype=float32)</code></pre>
 <p>This concludes our data preprocessing step and we can now focus on building a training a model.</p>
 </div>
 </div>
@@ -221,85 +322,85 @@ called <code>feature_spec</code>.</p>
 <h2>Building the model</h2>
 <p>We will use the Keras sequential API do build a model that uses the
 dense features we have defined in the <code>spec</code>:</p>
-<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb23-1" data-line-number="1">model &lt;-<span class="st"> </span><span class="kw"><a href="../../../keras/reference/keras_model_sequential.html">keras_model_sequential</a></span>() <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb23-2" data-line-number="2"><span class="st">  </span><span class="kw"><a href="../../../keras/reference/layer_dense_features.html">layer_dense_features</a></span>(<span class="dt">feature_columns =</span> <span class="kw"><a href="../../../tools/tfdatasets/reference/dense_features.html">dense_features</a></span>(spec)) <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb23-3" data-line-number="3"><span class="st">  </span><span class="kw"><a href="../../../keras/reference/layer_dense.html">layer_dense</a></span>(<span class="dt">units =</span> <span class="dv">128</span>, <span class="dt">activation =</span> <span class="st">"relu"</span>) <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb23-4" data-line-number="4"><span class="st">  </span><span class="kw"><a href="../../../keras/reference/layer_dense.html">layer_dense</a></span>(<span class="dt">units =</span> <span class="dv">128</span>, <span class="dt">activation =</span> <span class="st">"relu"</span>) <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb23-5" data-line-number="5"><span class="st">  </span><span class="kw"><a href="../../../keras/reference/layer_dense.html">layer_dense</a></span>(<span class="dt">units =</span> <span class="dv">1</span>, <span class="dt">activation =</span> <span class="st">"sigmoid"</span>)</a>
-<a class="sourceLine" id="cb23-6" data-line-number="6"></a>
-<a class="sourceLine" id="cb23-7" data-line-number="7">model <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../../../keras/reference/reexports.html">compile</a></span>(</a>
-<a class="sourceLine" id="cb23-8" data-line-number="8">  <span class="dt">loss =</span> <span class="st">"binary_crossentropy"</span>,</a>
-<a class="sourceLine" id="cb23-9" data-line-number="9">  <span class="dt">optimizer =</span> <span class="st">"adam"</span>,</a>
-<a class="sourceLine" id="cb23-10" data-line-number="10">  <span class="dt">metrics =</span> <span class="st">"accuracy"</span></a>
-<a class="sourceLine" id="cb23-11" data-line-number="11">)</a></code></pre></div>
+<div class="sourceCode" id="cb31"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb31-1" data-line-number="1">model &lt;-<span class="st"> </span><span class="kw"><a href="../../../keras/reference/keras_model_sequential.html">keras_model_sequential</a></span>() <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb31-2" data-line-number="2"><span class="st">  </span><span class="kw"><a href="../../../keras/reference/layer_dense_features.html">layer_dense_features</a></span>(<span class="dt">feature_columns =</span> <span class="kw"><a href="../../../tools/tfdatasets/reference/dense_features.html">dense_features</a></span>(spec)) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb31-3" data-line-number="3"><span class="st">  </span><span class="kw"><a href="../../../keras/reference/layer_dense.html">layer_dense</a></span>(<span class="dt">units =</span> <span class="dv">128</span>, <span class="dt">activation =</span> <span class="st">"relu"</span>) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb31-4" data-line-number="4"><span class="st">  </span><span class="kw"><a href="../../../keras/reference/layer_dense.html">layer_dense</a></span>(<span class="dt">units =</span> <span class="dv">128</span>, <span class="dt">activation =</span> <span class="st">"relu"</span>) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb31-5" data-line-number="5"><span class="st">  </span><span class="kw"><a href="../../../keras/reference/layer_dense.html">layer_dense</a></span>(<span class="dt">units =</span> <span class="dv">1</span>, <span class="dt">activation =</span> <span class="st">"sigmoid"</span>)</a>
+<a class="sourceLine" id="cb31-6" data-line-number="6"></a>
+<a class="sourceLine" id="cb31-7" data-line-number="7">model <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../../../keras/reference/reexports.html">compile</a></span>(</a>
+<a class="sourceLine" id="cb31-8" data-line-number="8">  <span class="dt">loss =</span> <span class="st">"binary_crossentropy"</span>,</a>
+<a class="sourceLine" id="cb31-9" data-line-number="9">  <span class="dt">optimizer =</span> <span class="st">"adam"</span>,</a>
+<a class="sourceLine" id="cb31-10" data-line-number="10">  <span class="dt">metrics =</span> <span class="st">"accuracy"</span></a>
+<a class="sourceLine" id="cb31-11" data-line-number="11">)</a></code></pre></div>
 </div>
 <div id="train-evaluate-and-predict" class="section level2">
 <h2>Train, evaluate and predict</h2>
 <p>Now the model can be instantiated and trained.</p>
-<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb24-1" data-line-number="1">model <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb24-2" data-line-number="2"><span class="st">  </span><span class="kw"><a href="../../../keras/reference/reexports.html">fit</a></span>(</a>
-<a class="sourceLine" id="cb24-3" data-line-number="3">    train_dataset <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../../../tools/tfdatasets/reference/dataset_use_spec.html">dataset_use_spec</a></span>(spec) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../../../tools/tfdatasets/reference/dataset_shuffle.html">dataset_shuffle</a></span>(<span class="dv">500</span>),</a>
-<a class="sourceLine" id="cb24-4" data-line-number="4">    <span class="dt">epochs =</span> <span class="dv">20</span>,</a>
-<a class="sourceLine" id="cb24-5" data-line-number="5">    <span class="dt">validation_data =</span> test_dataset <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../../../tools/tfdatasets/reference/dataset_use_spec.html">dataset_use_spec</a></span>(spec),</a>
-<a class="sourceLine" id="cb24-6" data-line-number="6">    <span class="dt">verbose =</span> <span class="dv">2</span></a>
-<a class="sourceLine" id="cb24-7" data-line-number="7">  )</a></code></pre></div>
+<div class="sourceCode" id="cb32"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb32-1" data-line-number="1">model <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb32-2" data-line-number="2"><span class="st">  </span><span class="kw"><a href="../../../keras/reference/reexports.html">fit</a></span>(</a>
+<a class="sourceLine" id="cb32-3" data-line-number="3">    train_dataset <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../../../tools/tfdatasets/reference/dataset_use_spec.html">dataset_use_spec</a></span>(spec) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../../../tools/tfdatasets/reference/dataset_shuffle.html">dataset_shuffle</a></span>(<span class="dv">500</span>),</a>
+<a class="sourceLine" id="cb32-4" data-line-number="4">    <span class="dt">epochs =</span> <span class="dv">20</span>,</a>
+<a class="sourceLine" id="cb32-5" data-line-number="5">    <span class="dt">validation_data =</span> test_dataset <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../../../tools/tfdatasets/reference/dataset_use_spec.html">dataset_use_spec</a></span>(spec),</a>
+<a class="sourceLine" id="cb32-6" data-line-number="6">    <span class="dt">verbose =</span> <span class="dv">2</span></a>
+<a class="sourceLine" id="cb32-7" data-line-number="7">  )</a></code></pre></div>
 <pre><code>## Epoch 1/20
-## 53/53 - 1s - loss: 0.5752 - accuracy: 0.7197 - val_loss: 0.0000e+00 - val_accuracy: 0.0000e+00
+## 53/53 - 1s - loss: 0.5667 - accuracy: 0.7045 - val_loss: 0.0000e+00 - val_accuracy: 0.0000e+00
 ## Epoch 2/20
-## 53/53 - 0s - loss: 0.4546 - accuracy: 0.8144 - val_loss: 0.4310 - val_accuracy: 0.8068
+## 53/53 - 0s - loss: 0.4672 - accuracy: 0.7992 - val_loss: 0.4195 - val_accuracy: 0.8371
 ## Epoch 3/20
-## 53/53 - 0s - loss: 0.4273 - accuracy: 0.8068 - val_loss: 0.4009 - val_accuracy: 0.8371
+## 53/53 - 0s - loss: 0.4216 - accuracy: 0.8409 - val_loss: 0.3894 - val_accuracy: 0.8371
 ## Epoch 4/20
-## 53/53 - 0s - loss: 0.4070 - accuracy: 0.8333 - val_loss: 0.3742 - val_accuracy: 0.8598
+## 53/53 - 0s - loss: 0.3997 - accuracy: 0.8333 - val_loss: 0.3723 - val_accuracy: 0.8636
 ## Epoch 5/20
-## 53/53 - 0s - loss: 0.3938 - accuracy: 0.8561 - val_loss: 0.3579 - val_accuracy: 0.8523
+## 53/53 - 0s - loss: 0.3745 - accuracy: 0.8636 - val_loss: 0.3619 - val_accuracy: 0.8712
 ## Epoch 6/20
-## 53/53 - 0s - loss: 0.3824 - accuracy: 0.8333 - val_loss: 0.3593 - val_accuracy: 0.8598
+## 53/53 - 0s - loss: 0.3710 - accuracy: 0.8561 - val_loss: 0.3420 - val_accuracy: 0.8636
 ## Epoch 7/20
-## 53/53 - 0s - loss: 0.3675 - accuracy: 0.8182 - val_loss: 0.3362 - val_accuracy: 0.8750
+## 53/53 - 0s - loss: 0.3512 - accuracy: 0.8523 - val_loss: 0.3325 - val_accuracy: 0.8788
 ## Epoch 8/20
-## 53/53 - 0s - loss: 0.3647 - accuracy: 0.8598 - val_loss: 0.3340 - val_accuracy: 0.8598
+## 53/53 - 0s - loss: 0.3591 - accuracy: 0.8712 - val_loss: 0.3218 - val_accuracy: 0.8788
 ## Epoch 9/20
-## 53/53 - 0s - loss: 0.3317 - accuracy: 0.8788 - val_loss: 0.3158 - val_accuracy: 0.8902
+## 53/53 - 0s - loss: 0.3565 - accuracy: 0.8409 - val_loss: 0.3513 - val_accuracy: 0.8523
 ## Epoch 10/20
-## 53/53 - 0s - loss: 0.3411 - accuracy: 0.8750 - val_loss: 0.3180 - val_accuracy: 0.8864
+## 53/53 - 0s - loss: 0.3526 - accuracy: 0.8712 - val_loss: 0.3152 - val_accuracy: 0.8750
 ## Epoch 11/20
-## 53/53 - 0s - loss: 0.3312 - accuracy: 0.8826 - val_loss: 0.3023 - val_accuracy: 0.8826
+## 53/53 - 0s - loss: 0.3220 - accuracy: 0.8750 - val_loss: 0.3122 - val_accuracy: 0.8826
 ## Epoch 12/20
-## 53/53 - 0s - loss: 0.3209 - accuracy: 0.8598 - val_loss: 0.3082 - val_accuracy: 0.8826
+## 53/53 - 0s - loss: 0.3202 - accuracy: 0.8826 - val_loss: 0.2963 - val_accuracy: 0.8864
 ## Epoch 13/20
-## 53/53 - 0s - loss: 0.3173 - accuracy: 0.8712 - val_loss: 0.2955 - val_accuracy: 0.8864
+## 53/53 - 0s - loss: 0.3118 - accuracy: 0.8826 - val_loss: 0.2850 - val_accuracy: 0.8939
 ## Epoch 14/20
-## 53/53 - 0s - loss: 0.3176 - accuracy: 0.8788 - val_loss: 0.2820 - val_accuracy: 0.8902
+## 53/53 - 0s - loss: 0.3107 - accuracy: 0.8826 - val_loss: 0.2893 - val_accuracy: 0.8902
 ## Epoch 15/20
-## 53/53 - 0s - loss: 0.3172 - accuracy: 0.8561 - val_loss: 0.2811 - val_accuracy: 0.8977
+## 53/53 - 0s - loss: 0.3036 - accuracy: 0.8788 - val_loss: 0.2741 - val_accuracy: 0.8939
 ## Epoch 16/20
-## 53/53 - 0s - loss: 0.3068 - accuracy: 0.8902 - val_loss: 0.2851 - val_accuracy: 0.8939
+## 53/53 - 0s - loss: 0.2975 - accuracy: 0.8864 - val_loss: 0.2747 - val_accuracy: 0.8977
 ## Epoch 17/20
-## 53/53 - 0s - loss: 0.2970 - accuracy: 0.8750 - val_loss: 0.2674 - val_accuracy: 0.9053
+## 53/53 - 0s - loss: 0.2897 - accuracy: 0.9015 - val_loss: 0.2786 - val_accuracy: 0.9015
 ## Epoch 18/20
-## 53/53 - 0s - loss: 0.2874 - accuracy: 0.8826 - val_loss: 0.2665 - val_accuracy: 0.8977
+## 53/53 - 0s - loss: 0.2861 - accuracy: 0.8826 - val_loss: 0.2684 - val_accuracy: 0.9015
 ## Epoch 19/20
-## 53/53 - 0s - loss: 0.2823 - accuracy: 0.8977 - val_loss: 0.2544 - val_accuracy: 0.9091
+## 53/53 - 0s - loss: 0.2933 - accuracy: 0.8977 - val_loss: 0.2604 - val_accuracy: 0.9053
 ## Epoch 20/20
-## 53/53 - 0s - loss: 0.2818 - accuracy: 0.8826 - val_loss: 0.2601 - val_accuracy: 0.9091</code></pre>
+## 53/53 - 0s - loss: 0.2749 - accuracy: 0.9015 - val_loss: 0.2478 - val_accuracy: 0.9091</code></pre>
 <p>Once the model is trained, you can check its accuracy on the test_data set.</p>
-<div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb26-1" data-line-number="1">model <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../../../keras/reference/reexports.html">evaluate</a></span>(test_dataset <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../../../tools/tfdatasets/reference/dataset_use_spec.html">dataset_use_spec</a></span>(spec), <span class="dt">verbose =</span> <span class="dv">0</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb34"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb34-1" data-line-number="1">model <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../../../keras/reference/reexports.html">evaluate</a></span>(test_dataset <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../../../tools/tfdatasets/reference/dataset_use_spec.html">dataset_use_spec</a></span>(spec), <span class="dt">verbose =</span> <span class="dv">0</span>)</a></code></pre></div>
 <pre><code>## $loss
-## [1] 0.2602749
+## [1] 0.2478401
 ## 
 ## $accuracy
 ## [1] 0.9090909</code></pre>
 <p>You can also use <code>predict</code> to infer labels on a batch or a dataset of batches:</p>
-<div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb28-1" data-line-number="1">batch &lt;-<span class="st"> </span>test_dataset <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb28-2" data-line-number="2"><span class="st">  </span>reticulate<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/reticulate/man/iterate.html">as_iterator</a></span>() <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb28-3" data-line-number="3"><span class="st">  </span>reticulate<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/reticulate/man/iterate.html">iter_next</a></span>() <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb28-4" data-line-number="4"><span class="st">  </span>reticulate<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/reticulate/man/r-py-conversion.html">py_to_r</a></span>()</a>
-<a class="sourceLine" id="cb28-5" data-line-number="5"><span class="kw"><a href="https://rdrr.io/r/stats/predict.html">predict</a></span>(model, batch)</a></code></pre></div>
-<pre><code>##            [,1]
-## [1,] 0.01933812
-## [2,] 0.17113033
-## [3,] 0.07307167
-## [4,] 0.98227388
-## [5,] 0.98028392</code></pre>
+<div class="sourceCode" id="cb36"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb36-1" data-line-number="1">batch &lt;-<span class="st"> </span>test_dataset <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb36-2" data-line-number="2"><span class="st">  </span>reticulate<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/reticulate/man/iterate.html">as_iterator</a></span>() <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb36-3" data-line-number="3"><span class="st">  </span>reticulate<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/reticulate/man/iterate.html">iter_next</a></span>() <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb36-4" data-line-number="4"><span class="st">  </span>reticulate<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/reticulate/man/r-py-conversion.html">py_to_r</a></span>()</a>
+<a class="sourceLine" id="cb36-5" data-line-number="5"><span class="kw"><a href="https://rdrr.io/r/stats/predict.html">predict</a></span>(model, batch)</a></code></pre></div>
+<pre><code>##             [,1]
+## [1,] 0.050429925
+## [2,] 0.210252777
+## [3,] 0.367364824
+## [4,] 0.005024131
+## [5,] 0.016748471</code></pre>
 </div>

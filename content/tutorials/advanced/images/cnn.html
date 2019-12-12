@@ -33,10 +33,10 @@ to classify CIFAR images. Because this tutorial uses the Keras Sequential API, c
 <a class="sourceLine" id="cb3-5" data-line-number="5"></a>
 <a class="sourceLine" id="cb3-6" data-line-number="6"><span class="kw"><a href="https://rdrr.io/r/graphics/par.html">par</a></span>(<span class="dt">mfcol =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="dv">5</span>,<span class="dv">6</span>), <span class="dt">mar =</span> <span class="kw"><a href="https://rdrr.io/r/base/rep.html">rep</a></span>(<span class="dv">1</span>, <span class="dv">4</span>), <span class="dt">oma =</span> <span class="kw"><a href="https://rdrr.io/r/base/rep.html">rep</a></span>(<span class="fl">0.2</span>, <span class="dv">4</span>))</a>
 <a class="sourceLine" id="cb3-7" data-line-number="7">cifar<span class="op">$</span>train<span class="op">$</span>x[index,,,] <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb3-8" data-line-number="8"><span class="st">  </span>purrr<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/purrr/man/array-coercion.html">array_tree</a></span>(<span class="dv">1</span>) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb3-9" data-line-number="9"><span class="st">  </span>purrr<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/purrr/man/set_names.html">set_names</a></span>(class_names[cifar<span class="op">$</span>train<span class="op">$</span>y[index] <span class="op">+</span><span class="st"> </span><span class="dv">1</span>]) <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb3-10" data-line-number="10"><span class="st">  </span>purrr<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/purrr/man/map.html">map</a></span>(as.raster, <span class="dt">max =</span> <span class="dv">255</span>) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb3-11" data-line-number="11"><span class="st">  </span>purrr<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/purrr/man/imap.html">iwalk</a></span>(<span class="op">~</span>{<span class="kw"><a href="https://rdrr.io/r/graphics/plot.html">plot</a></span>(.x); <span class="kw"><a href="https://rdrr.io/r/graphics/title.html">title</a></span>(.y)})</a></code></pre></div>
+<a class="sourceLine" id="cb3-8" data-line-number="8"><span class="st">  </span>purrr<span class="op">::</span><span class="kw"><a href="https://purrr.tidyverse.org/reference/array-coercion.html">array_tree</a></span>(<span class="dv">1</span>) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb3-9" data-line-number="9"><span class="st">  </span>purrr<span class="op">::</span><span class="kw"><a href="https://purrr.tidyverse.org/reference/set_names.html">set_names</a></span>(class_names[cifar<span class="op">$</span>train<span class="op">$</span>y[index] <span class="op">+</span><span class="st"> </span><span class="dv">1</span>]) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb3-10" data-line-number="10"><span class="st">  </span>purrr<span class="op">::</span><span class="kw"><a href="https://purrr.tidyverse.org/reference/map.html">map</a></span>(as.raster, <span class="dt">max =</span> <span class="dv">255</span>) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb3-11" data-line-number="11"><span class="st">  </span>purrr<span class="op">::</span><span class="kw"><a href="https://purrr.tidyverse.org/reference/imap.html">iwalk</a></span>(<span class="op">~</span>{<span class="kw"><a href="https://rdrr.io/r/graphics/plot.html">plot</a></span>(.x); <span class="kw"><a href="https://rdrr.io/r/graphics/title.html">title</a></span>(.y)})</a></code></pre></div>
 <p><img src="/tutorials/advanced/images/cnn_files/figure-html/unnamed-chunk-3-1.png" width="672"></p>
 </div>
 <div id="create-the-convolutional-base" class="section level2">
@@ -128,25 +128,25 @@ in the chubnk above.</p>
 <a class="sourceLine" id="cb10-13" data-line-number="13">  )</a></code></pre></div>
 <pre><code>## Train on 50000 samples, validate on 10000 samples
 ## Epoch 1/10
-## 50000/50000 - 33s - loss: 1.8909 - accuracy: 0.3912 - val_loss: 1.4419 - val_accuracy: 0.4769
+## 50000/50000 - 29s - loss: 1.8431 - accuracy: 0.3806 - val_loss: 1.4734 - val_accuracy: 0.4652
 ## Epoch 2/10
-## 50000/50000 - 31s - loss: 1.3519 - accuracy: 0.5165 - val_loss: 1.3589 - val_accuracy: 0.5253
+## 50000/50000 - 29s - loss: 1.3644 - accuracy: 0.5152 - val_loss: 1.2877 - val_accuracy: 0.5467
 ## Epoch 3/10
-## 50000/50000 - 32s - loss: 1.1962 - accuracy: 0.5797 - val_loss: 1.1695 - val_accuracy: 0.5867
+## 50000/50000 - 29s - loss: 1.2356 - accuracy: 0.5647 - val_loss: 1.1877 - val_accuracy: 0.5898
 ## Epoch 4/10
-## 50000/50000 - 34s - loss: 1.0811 - accuracy: 0.6243 - val_loss: 1.1108 - val_accuracy: 0.6217
+## 50000/50000 - 28s - loss: 1.1378 - accuracy: 0.5989 - val_loss: 1.1551 - val_accuracy: 0.5978
 ## Epoch 5/10
-## 50000/50000 - 34s - loss: 1.0010 - accuracy: 0.6516 - val_loss: 1.0483 - val_accuracy: 0.6463
+## 50000/50000 - 27s - loss: 1.0604 - accuracy: 0.6293 - val_loss: 1.1806 - val_accuracy: 0.5938
 ## Epoch 6/10
-## 50000/50000 - 33s - loss: 0.9441 - accuracy: 0.6725 - val_loss: 1.0655 - val_accuracy: 0.6376
+## 50000/50000 - 29s - loss: 0.9952 - accuracy: 0.6524 - val_loss: 1.0960 - val_accuracy: 0.6181
 ## Epoch 7/10
-## 50000/50000 - 33s - loss: 0.8754 - accuracy: 0.6966 - val_loss: 1.0486 - val_accuracy: 0.6528
+## 50000/50000 - 29s - loss: 0.9385 - accuracy: 0.6723 - val_loss: 1.1046 - val_accuracy: 0.6318
 ## Epoch 8/10
-## 50000/50000 - 33s - loss: 0.8300 - accuracy: 0.7127 - val_loss: 1.1089 - val_accuracy: 0.6313
+## 50000/50000 - 30s - loss: 0.8841 - accuracy: 0.6922 - val_loss: 1.1109 - val_accuracy: 0.6324
 ## Epoch 9/10
-## 50000/50000 - 33s - loss: 0.7887 - accuracy: 0.7246 - val_loss: 1.0807 - val_accuracy: 0.6439
+## 50000/50000 - 30s - loss: 0.8454 - accuracy: 0.7047 - val_loss: 1.0574 - val_accuracy: 0.6516
 ## Epoch 10/10
-## 50000/50000 - 34s - loss: 0.7503 - accuracy: 0.7398 - val_loss: 1.0982 - val_accuracy: 0.6576</code></pre>
+## 50000/50000 - 27s - loss: 0.8034 - accuracy: 0.7207 - val_loss: 1.0701 - val_accuracy: 0.6497</code></pre>
 </div>
 <div id="evaluate-the-model" class="section level2">
 <h2>Evaluate the model</h2>
@@ -154,9 +154,9 @@ in the chubnk above.</p>
 <p><img src="/tutorials/advanced/images/cnn_files/figure-html/unnamed-chunk-9-1.png" width="672"></p>
 <div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb13-1" data-line-number="1"><span class="kw"><a href="../../../tensorflow/reference/evaluate.html">evaluate</a></span>(model, cifar<span class="op">$</span>test<span class="op">$</span>x, cifar<span class="op">$</span>test<span class="op">$</span>y, <span class="dt">verbose =</span> <span class="dv">0</span>)</a></code></pre></div>
 <pre><code>## $loss
-## [1] 1.098242
+## [1] 1.070124
 ## 
 ## $accuracy
-## [1] 0.6576</code></pre>
+## [1] 0.6497</code></pre>
 <p>Our simple CNN has achieved a test accuracy of over 70%. Not bad for a few lines of code!</p>
 </div>
