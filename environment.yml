@@ -3,7 +3,7 @@ channels:
   - conda-forge
   - defaults
 dependencies:
-  - ca-certificates=2019.11.28=hecc5488_0
+  - ca-certificates=2019.11.27=0
   - certifi=2019.11.28=py36_0
   - freetype=2.7=1
   - jpeg=9c=h1de35cc_1001
@@ -21,7 +21,7 @@ dependencies:
   - lz4-c=1.8.3=h6de7cb9_1001
   - ncurses=6.1=h0a44026_1
   - olefile=0.46=py_0
-  - openssl=1.1.1d=h0b31af3_0
+  - openssl=1.1.1d=h1de35cc_3
   - pillow=4.0.0=py36_2
   - pip=19.3.1=py36_0
   - python=3.6.9=h359304d_0

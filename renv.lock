@@ -10,8 +10,7 @@
   },
   "Python": {
     "Version": "3.6.9",
-    "Type": "conda",
-    "Name": null
+    "Type": "conda"
   },
   "Packages": {
     "BH": {
@@ -44,10 +43,10 @@
     },
     "KernSmooth": {
       "Package": "KernSmooth",
-      "Version": "2.23-15",
+      "Version": "2.23-16",
       "Source": "Repository",
       "Repository": "CRAN",
-      "Hash": "081f417f4d6d55b7e8981433e8404a22"
+      "Hash": "997471f25a7ed6c782f0090ce52cc63a"
     },
     "MASS": {
       "Package": "MASS",
@@ -255,9 +254,14 @@
     "cloudml": {
       "Package": "cloudml",
       "Version": "0.6.1.9000",
-      "Source": "Repository",
-      "Repository": "CRAN",
-      "Hash": "357e9bd5c6184209d0fee125b73ed8bc"
+      "Source": "GitHub",
+      "RemoteType": "github",
+      "RemoteHost": "api.github.com",
+      "RemoteRepo": "cloudml",
+      "RemoteUsername": "rstudio",
+      "RemoteRef": "master",
+      "RemoteSha": "3ac1b4e820a131a731ab7dc0c3d556b1540fed18",
+      "Hash": "eb2c37a5051fa6831722db6231d2272e"
     },
     "codetools": {
       "Package": "codetools",
@@ -854,10 +858,10 @@
     },
     "nlme": {
       "Package": "nlme",
-      "Version": "3.1-140",
+      "Version": "3.1-142",
       "Source": "Repository",
       "Repository": "CRAN",
-      "Hash": "79d4c59449e799385e98e222e5f8f950"
+      "Hash": "557d78d7eac2c1090ee58647a6274142"
     },
     "nloptr": {
       "Package": "nloptr",
@@ -1340,9 +1344,14 @@
     "tensorflow": {
       "Package": "tensorflow",
       "Version": "2.0.0",
-      "Source": "Repository",
-      "Repository": "CRAN",
-      "Hash": "2917ec8b7934926476b17414b8bbeac9"
+      "Source": "GitHub",
+      "RemoteType": "github",
+      "RemoteHost": "api.github.com",
+      "RemoteRepo": "tensorflow",
+      "RemoteUsername": "rstudio",
+      "RemoteRef": "master",
+      "RemoteSha": "9df4e66153d82b192fa42d24abfbcf037b877794",
+      "Hash": "9c1e68eb37ccf1e163e44567e7c39e20"
     },
     "testthat": {
       "Package": "testthat",
@@ -1361,10 +1370,15 @@
     "tfdatasets": {
       "Package": "tfdatasets",
       "Version": "1.13.1.9000",
-      "Source": "Repository",
-      "Repository": "CRAN",
+      "Source": "GitHub",
+      "RemoteType": "github",
       "Remotes": "rstudio/keras, rstudio/reticulate",
-      "Hash": "42e8e052f16c6d44599e3c528f048f81"
+      "RemoteHost": "api.github.com",
+      "RemoteRepo": "tfdatasets",
+      "RemoteUsername": "rstudio",
+      "RemoteRef": "master",
+      "RemoteSha": "aa5b1401184d177f3b512efab941c7bcbe893c94",
+      "Hash": "d7df8c24b9afb0ab838feca917ab8f8f"
     },
     "tfds": {
       "Package": "tfds",
