@@ -87,13 +87,13 @@ aliases:
 <a class="sourceLine" id="cb10-3" data-line-number="3"><span class="st">  </span><span class="kw"><a href="../../../keras/reference/reexports.html">fit</a></span>()</a>
 <a class="sourceLine" id="cb10-4" data-line-number="4"></a>
 <a class="sourceLine" id="cb10-5" data-line-number="5">spec</a></code></pre></div>
-<pre><code>## ── Feature Spec ─────────────────────────────────────────────────────────────────────────── 
+<pre><code>## ── Feature Spec ────────────────────────────────────────────────────────────────────────── 
 ## A feature_spec with 13 steps.
 ## Fitted: TRUE 
-## ── Steps ────────────────────────────────────────────────────────────────────────────────── 
+## ── Steps ───────────────────────────────────────────────────────────────────────────────── 
 ## The feature_spec has 1 dense features.
 ## StepNumericColumn: CRIM, ZN, INDUS, CHAS, NOX, RM, AGE, DIS, RAD, TAX, PTRATIO, B, LSTAT 
-## ── Dense features ─────────────────────────────────────────────────────────────────────────</code></pre>
+## ── Dense features ────────────────────────────────────────────────────────────────────────</code></pre>
 <p>The <code>spec</code> created with <code>tfdatasets</code> can be used together with <code>layer_dense_features</code> to perform pre-processing directly in the TensorFlow graph.</p>
 <p>We can take a look at the output of a dense-features layer created by this <code>spec</code>:</p>
 <div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb12-1" data-line-number="1">layer &lt;-<span class="st"> </span><span class="kw"><a href="../../../keras/reference/layer_dense_features.html">layer_dense_features</a></span>(</a>
@@ -276,28 +276,28 @@ We also show how to use a custom callback, replacing the default training output
 <div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb25-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(loss, mae) <span class="op">%&lt;-%</span><span class="st"> </span>(model <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../../../keras/reference/reexports.html">evaluate</a></span>(test_df <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span>(<span class="op">-</span>label), test_df<span class="op">$</span>label, <span class="dt">verbose =</span> <span class="dv">0</span>))</a>
 <a class="sourceLine" id="cb25-2" data-line-number="2"></a>
 <a class="sourceLine" id="cb25-3" data-line-number="3"><span class="kw"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span>(<span class="st">"Mean absolute error on test set: $"</span>, <span class="kw"><a href="https://rdrr.io/r/base/sprintf.html">sprintf</a></span>(<span class="st">"%.2f"</span>, mae <span class="op">*</span><span class="st"> </span><span class="dv">1000</span>))</a></code></pre></div>
-<pre><code>## [1] "Mean absolute error on test set: $3002.32"</code></pre>
+<pre><code>## [1] "Mean absolute error on test set: $3069.44"</code></pre>
 </div>
 <div id="predict" class="section level2">
 <h2>Predict</h2>
 <p>Finally, predict some housing prices using data in the testing set:</p>
 <div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb27-1" data-line-number="1">test_predictions &lt;-<span class="st"> </span>model <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/stats/predict.html">predict</a></span>(test_df <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span>(<span class="op">-</span>label))</a>
 <a class="sourceLine" id="cb27-2" data-line-number="2">test_predictions[ , <span class="dv">1</span>]</a></code></pre></div>
-<pre><code>##   [1]  7.759608 18.546511 21.525824 30.329552 26.206022 20.379061 28.972841
-##   [8] 22.936476 19.548115 23.058081 18.773306 17.231783 16.081644 44.336926
-##  [15] 19.217535 20.302008 28.332586 21.567612 20.574213 37.461048 11.579722
-##  [22] 14.513885 21.496672 16.669203 22.553066 26.068880 30.536131 30.404364
-##  [29] 10.445388 22.028477 19.943378 14.874774 33.198818 26.659334 17.360529
-##  [36]  8.178129 15.533298 19.064489 19.243929 28.054504 31.655251 29.567472
-##  [43] 14.953157 43.255310 31.586626 25.668932 28.000528 16.941755 24.727943
-##  [50] 23.172396 36.855518 19.777802 12.556808 15.813701 36.187881 29.673326
-##  [57] 13.030141 50.681965 33.722412 24.914156 25.301760 17.899117 14.868908
-##  [64] 18.992828 24.683514 23.111195 13.744761 23.787327 14.203387  7.391667
-##  [71] 37.876629 30.980328 26.656527 14.644408 27.063200 18.266968 21.141125
-##  [78] 24.851347 36.980850 10.906940 20.344542 40.068722 15.938128 14.283166
-##  [85] 18.121195 18.713694 21.409807 21.765066 22.943521 32.322598 19.994921
-##  [92] 21.079947 26.719408 43.338303 36.935383 18.671057 37.789886 55.973999
-##  [99] 27.252848 46.181122 32.272293 21.036985</code></pre>
+<pre><code>##   [1]  8.401820 18.236509 20.987589 31.553528 24.816038 20.516159 26.321260
+##   [8] 21.516766 19.361589 21.405149 17.935390 16.580130 15.633373 39.941414
+##  [15] 19.659840 19.751015 25.952154 19.856686 19.386898 37.265919 10.121957
+##  [22] 13.844292 20.973927 14.859567 20.185659 24.615591 30.272026 28.279585
+##  [29] 10.758582 20.911592 18.760612 14.933270 32.492630 24.390156 17.958868
+##  [36]  8.814427 16.063963 16.581886 20.233200 25.665295 29.434422 27.302374
+##  [43] 14.083190 39.019428 28.726635 24.783020 25.967201 15.971505 23.474302
+##  [50] 21.458017 34.033680 17.908318 10.934789 15.063132 35.060081 27.373322
+##  [57] 12.225057 47.107738 33.392853 23.280413 23.434225 16.957714 15.111055
+##  [64] 18.660273 22.262732 21.891981 12.455392 22.635939 13.105928  6.648910
+##  [71] 36.692093 29.076965 25.994709 12.972850 25.526169 17.029133 20.087521
+##  [78] 22.937769 33.949635 11.063923 19.552631 37.475002 15.162964 13.065963
+##  [85] 16.475054 17.657410 20.743801 19.904766 21.987076 30.728792 19.231541
+##  [92] 19.281410 25.659569 41.229191 33.798435 20.063398 35.562473 50.962578
+##  [99] 26.223234 45.397835 31.701273 19.300026</code></pre>
 </div>
 <div id="conclusion" class="section level2">
 <h2>Conclusion</h2>

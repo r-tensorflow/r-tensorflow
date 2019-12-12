@@ -18,7 +18,8 @@ aliases:
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE, eval = TRUE)
+reticulate::use_condaenv("tf-2.1")
+knitr::opts_chunk$set(echo = TRUE, eval = tensorflow::tf_version() > "2.0")
 ```
 
 > Note: This tutorial requires TensorFlow version >= 2.1
@@ -129,7 +130,7 @@ value for each one.
 
 ```{r}
 text_vectorization %>% 
-  adapt(df$text)
+  adapt(matrix(df$text, ncol = 1))
 ```
 
 We can now see the vocabulary is in our text vectorization layer.

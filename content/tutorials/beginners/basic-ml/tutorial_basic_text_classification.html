@@ -42,54 +42,28 @@ the Kaggle board. Then you can run:</p>
 <a class="sourceLine" id="cb2-2" data-line-number="2"><span class="co"># we only need the movie_review.csv file</span></a>
 <a class="sourceLine" id="cb2-3" data-line-number="3">path &lt;-<span class="st"> </span>paths[<span class="dv">1</span>]</a></code></pre></div>
 <p>Now let’s read it to R using the <code>read_csv</code> funcntion from the <code>readr</code> package.</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1">df &lt;-<span class="st"> </span>readr<span class="op">::</span><span class="kw"><a href="https://readr.tidyverse.org/reference/read_delim.html">read_csv</a></span>(path)</a></code></pre></div>
-<pre><code>## Parsed with column specification:
-## cols(
-##   fold_id = col_double(),
-##   cv_tag = col_character(),
-##   html_id = col_double(),
-##   sent_id = col_double(),
-##   text = col_character(),
-##   tag = col_character()
-## )</code></pre>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/utils/head.html">head</a></span>(df)</a></code></pre></div>
-<pre><code>## # A tibble: 6 x 6
-##   fold_id cv_tag html_id sent_id text                                 tag  
-##     &lt;dbl&gt; &lt;chr&gt;    &lt;dbl&gt;   &lt;dbl&gt; &lt;chr&gt;                                &lt;chr&gt;
-## 1       0 cv000    29590       0 films adapted from comic books have… pos  
-## 2       0 cv000    29590       1 for starters , it was created by al… pos  
-## 3       0 cv000    29590       2 to say moore and campbell thoroughl… pos  
-## 4       0 cv000    29590       3 "the book ( or \" graphic novel , \… pos  
-## 5       0 cv000    29590       4 in other words , don't dismiss this… pos  
-## 6       0 cv000    29590       5 if you can get past the whole comic… pos</code></pre>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1">df &lt;-<span class="st"> </span>readr<span class="op">::</span><span class="kw"><a href="https://readr.tidyverse.org/reference/read_delim.html">read_csv</a></span>(path)</a>
+<a class="sourceLine" id="cb3-2" data-line-number="2"><span class="kw"><a href="https://rdrr.io/r/utils/head.html">head</a></span>(df)</a></code></pre></div>
 </div>
 <div id="explore-the-data" class="section level2">
 <h2>Explore the data</h2>
 <p>Let’s take a moment to understand the format of the data. The dataset has 60k rows, each
 one representing a movie review. The <code>text</code> column has the actual review and the <code>tag</code>
 represents shows us the classified sentiment for the review.</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" data-line-number="1">df <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="https://dplyr.tidyverse.org/reference/tally.html">count</a></span>(tag)</a></code></pre></div>
-<pre><code>## # A tibble: 2 x 2
-##   tag       n
-##   &lt;chr&gt; &lt;int&gt;
-## 1 neg   31783
-## 2 pos   32937</code></pre>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" data-line-number="1">df <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="https://dplyr.tidyverse.org/reference/tally.html">count</a></span>(tag)</a></code></pre></div>
 <p>Around half of the reviews are negative and the other half are positive.
 Here is an example of a review:</p>
-<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" data-line-number="1">df<span class="op">$</span>text[<span class="dv">1</span>]</a></code></pre></div>
-<pre><code>## [1] "films adapted from comic books have had plenty of success , whether they're about superheroes ( batman , superman , spawn ) , or geared toward kids ( casper ) or the arthouse crowd ( ghost world ) , but there's never really been a comic book like from hell before ."</code></pre>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" data-line-number="1">df<span class="op">$</span>text[<span class="dv">1</span>]</a></code></pre></div>
 <p>Let’s also split our dataset into training and testing:</p>
-<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb11-1" data-line-number="1">training_id &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/sample.html">sample.int</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span>(df), <span class="dt">size =</span> <span class="kw"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span>(df)<span class="op">*</span><span class="fl">0.8</span>)</a>
-<a class="sourceLine" id="cb11-2" data-line-number="2">training &lt;-<span class="st"> </span>df[training_id,]</a>
-<a class="sourceLine" id="cb11-3" data-line-number="3">testing &lt;-<span class="st"> </span>df[<span class="op">-</span>training_id,]</a></code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" data-line-number="1">training_id &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/sample.html">sample.int</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span>(df), <span class="dt">size =</span> <span class="kw"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span>(df)<span class="op">*</span><span class="fl">0.8</span>)</a>
+<a class="sourceLine" id="cb6-2" data-line-number="2">training &lt;-<span class="st"> </span>df[training_id,]</a>
+<a class="sourceLine" id="cb6-3" data-line-number="3">testing &lt;-<span class="st"> </span>df[<span class="op">-</span>training_id,]</a></code></pre></div>
 <p>It’s also useful to find out what is the distribution of the number of words
 in each review.</p>
-<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb12-1" data-line-number="1">df<span class="op">$</span>text <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb12-2" data-line-number="2"><span class="st">  </span><span class="kw"><a href="https://rdrr.io/r/base/strsplit.html">strsplit</a></span>(<span class="st">" "</span>) <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb12-3" data-line-number="3"><span class="st">  </span><span class="kw"><a href="https://rdrr.io/r/base/lapply.html">sapply</a></span>(length) <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb12-4" data-line-number="4"><span class="st">  </span><span class="kw"><a href="https://rdrr.io/r/base/summary.html">summary</a></span>()</a></code></pre></div>
-<pre><code>##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-##    1.00   14.00   21.00   23.06   30.00  179.00</code></pre>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" data-line-number="1">df<span class="op">$</span>text <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb7-2" data-line-number="2"><span class="st">  </span><span class="kw"><a href="https://rdrr.io/r/base/strsplit.html">strsplit</a></span>(<span class="st">" "</span>) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb7-3" data-line-number="3"><span class="st">  </span><span class="kw"><a href="https://rdrr.io/r/base/lapply.html">sapply</a></span>(length) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb7-4" data-line-number="4"><span class="st">  </span><span class="kw"><a href="https://rdrr.io/r/base/summary.html">summary</a></span>()</a></code></pre></div>
 </div>
 <div id="prepare-the-data" class="section level2">
 <h2>Prepare the data</h2>
@@ -103,27 +77,22 @@ First, we create a dictionary and represent each of the 10,000 most common words
 <p>In this tutorial, we will use the second approach.
 Now, let’s define our Text Vectorization layer, it will be responsible to take
 the string input and convert it to a Tensor.</p>
-<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb14-1" data-line-number="1">num_words &lt;-<span class="st"> </span><span class="dv">10000</span></a>
-<a class="sourceLine" id="cb14-2" data-line-number="2">max_length &lt;-<span class="st"> </span><span class="dv">50</span></a>
-<a class="sourceLine" id="cb14-3" data-line-number="3">text_vectorization &lt;-<span class="st"> </span><span class="kw"><a href="../../../keras/reference/layer_text_vectorization.html">layer_text_vectorization</a></span>(</a>
-<a class="sourceLine" id="cb14-4" data-line-number="4">  <span class="dt">max_tokens =</span> num_words, </a>
-<a class="sourceLine" id="cb14-5" data-line-number="5">  <span class="dt">output_sequence_length =</span> max_length, </a>
-<a class="sourceLine" id="cb14-6" data-line-number="6">)</a></code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" data-line-number="1">num_words &lt;-<span class="st"> </span><span class="dv">10000</span></a>
+<a class="sourceLine" id="cb8-2" data-line-number="2">max_length &lt;-<span class="st"> </span><span class="dv">50</span></a>
+<a class="sourceLine" id="cb8-3" data-line-number="3">text_vectorization &lt;-<span class="st"> </span><span class="kw"><a href="../../../keras/reference/layer_text_vectorization.html">layer_text_vectorization</a></span>(</a>
+<a class="sourceLine" id="cb8-4" data-line-number="4">  <span class="dt">max_tokens =</span> num_words, </a>
+<a class="sourceLine" id="cb8-5" data-line-number="5">  <span class="dt">output_sequence_length =</span> max_length, </a>
+<a class="sourceLine" id="cb8-6" data-line-number="6">)</a></code></pre></div>
 <p>Now, we need to <code>adapt</code> the Text Vectorization layer. It’s when we call <code>adapt</code>
 that the layer will learn about unique words in our dataset and assign an integer
 value for each one.</p>
-<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb15-1" data-line-number="1">text_vectorization <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb15-2" data-line-number="2"><span class="st">  </span><span class="kw"><a href="../../../keras/reference/adapt.html">adapt</a></span>(df<span class="op">$</span>text)</a></code></pre></div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" data-line-number="1">text_vectorization <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb9-2" data-line-number="2"><span class="st">  </span><span class="kw"><a href="../../../keras/reference/adapt.html">adapt</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/matrix.html">matrix</a></span>(df<span class="op">$</span>text, <span class="dt">ncol =</span> <span class="dv">1</span>))</a></code></pre></div>
 <p>We can now see the vocabulary is in our text vectorization layer.</p>
-<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb16-1" data-line-number="1"><span class="co"># </span><span class="al">TODO</span><span class="co"> see https://github.com/tensorflow/tensorflow/pull/34529</span></a>
-<a class="sourceLine" id="cb16-2" data-line-number="2"><span class="kw"><a href="../../../keras/reference/get_vocabulary.html">get_vocabulary</a></span>(text_vectorization)</a></code></pre></div>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" data-line-number="1"><span class="co"># </span><span class="al">TODO</span><span class="co"> see https://github.com/tensorflow/tensorflow/pull/34529</span></a>
+<a class="sourceLine" id="cb10-2" data-line-number="2"><span class="kw"><a href="../../../keras/reference/get_vocabulary.html">get_vocabulary</a></span>(text_vectorization)</a></code></pre></div>
 <p>You can see how the text vectorization layer transforms it’s inputs:</p>
-<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb17-1" data-line-number="1"><span class="kw">text_vectorization</span>(<span class="kw"><a href="https://rdrr.io/r/base/matrix.html">matrix</a></span>(df<span class="op">$</span>text[<span class="dv">1</span>], <span class="dt">ncol =</span> <span class="dv">1</span>))</a></code></pre></div>
-<pre><code>## tf.Tensor(
-## [[  68 2835   30  359 1662   33   91 1056    5  632  631  321   41 7803
-##    709 4865 1767   48 7600 1337  398 5161   48    2    1 1808 1800  148
-##     17  140  109   90   69    3  359  408   40   30  503  142    0    0
-##      0    0    0    0    0    0    0    0]], shape=(1, 50), dtype=int64)</code></pre>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb11-1" data-line-number="1"><span class="kw">text_vectorization</span>(<span class="kw"><a href="https://rdrr.io/r/base/matrix.html">matrix</a></span>(df<span class="op">$</span>text[<span class="dv">1</span>], <span class="dt">ncol =</span> <span class="dv">1</span>))</a></code></pre></div>
 </div>
 <div id="build-the-model" class="section level2">
 <h2>Build the model</h2>
@@ -133,17 +102,17 @@ value for each one.</p>
 <li>How many hidden units to use for each layer?</li>
 </ul>
 <p>In this example, the input data consists of an array of word-indices. The labels to predict are either 0 or 1. Let’s build a model for this problem:</p>
-<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb19-1" data-line-number="1">input &lt;-<span class="st"> </span><span class="kw"><a href="../../../keras/reference/layer_input.html">layer_input</a></span>(<span class="dt">shape =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="dv">1</span>), <span class="dt">dtype =</span> <span class="st">"string"</span>)</a>
-<a class="sourceLine" id="cb19-2" data-line-number="2"></a>
-<a class="sourceLine" id="cb19-3" data-line-number="3">output &lt;-<span class="st"> </span>input <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb19-4" data-line-number="4"><span class="st">  </span><span class="kw">text_vectorization</span>() <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb19-5" data-line-number="5"><span class="st">  </span><span class="kw"><a href="../../../keras/reference/layer_embedding.html">layer_embedding</a></span>(<span class="dt">input_dim =</span> num_words <span class="op">+</span><span class="st"> </span><span class="dv">1</span>, <span class="dt">output_dim =</span> <span class="dv">16</span>) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb19-6" data-line-number="6"><span class="st">  </span><span class="kw"><a href="../../../keras/reference/layer_global_average_pooling_1d.html">layer_global_average_pooling_1d</a></span>() <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb19-7" data-line-number="7"><span class="st">  </span><span class="kw"><a href="../../../keras/reference/layer_dense.html">layer_dense</a></span>(<span class="dt">units =</span> <span class="dv">16</span>, <span class="dt">activation =</span> <span class="st">"relu"</span>) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb19-8" data-line-number="8"><span class="st">  </span><span class="kw"><a href="../../../keras/reference/layer_dropout.html">layer_dropout</a></span>(<span class="fl">0.5</span>) <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb19-9" data-line-number="9"><span class="st">  </span><span class="kw"><a href="../../../keras/reference/layer_dense.html">layer_dense</a></span>(<span class="dt">units =</span> <span class="dv">1</span>, <span class="dt">activation =</span> <span class="st">"sigmoid"</span>)</a>
-<a class="sourceLine" id="cb19-10" data-line-number="10"></a>
-<a class="sourceLine" id="cb19-11" data-line-number="11">model &lt;-<span class="st"> </span><span class="kw"><a href="../../../keras/reference/keras_model.html">keras_model</a></span>(input, output)</a></code></pre></div>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb12-1" data-line-number="1">input &lt;-<span class="st"> </span><span class="kw"><a href="../../../keras/reference/layer_input.html">layer_input</a></span>(<span class="dt">shape =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="dv">1</span>), <span class="dt">dtype =</span> <span class="st">"string"</span>)</a>
+<a class="sourceLine" id="cb12-2" data-line-number="2"></a>
+<a class="sourceLine" id="cb12-3" data-line-number="3">output &lt;-<span class="st"> </span>input <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb12-4" data-line-number="4"><span class="st">  </span><span class="kw">text_vectorization</span>() <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb12-5" data-line-number="5"><span class="st">  </span><span class="kw"><a href="../../../keras/reference/layer_embedding.html">layer_embedding</a></span>(<span class="dt">input_dim =</span> num_words <span class="op">+</span><span class="st"> </span><span class="dv">1</span>, <span class="dt">output_dim =</span> <span class="dv">16</span>) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb12-6" data-line-number="6"><span class="st">  </span><span class="kw"><a href="../../../keras/reference/layer_global_average_pooling_1d.html">layer_global_average_pooling_1d</a></span>() <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb12-7" data-line-number="7"><span class="st">  </span><span class="kw"><a href="../../../keras/reference/layer_dense.html">layer_dense</a></span>(<span class="dt">units =</span> <span class="dv">16</span>, <span class="dt">activation =</span> <span class="st">"relu"</span>) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb12-8" data-line-number="8"><span class="st">  </span><span class="kw"><a href="../../../keras/reference/layer_dropout.html">layer_dropout</a></span>(<span class="fl">0.5</span>) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb12-9" data-line-number="9"><span class="st">  </span><span class="kw"><a href="../../../keras/reference/layer_dense.html">layer_dense</a></span>(<span class="dt">units =</span> <span class="dv">1</span>, <span class="dt">activation =</span> <span class="st">"sigmoid"</span>)</a>
+<a class="sourceLine" id="cb12-10" data-line-number="10"></a>
+<a class="sourceLine" id="cb12-11" data-line-number="11">model &lt;-<span class="st"> </span><span class="kw"><a href="../../../keras/reference/keras_model.html">keras_model</a></span>(input, output)</a></code></pre></div>
 <p>The layers are stacked sequentially to build the classifier:</p>
 <ul>
 <li>The first layer is an <code>embedding</code> layer. This layer takes the integer-encoded vocabulary and looks up the embedding vector for each word-index. These vectors are learned as the model trains. The vectors add a dimension to the output array. The resulting dimensions are: (<code>batch, sequence, embedding</code>).</li>
@@ -162,64 +131,37 @@ value for each one.</p>
 <p>This isn’t the only choice for a loss function, you could, for instance, choose <code>mean_squared_error</code>. But, generally, binary_crossentropy is better for dealing with probabilities — it measures the “distance” between probability distributions, or in our case, between the ground-truth distribution and the predictions.</p>
 <p>Later, when we are exploring regression problems (say, to predict the price of a house), we will see how to use another loss function called mean squared error.</p>
 <p>Now, configure the model to use an optimizer and a loss function:</p>
-<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb20-1" data-line-number="1">model <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../../../keras/reference/reexports.html">compile</a></span>(</a>
-<a class="sourceLine" id="cb20-2" data-line-number="2">  <span class="dt">optimizer =</span> <span class="st">'adam'</span>,</a>
-<a class="sourceLine" id="cb20-3" data-line-number="3">  <span class="dt">loss =</span> <span class="st">'binary_crossentropy'</span>,</a>
-<a class="sourceLine" id="cb20-4" data-line-number="4">  <span class="dt">metrics =</span> <span class="kw"><a href="https://rdrr.io/r/base/list.html">list</a></span>(<span class="st">'accuracy'</span>)</a>
-<a class="sourceLine" id="cb20-5" data-line-number="5">)</a></code></pre></div>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb13-1" data-line-number="1">model <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../../../keras/reference/reexports.html">compile</a></span>(</a>
+<a class="sourceLine" id="cb13-2" data-line-number="2">  <span class="dt">optimizer =</span> <span class="st">'adam'</span>,</a>
+<a class="sourceLine" id="cb13-3" data-line-number="3">  <span class="dt">loss =</span> <span class="st">'binary_crossentropy'</span>,</a>
+<a class="sourceLine" id="cb13-4" data-line-number="4">  <span class="dt">metrics =</span> <span class="kw"><a href="https://rdrr.io/r/base/list.html">list</a></span>(<span class="st">'accuracy'</span>)</a>
+<a class="sourceLine" id="cb13-5" data-line-number="5">)</a></code></pre></div>
 </div>
 </div>
 <div id="train-the-model" class="section level2">
 <h2>Train the model</h2>
 <p>Train the model for 20 epochs in mini-batches of 512 samples. This is 20 iterations over all samples in the x_train and y_train tensors. While training, monitor the model’s loss and accuracy on the 10,000 samples from the validation set:</p>
-<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb21-1" data-line-number="1">history &lt;-<span class="st"> </span>model <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../../../keras/reference/reexports.html">fit</a></span>(</a>
-<a class="sourceLine" id="cb21-2" data-line-number="2">  training<span class="op">$</span>text,</a>
-<a class="sourceLine" id="cb21-3" data-line-number="3">  <span class="kw"><a href="https://rdrr.io/r/base/numeric.html">as.numeric</a></span>(training<span class="op">$</span>tag <span class="op">==</span><span class="st"> "pos"</span>),</a>
-<a class="sourceLine" id="cb21-4" data-line-number="4">  <span class="dt">epochs =</span> <span class="dv">10</span>,</a>
-<a class="sourceLine" id="cb21-5" data-line-number="5">  <span class="dt">batch_size =</span> <span class="dv">512</span>,</a>
-<a class="sourceLine" id="cb21-6" data-line-number="6">  <span class="dt">validation_split =</span> <span class="fl">0.2</span>,</a>
-<a class="sourceLine" id="cb21-7" data-line-number="7">  <span class="dt">verbose=</span><span class="dv">2</span></a>
-<a class="sourceLine" id="cb21-8" data-line-number="8">)</a></code></pre></div>
-<pre><code>## Train on 41420 samples, validate on 10356 samples
-## Epoch 1/10
-## 41420/41420 - 1s - loss: 0.6921 - accuracy: 0.5185 - val_loss: 0.6898 - val_accuracy: 0.5410
-## Epoch 2/10
-## 41420/41420 - 0s - loss: 0.6862 - accuracy: 0.5600 - val_loss: 0.6805 - val_accuracy: 0.5965
-## Epoch 3/10
-## 41420/41420 - 0s - loss: 0.6716 - accuracy: 0.6050 - val_loss: 0.6633 - val_accuracy: 0.6400
-## Epoch 4/10
-## 41420/41420 - 0s - loss: 0.6468 - accuracy: 0.6515 - val_loss: 0.6399 - val_accuracy: 0.6619
-## Epoch 5/10
-## 41420/41420 - 0s - loss: 0.6161 - accuracy: 0.6796 - val_loss: 0.6184 - val_accuracy: 0.6747
-## Epoch 6/10
-## 41420/41420 - 0s - loss: 0.5875 - accuracy: 0.7029 - val_loss: 0.6039 - val_accuracy: 0.6808
-## Epoch 7/10
-## 41420/41420 - 1s - loss: 0.5632 - accuracy: 0.7212 - val_loss: 0.5963 - val_accuracy: 0.6831
-## Epoch 8/10
-## 41420/41420 - 0s - loss: 0.5448 - accuracy: 0.7336 - val_loss: 0.5917 - val_accuracy: 0.6863
-## Epoch 9/10
-## 41420/41420 - 0s - loss: 0.5297 - accuracy: 0.7442 - val_loss: 0.5937 - val_accuracy: 0.6842
-## Epoch 10/10
-## 41420/41420 - 0s - loss: 0.5165 - accuracy: 0.7539 - val_loss: 0.5953 - val_accuracy: 0.6868</code></pre>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb14-1" data-line-number="1">history &lt;-<span class="st"> </span>model <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../../../keras/reference/reexports.html">fit</a></span>(</a>
+<a class="sourceLine" id="cb14-2" data-line-number="2">  training<span class="op">$</span>text,</a>
+<a class="sourceLine" id="cb14-3" data-line-number="3">  <span class="kw"><a href="https://rdrr.io/r/base/numeric.html">as.numeric</a></span>(training<span class="op">$</span>tag <span class="op">==</span><span class="st"> "pos"</span>),</a>
+<a class="sourceLine" id="cb14-4" data-line-number="4">  <span class="dt">epochs =</span> <span class="dv">10</span>,</a>
+<a class="sourceLine" id="cb14-5" data-line-number="5">  <span class="dt">batch_size =</span> <span class="dv">512</span>,</a>
+<a class="sourceLine" id="cb14-6" data-line-number="6">  <span class="dt">validation_split =</span> <span class="fl">0.2</span>,</a>
+<a class="sourceLine" id="cb14-7" data-line-number="7">  <span class="dt">verbose=</span><span class="dv">2</span></a>
+<a class="sourceLine" id="cb14-8" data-line-number="8">)</a></code></pre></div>
 </div>
 <div id="evaluate-the-model" class="section level2">
 <h2>Evaluate the model</h2>
 <p>And let’s see how the model performs. Two values will be returned. Loss (a number which represents our error, lower values are better), and accuracy.</p>
-<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb23-1" data-line-number="1">results &lt;-<span class="st"> </span>model <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../../../keras/reference/reexports.html">evaluate</a></span>(testing<span class="op">$</span>text, <span class="kw"><a href="https://rdrr.io/r/base/numeric.html">as.numeric</a></span>(testing<span class="op">$</span>tag <span class="op">==</span><span class="st"> "pos"</span>), <span class="dt">verbose =</span> <span class="dv">0</span>)</a>
-<a class="sourceLine" id="cb23-2" data-line-number="2">results</a></code></pre></div>
-<pre><code>## $loss
-## [1] 0.5940198
-## 
-## $accuracy
-## [1] 0.6830192</code></pre>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb15-1" data-line-number="1">results &lt;-<span class="st"> </span>model <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../../../keras/reference/reexports.html">evaluate</a></span>(testing<span class="op">$</span>text, <span class="kw"><a href="https://rdrr.io/r/base/numeric.html">as.numeric</a></span>(testing<span class="op">$</span>tag <span class="op">==</span><span class="st"> "pos"</span>), <span class="dt">verbose =</span> <span class="dv">0</span>)</a>
+<a class="sourceLine" id="cb15-2" data-line-number="2">results</a></code></pre></div>
 <p>This fairly naive approach achieves an accuracy of about 68%. With more advanced approaches, the model should get closer to 85%.</p>
 </div>
 <div id="create-a-graph-of-accuracy-and-loss-over-time" class="section level2">
 <h2>Create a graph of accuracy and loss over time</h2>
 <p><code>fit</code> returns a <code>keras_training_history</code> object whose <code>metrics</code> slot contains loss and metrics values recorded during training.
 You can conveniently plot the loss and metrics curves like so:</p>
-<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb25-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/graphics/plot.html">plot</a></span>(history)</a></code></pre></div>
-<p><img src="/tutorials/beginners/basic-ml/tutorial_basic_text_classification_files/figure-html/unnamed-chunk-16-1.png" width="672"></p>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb16-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/graphics/plot.html">plot</a></span>(history)</a></code></pre></div>
 <p>The evolution of loss and metrics can also be seen during training in the RStudio Viewer pane.</p>
 <p>Notice the training loss decreases with each epoch and the training accuracy increases with each epoch. This is expected when using gradient descent optimization — it should minimize the desired quantity on every iteration.</p>
 </div>

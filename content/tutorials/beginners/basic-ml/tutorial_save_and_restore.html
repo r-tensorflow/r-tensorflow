@@ -97,15 +97,15 @@ aliases:
 <a class="sourceLine" id="cb4-3" data-line-number="3">model <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../../../keras/reference/reexports.html">fit</a></span>(train_images, train_labels, <span class="dt">epochs =</span> <span class="dv">5</span>, <span class="dt">verbose =</span> <span class="dv">2</span>)</a></code></pre></div>
 <pre><code>## Train on 1000 samples
 ## Epoch 1/5
-## 1000/1000 - 0s - loss: 1.1809 - accuracy: 0.6680
+## 1000/1000 - 0s - loss: 1.1261 - accuracy: 0.6750
 ## Epoch 2/5
-## 1000/1000 - 0s - loss: 0.4156 - accuracy: 0.8860
+## 1000/1000 - 0s - loss: 0.4136 - accuracy: 0.8740
 ## Epoch 3/5
-## 1000/1000 - 0s - loss: 0.2836 - accuracy: 0.9250
+## 1000/1000 - 0s - loss: 0.2785 - accuracy: 0.9320
 ## Epoch 4/5
-## 1000/1000 - 0s - loss: 0.2241 - accuracy: 0.9370
+## 1000/1000 - 0s - loss: 0.2096 - accuracy: 0.9490
 ## Epoch 5/5
-## 1000/1000 - 0s - loss: 0.1473 - accuracy: 0.9680</code></pre>
+## 1000/1000 - 0s - loss: 0.1438 - accuracy: 0.9720</code></pre>
 <div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" data-line-number="1">model <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../../../keras/reference/save_model_tf.html">save_model_tf</a></span>(<span class="st">"model"</span>)</a></code></pre></div>
 <p>The SavedModel format is a directory containing a protobuf binary and a Tensorflow checkpoint. Inspect the saved model directory:</p>
 <div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/base/list.files.html">list.files</a></span>(<span class="st">"model"</span>)</a></code></pre></div>
@@ -136,15 +136,15 @@ aliases:
 <a class="sourceLine" id="cb11-3" data-line-number="3">model <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../../../keras/reference/reexports.html">fit</a></span>(train_images, train_labels, <span class="dt">epochs =</span> <span class="dv">5</span>, <span class="dt">verbose =</span> <span class="dv">2</span>)</a></code></pre></div>
 <pre><code>## Train on 1000 samples
 ## Epoch 1/5
-## 1000/1000 - 0s - loss: 1.1386 - accuracy: 0.6780
+## 1000/1000 - 0s - loss: 1.1374 - accuracy: 0.6760
 ## Epoch 2/5
-## 1000/1000 - 0s - loss: 0.4326 - accuracy: 0.8770
+## 1000/1000 - 0s - loss: 0.4248 - accuracy: 0.8910
 ## Epoch 3/5
-## 1000/1000 - 0s - loss: 0.2874 - accuracy: 0.9310
+## 1000/1000 - 0s - loss: 0.2828 - accuracy: 0.9260
 ## Epoch 4/5
-## 1000/1000 - 0s - loss: 0.2164 - accuracy: 0.9460
+## 1000/1000 - 0s - loss: 0.2002 - accuracy: 0.9550
 ## Epoch 5/5
-## 1000/1000 - 0s - loss: 0.1536 - accuracy: 0.9690</code></pre>
+## 1000/1000 - 0s - loss: 0.1554 - accuracy: 0.9650</code></pre>
 <div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb13-1" data-line-number="1">model <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../../../keras/reference/save_model_hdf5.html">save_model_hdf5</a></span>(<span class="st">"my_model.h5"</span>)</a></code></pre></div>
 <p>Now recreate the model from that file:</p>
 <div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb14-1" data-line-number="1">new_model &lt;-<span class="st"> </span><span class="kw"><a href="../../../keras/reference/save_model_hdf5.html">load_model_hdf5</a></span>(<span class="st">"my_model.h5"</span>)</a>
@@ -221,25 +221,25 @@ aliases:
 <a class="sourceLine" id="cb16-19" data-line-number="19">)</a></code></pre></div>
 <pre><code>## Train on 1000 samples, validate on 1000 samples
 ## Epoch 1/10
-## 1000/1000 - 0s - loss: 1.1775 - accuracy: 0.6750 - val_loss: 0.6874 - val_accuracy: 0.7980
+## 1000/1000 - 0s - loss: 1.1944 - accuracy: 0.6630 - val_loss: 0.7363 - val_accuracy: 0.7780
 ## Epoch 2/10
-## 1000/1000 - 0s - loss: 0.4144 - accuracy: 0.8810 - val_loss: 0.5366 - val_accuracy: 0.8320
+## 1000/1000 - 0s - loss: 0.4396 - accuracy: 0.8840 - val_loss: 0.5276 - val_accuracy: 0.8420
 ## Epoch 3/10
-## 1000/1000 - 0s - loss: 0.2811 - accuracy: 0.9280 - val_loss: 0.4517 - val_accuracy: 0.8610
+## 1000/1000 - 0s - loss: 0.3021 - accuracy: 0.9140 - val_loss: 0.4812 - val_accuracy: 0.8490
 ## Epoch 4/10
-## 1000/1000 - 0s - loss: 0.2205 - accuracy: 0.9430 - val_loss: 0.4692 - val_accuracy: 0.8500
+## 1000/1000 - 0s - loss: 0.2101 - accuracy: 0.9440 - val_loss: 0.4602 - val_accuracy: 0.8530
 ## Epoch 5/10
-## 1000/1000 - 0s - loss: 0.1520 - accuracy: 0.9690 - val_loss: 0.4084 - val_accuracy: 0.8660
+## 1000/1000 - 0s - loss: 0.1585 - accuracy: 0.9630 - val_loss: 0.4199 - val_accuracy: 0.8620
 ## Epoch 6/10
-## 1000/1000 - 0s - loss: 0.1147 - accuracy: 0.9780 - val_loss: 0.3946 - val_accuracy: 0.8680
+## 1000/1000 - 0s - loss: 0.1089 - accuracy: 0.9820 - val_loss: 0.4184 - val_accuracy: 0.8640
 ## Epoch 7/10
-## 1000/1000 - 0s - loss: 0.0831 - accuracy: 0.9870 - val_loss: 0.4008 - val_accuracy: 0.8710
+## 1000/1000 - 0s - loss: 0.0901 - accuracy: 0.9860 - val_loss: 0.4225 - val_accuracy: 0.8660
 ## Epoch 8/10
-## 1000/1000 - 0s - loss: 0.0607 - accuracy: 0.9970 - val_loss: 0.4056 - val_accuracy: 0.8640
+## 1000/1000 - 0s - loss: 0.0706 - accuracy: 0.9890 - val_loss: 0.4039 - val_accuracy: 0.8660
 ## Epoch 9/10
-## 1000/1000 - 0s - loss: 0.0510 - accuracy: 0.9970 - val_loss: 0.4031 - val_accuracy: 0.8720
+## 1000/1000 - 0s - loss: 0.0498 - accuracy: 0.9990 - val_loss: 0.4016 - val_accuracy: 0.8670
 ## Epoch 10/10
-## 1000/1000 - 0s - loss: 0.0465 - accuracy: 0.9960 - val_loss: 0.3923 - val_accuracy: 0.8710</code></pre>
+## 1000/1000 - 0s - loss: 0.0416 - accuracy: 1.0000 - val_loss: 0.3941 - val_accuracy: 0.8710</code></pre>
 <p>Inspect the files that were created:</p>
 <div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb18-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/base/list.files.html">list.files</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/basename.html">dirname</a></span>(checkpoint_path))</a></code></pre></div>
 <pre><code>## [1] "checkpoint"                  "cp.ckpt.data-00000-of-00001"
@@ -249,15 +249,15 @@ aliases:
 <div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb20-1" data-line-number="1">fresh_model &lt;-<span class="st"> </span><span class="kw">create_model</span>()</a>
 <a class="sourceLine" id="cb20-2" data-line-number="2">fresh_model <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../../../keras/reference/reexports.html">evaluate</a></span>(test_images, test_labels, <span class="dt">verbose =</span> <span class="dv">0</span>)</a></code></pre></div>
 <pre><code>## $loss
-## [1] 2.321936
+## [1] 2.399993
 ## 
 ## $accuracy
-## [1] 0.126</code></pre>
+## [1] 0.101</code></pre>
 <p>Then load the weights from the latest checkpoint (epoch 10), and re-evaluate:</p>
 <div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb22-1" data-line-number="1">fresh_model <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../../../keras/reference/save_model_weights_tf.html">load_model_weights_tf</a></span>(<span class="dt">filepath =</span> checkpoint_path)</a>
 <a class="sourceLine" id="cb22-2" data-line-number="2">fresh_model <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../../../keras/reference/reexports.html">evaluate</a></span>(test_images, test_labels, <span class="dt">verbose =</span> <span class="dv">0</span>)</a></code></pre></div>
 <pre><code>## $loss
-## [1] 0.3923183
+## [1] 0.394114
 ## 
 ## $accuracy
 ## [1] 0.871</code></pre>
@@ -289,44 +289,44 @@ See the <a href="https://tensorflow.rstudio.com/keras/reference/callback_model_c
 <pre><code>## Train on 1000 samples, validate on 1000 samples
 ## Epoch 1/10
 ## 
-## Epoch 00001: val_loss improved from inf to 0.72178, saving model to checkpoints/cp.ckpt
-## 1000/1000 - 0s - loss: 1.1691 - accuracy: 0.6620 - val_loss: 0.7218 - val_accuracy: 0.7760
+## Epoch 00001: val_loss improved from inf to 0.71996, saving model to checkpoints/cp.ckpt
+## 1000/1000 - 0s - loss: 1.1466 - accuracy: 0.6610 - val_loss: 0.7200 - val_accuracy: 0.7860
 ## Epoch 2/10
 ## 
-## Epoch 00002: val_loss improved from 0.72178 to 0.56689, saving model to checkpoints/cp.ckpt
-## 1000/1000 - 0s - loss: 0.4227 - accuracy: 0.8850 - val_loss: 0.5669 - val_accuracy: 0.8110
+## Epoch 00002: val_loss improved from 0.71996 to 0.53675, saving model to checkpoints/cp.ckpt
+## 1000/1000 - 0s - loss: 0.4159 - accuracy: 0.8880 - val_loss: 0.5367 - val_accuracy: 0.8340
 ## Epoch 3/10
 ## 
-## Epoch 00003: val_loss improved from 0.56689 to 0.51581, saving model to checkpoints/cp.ckpt
-## 1000/1000 - 0s - loss: 0.3018 - accuracy: 0.9160 - val_loss: 0.5158 - val_accuracy: 0.8380
+## Epoch 00003: val_loss improved from 0.53675 to 0.47943, saving model to checkpoints/cp.ckpt
+## 1000/1000 - 0s - loss: 0.2886 - accuracy: 0.9290 - val_loss: 0.4794 - val_accuracy: 0.8470
 ## Epoch 4/10
 ## 
-## Epoch 00004: val_loss improved from 0.51581 to 0.44739, saving model to checkpoints/cp.ckpt
-## 1000/1000 - 0s - loss: 0.2120 - accuracy: 0.9480 - val_loss: 0.4474 - val_accuracy: 0.8540
+## Epoch 00004: val_loss improved from 0.47943 to 0.44316, saving model to checkpoints/cp.ckpt
+## 1000/1000 - 0s - loss: 0.2244 - accuracy: 0.9410 - val_loss: 0.4432 - val_accuracy: 0.8590
 ## Epoch 5/10
 ## 
-## Epoch 00005: val_loss did not improve from 0.44739
-## 1000/1000 - 0s - loss: 0.1519 - accuracy: 0.9700 - val_loss: 0.4602 - val_accuracy: 0.8510
+## Epoch 00005: val_loss did not improve from 0.44316
+## 1000/1000 - 0s - loss: 0.1526 - accuracy: 0.9640 - val_loss: 0.4440 - val_accuracy: 0.8540
 ## Epoch 6/10
 ## 
-## Epoch 00006: val_loss improved from 0.44739 to 0.42596, saving model to checkpoints/cp.ckpt
-## 1000/1000 - 0s - loss: 0.1257 - accuracy: 0.9750 - val_loss: 0.4260 - val_accuracy: 0.8630
+## Epoch 00006: val_loss improved from 0.44316 to 0.41255, saving model to checkpoints/cp.ckpt
+## 1000/1000 - 0s - loss: 0.1124 - accuracy: 0.9830 - val_loss: 0.4126 - val_accuracy: 0.8690
 ## Epoch 7/10
 ## 
-## Epoch 00007: val_loss improved from 0.42596 to 0.40990, saving model to checkpoints/cp.ckpt
-## 1000/1000 - 0s - loss: 0.0866 - accuracy: 0.9850 - val_loss: 0.4099 - val_accuracy: 0.8610
+## Epoch 00007: val_loss did not improve from 0.41255
+## 1000/1000 - 0s - loss: 0.0800 - accuracy: 0.9890 - val_loss: 0.4192 - val_accuracy: 0.8610
 ## Epoch 8/10
 ## 
-## Epoch 00008: val_loss did not improve from 0.40990
-## 1000/1000 - 0s - loss: 0.0688 - accuracy: 0.9930 - val_loss: 0.4210 - val_accuracy: 0.8560
+## Epoch 00008: val_loss did not improve from 0.41255
+## 1000/1000 - 0s - loss: 0.0693 - accuracy: 0.9890 - val_loss: 0.4172 - val_accuracy: 0.8670
 ## Epoch 9/10
 ## 
-## Epoch 00009: val_loss did not improve from 0.40990
-## 1000/1000 - 0s - loss: 0.0517 - accuracy: 0.9970 - val_loss: 0.4326 - val_accuracy: 0.8640
+## Epoch 00009: val_loss did not improve from 0.41255
+## 1000/1000 - 0s - loss: 0.0528 - accuracy: 0.9950 - val_loss: 0.4196 - val_accuracy: 0.8700
 ## Epoch 10/10
 ## 
-## Epoch 00010: val_loss did not improve from 0.40990
-## 1000/1000 - 0s - loss: 0.0386 - accuracy: 1.0000 - val_loss: 0.4521 - val_accuracy: 0.8510</code></pre>
+## Epoch 00010: val_loss improved from 0.41255 to 0.40041, saving model to checkpoints/cp.ckpt
+## 1000/1000 - 0s - loss: 0.0375 - accuracy: 1.0000 - val_loss: 0.4004 - val_accuracy: 0.8690</code></pre>
 <div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb26-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/base/list.files.html">list.files</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/basename.html">dirname</a></span>(checkpoint_path))</a></code></pre></div>
 <pre><code>## [1] "checkpoint"                  "cp.ckpt.data-00000-of-00001"
 ## [3] "cp.ckpt.index"</code></pre>
@@ -356,8 +356,8 @@ See the <a href="https://tensorflow.rstudio.com/keras/reference/callback_model_c
 <a class="sourceLine" id="cb28-10" data-line-number="10"><span class="co"># Evaluate the model</span></a>
 <a class="sourceLine" id="cb28-11" data-line-number="11">new_model <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../../../keras/reference/reexports.html">evaluate</a></span>(test_images, test_labels, <span class="dt">verbose =</span> <span class="dv">0</span>)</a></code></pre></div>
 <pre><code>## $loss
-## [1] 0.4520541
+## [1] 0.4004107
 ## 
 ## $accuracy
-## [1] 0.851</code></pre>
+## [1] 0.869</code></pre>
 </div>

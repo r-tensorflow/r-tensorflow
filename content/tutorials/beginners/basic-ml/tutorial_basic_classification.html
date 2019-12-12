@@ -198,15 +198,15 @@ Verify that the data is in the correct format and we’re ready to build and tra
 <div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb24-1" data-line-number="1">model <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../../../keras/reference/reexports.html">fit</a></span>(train_images, train_labels, <span class="dt">epochs =</span> <span class="dv">5</span>, <span class="dt">verbose =</span> <span class="dv">2</span>)</a></code></pre></div>
 <pre><code>## Train on 60000 samples
 ## Epoch 1/5
-## 60000/60000 - 2s - loss: 0.4945 - accuracy: 0.8262
+## 60000/60000 - 3s - loss: 0.4959 - accuracy: 0.8257
 ## Epoch 2/5
-## 60000/60000 - 2s - loss: 0.3751 - accuracy: 0.8643
+## 60000/60000 - 2s - loss: 0.3763 - accuracy: 0.8641
 ## Epoch 3/5
-## 60000/60000 - 2s - loss: 0.3354 - accuracy: 0.8758
+## 60000/60000 - 3s - loss: 0.3358 - accuracy: 0.8774
 ## Epoch 4/5
-## 60000/60000 - 2s - loss: 0.3135 - accuracy: 0.8854
+## 60000/60000 - 2s - loss: 0.3145 - accuracy: 0.8857
 ## Epoch 5/5
-## 60000/60000 - 2s - loss: 0.2956 - accuracy: 0.8918</code></pre>
+## 60000/60000 - 2s - loss: 0.2963 - accuracy: 0.8904</code></pre>
 <p>As the model trains, the loss and accuracy metrics are displayed. This model reaches an accuracy of about 0.88 (or 88%) on the training data.</p>
 </div>
 <div id="evaluate-accuracy" class="section level3">
@@ -215,9 +215,9 @@ Verify that the data is in the correct format and we’re ready to build and tra
 <div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb26-1" data-line-number="1">score &lt;-<span class="st"> </span>model <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../../../keras/reference/reexports.html">evaluate</a></span>(test_images, test_labels, <span class="dt">verbose =</span> <span class="dv">0</span>)</a>
 <a class="sourceLine" id="cb26-2" data-line-number="2"></a>
 <a class="sourceLine" id="cb26-3" data-line-number="3"><span class="kw"><a href="https://rdrr.io/r/base/cat.html">cat</a></span>(<span class="st">'Test loss:'</span>, score<span class="op">$</span>loss, <span class="st">"</span><span class="ch">\n</span><span class="st">"</span>)</a></code></pre></div>
-<pre><code>## Test loss: 0.3870942</code></pre>
+<pre><code>## Test loss: 0.3558974</code></pre>
 <div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb28-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/base/cat.html">cat</a></span>(<span class="st">'Test accuracy:'</span>, score<span class="op">$</span>acc, <span class="st">"</span><span class="ch">\n</span><span class="st">"</span>)</a></code></pre></div>
-<pre><code>## Test accuracy: 0.8644</code></pre>
+<pre><code>## Test accuracy: 0.8738</code></pre>
 <pre><code>10000/10000 [==============================] - 0s 19us/step
 Test loss: 0.3755946 
 Test accuracy: 0.8644 </code></pre>
@@ -229,15 +229,15 @@ Test accuracy: 0.8644 </code></pre>
 <div class="sourceCode" id="cb31"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb31-1" data-line-number="1">predictions &lt;-<span class="st"> </span>model <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/stats/predict.html">predict</a></span>(test_images)</a></code></pre></div>
 <p>Here, the model has predicted the label for each image in the testing set. Let’s take a look at the first prediction:</p>
 <div class="sourceCode" id="cb32"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb32-1" data-line-number="1">predictions[<span class="dv">1</span>, ]</a></code></pre></div>
-<pre><code>##  [1] 5.465935e-06 1.288366e-07 3.570543e-06 1.659937e-08 2.075325e-05
-##  [6] 1.836076e-02 2.499909e-06 1.217376e-01 2.614871e-05 8.598431e-01</code></pre>
+<pre><code>##  [1] 3.822324e-06 2.019062e-08 1.416017e-07 2.816890e-08 2.893030e-07
+##  [6] 4.805950e-03 3.916130e-06 6.512137e-03 3.137837e-05 9.886424e-01</code></pre>
 <p>A prediction is an array of 10 numbers. These describe the “confidence” of the model that the image corresponds to each of the 10 different articles of clothing. We can see which label has the highest confidence value:</p>
 <div class="sourceCode" id="cb34"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb34-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/base/which.min.html">which.max</a></span>(predictions[<span class="dv">1</span>, ])</a></code></pre></div>
 <pre><code>## [1] 10</code></pre>
 <p>Alternatively, we can also directly get the class prediction:</p>
 <div class="sourceCode" id="cb36"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb36-1" data-line-number="1">class_pred &lt;-<span class="st"> </span>model <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../../../keras/reference/predict_proba.html">predict_classes</a></span>(test_images)</a>
 <a class="sourceLine" id="cb36-2" data-line-number="2">class_pred[<span class="dv">1</span><span class="op">:</span><span class="dv">20</span>]</a></code></pre></div>
-<pre><code>##  [1] 9 2 1 1 6 1 4 6 5 7 4 5 5 3 4 1 2 2 8 0</code></pre>
+<pre><code>##  [1] 9 2 1 1 6 1 4 6 5 7 4 5 7 3 4 1 2 2 8 0</code></pre>
 <p>As the labels are 0-based, this actually means a predicted label of 9 (to be found in class_names[9]). So the model is most confident that this image is an ankle boot.
 And we can check the test label to see this is correct:</p>
 <div class="sourceCode" id="cb38"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb38-1" data-line-number="1">test_labels[<span class="dv">1</span>]</a></code></pre></div>
@@ -272,9 +272,9 @@ And we can check the test label to see this is correct:</p>
 <div class="sourceCode" id="cb43"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb43-1" data-line-number="1">predictions &lt;-<span class="st"> </span>model <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/stats/predict.html">predict</a></span>(img)</a>
 <a class="sourceLine" id="cb43-2" data-line-number="2">predictions</a></code></pre></div>
 <pre><code>##              [,1]         [,2]         [,3]         [,4]         [,5]
-## [1,] 5.465944e-06 1.288367e-07 3.570535e-06 1.659934e-08 2.075324e-05
-##            [,6]         [,7]      [,8]         [,9]    [,10]
-## [1,] 0.01836077 2.499906e-06 0.1217377 2.614871e-05 0.859843</code></pre>
+## [1,] 3.822321e-06 2.019058e-08 1.416017e-07 2.816884e-08 2.893032e-07
+##             [,6]        [,7]        [,8]         [,9]     [,10]
+## [1,] 0.004805941 3.91613e-06 0.006512137 3.137834e-05 0.9886424</code></pre>
 <p><code>predict</code> returns a list of lists, one for each image in the batch of data. Grab the predictions for our (only) image in the batch:</p>
 <div class="sourceCode" id="cb45"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb45-1" data-line-number="1"><span class="co"># subtract 1 as labels are 0-based</span></a>
 <a class="sourceLine" id="cb45-2" data-line-number="2">prediction &lt;-<span class="st"> </span>predictions[<span class="dv">1</span>, ] <span class="op">-</span><span class="st"> </span><span class="dv">1</span></a>

@@ -55,7 +55,7 @@ available.</p>
 <p>To load the files as a TensorFlow Dataset first create a dataset of the file paths:</p>
 <div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" data-line-number="1">list_ds &lt;-<span class="st"> </span><span class="kw"><a href="../../../tools/tfdatasets/reference/file_list_dataset.html">file_list_dataset</a></span>(<span class="dt">file_pattern =</span> <span class="kw"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span>(data_dir, <span class="st">"/*/*"</span>))</a></code></pre></div>
 <div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" data-line-number="1">list_ds <span class="op">%&gt;%</span><span class="st"> </span>reticulate<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/reticulate/man/iterate.html">as_iterator</a></span>() <span class="op">%&gt;%</span><span class="st"> </span>reticulate<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/reticulate/man/iterate.html">iter_next</a></span>()</a></code></pre></div>
-<pre><code>## tf.Tensor(b'/Users/dfalbel/.keras/datasets/flower_photos/dandelion/5909154147_9da14d1730_n.jpg', shape=(), dtype=string)</code></pre>
+<pre><code>## tf.Tensor(b'/Users/dfalbel/.keras/datasets/flower_photos/sunflowers/7012364067_5ffc7654c9_m.jpg', shape=(), dtype=string)</code></pre>
 <p>Write a short pure-tensorflow function that converts a file paths to an (image_data, label) pair:</p>
 <div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" data-line-number="1">get_label &lt;-<span class="st"> </span><span class="cf">function</span>(file_path) {</a>
 <a class="sourceLine" id="cb10-2" data-line-number="2">  parts &lt;-<span class="st"> </span>tf<span class="op">$</span>strings<span class="op">$</span><span class="kw"><a href="https://rdrr.io/r/base/split.html">split</a></span>(file_path, <span class="st">"/"</span>)</a>
@@ -93,58 +93,58 @@ available.</p>
 <a class="sourceLine" id="cb13-3" data-line-number="3"><span class="st">  </span>reticulate<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/reticulate/man/iterate.html">iter_next</a></span>()</a></code></pre></div>
 <pre><code>## [[1]]
 ## tf.Tensor(
-## [[[8.6834738e-03 2.6610646e-02 0.0000000e+00]
-##   [9.2436988e-03 2.1008406e-02 0.0000000e+00]
-##   [8.4033636e-03 2.0168070e-02 0.0000000e+00]
+## [[[0.26108226 0.28664246 0.23240578]
+##   [0.3835188  0.42273444 0.36779746]
+##   [0.5085065  0.5641787  0.4872589 ]
 ##   ...
-##   [1.2549020e-01 1.6862746e-01 0.0000000e+00]
-##   [1.2408963e-01 1.6722688e-01 0.0000000e+00]
-##   [1.1540600e-01 1.5854326e-01 0.0000000e+00]]
+##   [0.29320297 0.3207299  0.28912947]
+##   [0.27933556 0.28514788 0.26364928]
+##   [0.3252947  0.3322497  0.29577777]]
 ## 
-##  [[5.8292076e-03 2.3756379e-02 0.0000000e+00]
-##   [9.2436988e-03 2.1008406e-02 0.0000000e+00]
-##   [8.1438841e-03 1.9908590e-02 0.0000000e+00]
+##  [[0.32428253 0.34497926 0.32254213]
+##   [0.42655724 0.45317414 0.43152922]
+##   [0.52286255 0.5637061  0.52135575]
 ##   ...
-##   [1.2886350e-01 1.7200075e-01 3.3732879e-03]
-##   [1.2772234e-01 1.7085959e-01 3.6327033e-03]
-##   [1.2189305e-01 1.6503030e-01 7.7835715e-04]]
+##   [0.3946204  0.4249947  0.3848521 ]
+##   [0.30928746 0.3328272  0.30124855]
+##   [0.34228754 0.3682329  0.3242552 ]]
 ## 
-##  [[9.0423673e-03 2.6969539e-02 0.0000000e+00]
-##   [1.2683825e-02 2.4448531e-02 0.0000000e+00]
-##   [1.1317654e-02 2.3082361e-02 0.0000000e+00]
+##  [[0.31418476 0.33779606 0.30834335]
+##   [0.35513175 0.38139224 0.35061496]
+##   [0.41161874 0.44248202 0.39789852]
 ##   ...
-##   [1.2569161e-01 1.6882886e-01 4.4706254e-04]
-##   [1.2579970e-01 1.6893695e-01 4.8144278e-04]
-##   [1.2240889e-01 1.6554613e-01 1.0315585e-04]]
+##   [0.3510831  0.380845   0.33851305]
+##   [0.32428718 0.35173815 0.32117093]
+##   [0.34052372 0.37109098 0.33036968]]
 ## 
 ##  ...
 ## 
-##  [[6.2745102e-02 7.4509807e-02 0.0000000e+00]
-##   [6.3054614e-02 7.4819319e-02 0.0000000e+00]
-##   [6.6946782e-02 7.8957208e-02 0.0000000e+00]
+##  [[0.51577413 0.5430322  0.3832517 ]
+##   [0.51220775 0.55424315 0.13811943]
+##   [0.46866077 0.51306355 0.42778164]
 ##   ...
-##   [7.8396991e-02 1.0192641e-01 0.0000000e+00]
-##   [7.6219887e-02 9.9749304e-02 0.0000000e+00]
-##   [8.1512690e-02 1.0504211e-01 3.0813182e-03]]
+##   [0.60645247 0.54855657 0.42413402]
+##   [0.53028923 0.5424932  0.4496683 ]
+##   [0.3954216  0.4404597  0.31557053]]
 ## 
-##  [[6.3033998e-02 7.5025700e-02 0.0000000e+00]
-##   [6.5369286e-02 7.7133991e-02 0.0000000e+00]
-##   [6.6946782e-02 7.8711487e-02 0.0000000e+00]
+##  [[0.46493796 0.47719267 0.30036384]
+##   [0.38151678 0.40711772 0.33377895]
+##   [0.45623612 0.47059092 0.44241753]
 ##   ...
-##   [7.8151330e-02 1.0168075e-01 0.0000000e+00]
-##   [7.8431375e-02 1.0196079e-01 0.0000000e+00]
-##   [8.1285693e-02 1.0481511e-01 2.8543193e-03]]
+##   [0.5826995  0.5467584  0.44737065]
+##   [0.438906   0.43650544 0.34152257]
+##   [0.47998762 0.5019801  0.38992822]]
 ## 
-##  [[6.6666670e-02 8.1512608e-02 0.0000000e+00]
-##   [6.6666670e-02 7.8431375e-02 0.0000000e+00]
-##   [6.6946782e-02 7.8711487e-02 0.0000000e+00]
+##  [[0.39811558 0.43371367 0.3506316 ]
+##   [0.3170099  0.36533946 0.27275753]
+##   [0.38362864 0.38659358 0.33187914]
 ##   ...
-##   [7.8151330e-02 1.0168075e-01 0.0000000e+00]
-##   [7.8431375e-02 1.0196079e-01 0.0000000e+00]
-##   [7.8431375e-02 1.0196079e-01 0.0000000e+00]]], shape=(224, 224, 3), dtype=float32)
+##   [0.6704332  0.6382264  0.5415237 ]
+##   [0.6254841  0.5888986  0.48829657]
+##   [0.5075697  0.48495066 0.3952508 ]]], shape=(224, 224, 3), dtype=float32)
 ## 
 ## [[2]]
-## tf.Tensor([0. 1. 0. 0. 0.], shape=(5,), dtype=float32)</code></pre>
+## tf.Tensor([0. 0. 0. 1. 0.], shape=(5,), dtype=float32)</code></pre>
 </div>
 <div id="training-a-model" class="section level2">
 <h2>Training a model</h2>
@@ -194,13 +194,13 @@ to verify your model performance.</p>
 <a class="sourceLine" id="cb17-5" data-line-number="5">    <span class="dt">verbose =</span> <span class="dv">2</span></a>
 <a class="sourceLine" id="cb17-6" data-line-number="6">  )</a></code></pre></div>
 <pre><code>## Epoch 1/5
-## 115/115 - 12s - loss: 8.1625 - accuracy: 0.3302
+## 115/115 - 11s - loss: 8.7689 - accuracy: 0.3188
 ## Epoch 2/5
-## 115/115 - 13s - loss: 2.2350 - accuracy: 0.4060
+## 115/115 - 10s - loss: 1.9043 - accuracy: 0.4272
 ## Epoch 3/5
-## 115/115 - 14s - loss: 2.2305 - accuracy: 0.4128
+## 115/115 - 10s - loss: 1.7823 - accuracy: 0.4305
 ## Epoch 4/5
-## 115/115 - 13s - loss: 1.4776 - accuracy: 0.4689
+## 115/115 - 10s - loss: 1.3138 - accuracy: 0.4837
 ## Epoch 5/5
-## 115/115 - 13s - loss: 1.3211 - accuracy: 0.4831</code></pre>
+## 115/115 - 11s - loss: 1.3058 - accuracy: 0.5068</code></pre>
 </div>

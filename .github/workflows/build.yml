@@ -1,0 +1,21 @@
+name: "Build"
+
+on:
+  schedule:
+    - cron:  '*/15 * * * *'
+
+jobs:
+  build-deploy:
+    name: 'Run the update script'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+      - name: "Hugo setup"
+        uses: peaceiris/actions-hugo@v2.3.0
+        with:
+          hugo-version: 0.58.3
+      - uses: r-lib/actions/setup-r@v1
+        with:
+          r-version: 3.6.1
+      - run: Rscript -e 'install.packages("renv")'
+      - run: ./update.sh
