@@ -1,0 +1,153 @@
+---
+title: Hyperparameter Tuning with the HParams Dashboard
+type: docs
+menu:
+  main:
+    name: "HParams Dashboard"
+    identifier: "tools-tensorboard-hparams"
+    parent: "tensorboard-top"
+    weight: 20
+editor_options: 
+  chunk_output_type: console
+---
+
+
+
+<p>When building machine learning models, you need to choose various hyperparameters, such as the dropout rate in a layer or the learning rate. These decisions impact model metrics, such as accuracy. Therefore, an important step in the machine learning workflow is to identify the best hyperparameters for your problem, which often involves experimentation. This process is known as “Hyperparameter Optimization” or “Hyperparameter Tuning”.</p>
+<p>The HParams dashboard in TensorBoard provides several tools to help with this process of identifying the best experiment or most promising sets of hyperparameters.</p>
+<p>This tutorial will focus on the following steps:</p>
+<ol style="list-style-type: decimal">
+<li>Experiment setup and HParams summary</li>
+<li>Adapt TensorFlow runs to log hyperparameters and metrics</li>
+<li>Start runs and log them all under one parent directory</li>
+<li>Visualize the results in TensorBoard’s HParams dashboard</li>
+</ol>
+<blockquote>
+<p><strong>Note</strong>: The HParams summary APIs and dashboard UI are in a preview stage and will change over time.</p>
+</blockquote>
+<p>Import TensorFlow and the TensorBoard HParams plugin:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(tensorflow)</a>
+<a class="sourceLine" id="cb1-2" data-line-number="2"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(reticulate)</a>
+<a class="sourceLine" id="cb1-3" data-line-number="3"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(keras)</a>
+<a class="sourceLine" id="cb1-4" data-line-number="4">hp &lt;-<span class="st"> </span><span class="kw"><a href="../../tensorflow/reference/reexports.html">import</a></span>(<span class="st">"tensorboard.plugins.hparams.api"</span>)</a></code></pre></div>
+<p>Download the FashionMNIST dataset and scale it:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" data-line-number="1">fashion_mnist &lt;-<span class="st"> </span><span class="kw"><a href="../../keras/reference/dataset_fashion_mnist.html">dataset_fashion_mnist</a></span>()</a>
+<a class="sourceLine" id="cb2-2" data-line-number="2">fashion_mnist<span class="op">$</span>train<span class="op">$</span>x &lt;-<span class="st"> </span>fashion_mnist<span class="op">$</span>train<span class="op">$</span>x<span class="op">/</span><span class="dv">255</span></a>
+<a class="sourceLine" id="cb2-3" data-line-number="3">fashion_mnist<span class="op">$</span>test<span class="op">$</span>x &lt;-<span class="st"> </span>fashion_mnist<span class="op">$</span>test<span class="op">$</span>x<span class="op">/</span><span class="dv">255</span></a></code></pre></div>
+<div id="experiment-setup-and-the-hparams-experiment-summary" class="section level2">
+<h2>Experiment setup and the HParams experiment summary</h2>
+<p>Experiment with three hyperparameters in the model:</p>
+<ul>
+<li>Number of units in the first dense layer</li>
+<li>Dropout rate in the dropout layer</li>
+<li>Optimizer</li>
+</ul>
+<p>List the values to try, and log an experiment configuration to TensorBoard. This step is optional: you can provide domain information to enable more precise filtering of hyperparameters in the UI, and you can specify which metrics should be displayed.</p>
+<p>If you choose to skip this step, you can use a string literal wherever you would otherwise use an HParam value: e.g., <code>hparams["dropout"]</code> or <code>hparams$dropout</code> instead of <code>hparams[HP_DROPOUT]</code>.</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1">HP_NUM_UNITS =<span class="st"> </span>hp<span class="op">$</span><span class="kw">HParam</span>(<span class="st">'num_units'</span>, hp<span class="op">$</span><span class="kw">Discrete</span>(<span class="kw"><a href="https://rdrr.io/r/base/list.html">list</a></span>(<span class="dv">16</span>, <span class="dv">32</span>)))</a>
+<a class="sourceLine" id="cb3-2" data-line-number="2">HP_DROPOUT =<span class="st"> </span>hp<span class="op">$</span><span class="kw">HParam</span>(<span class="st">'dropout'</span>, hp<span class="op">$</span><span class="kw">RealInterval</span>(<span class="fl">0.1</span>, <span class="fl">0.2</span>))</a>
+<a class="sourceLine" id="cb3-3" data-line-number="3">HP_OPTIMIZER =<span class="st"> </span>hp<span class="op">$</span><span class="kw">HParam</span>(<span class="st">'optimizer'</span>, hp<span class="op">$</span><span class="kw">Discrete</span>(<span class="kw"><a href="https://rdrr.io/r/base/list.html">list</a></span>(<span class="st">'adam'</span>, <span class="st">'sgd'</span>)))</a>
+<a class="sourceLine" id="cb3-4" data-line-number="4"></a>
+<a class="sourceLine" id="cb3-5" data-line-number="5">METRIC_ACCURACY =<span class="st"> 'accuracy'</span></a>
+<a class="sourceLine" id="cb3-6" data-line-number="6"></a>
+<a class="sourceLine" id="cb3-7" data-line-number="7"><span class="kw"><a href="https://rdrr.io/r/base/with.html">with</a></span>(tf<span class="op">$</span>summary<span class="op">$</span><span class="kw">create_file_writer</span>(<span class="st">"logs/hparam_tuning"</span>)<span class="op">$</span><span class="kw">as_default</span>(), {</a>
+<a class="sourceLine" id="cb3-8" data-line-number="8">  hp<span class="op">$</span><span class="kw">hparams_config</span>(</a>
+<a class="sourceLine" id="cb3-9" data-line-number="9">    <span class="dt">hparams =</span> <span class="kw"><a href="https://rdrr.io/r/base/list.html">list</a></span>(HP_NUM_UNITS, HP_DROPOUT, HP_OPTIMIZER),</a>
+<a class="sourceLine" id="cb3-10" data-line-number="10">    <span class="dt">metrics =</span> <span class="kw"><a href="https://rdrr.io/r/base/list.html">list</a></span>(hp<span class="op">$</span><span class="kw">Metric</span>(METRIC_ACCURACY, <span class="dt">display_name =</span> <span class="st">"Accuracy"</span>))</a>
+<a class="sourceLine" id="cb3-11" data-line-number="11">  )</a>
+<a class="sourceLine" id="cb3-12" data-line-number="12">})</a></code></pre></div>
+</div>
+<div id="adapt-tensorflow-runs-to-log-hyperparameters-and-metrics" class="section level2">
+<h2>Adapt TensorFlow runs to log hyperparameters and metrics</h2>
+<p>The model will be quite simple: two dense layers with a dropout layer between them. The training code will look familiar, although the hyperparameters are no longer hardcoded. Instead, the hyperparameters are provided in an hparams dictionary and used throughout the training function:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" data-line-number="1">train_test_model &lt;-<span class="st"> </span><span class="cf">function</span>(hparams) {</a>
+<a class="sourceLine" id="cb4-2" data-line-number="2">  </a>
+<a class="sourceLine" id="cb4-3" data-line-number="3">  model &lt;-<span class="st"> </span><span class="kw"><a href="../../keras/reference/keras_model_sequential.html">keras_model_sequential</a></span>() <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb4-4" data-line-number="4"><span class="st">    </span><span class="kw"><a href="../../keras/reference/layer_flatten.html">layer_flatten</a></span>() <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb4-5" data-line-number="5"><span class="st">    </span><span class="kw"><a href="../../keras/reference/layer_dense.html">layer_dense</a></span>(<span class="kw"><a href="https://rdrr.io/pkg/reticulate/man/r-py-conversion.html">py_to_r</a></span>(hparams[HP_NUM_UNITS]), <span class="dt">activation =</span> <span class="st">"relu"</span>) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb4-6" data-line-number="6"><span class="st">    </span><span class="kw"><a href="../../keras/reference/layer_dropout.html">layer_dropout</a></span>(<span class="kw"><a href="https://rdrr.io/pkg/reticulate/man/r-py-conversion.html">py_to_r</a></span>(hparams[HP_DROPOUT])) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb4-7" data-line-number="7"><span class="st">    </span><span class="kw"><a href="../../keras/reference/layer_dense.html">layer_dense</a></span>(<span class="dt">units =</span> <span class="dv">10</span>, <span class="dt">activation =</span> <span class="st">"softmax"</span>)</a>
+<a class="sourceLine" id="cb4-8" data-line-number="8">  </a>
+<a class="sourceLine" id="cb4-9" data-line-number="9">  model <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb4-10" data-line-number="10"><span class="st">    </span><span class="kw"><a href="../../keras/reference/reexports.html">compile</a></span>(</a>
+<a class="sourceLine" id="cb4-11" data-line-number="11">      <span class="dt">optimizer =</span> <span class="kw"><a href="https://rdrr.io/pkg/reticulate/man/r-py-conversion.html">py_to_r</a></span>(hparams[HP_OPTIMIZER]),</a>
+<a class="sourceLine" id="cb4-12" data-line-number="12">      <span class="dt">loss =</span> <span class="st">"sparse_categorical_crossentropy"</span>,</a>
+<a class="sourceLine" id="cb4-13" data-line-number="13">      <span class="dt">metrics =</span> <span class="st">"accuracy"</span></a>
+<a class="sourceLine" id="cb4-14" data-line-number="14">    )</a>
+<a class="sourceLine" id="cb4-15" data-line-number="15">  </a>
+<a class="sourceLine" id="cb4-16" data-line-number="16">  model <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../../keras/reference/reexports.html">fit</a></span>(</a>
+<a class="sourceLine" id="cb4-17" data-line-number="17">    <span class="dt">x =</span> fashion_mnist<span class="op">$</span>train<span class="op">$</span>x, </a>
+<a class="sourceLine" id="cb4-18" data-line-number="18">    <span class="dt">y =</span> fashion_mnist<span class="op">$</span>train<span class="op">$</span>y, </a>
+<a class="sourceLine" id="cb4-19" data-line-number="19">    <span class="dt">epochs =</span> <span class="dv">1</span></a>
+<a class="sourceLine" id="cb4-20" data-line-number="20">  ) <span class="co"># Run with 1 epoch to speed things up for demo purposes</span></a>
+<a class="sourceLine" id="cb4-21" data-line-number="21">  </a>
+<a class="sourceLine" id="cb4-22" data-line-number="22">  results &lt;-<span class="st"> </span>model <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../../tensorflow/reference/evaluate.html">evaluate</a></span>(</a>
+<a class="sourceLine" id="cb4-23" data-line-number="23">    <span class="dt">x =</span> fashion_mnist<span class="op">$</span>test<span class="op">$</span>x, </a>
+<a class="sourceLine" id="cb4-24" data-line-number="24">    <span class="dt">y =</span> fashion_mnist<span class="op">$</span>test<span class="op">$</span>y,</a>
+<a class="sourceLine" id="cb4-25" data-line-number="25">    <span class="dt">verbose =</span> <span class="dv">0</span></a>
+<a class="sourceLine" id="cb4-26" data-line-number="26">  )</a>
+<a class="sourceLine" id="cb4-27" data-line-number="27">  </a>
+<a class="sourceLine" id="cb4-28" data-line-number="28">  results<span class="op">$</span>accuracy</a>
+<a class="sourceLine" id="cb4-29" data-line-number="29">}</a></code></pre></div>
+<p>For each run, log an hparams summary with the hyperparameters and final accuracy:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" data-line-number="1">run &lt;-<span class="st"> </span><span class="cf">function</span>(run_dir, hparams) {</a>
+<a class="sourceLine" id="cb5-2" data-line-number="2">  <span class="kw"><a href="https://rdrr.io/r/base/with.html">with</a></span>(tf<span class="op">$</span>summary<span class="op">$</span><span class="kw">create_file_writer</span>(run_dir)<span class="op">$</span><span class="kw">as_default</span>(), {</a>
+<a class="sourceLine" id="cb5-3" data-line-number="3">    hp<span class="op">$</span><span class="kw">hparams</span>(hparams) <span class="co"># record the values used in this trial</span></a>
+<a class="sourceLine" id="cb5-4" data-line-number="4">    accuracy &lt;-<span class="st"> </span><span class="kw">train_test_model</span>(hparams)</a>
+<a class="sourceLine" id="cb5-5" data-line-number="5">    tf<span class="op">$</span>summary<span class="op">$</span><span class="kw">scalar</span>(METRIC_ACCURACY, accuracy, <span class="dt">step =</span> <span class="kw"><a href="https://rdrr.io/r/base/integer.html">as.integer</a></span>(<span class="dv">1</span>))</a>
+<a class="sourceLine" id="cb5-6" data-line-number="6">  })</a>
+<a class="sourceLine" id="cb5-7" data-line-number="7">}</a></code></pre></div>
+<p>When training Keras models, you can use callbacks instead of writing these directly:</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" data-line-number="1">model <span class="op">%&gt;%</span><span class="st">  </span><span class="kw"><a href="../../keras/reference/reexports.html">fit</a></span>(</a>
+<a class="sourceLine" id="cb6-2" data-line-number="2">    ...,</a>
+<a class="sourceLine" id="cb6-3" data-line-number="3">    <span class="dt">callbacks=</span><span class="kw"><a href="https://rdrr.io/r/base/list.html">list</a></span>(</a>
+<a class="sourceLine" id="cb6-4" data-line-number="4">        <span class="kw"><a href="../../keras/reference/callback_tensorboard.html">callback_tensorboard</a></span>(logdir),  <span class="co"># log metrics</span></a>
+<a class="sourceLine" id="cb6-5" data-line-number="5">        hp<span class="op">$</span><span class="kw"><a href="../../keras/reference/KerasCallback.html">KerasCallback</a></span>(logdir, hparams),  <span class="co"># log hparams</span></a>
+<a class="sourceLine" id="cb6-6" data-line-number="6">    ),</a>
+<a class="sourceLine" id="cb6-7" data-line-number="7">)</a></code></pre></div>
+</div>
+<div id="start-runs-and-log-them-all-under-one-parent-directory" class="section level2">
+<h2>Start runs and log them all under one parent directory</h2>
+<p>You can now try multiple experiments, training each one with a different set of hyperparameters.</p>
+<p>For simplicity, use a grid search: try all combinations of the discrete parameters and just the lower and upper bounds of the real-valued parameter. For more complex scenarios, it might be more effective to choose each hyperparameter value randomly (this is called a random search). There are more advanced methods that can be used.</p>
+<p>Run a few experiments, which will take a few minutes:</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" data-line-number="1">session_num &lt;-<span class="st"> </span><span class="dv">0</span></a>
+<a class="sourceLine" id="cb7-2" data-line-number="2"></a>
+<a class="sourceLine" id="cb7-3" data-line-number="3"><span class="cf">for</span>(num_units <span class="cf">in</span> HP_NUM_UNITS<span class="op">$</span>domain<span class="op">$</span>values) {</a>
+<a class="sourceLine" id="cb7-4" data-line-number="4">  <span class="cf">for</span> (dropout_rate <span class="cf">in</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(HP_DROPOUT<span class="op">$</span>domain<span class="op">$</span>min_value, HP_DROPOUT<span class="op">$</span>domain<span class="op">$</span>max_value)) {</a>
+<a class="sourceLine" id="cb7-5" data-line-number="5">    <span class="cf">for</span> (optimizer <span class="cf">in</span> HP_OPTIMIZER<span class="op">$</span>domain<span class="op">$</span>values) {</a>
+<a class="sourceLine" id="cb7-6" data-line-number="6">      hparams &lt;-<span class="st"> </span><span class="kw"><a href="../../tensorflow/reference/reexports.html">dict</a></span>(</a>
+<a class="sourceLine" id="cb7-7" data-line-number="7">        <span class="dt">HP_NUM_UNITS =</span> num_units,</a>
+<a class="sourceLine" id="cb7-8" data-line-number="8">        <span class="dt">HP_DROPOUT =</span> dropout_rate,</a>
+<a class="sourceLine" id="cb7-9" data-line-number="9">        <span class="dt">HP_OPTIMIZER =</span> optimizer</a>
+<a class="sourceLine" id="cb7-10" data-line-number="10">      )</a>
+<a class="sourceLine" id="cb7-11" data-line-number="11">      </a>
+<a class="sourceLine" id="cb7-12" data-line-number="12">      run_name &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/sprintf.html">sprintf</a></span>(<span class="st">"run-%04d"</span>, session_num)</a>
+<a class="sourceLine" id="cb7-13" data-line-number="13">      <span class="kw"><a href="https://rdrr.io/r/base/print.html">print</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/sprintf.html">sprintf</a></span>(<span class="st">'--- Starting trial: %s'</span>,  run_name))</a>
+<a class="sourceLine" id="cb7-14" data-line-number="14">      <span class="co">#purrr::iwalk(hparams, ~print(paste(.y, .x, sep = ": ")))</span></a>
+<a class="sourceLine" id="cb7-15" data-line-number="15">      <span class="kw">run</span>(<span class="kw"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span>(<span class="st">'logs/hparam_tuning/'</span>, run_name), hparams)</a>
+<a class="sourceLine" id="cb7-16" data-line-number="16">      session_num &lt;-<span class="st"> </span>session_num <span class="op">+</span><span class="st"> </span><span class="dv">1</span></a>
+<a class="sourceLine" id="cb7-17" data-line-number="17">    }</a>
+<a class="sourceLine" id="cb7-18" data-line-number="18">  }</a>
+<a class="sourceLine" id="cb7-19" data-line-number="19">}</a></code></pre></div>
+</div>
+<div id="visualize-the-results-in-tensorboards-hparams-plugin" class="section level2">
+<h2>Visualize the results in TensorBoard’s HParams plugin</h2>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" data-line-number="1"><span class="kw"><a href="../../tensorflow/reference/tensorboard.html">tensorboard</a></span>(<span class="st">"logs/hparam_tuning/"</span>)</a></code></pre></div>
+<p><img src="../images/hparams_table.png"></p>
+<p>The left pane of the dashboard provides filtering capabilities that are active across all the views in the HParams dashboard:</p>
+<ul>
+<li>Filter which hyperparameters/metrics are shown in the dashboard</li>
+<li>Filter which hyperparameter/metrics values are shown in the dashboard</li>
+<li>Filter on run status (running, success, …)</li>
+<li>Sort by hyperparameter/metric in the table view</li>
+<li>Number of session groups to show (useful for performance when there are many experiments)</li>
+</ul>
+<p>The HParams dashboard has three different views, with various useful information:</p>
+<ul>
+<li>The Table View lists the runs, their hyperparameters, and their metrics.</li>
+<li>The Parallel Coordinates View shows each run as a line going through an axis for each hyperparemeter and metric. Click and drag the mouse on any axis to mark a region which will highlight only the runs that pass through it. This can be useful for identifying which groups of hyperparameters are most important. The axes themselves can be re-ordered by dragging them.</li>
+<li>The Scatter Plot View shows plots comparing each hyperparameter/metric with each metric. This can help identify correlations. Click and drag to select a region in a specific plot and highlight those sessions across the other plots.</li>
+</ul>
+<p>A table row, a parallel coordinates line, and a scatter plot market can be clicked to see a plot of the metrics as a function of training steps for that session (although in this tutorial only one step is used for each run).</p>
+</div>

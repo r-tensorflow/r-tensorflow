@@ -248,6 +248,13 @@ disqusShortname = "r-tensorflow"
 	weight = 20
 	
 [[menu.main]]
+	name   = "Tensorboard"
+	url    = "/tools/tensorboard/"
+	identifier = "tensorboard-top"
+	parent = "tools-top"
+	weight = 30
+	
+[[menu.main]]
 	name   = "API"
 	url    = "/reference/keras"
 	identifier = "reference-top"
