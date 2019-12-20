@@ -55,12 +55,12 @@ interface is an abstraction that makes it easier to define feature columns in R.
 <a class=sourceLine id=cb1-2 data-line-number=2>hearts_dataset &lt;-<span class=st> </span><span class=kw><a href=../../tools/tfdatasets/reference/tensor_slices_dataset.html>tensor_slices_dataset</a></span>(hearts)</a>
 <a class=sourceLine id=cb1-3 data-line-number=3>spec &lt;-<span class=st> </span><span class=kw><a href=../../tools/tfdatasets/reference/feature_spec.html>feature_spec</a></span>(hearts_dataset, target <span class=op>~</span><span class=st> </span>.)</a></code></pre></div><p>We then add steps in order to define <code>feature_columns</code>. Read the <code>feature_spec</code>
 vignette for more information.</p></div><div id=numeric-column class="section level2"><h2>Numeric column</h2><p>We use <code>step_numeric_column</code> to add numeric columns to our <code>spec</code>.</p><div class=sourceCode id=cb2><pre class="sourceCode r"><code class="sourceCode r"><a class=sourceLine id=cb2-1 data-line-number=1>spec <span class=op>%&gt;%</span><span class=st> </span></a>
-<a class=sourceLine id=cb2-2 data-line-number=2><span class=st>  </span><span class=kw><a href=../../tools/tfdatasets/reference/step_numeric_column.html>step_numeric_column</a></span>(age)</a></code></pre></div><pre><code>## ── Feature Spec ────────────────────────────────────────────────────────────────────────────── 
+<a class=sourceLine id=cb2-2 data-line-number=2><span class=st>  </span><span class=kw><a href=../../tools/tfdatasets/reference/step_numeric_column.html>step_numeric_column</a></span>(age)</a></code></pre></div><pre><code>## ── Feature Spec ────────────────────────────────────────────────────────────────────────────────────────── 
 ## A feature_spec with 1 steps.
 ## Fitted: FALSE 
-## ── Steps ───────────────────────────────────────────────────────────────────────────────────── 
+## ── Steps ───────────────────────────────────────────────────────────────────────────────────────────────── 
 ## StepNumericColumn: age 
-## ── Dense features ──────────────────────────────────────────────────────────────────────────── 
+## ── Dense features ──────────────────────────────────────────────────────────────────────────────────────── 
 ## Feature spec must be fitted before we can detect the dense features.</code></pre><p>By default, a numeric column creates a single value (scalar). Use the shape argument
 to specify another shape. For example:</p><div class=sourceCode id=cb4><pre class="sourceCode r"><code class="sourceCode r"><a class=sourceLine id=cb4-1 data-line-number=1><span class=co># Represent a 10-element vector in which each cell contains a tf$float32.</span></a>
 <a class=sourceLine id=cb4-2 data-line-number=2>spec <span class=op>%&gt;%</span><span class=st> </span></a>
@@ -228,42 +228,42 @@ function from Keras to create a layer that will automatically initialize values.
 <a class=sourceLine id=cb22-33 data-line-number=33>  )</a></code></pre></div><pre><code>## Train on 242 samples, validate on 61 samples
 ## Epoch 1/10
 ## 
- 32/242 [==&gt;...........................] - ETA: 6s - loss: 0.7090 - accuracy: 0.4375
-242/242 [==============================] - 1s 5ms/sample - loss: 0.7694 - accuracy: 0.4876 - val_loss: 0.7361 - val_accuracy: 0.4754
+ 32/242 [==&gt;...........................] - ETA: 6s - loss: 0.7368 - accuracy: 0.5625
+242/242 [==============================] - 1s 6ms/sample - loss: 0.6771 - accuracy: 0.6446 - val_loss: 0.6462 - val_accuracy: 0.6393
 ## Epoch 2/10
 ## 
- 32/242 [==&gt;...........................] - ETA: 0s - loss: 0.8507 - accuracy: 0.4688
-242/242 [==============================] - 0s 168us/sample - loss: 0.7522 - accuracy: 0.5083 - val_loss: 0.7240 - val_accuracy: 0.5082
+ 32/242 [==&gt;...........................] - ETA: 0s - loss: 0.5944 - accuracy: 0.8438
+242/242 [==============================] - 0s 216us/sample - loss: 0.6641 - accuracy: 0.6488 - val_loss: 0.6363 - val_accuracy: 0.6393
 ## Epoch 3/10
 ## 
- 32/242 [==&gt;...........................] - ETA: 0s - loss: 0.7433 - accuracy: 0.5312
-242/242 [==============================] - 0s 118us/sample - loss: 0.7354 - accuracy: 0.5496 - val_loss: 0.7124 - val_accuracy: 0.5082
+ 32/242 [==&gt;...........................] - ETA: 0s - loss: 0.6673 - accuracy: 0.5938
+242/242 [==============================] - 0s 213us/sample - loss: 0.6516 - accuracy: 0.6529 - val_loss: 0.6269 - val_accuracy: 0.6230
 ## Epoch 4/10
 ## 
- 32/242 [==&gt;...........................] - ETA: 0s - loss: 0.7578 - accuracy: 0.4688
-242/242 [==============================] - 0s 111us/sample - loss: 0.7189 - accuracy: 0.5537 - val_loss: 0.7016 - val_accuracy: 0.5246
+ 32/242 [==&gt;...........................] - ETA: 0s - loss: 0.5900 - accuracy: 0.6875
+242/242 [==============================] - 0s 159us/sample - loss: 0.6398 - accuracy: 0.6529 - val_loss: 0.6178 - val_accuracy: 0.6230
 ## Epoch 5/10
 ## 
- 32/242 [==&gt;...........................] - ETA: 0s - loss: 0.6576 - accuracy: 0.5625
-242/242 [==============================] - 0s 114us/sample - loss: 0.7035 - accuracy: 0.5579 - val_loss: 0.6914 - val_accuracy: 0.5410
+ 32/242 [==&gt;...........................] - ETA: 0s - loss: 0.6728 - accuracy: 0.5938
+242/242 [==============================] - 0s 155us/sample - loss: 0.6283 - accuracy: 0.6612 - val_loss: 0.6091 - val_accuracy: 0.6393
 ## Epoch 6/10
 ## 
- 32/242 [==&gt;...........................] - ETA: 0s - loss: 0.7414 - accuracy: 0.4688
-242/242 [==============================] - 0s 116us/sample - loss: 0.6888 - accuracy: 0.5826 - val_loss: 0.6816 - val_accuracy: 0.5410
+ 32/242 [==&gt;...........................] - ETA: 0s - loss: 0.6083 - accuracy: 0.6562
+242/242 [==============================] - 0s 131us/sample - loss: 0.6173 - accuracy: 0.6694 - val_loss: 0.6009 - val_accuracy: 0.6885
 ## Epoch 7/10
 ## 
- 32/242 [==&gt;...........................] - ETA: 0s - loss: 0.6904 - accuracy: 0.6250
-242/242 [==============================] - 0s 119us/sample - loss: 0.6744 - accuracy: 0.6074 - val_loss: 0.6721 - val_accuracy: 0.5410
+ 32/242 [==&gt;...........................] - ETA: 0s - loss: 0.6746 - accuracy: 0.6875
+242/242 [==============================] - 0s 125us/sample - loss: 0.6068 - accuracy: 0.6694 - val_loss: 0.5930 - val_accuracy: 0.6885
 ## Epoch 8/10
 ## 
- 32/242 [==&gt;...........................] - ETA: 0s - loss: 0.7391 - accuracy: 0.5625
-242/242 [==============================] - 0s 121us/sample - loss: 0.6616 - accuracy: 0.6198 - val_loss: 0.6627 - val_accuracy: 0.5410
+ 32/242 [==&gt;...........................] - ETA: 0s - loss: 0.5721 - accuracy: 0.7188
+242/242 [==============================] - 0s 120us/sample - loss: 0.5970 - accuracy: 0.6777 - val_loss: 0.5854 - val_accuracy: 0.6885
 ## Epoch 9/10
 ## 
- 32/242 [==&gt;...........................] - ETA: 0s - loss: 0.5875 - accuracy: 0.7188
-242/242 [==============================] - 0s 114us/sample - loss: 0.6479 - accuracy: 0.6364 - val_loss: 0.6541 - val_accuracy: 0.5410
+ 32/242 [==&gt;...........................] - ETA: 0s - loss: 0.5595 - accuracy: 0.7500
+242/242 [==============================] - 0s 122us/sample - loss: 0.5875 - accuracy: 0.6777 - val_loss: 0.5782 - val_accuracy: 0.6885
 ## Epoch 10/10
 ## 
- 32/242 [==&gt;...........................] - ETA: 0s - loss: 0.7074 - accuracy: 0.5625
-242/242 [==============================] - 0s 116us/sample - loss: 0.6357 - accuracy: 0.6529 - val_loss: 0.6460 - val_accuracy: 0.5410</code></pre></div></div></div></div><footer>Copyright © 2015-2019 The TensorFlow Authors and RStudio, Inc.
+ 32/242 [==&gt;...........................] - ETA: 0s - loss: 0.5756 - accuracy: 0.7188
+242/242 [==============================] - 0s 120us/sample - loss: 0.5784 - accuracy: 0.6860 - val_loss: 0.5711 - val_accuracy: 0.6885</code></pre></div></div></div></div><footer>Copyright © 2015-2019 The TensorFlow Authors and RStudio, Inc.
 <script type=text/javascript>(function(w,d,t,u,n,s,e){w['SwiftypeObject']=n;w[n]=w[n]||function(){(w[n].q=w[n].q||[]).push(arguments);};s=d.createElement(t);e=d.getElementsByTagName(t)[0];s.async=1;s.src=u;e.parentNode.insertBefore(s,e);})(window,document,'script','//s.swiftypecdn.com/install/v2/st.js','_st');_st('install','Ne8tbLfE121Pkj3xMr_G','2.0.0');</script></footer></div></div></body></html>

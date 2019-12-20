@@ -158,7 +158,7 @@
 <a class=sourceLine id=cb1-120 data-line-number=120><span class=co># You could notice that our input is just a plain text. Unlike tabular data, lime function </span></a>
 <a class=sourceLine id=cb1-121 data-line-number=121><span class=co># for text classification requires a preprocess fuction. Because it will help to convert a text to integers </span></a>
 <a class=sourceLine id=cb1-122 data-line-number=122><span class=co># with provided function. </span></a>
-<a class=sourceLine id=cb1-123 data-line-number=123>explainer &lt;-<span class=st> </span><span class=kw>lime</span>(sentence_to_explain, <span class=dt>model =</span> model, <span class=dt>preprocess =</span> get_embedding_explanation)</a>
+<a class=sourceLine id=cb1-123 data-line-number=123>explainer &lt;-<span class=st> </span><span class=kw><a href=https://lime.data-imaginist.com/reference/lime.html>lime</a></span>(sentence_to_explain, <span class=dt>model =</span> model, <span class=dt>preprocess =</span> get_embedding_explanation)</a>
 <a class=sourceLine id=cb1-124 data-line-number=124></a>
 <a class=sourceLine id=cb1-125 data-line-number=125><span class=co># Get explanation for the first 10 words</span></a>
 <a class=sourceLine id=cb1-126 data-line-number=126>explanation &lt;-<span class=st> </span><span class=kw><a href=https://dplyr.tidyverse.org/reference/explain.html>explain</a></span>(sentence_to_explain, explainer, <span class=dt>n_labels =</span> <span class=dv>1</span>, <span class=dt>n_features =</span> <span class=dv>10</span>,<span class=dt>n_permutations =</span> <span class=fl>1e4</span>)</a>
@@ -166,9 +166,9 @@
 <a class=sourceLine id=cb1-128 data-line-number=128></a>
 <a class=sourceLine id=cb1-129 data-line-number=129><span class=co># Different graphical ways to show the same information</span></a>
 <a class=sourceLine id=cb1-130 data-line-number=130></a>
-<a class=sourceLine id=cb1-131 data-line-number=131><span class=kw>plot_text_explanations</span>(explanation)</a>
+<a class=sourceLine id=cb1-131 data-line-number=131><span class=kw><a href=https://lime.data-imaginist.com/reference/text_explanations.html>plot_text_explanations</a></span>(explanation)</a>
 <a class=sourceLine id=cb1-132 data-line-number=132></a>
-<a class=sourceLine id=cb1-133 data-line-number=133><span class=kw>plot_features</span>(explanation)</a>
+<a class=sourceLine id=cb1-133 data-line-number=133><span class=kw><a href=https://lime.data-imaginist.com/reference/plot_features.html>plot_features</a></span>(explanation)</a>
 <a class=sourceLine id=cb1-134 data-line-number=134></a>
-<a class=sourceLine id=cb1-135 data-line-number=135><span class=kw>interactive_text_explanations</span>(explainer)</a></code></pre></div></div></div></div><footer>Copyright © 2015-2019 The TensorFlow Authors and RStudio, Inc.
+<a class=sourceLine id=cb1-135 data-line-number=135><span class=kw><a href=https://lime.data-imaginist.com/reference/interactive_text_explanations.html>interactive_text_explanations</a></span>(explainer)</a></code></pre></div></div></div></div><footer>Copyright © 2015-2019 The TensorFlow Authors and RStudio, Inc.
 <script type=text/javascript>(function(w,d,t,u,n,s,e){w['SwiftypeObject']=n;w[n]=w[n]||function(){(w[n].q=w[n].q||[]).push(arguments);};s=d.createElement(t);e=d.getElementsByTagName(t)[0];s.async=1;s.src=u;e.parentNode.insertBefore(s,e);})(window,document,'script','//s.swiftypecdn.com/install/v2/st.js','_st');_st('install','Ne8tbLfE121Pkj3xMr_G','2.0.0');</script></footer></div></div></body></html>
