@@ -12,6 +12,11 @@ aliases:
 - /keras/reference/set_vocabulary.html
 - /guide/keras/reference/set_vocabulary.html
 - /tools/tools/keras/reference/set_vocabulary.html
+- /installation/keras/reference/set_vocabulary.html
+- /tutorials/keras/reference/set_vocabulary.html
+- /guide/tools/keras/reference/set_vocabulary.html
+- /deploy/keras/reference/set_vocabulary.html
+- /tools/keras/reference/set_vocabulary.html
 ---
     
     <p>This method sets the vocabulary and DF data for this layer directly, instead
@@ -21,8 +26,13 @@ vocabulary data is already present in the layer, this method will either
 replace it, if <code>append</code> is set to <code>FALSE</code>, or append to it (if 'append' is set
 to <code>TRUE</code>)</p>
 
-    <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>set_vocabulary</span>(<span class='no'>object</span>, <span class='no'>vocab</span>, <span class='kw'>df_data</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>oov_df_value</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>append</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)</code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>set_vocabulary</span>(
+  <span class='no'>object</span>,
+  <span class='no'>vocab</span>,
+  <span class='kw'>df_data</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>oov_df_value</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
+  <span class='kw'>append</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>
+)</code></pre></div>
 
     <h2 id="arguments">Arguments</h2>
     <table class="ref-arguments">

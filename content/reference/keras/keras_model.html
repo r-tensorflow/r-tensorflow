@@ -11,6 +11,11 @@ aliases:
 - /keras/reference/keras_model.html
 - /guide/keras/reference/keras_model.html
 - /tools/tools/keras/reference/keras_model.html
+- /installation/keras/reference/keras_model.html
+- /tutorials/keras/reference/keras_model.html
+- /guide/tools/keras/reference/keras_model.html
+- /deploy/keras/reference/keras_model.html
+- /tools/keras/reference/keras_model.html
 ---
     
     <p>A model is a directed acyclic graph of layers.</p>
@@ -56,7 +61,26 @@ aliases:
 <code><a href='../train_on_batch.html'>train_on_batch</a>()</code></p></div>
 
     <h2 id="examples">Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><div class='input'><span class='kw'>if</span> (<span class='fl'>FALSE</span>) {
+<span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='no'>keras</span>)
+
+<span class='co'># input layer</span>
+<span class='no'>inputs</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='../layer_input.html'>layer_input</a></span>(<span class='kw'>shape</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>784</span>))
+
+<span class='co'># outputs compose input + dense layers</span>
+<span class='no'>predictions</span> <span class='kw'>&lt;-</span> <span class='no'>inputs</span> <span class='kw'>%&gt;%</span>
+  <span class='fu'><a href='../layer_dense.html'>layer_dense</a></span>(<span class='kw'>units</span> <span class='kw'>=</span> <span class='fl'>64</span>, <span class='kw'>activation</span> <span class='kw'>=</span> <span class='st'>'relu'</span>) <span class='kw'>%&gt;%</span>
+  <span class='fu'><a href='../layer_dense.html'>layer_dense</a></span>(<span class='kw'>units</span> <span class='kw'>=</span> <span class='fl'>64</span>, <span class='kw'>activation</span> <span class='kw'>=</span> <span class='st'>'relu'</span>) <span class='kw'>%&gt;%</span>
+  <span class='fu'><a href='../layer_dense.html'>layer_dense</a></span>(<span class='kw'>units</span> <span class='kw'>=</span> <span class='fl'>10</span>, <span class='kw'>activation</span> <span class='kw'>=</span> <span class='st'>'softmax'</span>)
+
+<span class='co'># create and compile model</span>
+<span class='no'>model</span> <span class='kw'>&lt;-</span> <span class='fu'>keras_model</span>(<span class='kw'>inputs</span> <span class='kw'>=</span> <span class='no'>inputs</span>, <span class='kw'>outputs</span> <span class='kw'>=</span> <span class='no'>predictions</span>)
+<span class='no'>model</span> <span class='kw'>%&gt;%</span> <span class='fu'><a href='https://rdrr.io/pkg/generics/man/compile.html'>compile</a></span>(
+  <span class='kw'>optimizer</span> <span class='kw'>=</span> <span class='st'>'rmsprop'</span>,
+  <span class='kw'>loss</span> <span class='kw'>=</span> <span class='st'>'categorical_crossentropy'</span>,
+  <span class='kw'>metrics</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>'accuracy'</span>)
+)
+}</div></code></pre></div>
 
 
 
