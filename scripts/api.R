@@ -93,13 +93,15 @@ copy_reference <- function(exdir, name) {
         tools_url <- paste0("/tools/tools", old_url)
         installation_url <- paste0("/installation", old_url)
         tutorials_url <- paste0("/tutorials", old_url)
+        tutorials_tools_url <- paste0("/tutorials/tools", old_url)
         guide_tools_url <- paste0("/guide/tools", old_url)
         deploy_url <- paste0("/deploy", old_url)
         tools2_url <- paste0("/tools", old_url)
         
+        
         front_matter$aliases <- c(front_matter$aliases, old_url, guide_url, tools_url,
                                   installation_url, tutorials_url, guide_tools_url,
-                                  deploy_url, tools2_url)
+                                  deploy_url, tools2_url, tutorials_tools_url)
       }
       
       if (stringr::str_detect(path, "_index.html"))

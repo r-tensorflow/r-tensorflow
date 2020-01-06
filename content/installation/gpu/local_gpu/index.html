@@ -153,7 +153,7 @@ aliases:
 <h3>Multiple Users</h3>
 <p>In a multi-user server environment you may want to install a system-wide version of TensorFlow with GPU support so all users can share the same configuration. To do this, start by following the directions for native pip installation of the GPU version of TensorFlow here:</p>
 <p><a href="https://www.tensorflow.org/install/install_linux#InstallingNativePip" class="uri">https://www.tensorflow.org/install/install_linux#InstallingNativePip</a></p>
-<p>There are some components of TensorFlow (e.g. the <a href="https://github.com/tensorflow/tensorflow/tree/master/tensorflow/contrib/keras">Keras</a> library) which have dependencies on additional Python packages.</p>
+<p>There are some components of TensorFlow (e.g. the <a href="https://github.com/tensorflow/tensorflow/tree/master/tensorflow/python/keras">Keras</a> library) which have dependencies on additional Python packages.</p>
 <p>You can install Keras and it’s optional dependencies with the following command (ensuring you have the correct privilege to write to system library locations as required via sudo, etc.):</p>
 <div class="sourceCode" id="cb11"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb11-1" data-line-number="1"><span class="ex">pip</span> install keras h5py pyyaml requests Pillow scipy</a></code></pre></div>
 <p>If you have any trouble with locating the system-wide version of TensorFlow from within R please see the section on <a href="installation.html#locating-tensorflow">locating TensorFlow</a>.</p>
