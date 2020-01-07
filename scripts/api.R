@@ -98,6 +98,8 @@ copy_reference <- function(exdir, name) {
         deploy_url <- paste0("/deploy", old_url)
         tools2_url <- paste0("/tools", old_url)
         
+        print(old_url)
+        
         
         front_matter$aliases <- c(front_matter$aliases, old_url, guide_url, tools_url,
                                   installation_url, tutorials_url, guide_tools_url,

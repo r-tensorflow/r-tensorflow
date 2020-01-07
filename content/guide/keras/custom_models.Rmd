@@ -25,7 +25,7 @@ knitr::opts_chunk$set(comment = NA, eval = FALSE)
 
 ## Overview
 
-In addition to [sequential models](sequential_model.html) and models created with the [functional API](functional_api.html), you may also define models by defining a custom `call()` (forward pass) operation. 
+In addition to [sequential models](../sequential_model/) and models created with the [functional API](../functional_api/), you may also define models by defining a custom `call()` (forward pass) operation. 
 
 To create a custom Keras model, you call the `keras_model_custom()` function, passing it an R function which in turn returns another R function that implements the custom `call()` (forward pass) operation. The R function you pass takes a `model` argument, which provides access to the underlying Keras model object should you need it. 
 

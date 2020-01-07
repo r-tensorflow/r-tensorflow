@@ -136,7 +136,7 @@ Below are some common definitions that are necessary to know and understand to c
   - A **batch** generally approximates the distribution of the input data better than a single input. The larger the batch, the better the approximation; however, it is also true that the batch will take longer to process and will still result in only one update. For inference (evaluate/predict), it is recommended to pick a batch size that is as large as you can afford without going out of memory (since larger batches will usually result in faster evaluating/prediction).
 - **Epoch**: an arbitrary cutoff, generally defined as "one pass over the entire dataset", used to separate training into distinct phases, which is useful for logging and periodic evaluation.
   - When using `evaluation_data` or `evaluation_split` with the `fit` method of Keras models, evaluation will be run at the end of every **epoch**.
-  - Within Keras, there is the ability to add [callbacks](training_callbacks.html) specifically designed to be run at the end of an **epoch**. Examples of these are learning rate changes and model checkpointing (saving).
+  - Within Keras, there is the ability to add [callbacks](../training_callbacks/) specifically designed to be run at the end of an **epoch**. Examples of these are learning rate changes and model checkpointing (saving).
 
 ## Why are Keras objects modified in place?
 
@@ -346,7 +346,7 @@ early_stopping <- callback_early_stopping(monitor = 'val_loss', patience = 2)
 model %>% fit(X, y, validation_split = 0.2, callbacks = c(early_stopping))
 ```
 
-Find out more in the [callbacks documentation](training_callbacks.html).
+Find out more in the [callbacks documentation](../training_callbacks/).
 
 ## How is the validation split computed?
 
@@ -497,13 +497,13 @@ For example:
 model <- application_vgg16(weights = 'imagenet', include_top = TRUE)
 ```
 
-For a few simple usage examples, see [the documentation for the Applications module](applications.html).
+For a few simple usage examples, see [the documentation for the Applications module](../applications/).
 
 The VGG16 model is also the basis for the [Deep dream](https://keras.rstudio.com/articles/examples/deep_dream.html) Keras example script.
 
 ## How can I use other Keras backends?
 
-By default the Keras Python and R packages use the TensorFlow backend. Other available backends include Theano or CNTK. To learn more about using alternatate backends (e.g. Theano or CNTK) see the [article on Keras backends](backend.html).
+By default the Keras Python and R packages use the TensorFlow backend. Other available backends include Theano or CNTK. To learn more about using alternatate backends (e.g. Theano or CNTK) see the [article on Keras backends](../backend/).
 
 
 ## How can I use the PlaidML backend?
@@ -570,7 +570,7 @@ keras <- NULL
 
 ### Custom Layers
 
-If you create [custom layers in R](custom_layers.html) or import other Python packages which include custom Keras layers, be sure to wrap them using the `create_layer()` function so that they are composable using the magrittr pipe operator. See the documentation on [layer wrapper functions](custom_layers.html#layer-wrapper-function) for additional details.
+If you create [custom layers in R](../custom_layers/) or import other Python packages which include custom Keras layers, be sure to wrap them using the `create_layer()` function so that they are composable using the magrittr pipe operator. See the documentation on [layer wrapper functions](custom_layers.html#layer-wrapper-function) for additional details.
 
 
 ## How can I obtain reproducible results using Keras during development?

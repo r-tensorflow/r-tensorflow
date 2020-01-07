@@ -125,7 +125,7 @@ Keras has a built-in utility, <code><a href="../../keras/reference/multi_gpu_mod
 <strong>Epoch</strong>: an arbitrary cutoff, generally defined as “one pass over the entire dataset”, used to separate training into distinct phases, which is useful for logging and periodic evaluation.
 <ul>
 <li>When using <code>evaluation_data</code> or <code>evaluation_split</code> with the <code>fit</code> method of Keras models, evaluation will be run at the end of every <strong>epoch</strong>.</li>
-<li>Within Keras, there is the ability to add <a href="training_callbacks.html">callbacks</a> specifically designed to be run at the end of an <strong>epoch</strong>. Examples of these are learning rate changes and model checkpointing (saving).</li>
+<li>Within Keras, there is the ability to add <a href="../training_callbacks/">callbacks</a> specifically designed to be run at the end of an <strong>epoch</strong>. Examples of these are learning rate changes and model checkpointing (saving).</li>
 </ul>
 </li>
 </ul>
@@ -283,7 +283,7 @@ Keras has a built-in utility, <code><a href="../../keras/reference/multi_gpu_mod
 <p>You can use an early stopping callback:</p>
 <div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb17-1" data-line-number="1">early_stopping &lt;-<span class="st"> </span><span class="kw"><a href="../../keras/reference/callback_early_stopping.html">callback_early_stopping</a></span>(<span class="dt">monitor =</span> <span class="st">'val_loss'</span>, <span class="dt">patience =</span> <span class="dv">2</span>)</a>
 <a class="sourceLine" id="cb17-2" data-line-number="2">model <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../../keras/reference/reexports.html">fit</a></span>(X, y, <span class="dt">validation_split =</span> <span class="fl">0.2</span>, <span class="dt">callbacks =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(early_stopping))</a></code></pre></div>
-<p>Find out more in the <a href="training_callbacks.html">callbacks documentation</a>.</p>
+<p>Find out more in the <a href="../training_callbacks/">callbacks documentation</a>.</p>
 </div>
 <div id="how-is-the-validation-split-computed" class="section level2">
 <h2>How is the validation split computed?</h2>
@@ -406,12 +406,12 @@ Keras has a built-in utility, <code><a href="../../keras/reference/multi_gpu_mod
 </ul>
 <p>For example:</p>
 <div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb23-1" data-line-number="1">model &lt;-<span class="st"> </span><span class="kw"><a href="../../keras/reference/application_vgg.html">application_vgg16</a></span>(<span class="dt">weights =</span> <span class="st">'imagenet'</span>, <span class="dt">include_top =</span> <span class="ot">TRUE</span>)</a></code></pre></div>
-<p>For a few simple usage examples, see <a href="applications.html">the documentation for the Applications module</a>.</p>
+<p>For a few simple usage examples, see <a href="../applications/">the documentation for the Applications module</a>.</p>
 <p>The VGG16 model is also the basis for the <a href="https://keras.rstudio.com/articles/examples/deep_dream.html">Deep dream</a> Keras example script.</p>
 </div>
 <div id="how-can-i-use-other-keras-backends" class="section level2">
 <h2>How can I use other Keras backends?</h2>
-<p>By default the Keras Python and R packages use the TensorFlow backend. Other available backends include Theano or CNTK. To learn more about using alternatate backends (e.g. Theano or CNTK) see the <a href="backend.html">article on Keras backends</a>.</p>
+<p>By default the Keras Python and R packages use the TensorFlow backend. Other available backends include Theano or CNTK. To learn more about using alternatate backends (e.g. Theano or CNTK) see the <a href="../backend/">article on Keras backends</a>.</p>
 </div>
 <div id="how-can-i-use-the-plaidml-backend" class="section level2">
 <h2>How can I use the PlaidML backend?</h2>
@@ -458,7 +458,7 @@ Keras has a built-in utility, <code><a href="../../keras/reference/multi_gpu_mod
 </div>
 <div id="custom-layers" class="section level3">
 <h3>Custom Layers</h3>
-<p>If you create <a href="custom_layers.html">custom layers in R</a> or import other Python packages which include custom Keras layers, be sure to wrap them using the <code><a href="../../keras/reference/create_layer.html">create_layer()</a></code> function so that they are composable using the magrittr pipe operator. See the documentation on <a href="custom_layers.html#layer-wrapper-function">layer wrapper functions</a> for additional details.</p>
+<p>If you create <a href="../custom_layers/">custom layers in R</a> or import other Python packages which include custom Keras layers, be sure to wrap them using the <code><a href="../../keras/reference/create_layer.html">create_layer()</a></code> function so that they are composable using the magrittr pipe operator. See the documentation on <a href="custom_layers.html#layer-wrapper-function">layer wrapper functions</a> for additional details.</p>
 </div>
 </div>
 <div id="how-can-i-obtain-reproducible-results-using-keras-during-development" class="section level2">

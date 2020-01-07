@@ -42,7 +42,7 @@ aliases:
 <p>There are no special requirements for your training script, however there are a couple of things to keep in mind:</p>
 <ol style="list-style-type: decimal">
 <li><p>When you train a model on CloudML all of the files in the current working directory are uploaded. Therefore, your training script should be within the current working directory and references to other scripts, data files, etc. should be relative to the current working directory. The most straightforward way to organize your work on a CloudML application is to use an <a href="https://support.rstudio.com/hc/en-us/articles/200526207-Using-Projects">RStudio Project</a>.</p></li>
-<li><p>Your training data may be contained within the working directory, or it may be located within Google Cloud Storage. If your training data is large and/or located in cloud storage, the most straightforward workflow for development is to use a local subsample of your data. See the article on <a href="storage.html">Google Cloud Storage</a> for a detailed example of using distinct data for local and CloudML execution contexts, as well as reading data from Google Cloud Storage buckets.</p></li>
+<li><p>Your training data may be contained within the working directory, or it may be located within Google Cloud Storage. If your training data is large and/or located in cloud storage, the most straightforward workflow for development is to use a local subsample of your data. See the article on <a href="../storage/">Google Cloud Storage</a> for a detailed example of using distinct data for local and CloudML execution contexts, as well as reading data from Google Cloud Storage buckets.</p></li>
 </ol>
 <p>Once your script is working the way you expect you are ready to submit it as a job to CloudML.</p>
 </div>
@@ -171,7 +171,7 @@ https://console.cloud.google.com/logs?resource=ml.googleapis.com%2Fjob_id%2Fclou
 <p>You can try out different flags by passing a named list of <code>flags</code> to the <code><a href="../../tools/cloudml/reference/cloudml_train.html">cloudml_train()</a></code> function. For example:</p>
 <div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb16-1" data-line-number="1"><span class="kw"><a href="../../tools/cloudml/reference/cloudml_train.html">cloudml_train</a></span>(<span class="st">"minst_mlp.R"</span>, <span class="dt">flags =</span> <span class="kw"><a href="https://rdrr.io/r/base/list.html">list</a></span>(<span class="dt">dropout1 =</span> <span class="fl">0.3</span>, <span class="dt">dropout2 =</span> <span class="fl">0.2</span>))</a></code></pre></div>
 <p>These flags are passed to your script and are also retained as part of the results recorded for the training run.</p>
-<p>You can also more systematically try combinations of flags using CloudML <a href="tuning.html">hyperparameter tuning</a>.</p>
+<p>You can also more systematically try combinations of flags using CloudML <a href="../tuning/">hyperparameter tuning</a>.</p>
 </div>
 <div id="training-with-a-gpu" class="section level2">
 <h2>Training with a GPU</h2>
@@ -201,8 +201,8 @@ https://console.cloud.google.com/logs?resource=ml.googleapis.com%2Fjob_id%2Fclou
 <h2>Learning More</h2>
 <p>The following articles provide additional documentation on training and deploying models with CloudML:</p>
 <ul>
-<li><p><a href="tuning.html">Hyperparameter Tuning</a> explores how you can improve the performance of your models by running many trials with distinct hyperparameters (e.g. number and size of layers) to determine their optimal values.</p></li>
-<li><p><a href="storage.html">Google Cloud Storage</a> provides information on copying data between your local machine and Google Storage and also describes how to use data within Google Storage during training.</p></li>
-<li><p><a href="deployment.html">Deploying Models</a> describes how to deploy trained models and generate predictions from them.</p></li>
+<li><p><a href="../tuning/">Hyperparameter Tuning</a> explores how you can improve the performance of your models by running many trials with distinct hyperparameters (e.g. number and size of layers) to determine their optimal values.</p></li>
+<li><p><a href="../storage/">Google Cloud Storage</a> provides information on copying data between your local machine and Google Storage and also describes how to use data within Google Storage during training.</p></li>
+<li><p><a href="../deployment/">Deploying Models</a> describes how to deploy trained models and generate predictions from them.</p></li>
 </ul>
 </div>

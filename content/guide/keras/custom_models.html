@@ -22,7 +22,7 @@ aliases:
 
 <div id="overview" class="section level2">
 <h2>Overview</h2>
-<p>In addition to <a href="sequential_model.html">sequential models</a> and models created with the <a href="functional_api.html">functional API</a>, you may also define models by defining a custom <code><a href="https://rdrr.io/r/base/call.html">call()</a></code> (forward pass) operation.</p>
+<p>In addition to <a href="../sequential_model/">sequential models</a> and models created with the <a href="../functional_api/">functional API</a>, you may also define models by defining a custom <code><a href="https://rdrr.io/r/base/call.html">call()</a></code> (forward pass) operation.</p>
 <p>To create a custom Keras model, you call the <code><a href="../../keras/reference/keras_model_custom.html">keras_model_custom()</a></code> function, passing it an R function which in turn returns another R function that implements the custom <code><a href="https://rdrr.io/r/base/call.html">call()</a></code> (forward pass) operation. The R function you pass takes a <code>model</code> argument, which provides access to the underlying Keras model object should you need it.</p>
 <p>Typically, you’ll wrap your call to <code><a href="../../keras/reference/keras_model_custom.html">keras_model_custom()</a></code> in yet another function that enables callers to easily instantiate your custom model.</p>
 </div>

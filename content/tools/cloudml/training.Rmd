@@ -51,7 +51,7 @@ There are no special requirements for your training script, however there are a 
 
 1) When you train a model on CloudML all of the files in the current working directory are uploaded. Therefore, your training script should be within the current working directory and references to other scripts, data files, etc. should be relative to the current working directory. The most straightforward way to organize your work on a CloudML application is to use an [RStudio Project](https://support.rstudio.com/hc/en-us/articles/200526207-Using-Projects).
 
-2) Your training data may be contained within the working directory, or it may be located within Google Cloud Storage. If your training data is large and/or located in cloud storage, the most straightforward workflow for development is to use a local subsample of your data. See the article on [Google Cloud Storage](storage.html) for a detailed example of using distinct data for local and CloudML execution contexts, as well as reading data from Google Cloud Storage buckets.
+2) Your training data may be contained within the working directory, or it may be located within Google Cloud Storage. If your training data is large and/or located in cloud storage, the most straightforward workflow for development is to use a local subsample of your data. See the article on [Google Cloud Storage](../storage/) for a detailed example of using distinct data for local and CloudML execution contexts, as well as reading data from Google Cloud Storage buckets.
 
 Once your script is working the way you expect you are ready to submit it as a job to CloudML.
 
@@ -246,7 +246,7 @@ cloudml_train("minst_mlp.R", flags = list(dropout1 = 0.3, dropout2 = 0.2))
 
 These flags are passed to your script and are also retained as part of the results recorded for the training run.
 
-You can also more systematically try combinations of flags using CloudML [hyperparameter tuning](tuning.html). 
+You can also more systematically try combinations of flags using CloudML [hyperparameter tuning](../tuning/). 
 
 ## Training with a GPU
 
@@ -300,11 +300,11 @@ Note that `trainingInput` is used as the top level key in the config file (this 
 
 The following articles provide additional documentation on training and deploying models with CloudML:
 
-* [Hyperparameter Tuning](tuning.html) explores how you can improve the performance of your models by running many trials with distinct hyperparameters (e.g. number and size of layers) to determine their optimal values.
+* [Hyperparameter Tuning](../tuning/) explores how you can improve the performance of your models by running many trials with distinct hyperparameters (e.g. number and size of layers) to determine their optimal values.
 
-* [Google Cloud Storage](storage.html) provides information on copying data between your local machine and Google Storage and also describes how to use data within Google Storage during training.
+* [Google Cloud Storage](../storage/) provides information on copying data between your local machine and Google Storage and also describes how to use data within Google Storage during training.
 
-* [Deploying Models](deployment.html) describes how to deploy trained models and generate predictions from them.
+* [Deploying Models](../deployment/) describes how to deploy trained models and generate predictions from them.
 
 
 
