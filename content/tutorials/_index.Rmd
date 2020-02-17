@@ -24,7 +24,7 @@ build more complex workflows as you need to use advanced models and techniques.
 We recommend the following tutorials for your first contact with TensorFlow. 
 Feel free to navigate through the 'beginners' section in the sidebar.
 
-- [Quickstart](/tutorials/beginners/quickstart): the minimal getting started guide to Keras.
+- [Quickstart](/tutorials/beginners/): the minimal getting started guide to Keras.
 - [Basic ML with Keras](/tutorials/beginners/basic-ml/): use Keras to solve basic Machine Learning tasks.
 - [Load data](/tutorials/beginners/load/load_csv/): learn to efficiently load data to TensorFlow using `tfdatasets`.
 

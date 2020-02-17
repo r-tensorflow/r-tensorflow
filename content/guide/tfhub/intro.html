@@ -30,56 +30,56 @@ alias:
 <div id="installation" class="section level2">
 <h2>Installation</h2>
 <p>You can install the released version of tfhub from <a href="https://CRAN.R-project.org">CRAN</a> with:</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span>(<span class="st">"tfhub"</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a><span class="kw"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span>(<span class="st">"tfhub"</span>)</span></code></pre></div>
 <p>And the development version from <a href="https://github.com/">GitHub</a> with:</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" data-line-number="1"><span class="co"># install.packages("devtools")</span></a>
-<a class="sourceLine" id="cb2-2" data-line-number="2">devtools<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/devtools/man/reexports.html">install_github</a></span>(<span class="st">"rstudio/tfhub"</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1"></a><span class="co"># install.packages("devtools")</span></span>
+<span id="cb2-2"><a href="#cb2-2"></a>devtools<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/devtools/man/reexports.html">install_github</a></span>(<span class="st">"rstudio/tfhub"</span>)</span></code></pre></div>
 <p>After installing the tfhub package you need to install the TensorFlow Hub python
 module:</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(tfhub)</a>
-<a class="sourceLine" id="cb3-2" data-line-number="2"><span class="kw"><a href="https://rdrr.io/pkg/tfhub/man/install_tfhub.html">install_tfhub</a></span>()</a></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1"></a><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(tfhub)</span>
+<span id="cb3-2"><a href="#cb3-2"></a><span class="kw"><a href="https://rdrr.io/pkg/tfhub/man/install_tfhub.html">install_tfhub</a></span>()</span></code></pre></div>
 </div>
 <div id="loading-modules" class="section level2">
 <h2>Loading modules</h2>
 <p>Modules can be loaded from URL’s and local paths using <code><a href="https://rdrr.io/pkg/tfhub/man/hub_load.html">hub_load()</a></code></p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" data-line-number="1">module &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/pkg/tfhub/man/hub_load.html">hub_load</a></span>(<span class="st">"https://tfhub.dev/google/tf2-preview/mobilenet_v2/feature_vector/2"</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1"></a>module &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/pkg/tfhub/man/hub_load.html">hub_load</a></span>(<span class="st">"https://tfhub.dev/google/tf2-preview/mobilenet_v2/feature_vector/2"</span>)</span></code></pre></div>
 <p>Module’s behave like functions and can be called with Tensors eg:</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" data-line-number="1">input &lt;-<span class="st"> </span>tf<span class="op">$</span>random<span class="op">$</span><span class="kw">uniform</span>(<span class="dt">shape =</span> <span class="kw"><a href="https://rdrr.io/pkg/tfhub/man/reexports.html">shape</a></span>(<span class="dv">1</span>,<span class="dv">224</span>,<span class="dv">224</span>,<span class="dv">3</span>), <span class="dt">minval =</span> <span class="dv">0</span>, <span class="dt">maxval =</span> <span class="dv">1</span>)</a>
-<a class="sourceLine" id="cb5-2" data-line-number="2">output &lt;-<span class="st"> </span><span class="kw">module</span>(input)</a></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1"></a>input &lt;-<span class="st"> </span>tf<span class="op">$</span>random<span class="op">$</span><span class="kw">uniform</span>(<span class="dt">shape =</span> <span class="kw"><a href="https://rdrr.io/pkg/tfhub/man/reexports.html">shape</a></span>(<span class="dv">1</span>,<span class="dv">224</span>,<span class="dv">224</span>,<span class="dv">3</span>), <span class="dt">minval =</span> <span class="dv">0</span>, <span class="dt">maxval =</span> <span class="dv">1</span>)</span>
+<span id="cb5-2"><a href="#cb5-2"></a>output &lt;-<span class="st"> </span><span class="kw">module</span>(input)</span></code></pre></div>
 </div>
 <div id="using-with-keras" class="section level2">
 <h2>Using with Keras</h2>
 <p>The easiest way to get started with tfhub is using <code>layer_hub</code>. A Keras layer that
 loads a TensorFlow Hub module and prepares it for using with your model.</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(tfhub)</a>
-<a class="sourceLine" id="cb6-2" data-line-number="2"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(keras)</a>
-<a class="sourceLine" id="cb6-3" data-line-number="3"></a>
-<a class="sourceLine" id="cb6-4" data-line-number="4">input &lt;-<span class="st"> </span><span class="kw"><a href="../../keras/reference/layer_input.html">layer_input</a></span>(<span class="dt">shape =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="dv">32</span>, <span class="dv">32</span>, <span class="dv">3</span>))</a>
-<a class="sourceLine" id="cb6-5" data-line-number="5"></a>
-<a class="sourceLine" id="cb6-6" data-line-number="6">output &lt;-<span class="st"> </span>input <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb6-7" data-line-number="7"><span class="st">  </span><span class="co"># we are using a pre-trained MobileNet model!</span></a>
-<a class="sourceLine" id="cb6-8" data-line-number="8"><span class="st">  </span><span class="kw"><a href="https://rdrr.io/pkg/tfhub/man/layer_hub.html">layer_hub</a></span>(<span class="dt">handle =</span> <span class="st">"https://tfhub.dev/google/tf2-preview/mobilenet_v2/feature_vector/2"</span>) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb6-9" data-line-number="9"><span class="st">  </span><span class="kw"><a href="../../keras/reference/layer_dense.html">layer_dense</a></span>(<span class="dt">units =</span> <span class="dv">10</span>, <span class="dt">activation =</span> <span class="st">"softmax"</span>)</a>
-<a class="sourceLine" id="cb6-10" data-line-number="10"></a>
-<a class="sourceLine" id="cb6-11" data-line-number="11">model &lt;-<span class="st"> </span><span class="kw"><a href="../../keras/reference/keras_model.html">keras_model</a></span>(input, output)</a>
-<a class="sourceLine" id="cb6-12" data-line-number="12"></a>
-<a class="sourceLine" id="cb6-13" data-line-number="13">model <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb6-14" data-line-number="14"><span class="st">  </span><span class="kw"><a href="../../keras/reference/reexports.html">compile</a></span>(</a>
-<a class="sourceLine" id="cb6-15" data-line-number="15">    <span class="dt">loss =</span> <span class="st">"sparse_categorical_crossentropy"</span>,</a>
-<a class="sourceLine" id="cb6-16" data-line-number="16">    <span class="dt">optimizer =</span> <span class="st">"adam"</span>,</a>
-<a class="sourceLine" id="cb6-17" data-line-number="17">    <span class="dt">metrics =</span> <span class="st">"accuracy"</span></a>
-<a class="sourceLine" id="cb6-18" data-line-number="18">  )</a></code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1"></a><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(tfhub)</span>
+<span id="cb6-2"><a href="#cb6-2"></a><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(keras)</span>
+<span id="cb6-3"><a href="#cb6-3"></a></span>
+<span id="cb6-4"><a href="#cb6-4"></a>input &lt;-<span class="st"> </span><span class="kw"><a href="../../keras/reference/layer_input.html">layer_input</a></span>(<span class="dt">shape =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="dv">32</span>, <span class="dv">32</span>, <span class="dv">3</span>))</span>
+<span id="cb6-5"><a href="#cb6-5"></a></span>
+<span id="cb6-6"><a href="#cb6-6"></a>output &lt;-<span class="st"> </span>input <span class="op">%&gt;%</span></span>
+<span id="cb6-7"><a href="#cb6-7"></a><span class="st">  </span><span class="co"># we are using a pre-trained MobileNet model!</span></span>
+<span id="cb6-8"><a href="#cb6-8"></a><span class="st">  </span><span class="kw"><a href="https://rdrr.io/pkg/tfhub/man/layer_hub.html">layer_hub</a></span>(<span class="dt">handle =</span> <span class="st">"https://tfhub.dev/google/tf2-preview/mobilenet_v2/feature_vector/2"</span>) <span class="op">%&gt;%</span></span>
+<span id="cb6-9"><a href="#cb6-9"></a><span class="st">  </span><span class="kw"><a href="../../keras/reference/layer_dense.html">layer_dense</a></span>(<span class="dt">units =</span> <span class="dv">10</span>, <span class="dt">activation =</span> <span class="st">"softmax"</span>)</span>
+<span id="cb6-10"><a href="#cb6-10"></a></span>
+<span id="cb6-11"><a href="#cb6-11"></a>model &lt;-<span class="st"> </span><span class="kw"><a href="../../keras/reference/keras_model.html">keras_model</a></span>(input, output)</span>
+<span id="cb6-12"><a href="#cb6-12"></a></span>
+<span id="cb6-13"><a href="#cb6-13"></a>model <span class="op">%&gt;%</span></span>
+<span id="cb6-14"><a href="#cb6-14"></a><span class="st">  </span><span class="kw"><a href="../../keras/reference/reexports.html">compile</a></span>(</span>
+<span id="cb6-15"><a href="#cb6-15"></a>    <span class="dt">loss =</span> <span class="st">"sparse_categorical_crossentropy"</span>,</span>
+<span id="cb6-16"><a href="#cb6-16"></a>    <span class="dt">optimizer =</span> <span class="st">"adam"</span>,</span>
+<span id="cb6-17"><a href="#cb6-17"></a>    <span class="dt">metrics =</span> <span class="st">"accuracy"</span></span>
+<span id="cb6-18"><a href="#cb6-18"></a>  )</span></code></pre></div>
 <p>We can then fit our model in the CIFAR10 dataset:</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" data-line-number="1">cifar &lt;-<span class="st"> </span><span class="kw"><a href="../../keras/reference/dataset_cifar10.html">dataset_cifar10</a></span>()</a>
-<a class="sourceLine" id="cb7-2" data-line-number="2">cifar<span class="op">$</span>train<span class="op">$</span>x &lt;-<span class="st"> </span>tf<span class="op">$</span>image<span class="op">$</span><span class="kw">resize</span>(cifar<span class="op">$</span>train<span class="op">$</span>x<span class="op">/</span><span class="dv">255</span>, <span class="dt">size =</span> <span class="kw"><a href="https://rdrr.io/pkg/tfhub/man/reexports.html">shape</a></span>(<span class="dv">224</span>,<span class="dv">224</span>))</a>
-<a class="sourceLine" id="cb7-3" data-line-number="3"></a>
-<a class="sourceLine" id="cb7-4" data-line-number="4">model <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb7-5" data-line-number="5"><span class="st">  </span><span class="kw"><a href="../../keras/reference/reexports.html">fit</a></span>(</a>
-<a class="sourceLine" id="cb7-6" data-line-number="6">    <span class="dt">x =</span> cifar<span class="op">$</span>train<span class="op">$</span>x,</a>
-<a class="sourceLine" id="cb7-7" data-line-number="7">    <span class="dt">y =</span> cifar<span class="op">$</span>train<span class="op">$</span>y,</a>
-<a class="sourceLine" id="cb7-8" data-line-number="8">    <span class="dt">validation_split =</span> <span class="fl">0.2</span>,</a>
-<a class="sourceLine" id="cb7-9" data-line-number="9">    <span class="dt">batch_size =</span> <span class="dv">128</span></a>
-<a class="sourceLine" id="cb7-10" data-line-number="10">  )</a></code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1"></a>cifar &lt;-<span class="st"> </span><span class="kw"><a href="../../keras/reference/dataset_cifar10.html">dataset_cifar10</a></span>()</span>
+<span id="cb7-2"><a href="#cb7-2"></a>cifar<span class="op">$</span>train<span class="op">$</span>x &lt;-<span class="st"> </span>tf<span class="op">$</span>image<span class="op">$</span><span class="kw">resize</span>(cifar<span class="op">$</span>train<span class="op">$</span>x<span class="op">/</span><span class="dv">255</span>, <span class="dt">size =</span> <span class="kw"><a href="https://rdrr.io/pkg/tfhub/man/reexports.html">shape</a></span>(<span class="dv">224</span>,<span class="dv">224</span>))</span>
+<span id="cb7-3"><a href="#cb7-3"></a></span>
+<span id="cb7-4"><a href="#cb7-4"></a>model <span class="op">%&gt;%</span></span>
+<span id="cb7-5"><a href="#cb7-5"></a><span class="st">  </span><span class="kw"><a href="../../keras/reference/reexports.html">fit</a></span>(</span>
+<span id="cb7-6"><a href="#cb7-6"></a>    <span class="dt">x =</span> cifar<span class="op">$</span>train<span class="op">$</span>x,</span>
+<span id="cb7-7"><a href="#cb7-7"></a>    <span class="dt">y =</span> cifar<span class="op">$</span>train<span class="op">$</span>y,</span>
+<span id="cb7-8"><a href="#cb7-8"></a>    <span class="dt">validation_split =</span> <span class="fl">0.2</span>,</span>
+<span id="cb7-9"><a href="#cb7-9"></a>    <span class="dt">batch_size =</span> <span class="dv">128</span></span>
+<span id="cb7-10"><a href="#cb7-10"></a>  )</span></code></pre></div>
 </div>
 <div id="using-with-tfdatasets" class="section level2">
 <h2>Using with tfdatasets</h2>

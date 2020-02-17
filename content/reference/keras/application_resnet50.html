@@ -11,6 +11,12 @@ aliases:
 - /keras/reference/application_resnet50.html
 - /guide/keras/reference/application_resnet50.html
 - /tools/tools/keras/reference/application_resnet50.html
+- /installation/keras/reference/application_resnet50.html
+- /tutorials/keras/reference/application_resnet50.html
+- /guide/tools/keras/reference/application_resnet50.html
+- /deploy/keras/reference/application_resnet50.html
+- /tools/keras/reference/application_resnet50.html
+- /tutorials/tools/keras/reference/application_resnet50.html
 ---
     
     <p>ResNet50 model for Keras.</p>
@@ -104,7 +110,7 @@ preprocessing.</p>
 <span class='no'>x</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='../imagenet_preprocess_input.html'>imagenet_preprocess_input</a></span>(<span class='no'>x</span>)
 
 <span class='co'># make predictions then decode and print them</span>
-<span class='no'>preds</span> <span class='kw'>&lt;-</span> <span class='no'>model</span>
+<span class='no'>preds</span> <span class='kw'>&lt;-</span> <span class='no'>model</span> <span class='kw'>%&gt;%</span> <span class='fu'><a href='https://rdrr.io/r/stats/predict.html'>predict</a></span>(<span class='no'>x</span>)
 <span class='fu'><a href='../imagenet_decode_predictions.html'>imagenet_decode_predictions</a></span>(<span class='no'>preds</span>, <span class='kw'>top</span> <span class='kw'>=</span> <span class='fl'>3</span>)<span class='kw'>[[</span><span class='fl'>1</span>]]
 }</div></code></pre></div>
 

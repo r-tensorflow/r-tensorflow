@@ -1,0 +1,86 @@
+---
+title: iris_custom_decay_dnn
+type: docs
+repo: https://github.com/rstudio/tfestimators
+description: Create a deep neural network with learning rate decay for iris dataset.
+menu:
+  main:
+    parent: tfestimators-examples
+---
+
+
+
+<div class="source-ref">
+<p><span class="caption">Source: </span><a href="https://github.com/rstudio/tfestimators/blob/master/vignettes/examples/iris_custom_decay_dnn.R" class="uri">https://github.com/rstudio/tfestimators/blob/master/vignettes/examples/iris_custom_decay_dnn.R</a></p>
+</div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(tfestimators)</span>
+<span id="cb1-2"><a href="#cb1-2"></a></span>
+<span id="cb1-3"><a href="#cb1-3"></a><span class="co"># Construct the input</span></span>
+<span id="cb1-4"><a href="#cb1-4"></a>inputs &lt;-<span class="st"> </span><span class="kw"><a href="../../../tfestimators/reference/input_fn.html">input_fn</a></span>(</span>
+<span id="cb1-5"><a href="#cb1-5"></a>  iris,</span>
+<span id="cb1-6"><a href="#cb1-6"></a>  <span class="dt">response =</span> <span class="st">"Species"</span>,</span>
+<span id="cb1-7"><a href="#cb1-7"></a>  <span class="dt">features =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(</span>
+<span id="cb1-8"><a href="#cb1-8"></a>    <span class="st">"Sepal.Length"</span>,</span>
+<span id="cb1-9"><a href="#cb1-9"></a>    <span class="st">"Sepal.Width"</span>,</span>
+<span id="cb1-10"><a href="#cb1-10"></a>    <span class="st">"Petal.Length"</span>,</span>
+<span id="cb1-11"><a href="#cb1-11"></a>    <span class="st">"Petal.Width"</span>),</span>
+<span id="cb1-12"><a href="#cb1-12"></a>  <span class="dt">batch_size =</span> <span class="dv">10</span></span>
+<span id="cb1-13"><a href="#cb1-13"></a>)</span>
+<span id="cb1-14"><a href="#cb1-14"></a></span>
+<span id="cb1-15"><a href="#cb1-15"></a>custom_model_fn &lt;-<span class="st"> </span><span class="cf">function</span>(features, labels, mode, params, config) {</span>
+<span id="cb1-16"><a href="#cb1-16"></a></span>
+<span id="cb1-17"><a href="#cb1-17"></a>  <span class="co"># Create three fully connected layers respectively of size 10, 20, and 10 with</span></span>
+<span id="cb1-18"><a href="#cb1-18"></a>  <span class="co"># each layer having a dropout probability of 0.1.</span></span>
+<span id="cb1-19"><a href="#cb1-19"></a>  logits &lt;-<span class="st"> </span>features <span class="op">%&gt;%</span></span>
+<span id="cb1-20"><a href="#cb1-20"></a><span class="st">    </span>tf<span class="op">$</span>contrib<span class="op">$</span>layers<span class="op">$</span><span class="kw"><a href="https://rdrr.io/r/utils/stack.html">stack</a></span>(</span>
+<span id="cb1-21"><a href="#cb1-21"></a>    tf<span class="op">$</span>contrib<span class="op">$</span>layers<span class="op">$</span>fully_connected, <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(10L, 20L, 10L),</span>
+<span id="cb1-22"><a href="#cb1-22"></a>      <span class="dt">normalizer_fn =</span> tf<span class="op">$</span>contrib<span class="op">$</span>layers<span class="op">$</span>dropout,</span>
+<span id="cb1-23"><a href="#cb1-23"></a>      <span class="dt">normalizer_params =</span> <span class="kw"><a href="https://rdrr.io/r/base/list.html">list</a></span>(<span class="dt">keep_prob =</span> <span class="fl">0.9</span>)) <span class="op">%&gt;%</span></span>
+<span id="cb1-24"><a href="#cb1-24"></a><span class="st">    </span>tf<span class="op">$</span>contrib<span class="op">$</span>layers<span class="op">$</span><span class="kw">fully_connected</span>(3L, <span class="dt">activation_fn =</span> <span class="ot">NULL</span>) <span class="co"># Compute logits (1 per class) and compute loss.</span></span>
+<span id="cb1-25"><a href="#cb1-25"></a></span>
+<span id="cb1-26"><a href="#cb1-26"></a>  <span class="co"># Compute predictions.</span></span>
+<span id="cb1-27"><a href="#cb1-27"></a>  predicted_classes &lt;-<span class="st"> </span>tf<span class="op">$</span><span class="kw">argmax</span>(logits, 1L)</span>
+<span id="cb1-28"><a href="#cb1-28"></a>  <span class="cf">if</span> (mode <span class="op">==</span><span class="st"> "infer"</span>) {</span>
+<span id="cb1-29"><a href="#cb1-29"></a>    predictions &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/list.html">list</a></span>(</span>
+<span id="cb1-30"><a href="#cb1-30"></a>      <span class="dt">class =</span> predicted_classes,</span>
+<span id="cb1-31"><a href="#cb1-31"></a>      <span class="dt">prob =</span> tf<span class="op">$</span>nn<span class="op">$</span><span class="kw">softmax</span>(logits))</span>
+<span id="cb1-32"><a href="#cb1-32"></a>    <span class="kw"><a href="https://rdrr.io/r/base/function.html">return</a></span>(<span class="kw"><a href="../../../tfestimators/reference/estimator_spec.html">estimator_spec</a></span>(<span class="dt">mode =</span> mode, <span class="dt">predictions =</span> predictions))</span>
+<span id="cb1-33"><a href="#cb1-33"></a>  }</span>
+<span id="cb1-34"><a href="#cb1-34"></a></span>
+<span id="cb1-35"><a href="#cb1-35"></a>  <span class="co"># Convert the labels to a one-hot tensor of shape (length of features, 3) and</span></span>
+<span id="cb1-36"><a href="#cb1-36"></a>  <span class="co"># with a on-value of 1 for each one-hot vector of length 3.</span></span>
+<span id="cb1-37"><a href="#cb1-37"></a>  onehot_labels &lt;-<span class="st"> </span>tf<span class="op">$</span><span class="kw">one_hot</span>(labels, 3L, 1L, 0L)</span>
+<span id="cb1-38"><a href="#cb1-38"></a>  <span class="co"># Compute loss.</span></span>
+<span id="cb1-39"><a href="#cb1-39"></a>  loss &lt;-<span class="st"> </span>tf<span class="op">$</span>losses<span class="op">$</span><span class="kw">softmax_cross_entropy</span>(onehot_labels, logits)</span>
+<span id="cb1-40"><a href="#cb1-40"></a></span>
+<span id="cb1-41"><a href="#cb1-41"></a>  <span class="cf">if</span> (mode <span class="op">==</span><span class="st"> "train"</span>) {</span>
+<span id="cb1-42"><a href="#cb1-42"></a>    global_step &lt;-<span class="st"> </span>tf<span class="op">$</span>train<span class="op">$</span><span class="kw">get_global_step</span>()</span>
+<span id="cb1-43"><a href="#cb1-43"></a>    learning_rate &lt;-<span class="st"> </span>tf<span class="op">$</span>train<span class="op">$</span><span class="kw">exponential_decay</span>(</span>
+<span id="cb1-44"><a href="#cb1-44"></a>      <span class="dt">learning_rate =</span> <span class="fl">0.1</span>,</span>
+<span id="cb1-45"><a href="#cb1-45"></a>      <span class="dt">global_step =</span> global_step,</span>
+<span id="cb1-46"><a href="#cb1-46"></a>      <span class="dt">decay_steps =</span> 100L,</span>
+<span id="cb1-47"><a href="#cb1-47"></a>      <span class="dt">decay_rate =</span> <span class="fl">0.001</span>)</span>
+<span id="cb1-48"><a href="#cb1-48"></a>    optimizer &lt;-<span class="st"> </span>tf<span class="op">$</span>train<span class="op">$</span><span class="kw">AdagradOptimizer</span>(<span class="dt">learning_rate =</span> learning_rate)</span>
+<span id="cb1-49"><a href="#cb1-49"></a>    train_op &lt;-<span class="st"> </span>optimizer<span class="op">$</span><span class="kw">minimize</span>(loss, <span class="dt">global_step =</span> global_step)</span>
+<span id="cb1-50"><a href="#cb1-50"></a>    <span class="kw"><a href="https://rdrr.io/r/base/function.html">return</a></span>(<span class="kw"><a href="../../../tfestimators/reference/estimator_spec.html">estimator_spec</a></span>(<span class="dt">mode =</span> mode, <span class="dt">loss =</span> loss, <span class="dt">train_op =</span> train_op))</span>
+<span id="cb1-51"><a href="#cb1-51"></a>  }</span>
+<span id="cb1-52"><a href="#cb1-52"></a></span>
+<span id="cb1-53"><a href="#cb1-53"></a>  <span class="co"># Compute evaluation metrics.</span></span>
+<span id="cb1-54"><a href="#cb1-54"></a>  eval_metric_ops &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/list.html">list</a></span>(</span>
+<span id="cb1-55"><a href="#cb1-55"></a>    <span class="dt">accuracy =</span> tf<span class="op">$</span>metrics<span class="op">$</span><span class="kw">accuracy</span>(</span>
+<span id="cb1-56"><a href="#cb1-56"></a>      <span class="dt">labels =</span> labels, <span class="dt">predictions =</span> predicted_classes</span>
+<span id="cb1-57"><a href="#cb1-57"></a>    ))</span>
+<span id="cb1-58"><a href="#cb1-58"></a></span>
+<span id="cb1-59"><a href="#cb1-59"></a>  <span class="kw"><a href="https://rdrr.io/r/base/function.html">return</a></span>(<span class="kw"><a href="../../../tfestimators/reference/estimator_spec.html">estimator_spec</a></span>(<span class="dt">mode =</span> mode, <span class="dt">loss =</span> loss, <span class="dt">eval_metric_ops =</span> eval_metric_ops))</span>
+<span id="cb1-60"><a href="#cb1-60"></a>}</span>
+<span id="cb1-61"><a href="#cb1-61"></a></span>
+<span id="cb1-62"><a href="#cb1-62"></a>model_dir &lt;-<span class="st"> "/tmp/iris-custom-decay-cnn-model"</span></span>
+<span id="cb1-63"><a href="#cb1-63"></a></span>
+<span id="cb1-64"><a href="#cb1-64"></a><span class="co"># Intialize classifer and training</span></span>
+<span id="cb1-65"><a href="#cb1-65"></a>classifier &lt;-<span class="st"> </span><span class="kw"><a href="../../../tfestimators/reference/estimator.html">estimator</a></span>(</span>
+<span id="cb1-66"><a href="#cb1-66"></a>  <span class="dt">model_fn =</span> custom_model_fn, <span class="dt">model_dir =</span> model_dir)</span>
+<span id="cb1-67"><a href="#cb1-67"></a></span>
+<span id="cb1-68"><a href="#cb1-68"></a>classifier <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../../../tfestimators/reference/reexports.html">train</a></span>(<span class="dt">input_fn =</span> inputs, <span class="dt">steps =</span> <span class="dv">100</span>)</span>
+<span id="cb1-69"><a href="#cb1-69"></a></span>
+<span id="cb1-70"><a href="#cb1-70"></a><span class="co"># Genearate predictions</span></span>
+<span id="cb1-71"><a href="#cb1-71"></a>predictions &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/stats/predict.html">predict</a></span>(classifier, <span class="dt">input_fn =</span> inputs)</span></code></pre></div>

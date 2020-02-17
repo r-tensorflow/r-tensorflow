@@ -1,0 +1,225 @@
+---
+title: wide_and_deep
+type: docs
+repo: https://github.com/rstudio/tfestimators
+description: Build a wide & deep learning model.
+menu:
+  main:
+    parent: tfestimators-examples
+---
+
+
+
+<div class="source-ref">
+<p><span class="caption">Source: </span><a href="https://github.com/rstudio/tfestimators/blob/master/vignettes/examples/wide_and_deep.R" class="uri">https://github.com/rstudio/tfestimators/blob/master/vignettes/examples/wide_and_deep.R</a></p>
+</div>
+<p>In this example, we’ll introduce how to use the TensorFlow Estimators API to
+jointly train a wide linear model and a deep feed-forward neural network.
+This approach combines the strengths of memorization and generalization. It’s
+useful for generic large-scale regression and classification problems with
+sparse input features (e.g., categorical features with a large number of
+possible feature values). If you’re interested in learning more about how
+Wide &amp; Deep Learning works, please check out the <a href="http://arxiv.org/abs/1606.07792">white
+paper</a>.</p>
+<div class="figure">
+<img src="https://www.tensorflow.org/images/wide_n_deep.svg" alt=""><p class="caption">Wide &amp; Deep</p>
+</div>
+<p>The figure above shows a comparison of a wide model (logistic regression with
+sparse features and transformations), a deep model (feed-forward neural
+network with an embedding layer and several hidden layers), and a Wide &amp; Deep
+model (joint training of both). At a high level, there are only 3 steps to
+configure a wide, deep, or Wide &amp; Deep model using the TF Estimators API:</p>
+<ul>
+<li>Select features for the wide part: Choose the sparse base columns and
+crossed columns you want to use. - Select features for the deep part: Choose
+the continuous columns, the embedding dimension for each categorical column,
+and the hidden layer sizes. - Put them all together in a Wide &amp; Deep model
+(linear_dnn_combined_classifier).</li>
+</ul>
+<p>And that’s it! Let’s go through a simple example.</p>
+<div id="download-data" class="section level3">
+<h3>Download Data</h3>
+<p>First of all, let’s download the census data:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(tfestimators)</span>
+<span id="cb1-2"><a href="#cb1-2"></a></span>
+<span id="cb1-3"><a href="#cb1-3"></a>maybe_download_census &lt;-<span class="st"> </span><span class="cf">function</span>(train_data_path, test_data_path, column_names_to_assign) {</span>
+<span id="cb1-4"><a href="#cb1-4"></a>  trim_character_cols &lt;-<span class="st"> </span><span class="cf">function</span>(df) {</span>
+<span id="cb1-5"><a href="#cb1-5"></a>    df <span class="op">%&gt;%</span></span>
+<span id="cb1-6"><a href="#cb1-6"></a><span class="st">      </span><span class="kw"><a href="https://rdrr.io/r/base/lapply.html">lapply</a></span>(<span class="cf">function</span>(x) <span class="cf">if</span> (<span class="kw"><a href="https://rdrr.io/r/base/character.html">is.character</a></span>(x)) <span class="kw"><a href="https://rdrr.io/r/base/trimws.html">trimws</a></span>(x) <span class="cf">else</span> x) <span class="op">%&gt;%</span></span>
+<span id="cb1-7"><a href="#cb1-7"></a><span class="st">      </span><span class="kw"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span>(<span class="dt">stringsAsFactors =</span> <span class="ot">FALSE</span>)</span>
+<span id="cb1-8"><a href="#cb1-8"></a>  }</span>
+<span id="cb1-9"><a href="#cb1-9"></a>  </span>
+<span id="cb1-10"><a href="#cb1-10"></a>  <span class="cf">if</span> (<span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/files.html">file.exists</a></span>(train_data_path) <span class="op">||</span><span class="st"> </span><span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/files.html">file.exists</a></span>(test_data_path)) {</span>
+<span id="cb1-11"><a href="#cb1-11"></a>    <span class="kw"><a href="https://rdrr.io/r/base/cat.html">cat</a></span>(<span class="st">"Downloading census data ..."</span>)</span>
+<span id="cb1-12"><a href="#cb1-12"></a>    train_data &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/utils/read.table.html">read.csv</a></span>(<span class="st">"https://archive.ics.uci.edu/ml/machine-learning-databases/adult/adult.data"</span>, <span class="dt">header =</span> <span class="ot">FALSE</span>, <span class="dt">skip =</span> <span class="dv">1</span>, </span>
+<span id="cb1-13"><a href="#cb1-13"></a>                           <span class="dt">stringsAsFactors =</span> <span class="ot">FALSE</span>) <span class="op">%&gt;%</span></span>
+<span id="cb1-14"><a href="#cb1-14"></a><span class="st">      </span><span class="kw">trim_character_cols</span>()</span>
+<span id="cb1-15"><a href="#cb1-15"></a>    test_data &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/utils/read.table.html">read.csv</a></span>(<span class="st">"https://archive.ics.uci.edu/ml/machine-learning-databases/adult/adult.test"</span>, <span class="dt">header =</span> <span class="ot">FALSE</span>, <span class="dt">skip =</span> <span class="dv">1</span>,</span>
+<span id="cb1-16"><a href="#cb1-16"></a>                          <span class="dt">stringsAsFactors =</span> <span class="ot">FALSE</span>) <span class="op">%&gt;%</span></span>
+<span id="cb1-17"><a href="#cb1-17"></a><span class="st">      </span><span class="kw">trim_character_cols</span>()</span>
+<span id="cb1-18"><a href="#cb1-18"></a>    <span class="kw"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span>(train_data) &lt;-<span class="st"> </span>column_names_to_assign</span>
+<span id="cb1-19"><a href="#cb1-19"></a>    <span class="kw"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span>(test_data) &lt;-<span class="st"> </span>column_names_to_assign</span>
+<span id="cb1-20"><a href="#cb1-20"></a>    <span class="kw"><a href="https://rdrr.io/r/utils/write.table.html">write.csv</a></span>(train_data, train_data_path, <span class="dt">row.names =</span> <span class="ot">FALSE</span>)</span>
+<span id="cb1-21"><a href="#cb1-21"></a>    <span class="kw"><a href="https://rdrr.io/r/utils/write.table.html">write.csv</a></span>(test_data, test_data_path, <span class="dt">row.names =</span> <span class="ot">FALSE</span>)</span>
+<span id="cb1-22"><a href="#cb1-22"></a>  } <span class="cf">else</span> {</span>
+<span id="cb1-23"><a href="#cb1-23"></a>    train_data &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/utils/read.table.html">read.csv</a></span>(train_data_path, <span class="dt">header =</span> <span class="ot">TRUE</span>,</span>
+<span id="cb1-24"><a href="#cb1-24"></a>                           <span class="dt">stringsAsFactors =</span> <span class="ot">FALSE</span>) <span class="op">%&gt;%</span></span>
+<span id="cb1-25"><a href="#cb1-25"></a><span class="st">      </span><span class="kw">trim_character_cols</span>()</span>
+<span id="cb1-26"><a href="#cb1-26"></a>    test_data &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/utils/read.table.html">read.csv</a></span>(test_data_path, <span class="dt">header =</span> <span class="ot">TRUE</span>,</span>
+<span id="cb1-27"><a href="#cb1-27"></a>                          <span class="dt">stringsAsFactors =</span> <span class="ot">FALSE</span>) <span class="op">%&gt;%</span></span>
+<span id="cb1-28"><a href="#cb1-28"></a><span class="st">      </span><span class="kw">trim_character_cols</span>()</span>
+<span id="cb1-29"><a href="#cb1-29"></a>  }</span>
+<span id="cb1-30"><a href="#cb1-30"></a>  <span class="kw"><a href="https://rdrr.io/r/base/function.html">return</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/list.html">list</a></span>(<span class="dt">train_data =</span> train_data, <span class="dt">test_data =</span> test_data))</span>
+<span id="cb1-31"><a href="#cb1-31"></a>}</span>
+<span id="cb1-32"><a href="#cb1-32"></a></span>
+<span id="cb1-33"><a href="#cb1-33"></a>COLNAMES &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"age"</span>, <span class="st">"workclass"</span>, <span class="st">"fnlwgt"</span>, <span class="st">"education"</span>, <span class="st">"education_num"</span>, <span class="st">"marital_status"</span>, <span class="st">"occupation"</span>,</span>
+<span id="cb1-34"><a href="#cb1-34"></a>              <span class="st">"relationship"</span>, <span class="st">"race"</span>, <span class="st">"sex"</span>, <span class="st">"capital_gain"</span>, <span class="st">"capital_loss"</span>, <span class="st">"hours_per_week"</span>, <span class="st">"native_country"</span>,</span>
+<span id="cb1-35"><a href="#cb1-35"></a>              <span class="st">"income_bracket"</span>)</span>
+<span id="cb1-36"><a href="#cb1-36"></a></span>
+<span id="cb1-37"><a href="#cb1-37"></a>downloaded_data &lt;-<span class="st"> </span><span class="kw">maybe_download_census</span>(</span>
+<span id="cb1-38"><a href="#cb1-38"></a>  <span class="kw"><a href="https://rdrr.io/r/base/file.path.html">file.path</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/getwd.html">getwd</a></span>(), <span class="st">"train_census.csv"</span>),</span>
+<span id="cb1-39"><a href="#cb1-39"></a>  <span class="kw"><a href="https://rdrr.io/r/base/file.path.html">file.path</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/getwd.html">getwd</a></span>(), <span class="st">"test_census.csv"</span>),</span>
+<span id="cb1-40"><a href="#cb1-40"></a>  COLNAMES</span>
+<span id="cb1-41"><a href="#cb1-41"></a>)</span>
+<span id="cb1-42"><a href="#cb1-42"></a>train_data &lt;-<span class="st"> </span>downloaded_data<span class="op">$</span>train_data</span>
+<span id="cb1-43"><a href="#cb1-43"></a>test_data &lt;-<span class="st"> </span>downloaded_data<span class="op">$</span>test_data</span></code></pre></div>
+</div>
+<div id="define-base-feature-columns" class="section level3">
+<h3>Define Base Feature Columns</h3>
+<p>Next, let’s define the base categorical and continuous feature columns that
+we’ll use. These base columns will be the building blocks used by both the
+wide part and the deep part of the model.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1"></a>gender &lt;-<span class="st"> </span><span class="kw"><a href="../../../tfestimators/reference/column_categorical_with_vocabulary_list.html">column_categorical_with_vocabulary_list</a></span>(</span>
+<span id="cb2-2"><a href="#cb2-2"></a>  <span class="st">"gender"</span>, <span class="dt">vocabulary_list =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"Female"</span>, <span class="st">"Male"</span>))</span>
+<span id="cb2-3"><a href="#cb2-3"></a>education &lt;-<span class="st"> </span><span class="kw"><a href="../../../tfestimators/reference/column_categorical_with_vocabulary_list.html">column_categorical_with_vocabulary_list</a></span>(</span>
+<span id="cb2-4"><a href="#cb2-4"></a>  <span class="st">"education"</span>,</span>
+<span id="cb2-5"><a href="#cb2-5"></a>  <span class="dt">vocabulary_list =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(</span>
+<span id="cb2-6"><a href="#cb2-6"></a>    <span class="st">"Bachelors"</span>, <span class="st">"HS-grad"</span>, <span class="st">"11th"</span>, <span class="st">"Masters"</span>, <span class="st">"9th"</span>,</span>
+<span id="cb2-7"><a href="#cb2-7"></a>    <span class="st">"Some-college"</span>, <span class="st">"Assoc-acdm"</span>, <span class="st">"Assoc-voc"</span>, <span class="st">"7th-8th"</span>,</span>
+<span id="cb2-8"><a href="#cb2-8"></a>    <span class="st">"Doctorate"</span>, <span class="st">"Prof-school"</span>, <span class="st">"5th-6th"</span>, <span class="st">"10th"</span>, <span class="st">"1st-4th"</span>,</span>
+<span id="cb2-9"><a href="#cb2-9"></a>    <span class="st">"Preschool"</span>, <span class="st">"12th"</span>))</span>
+<span id="cb2-10"><a href="#cb2-10"></a>marital_status &lt;-<span class="st"> </span><span class="kw"><a href="../../../tfestimators/reference/column_categorical_with_vocabulary_list.html">column_categorical_with_vocabulary_list</a></span>(</span>
+<span id="cb2-11"><a href="#cb2-11"></a>  <span class="st">"marital_status"</span>,</span>
+<span id="cb2-12"><a href="#cb2-12"></a>  <span class="dt">vocabulary_list =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(</span>
+<span id="cb2-13"><a href="#cb2-13"></a>    <span class="st">"Married-civ-spouse"</span>, <span class="st">"Divorced"</span>, <span class="st">"Married-spouse-absent"</span>,</span>
+<span id="cb2-14"><a href="#cb2-14"></a>    <span class="st">"Never-married"</span>, <span class="st">"Separated"</span>, <span class="st">"Married-AF-spouse"</span>, <span class="st">"Widowed"</span>))</span>
+<span id="cb2-15"><a href="#cb2-15"></a>relationship &lt;-<span class="st"> </span><span class="kw"><a href="../../../tfestimators/reference/column_categorical_with_vocabulary_list.html">column_categorical_with_vocabulary_list</a></span>(</span>
+<span id="cb2-16"><a href="#cb2-16"></a>  <span class="st">"relationship"</span>,</span>
+<span id="cb2-17"><a href="#cb2-17"></a>  <span class="dt">vocabulary_list =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(</span>
+<span id="cb2-18"><a href="#cb2-18"></a>    <span class="st">"Husband"</span>, <span class="st">"Not-in-family"</span>, <span class="st">"Wife"</span>, <span class="st">"Own-child"</span>, <span class="st">"Unmarried"</span>,</span>
+<span id="cb2-19"><a href="#cb2-19"></a>    <span class="st">"Other-relative"</span>))</span>
+<span id="cb2-20"><a href="#cb2-20"></a>workclass &lt;-<span class="st"> </span><span class="kw"><a href="../../../tfestimators/reference/column_categorical_with_vocabulary_list.html">column_categorical_with_vocabulary_list</a></span>(</span>
+<span id="cb2-21"><a href="#cb2-21"></a>  <span class="st">"workclass"</span>,</span>
+<span id="cb2-22"><a href="#cb2-22"></a>  <span class="dt">vocabulary_list =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(</span>
+<span id="cb2-23"><a href="#cb2-23"></a>    <span class="st">"Self-emp-not-inc"</span>, <span class="st">"Private"</span>, <span class="st">"State-gov"</span>, <span class="st">"Federal-gov"</span>,</span>
+<span id="cb2-24"><a href="#cb2-24"></a>    <span class="st">"Local-gov"</span>, <span class="st">"?"</span>, <span class="st">"Self-emp-inc"</span>, <span class="st">"Without-pay"</span>, <span class="st">"Never-worked"</span>))</span>
+<span id="cb2-25"><a href="#cb2-25"></a></span>
+<span id="cb2-26"><a href="#cb2-26"></a><span class="co"># To show an example of hashing:</span></span>
+<span id="cb2-27"><a href="#cb2-27"></a>occupation &lt;-<span class="st"> </span><span class="kw"><a href="../../../tfestimators/reference/column_categorical_with_hash_bucket.html">column_categorical_with_hash_bucket</a></span>(</span>
+<span id="cb2-28"><a href="#cb2-28"></a>  <span class="st">"occupation"</span>, <span class="dt">hash_bucket_size =</span> <span class="dv">1000</span>, <span class="dt">dtype =</span> tf<span class="op">$</span>string)</span>
+<span id="cb2-29"><a href="#cb2-29"></a>native_country &lt;-<span class="st"> </span><span class="kw"><a href="../../../tfestimators/reference/column_categorical_with_hash_bucket.html">column_categorical_with_hash_bucket</a></span>(</span>
+<span id="cb2-30"><a href="#cb2-30"></a>  <span class="st">"native_country"</span>, <span class="dt">hash_bucket_size =</span> <span class="dv">1000</span>, <span class="dt">dtype =</span> tf<span class="op">$</span>string)</span>
+<span id="cb2-31"><a href="#cb2-31"></a></span>
+<span id="cb2-32"><a href="#cb2-32"></a><span class="co"># Continuous base columns.</span></span>
+<span id="cb2-33"><a href="#cb2-33"></a>age &lt;-<span class="st"> </span><span class="kw"><a href="../../../tfestimators/reference/column_numeric.html">column_numeric</a></span>(<span class="st">"age"</span>)</span>
+<span id="cb2-34"><a href="#cb2-34"></a>education_num &lt;-<span class="st"> </span><span class="kw"><a href="../../../tfestimators/reference/column_numeric.html">column_numeric</a></span>(<span class="st">"education_num"</span>)</span>
+<span id="cb2-35"><a href="#cb2-35"></a>capital_gain &lt;-<span class="st"> </span><span class="kw"><a href="../../../tfestimators/reference/column_numeric.html">column_numeric</a></span>(<span class="st">"capital_gain"</span>)</span>
+<span id="cb2-36"><a href="#cb2-36"></a>capital_loss &lt;-<span class="st"> </span><span class="kw"><a href="../../../tfestimators/reference/column_numeric.html">column_numeric</a></span>(<span class="st">"capital_loss"</span>)</span>
+<span id="cb2-37"><a href="#cb2-37"></a>hours_per_week &lt;-<span class="st"> </span><span class="kw"><a href="../../../tfestimators/reference/column_numeric.html">column_numeric</a></span>(<span class="st">"hours_per_week"</span>)</span>
+<span id="cb2-38"><a href="#cb2-38"></a></span>
+<span id="cb2-39"><a href="#cb2-39"></a><span class="co"># Transformations.</span></span>
+<span id="cb2-40"><a href="#cb2-40"></a>age_buckets &lt;-<span class="st"> </span><span class="kw"><a href="../../../tfestimators/reference/column_bucketized.html">column_bucketized</a></span>(</span>
+<span id="cb2-41"><a href="#cb2-41"></a>  age, <span class="dt">boundaries =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="dv">18</span>, <span class="dv">25</span>, <span class="dv">30</span>, <span class="dv">35</span>, <span class="dv">40</span>, <span class="dv">45</span>, <span class="dv">50</span>, <span class="dv">55</span>, <span class="dv">60</span>, <span class="dv">65</span>))</span>
+<span id="cb2-42"><a href="#cb2-42"></a></span>
+<span id="cb2-43"><a href="#cb2-43"></a>base_columns &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(gender, native_country, education, occupation, workclass, relationship, age_buckets)</span></code></pre></div>
+</div>
+<div id="the-wide-model-linear-model-with-crossed-feature-columns" class="section level3">
+<h3>The Wide Model: Linear Model with Crossed Feature Columns</h3>
+<p>The wide model is a linear model with a wide set of sparse and crossed feature columns:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1"></a>crossed_columns &lt;-<span class="st"> </span><span class="kw"><a href="../../../tfestimators/reference/feature_columns.html">feature_columns</a></span>(</span>
+<span id="cb3-2"><a href="#cb3-2"></a>  native_country, education, occupation, workclass, relationship, age_buckets,</span>
+<span id="cb3-3"><a href="#cb3-3"></a>  <span class="kw"><a href="../../../tfestimators/reference/column_crossed.html">column_crossed</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"education"</span>, <span class="st">"occupation"</span>), <span class="dt">hash_bucket_size =</span> <span class="dv">10000</span>),</span>
+<span id="cb3-4"><a href="#cb3-4"></a>  <span class="kw"><a href="../../../tfestimators/reference/column_crossed.html">column_crossed</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"native_country"</span>, <span class="st">"occupation"</span>), <span class="dt">hash_bucket_size =</span> <span class="dv">10000</span>),</span>
+<span id="cb3-5"><a href="#cb3-5"></a>  <span class="kw"><a href="../../../tfestimators/reference/column_crossed.html">column_crossed</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(age_buckets, <span class="st">"education"</span>, <span class="st">"occupation"</span>), <span class="dt">hash_bucket_size =</span> <span class="dv">10000</span>)</span>
+<span id="cb3-6"><a href="#cb3-6"></a>)</span></code></pre></div>
+<p>Wide models with crossed feature columns can memorize sparse interactions
+between features effectively. That being said, one limitation of crossed
+feature columns is that they do not generalize to feature combinations that
+have not appeared in the training data. Let’s add a deep model with
+embeddings to fix that.</p>
+</div>
+<div id="the-deep-model-neural-network-with-embeddings" class="section level3">
+<h3>The Deep Model: Neural Network with Embeddings</h3>
+<p>The deep model is a feed-forward neural network, as shown in the previous
+figure. Each of the sparse, high-dimensional categorical features are first
+converted into a low-dimensional and dense real-valued vector, often referred
+to as an embedding vector. These low-dimensional dense embedding vectors are
+concatenated with the continuous features, and then fed into the hidden
+layers of a neural network in the forward pass. The embedding values are
+initialized randomly, and are trained along with all other model parameters
+to minimize the training loss. If you’re interested in learning more about
+embeddings, check out the TensorFlow tutorial on Vector Representations of
+Words, or Word Embedding on Wikipedia.</p>
+<p>We’ll configure the embeddings for the categorical columns using
+embedding_column, and concatenate them with the continuous columns:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1"></a>deep_columns &lt;-<span class="st"> </span><span class="kw"><a href="../../../tfestimators/reference/feature_columns.html">feature_columns</a></span>(</span>
+<span id="cb4-2"><a href="#cb4-2"></a>  <span class="kw"><a href="../../../tfestimators/reference/column_embedding.html">column_embedding</a></span>(workclass, <span class="dt">dimension =</span> <span class="dv">8</span>),</span>
+<span id="cb4-3"><a href="#cb4-3"></a>  <span class="kw"><a href="../../../tfestimators/reference/column_embedding.html">column_embedding</a></span>(education, <span class="dt">dimension =</span> <span class="dv">8</span>),</span>
+<span id="cb4-4"><a href="#cb4-4"></a>  <span class="kw"><a href="../../../tfestimators/reference/column_embedding.html">column_embedding</a></span>(relationship, <span class="dt">dimension =</span> <span class="dv">8</span>),</span>
+<span id="cb4-5"><a href="#cb4-5"></a>  <span class="kw"><a href="../../../tfestimators/reference/column_embedding.html">column_embedding</a></span>(native_country, <span class="dt">dimension =</span> <span class="dv">8</span>),</span>
+<span id="cb4-6"><a href="#cb4-6"></a>  <span class="kw"><a href="../../../tfestimators/reference/column_embedding.html">column_embedding</a></span>(occupation, <span class="dt">dimension =</span> <span class="dv">8</span>),</span>
+<span id="cb4-7"><a href="#cb4-7"></a>  age, </span>
+<span id="cb4-8"><a href="#cb4-8"></a>  education_num, </span>
+<span id="cb4-9"><a href="#cb4-9"></a>  capital_gain, </span>
+<span id="cb4-10"><a href="#cb4-10"></a>  capital_loss,</span>
+<span id="cb4-11"><a href="#cb4-11"></a>  hours_per_week</span>
+<span id="cb4-12"><a href="#cb4-12"></a>)</span></code></pre></div>
+<p>The higher the dimension of the embedding is, the more degrees of freedom the
+model will have to learn the representations of the features. For simplicity,
+we set the dimension to 8 for all feature columns here. Empirically, a more
+informed decision for the number of dimensions is to start with a value on
+the order of <span class="math inline">\(\log_2{n}\)</span> or <span class="math inline">\(k\sqrt[4]{n}\)</span>, where n is the number of unique features in a
+feature column and k is a small constant (usually smaller than 10).</p>
+<p>Through dense embeddings, deep models can generalize better and make
+predictions on feature pairs that were previously unseen in the training
+data. However, it is difficult to learn effective low-dimensional
+representations for feature columns when the underlying interaction matrix
+between two feature columns is sparse and high-rank. In such cases, the
+interaction between most feature pairs should be zero except a few, but dense
+embeddings will lead to nonzero predictions for all feature pairs, and thus
+can over-generalize. On the other hand, linear models with crossed features
+can memorize these “exception rules” effectively with fewer model parameters.
+Now, let’s see how to jointly train wide and deep models and allow them to
+complement each other’s strengths and weaknesses.</p>
+</div>
+<div id="combining-wide-and-deep-models-into-one" class="section level3">
+<h3>Combining Wide and Deep Models into One</h3>
+<p>The wide models and deep models are combined by summing up their final output
+log odds as the prediction, then feeding the prediction to a logistic loss
+function. All the graph definition and variable allocations have already been
+handled for you under the hood, so you simply need to create a
+dnn_linear_combined_classifier:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1"></a>model &lt;-<span class="st"> </span><span class="kw"><a href="../../../tfestimators/reference/dnn_linear_combined_estimators.html">dnn_linear_combined_classifier</a></span>(</span>
+<span id="cb5-2"><a href="#cb5-2"></a>  <span class="dt">linear_feature_columns =</span> crossed_columns,</span>
+<span id="cb5-3"><a href="#cb5-3"></a>  <span class="dt">dnn_feature_columns =</span> deep_columns,</span>
+<span id="cb5-4"><a href="#cb5-4"></a>  <span class="dt">dnn_hidden_units =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="dv">100</span>, <span class="dv">50</span>)</span>
+<span id="cb5-5"><a href="#cb5-5"></a>)</span></code></pre></div>
+</div>
+<div id="training-and-evaluating-the-model" class="section level3">
+<h3>Training and Evaluating The Model</h3>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1"></a><span class="co"># Build labels according to income bracket</span></span>
+<span id="cb6-2"><a href="#cb6-2"></a>train_data<span class="op">$</span>income_bracket &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/character.html">as.character</a></span>(train_data<span class="op">$</span>income_bracket)</span>
+<span id="cb6-3"><a href="#cb6-3"></a>test_data<span class="op">$</span>income_bracket &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/character.html">as.character</a></span>(test_data<span class="op">$</span>income_bracket)</span>
+<span id="cb6-4"><a href="#cb6-4"></a>train_data<span class="op">$</span>label &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span>(train_data<span class="op">$</span>income_bracket <span class="op">==</span><span class="st"> "&gt;50K"</span>, <span class="dv">1</span>, <span class="dv">0</span>)</span>
+<span id="cb6-5"><a href="#cb6-5"></a>test_data<span class="op">$</span>label &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span>(test_data<span class="op">$</span>income_bracket <span class="op">==</span><span class="st"> "&gt;50K"</span>, <span class="dv">1</span>, <span class="dv">0</span>)</span>
+<span id="cb6-6"><a href="#cb6-6"></a></span>
+<span id="cb6-7"><a href="#cb6-7"></a>constructed_input_fn &lt;-<span class="st"> </span><span class="cf">function</span>(dataset) {</span>
+<span id="cb6-8"><a href="#cb6-8"></a>  <span class="kw"><a href="../../../tfestimators/reference/input_fn.html">input_fn</a></span>(dataset, <span class="dt">features =</span> <span class="op">-</span>label, <span class="dt">response =</span> label)</span>
+<span id="cb6-9"><a href="#cb6-9"></a>}</span>
+<span id="cb6-10"><a href="#cb6-10"></a>train_input_fn &lt;-<span class="st"> </span><span class="kw">constructed_input_fn</span>(train_data)</span>
+<span id="cb6-11"><a href="#cb6-11"></a>eval_input_fn &lt;-<span class="st"> </span><span class="kw">constructed_input_fn</span>(test_data)</span>
+<span id="cb6-12"><a href="#cb6-12"></a></span>
+<span id="cb6-13"><a href="#cb6-13"></a><span class="kw"><a href="../../../tfestimators/reference/reexports.html">train</a></span>(model, <span class="dt">input_fn =</span> train_input_fn, <span class="dt">steps =</span> <span class="dv">2</span>)</span>
+<span id="cb6-14"><a href="#cb6-14"></a></span>
+<span id="cb6-15"><a href="#cb6-15"></a><span class="kw"><a href="../../../tfestimators/reference/reexports.html">evaluate</a></span>(model, <span class="dt">input_fn =</span> eval_input_fn, <span class="dt">steps =</span> <span class="dv">2</span>)</span></code></pre></div>
+</div>

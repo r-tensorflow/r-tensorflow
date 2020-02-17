@@ -11,6 +11,12 @@ aliases:
 - /keras/reference/layer_batch_normalization.html
 - /guide/keras/reference/layer_batch_normalization.html
 - /tools/tools/keras/reference/layer_batch_normalization.html
+- /installation/keras/reference/layer_batch_normalization.html
+- /tutorials/keras/reference/layer_batch_normalization.html
+- /guide/tools/keras/reference/layer_batch_normalization.html
+- /deploy/keras/reference/layer_batch_normalization.html
+- /tools/keras/reference/layer_batch_normalization.html
+- /tutorials/tools/keras/reference/layer_batch_normalization.html
 ---
     
     <p>Normalize the activations of the previous layer at each batch, i.e. applies a
@@ -32,6 +38,12 @@ activation standard deviation close to 1.</p>
   <span class='kw'>gamma_regularizer</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
   <span class='kw'>beta_constraint</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
   <span class='kw'>gamma_constraint</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>renorm</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
+  <span class='kw'>renorm_clipping</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>renorm_momentum</span> <span class='kw'>=</span> <span class='fl'>0.99</span>,
+  <span class='kw'>fused</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>virtual_batch_size</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>adjustment</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
   <span class='kw'>input_shape</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
   <span class='kw'>batch_input_shape</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
   <span class='kw'>batch_size</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
@@ -109,6 +121,59 @@ since the scaling will be done by the next layer.</p></td>
     <tr>
       <td>gamma_constraint</td>
       <td><p>Optional constraint for the gamma weight.</p></td>
+    </tr>
+    <tr>
+      <td>renorm</td>
+      <td><p>Whether to use Batch Renormalization
+(https://arxiv.org/abs/1702.03275). This adds extra variables during
+training. The inference is the same for either value of this parameter.</p></td>
+    </tr>
+    <tr>
+      <td>renorm_clipping</td>
+      <td><p>A named list or dictionary that may map keys <code>rmax</code>,
+<code>rmin</code>, <code>dmax</code> to scalar Tensors used to clip the renorm correction. The
+correction <code>(r, d)</code> is used as <code>corrected_value = normalized_value * r + d</code>,
+with <code>r</code> clipped to rmin, rmax, and <code>d</code> to -dmax, dmax. Missing <code>rmax</code>,
+<code>rmin</code>, <code>dmax</code> are set to <code>Inf</code>, <code>0</code>, <code>Inf</code>, <code>respectively</code>.</p></td>
+    </tr>
+    <tr>
+      <td>renorm_momentum</td>
+      <td><p>Momentum used to update the moving means and standard
+deviations with renorm. Unlike momentum, this affects training and should
+be neither too small (which would add noise) nor too large (which would
+give stale estimates). Note that momentum is still applied to get the means
+and variances for inference.</p></td>
+    </tr>
+    <tr>
+      <td>fused</td>
+      <td><p><code>TRUE</code>, use a faster, fused implementation, or raise a ValueError
+if the fused implementation cannot be used. If <code>NULL</code>, use the faster
+implementation if possible. If <code>FALSE</code>, do not use the fused implementation.</p></td>
+    </tr>
+    <tr>
+      <td>virtual_batch_size</td>
+      <td><p>An integer. By default, virtual_batch_size is <code>NULL</code>,
+which means batch normalization is performed across the whole batch.
+When virtual_batch_size is not <code>NULL</code>, instead perform "Ghost Batch
+Normalization", which creates virtual sub-batches which are each normalized
+separately (with shared gamma, beta, and moving statistics). Must divide
+the actual <code>batch size</code> during execution.</p></td>
+    </tr>
+    <tr>
+      <td>adjustment</td>
+      <td><p>A function taking the Tensor containing the (dynamic) shape
+of the input tensor and returning a pair <code>(scale, bias)</code> to apply to the
+normalized values <code>(before gamma and beta)</code>, only during training.
+For example, if <code>axis==-1</code>,
+<code>adjustment &lt;- function(shape) {
+    tuple(tf$random$uniform(shape[-1:NULL, style = "python"], 0.93, 1.07),
+          tf$random$uniform(shape[-1:NULL, style = "python"], -0.1, 0.1))
+   }</code>
+will scale the normalized value
+by up to 7% up or down, then shift the result by up to 0.1 (with
+independent scaling and bias for each feature but shared across all examples),
+and finally apply gamma and/or beta. If <code>NULL</code>, no adjustment is applied.
+Cannot be specified if virtual_batch_size is specified.</p></td>
     </tr>
     <tr>
       <td>input_shape</td>

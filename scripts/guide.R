@@ -33,6 +33,24 @@ modify_image_path <- function(path) {
   
 }
 
+modify_vignette_references <- function(path) {
+  
+  if (fs::path_file(path) == "index.Rmd")
+    return(NULL)
+  
+  file <- readr::read_file(path)
+  
+  # file <- c("(cover.html)",
+  # "(/cover/hello.html)", "hsjahsja (only of each) sahsjha .html")
+  file <- stringr::str_replace_all(
+    file, 
+    "\\(([^\\/\\)]*)\\.html\\)", 
+    "(../\\1/)"
+  )
+  readr::write_file(file, path)
+  
+}
+
 copy_vignette_dir <- function(name, path) {
   
   vignette_dir <- fs::dir_ls(
@@ -44,7 +62,8 @@ copy_vignette_dir <- function(name, path) {
   
   # modify the path for all images
   fs::dir_ls(vignette_dir, recurse = TRUE, type = "file", glob = "*.Rmd") %>% 
-    purrr::walk(modify_image_path)
+    purrr::walk(modify_image_path) %>% 
+    purrr::walk(modify_vignette_references)
   
   # copy vignette dir to guide folder
   if (name != "cloudml")

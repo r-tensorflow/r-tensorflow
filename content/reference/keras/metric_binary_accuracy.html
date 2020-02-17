@@ -11,6 +11,12 @@ aliases:
 - /keras/reference/metric_binary_accuracy.html
 - /guide/keras/reference/metric_binary_accuracy.html
 - /tools/tools/keras/reference/metric_binary_accuracy.html
+- /installation/keras/reference/metric_binary_accuracy.html
+- /tutorials/keras/reference/metric_binary_accuracy.html
+- /guide/tools/keras/reference/metric_binary_accuracy.html
+- /deploy/keras/reference/metric_binary_accuracy.html
+- /tools/keras/reference/metric_binary_accuracy.html
+- /tutorials/tools/keras/reference/metric_binary_accuracy.html
 ---
     
     <p>Model performance metrics</p>
@@ -112,7 +118,31 @@ you should create a custom metric that wraps the call with the parameter.
 See below for an example.</p>
 
     <h2 id="examples">Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><div class='input'><span class='kw'>if</span> (<span class='fl'>FALSE</span>) {
+
+<span class='co'># create metric using backend tensor functions</span>
+<span class='no'>metric_mean_pred</span> <span class='kw'>&lt;-</span> <span class='fu'>custom_metric</span>(<span class='st'>"mean_pred"</span>, <span class='kw'>function</span>(<span class='no'>y_true</span>, <span class='no'>y_pred</span>) {
+  <span class='fu'><a href='../k_mean.html'>k_mean</a></span>(<span class='no'>y_pred</span>)
+})
+
+<span class='no'>model</span> <span class='kw'>%&gt;%</span> <span class='fu'><a href='https://rdrr.io/pkg/generics/man/compile.html'>compile</a></span>(
+  <span class='kw'>optimizer</span> <span class='kw'>=</span> <span class='fu'><a href='../optimizer_rmsprop.html'>optimizer_rmsprop</a></span>(),
+  <span class='kw'>loss</span> <span class='kw'>=</span> <span class='no'>loss_binary_crossentropy</span>,
+  <span class='kw'>metrics</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>'accuracy'</span>, <span class='no'>metric_mean_pred</span>)
+)
+
+<span class='co'># create custom metric to wrap metric with parameter</span>
+<span class='no'>metric_top_3_categorical_accuracy</span> <span class='kw'>&lt;-</span>
+  <span class='fu'>custom_metric</span>(<span class='st'>"top_3_categorical_accuracy"</span>, <span class='kw'>function</span>(<span class='no'>y_true</span>, <span class='no'>y_pred</span>) {
+    <span class='fu'>metric_top_k_categorical_accuracy</span>(<span class='no'>y_true</span>, <span class='no'>y_pred</span>, <span class='kw'>k</span> <span class='kw'>=</span> <span class='fl'>3</span>)
+  })
+
+<span class='no'>model</span> <span class='kw'>%&gt;%</span> <span class='fu'><a href='https://rdrr.io/pkg/generics/man/compile.html'>compile</a></span>(
+  <span class='kw'>loss</span> <span class='kw'>=</span> <span class='st'>'categorical_crossentropy'</span>,
+  <span class='kw'>optimizer</span> <span class='kw'>=</span> <span class='fu'><a href='../optimizer_rmsprop.html'>optimizer_rmsprop</a></span>(),
+  <span class='kw'>metrics</span> <span class='kw'>=</span> <span class='no'>metric_top_3_categorical_accuracy</span>
+)
+}</div></code></pre></div>
 
 
 

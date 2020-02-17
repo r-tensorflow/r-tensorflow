@@ -42,20 +42,20 @@ aliases:
 <p>There are no special requirements for your training script, however there are a couple of things to keep in mind:</p>
 <ol style="list-style-type: decimal">
 <li><p>When you train a model on CloudML all of the files in the current working directory are uploaded. Therefore, your training script should be within the current working directory and references to other scripts, data files, etc. should be relative to the current working directory. The most straightforward way to organize your work on a CloudML application is to use an <a href="https://support.rstudio.com/hc/en-us/articles/200526207-Using-Projects">RStudio Project</a>.</p></li>
-<li><p>Your training data may be contained within the working directory, or it may be located within Google Cloud Storage. If your training data is large and/or located in cloud storage, the most straightforward workflow for development is to use a local subsample of your data. See the article on <a href="storage.html">Google Cloud Storage</a> for a detailed example of using distinct data for local and CloudML execution contexts, as well as reading data from Google Cloud Storage buckets.</p></li>
+<li><p>Your training data may be contained within the working directory, or it may be located within Google Cloud Storage. If your training data is large and/or located in cloud storage, the most straightforward workflow for development is to use a local subsample of your data. See the article on <a href="../storage/">Google Cloud Storage</a> for a detailed example of using distinct data for local and CloudML execution contexts, as well as reading data from Google Cloud Storage buckets.</p></li>
 </ol>
 <p>Once your script is working the way you expect you are ready to submit it as a job to CloudML.</p>
 </div>
 <div id="submitting-jobs" class="section level2">
 <h2>Submitting Jobs</h2>
 <p>The core unit of work in CloudML is a job. A job consists of a training script and related files (e.g. other scripts, data files, etc. within the working directory). To submit a job to CloudML you use the <code><a href="../../tools/cloudml/reference/cloudml_train.html">cloudml_train()</a></code> function, passing it the name of the training script to run. For example:</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(cloudml)</a>
-<a class="sourceLine" id="cb1-2" data-line-number="2">job &lt;-<span class="st"> </span><span class="kw"><a href="../../tools/cloudml/reference/cloudml_train.html">cloudml_train</a></span>(<span class="st">"mnist_mlp.R"</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(cloudml)</span>
+<span id="cb1-2"><a href="#cb1-2"></a>job &lt;-<span class="st"> </span><span class="kw"><a href="../../tools/cloudml/reference/cloudml_train.html">cloudml_train</a></span>(<span class="st">"mnist_mlp.R"</span>)</span></code></pre></div>
 <div class="bs-callout bs-callout-warning">
 <p>Note that the very first time you submit a job to CloudML the various packages required to run your script will be compiled from source. This will make the execution time of the job considerably longer that you might expect. It’s only the first job that incurs this overhead though (since the package installations are cached), and subsequent jobs will run more quickly.</p>
 </div>
 <p>The <code><a href="../../tools/cloudml/reference/cloudml_train.html">cloudml_train()</a></code> function returns a <code>job</code> object. This is a reference to the training job which you can use later to check it’s status, collect it’s output, etc. For example:</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" data-line-number="1"><span class="kw"><a href="../../tools/cloudml/reference/job_status.html">job_status</a></span>(job)</a></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1"></a><span class="kw"><a href="../../tools/cloudml/reference/job_status.html">job_status</a></span>(job)</span></code></pre></div>
 <pre><code> $ createTime    : chr "2017-12-18T20:35:21Z"
  $ etag          : chr "2KRqIbAhzvM="
  $ jobId         : chr "cloudml_2017_12_18_203510175"
@@ -74,13 +74,13 @@ https://console.cloud.google.com/ml/jobs/cloudml_2017_12_18_203510175?project=ce
 View logs at:
 https://console.cloud.google.com/logs?resource=ml.googleapis.com%2Fjob_id%2Fcloudml_2017_12_18_203510175&amp;project=cedar-card-791</code></pre>
 <p>To interact with jobs you don’t need the <code>job</code> object returned from <code><a href="../../tools/cloudml/reference/cloudml_train.html">cloudml_train()</a></code>. If you call <code><a href="../../tools/cloudml/reference/job_status.html">job_status()</a></code> or with no arguments it will act on the most recently submitted job:</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" data-line-number="1"><span class="kw"><a href="../../tools/cloudml/reference/job_status.html">job_status</a></span>()   <span class="co"># get status of last job</span></a></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1"></a><span class="kw"><a href="../../tools/cloudml/reference/job_status.html">job_status</a></span>()   <span class="co"># get status of last job</span></span></code></pre></div>
 </div>
 <div id="collecting-job-results" class="section level2">
 <h2>Collecting Job Results</h2>
 <p>You can call <code><a href="../../tools/cloudml/reference/job_collect.html">job_collect()</a></code> at any time to download a job:</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" data-line-number="1"><span class="kw"><a href="../../tools/cloudml/reference/job_collect.html">job_collect</a></span>()     <span class="co"># collect last job</span></a>
-<a class="sourceLine" id="cb5-2" data-line-number="2"><span class="kw"><a href="../../tools/cloudml/reference/job_collect.html">job_collect</a></span>(job)  <span class="co"># collect specific job</span></a></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1"></a><span class="kw"><a href="../../tools/cloudml/reference/job_collect.html">job_collect</a></span>()     <span class="co"># collect last job</span></span>
+<span id="cb5-2"><a href="#cb5-2"></a><span class="kw"><a href="../../tools/cloudml/reference/job_collect.html">job_collect</a></span>(job)  <span class="co"># collect specific job</span></span></code></pre></div>
 <p>Note also that if you are using RStudio v1.1 or higher you’ll be given the to monitor and collect submitted jobs in the background using an RStudio terminal:</p>
 <p><img src="../images/rstudio-terminal.png" class="screenshot" width="725"></p>
 <p>In this case you don’t need to call <code><a href="../../tools/cloudml/reference/job_collect.html">job_collect()</a></code> explicitly as this will be done from within the background terminal after the job completes.</p>
@@ -90,7 +90,7 @@ https://console.cloud.google.com/logs?resource=ml.googleapis.com%2Fjob_id%2Fclou
 <h3>Training Runs</h3>
 <p>Each training job will produce one or more training runs (it’s typically only a single run, however when doing hyperparmeter turning there will be multiple runs). When you collect a job from CloudML it is automatically downloaded into the <code>runs</code> sub-directory of the current working directory.</p>
 <p>You can list all of the runs as a data frame using the <code>ls_runs()</code> function:</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" data-line-number="1"><span class="kw">ls_runs</span>()</a></code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1"></a><span class="kw">ls_runs</span>()</span></code></pre></div>
 <pre><code>Data frame: 6 x 37 
                             run_dir eval_loss eval_acc metric_loss metric_acc metric_val_loss metric_val_acc
 6 runs/cloudml_2018_01_26_135812740    0.1049   0.9789      0.0852     0.9760          0.1093         0.9770
@@ -106,18 +106,18 @@ https://console.cloud.google.com/logs?resource=ml.googleapis.com%2Fjob_id%2Fclou
 #   cloudml_created, cloudml_end, cloudml_job, cloudml_log_url, cloudml_ml_units, cloudml_start,
 #   cloudml_state</code></pre>
 <p>You can view run reports using the <code>view_run()</code> function:</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" data-line-number="1"><span class="co"># view the latest run</span></a>
-<a class="sourceLine" id="cb8-2" data-line-number="2"><span class="kw">view_run</span>()</a>
-<a class="sourceLine" id="cb8-3" data-line-number="3"></a>
-<a class="sourceLine" id="cb8-4" data-line-number="4"><span class="co"># view a specific run</span></a>
-<a class="sourceLine" id="cb8-5" data-line-number="5"><span class="kw">view_run</span>(<span class="st">"runs/cloudml_2017_12_15_182614794"</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1"></a><span class="co"># view the latest run</span></span>
+<span id="cb8-2"><a href="#cb8-2"></a><span class="kw">view_run</span>()</span>
+<span id="cb8-3"><a href="#cb8-3"></a></span>
+<span id="cb8-4"><a href="#cb8-4"></a><span class="co"># view a specific run</span></span>
+<span id="cb8-5"><a href="#cb8-5"></a><span class="kw">view_run</span>(<span class="st">"runs/cloudml_2017_12_15_182614794"</span>)</span></code></pre></div>
 <p>There are many tools available to list, filter, and compare training runs. For additional information see the documentation for the <a href="https://tensorflow.rstudio.com/tools/tfruns/articles/overview.html">tfruns package</a>.</p>
 </div>
 </div>
 <div id="managing-jobs" class="section level2">
 <h2>Managing Jobs</h2>
 <p>You can enumerate previously submitted jobs using the <code><a href="../../tools/cloudml/reference/job_list.html">job_list()</a></code> function:</p>
-<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" data-line-number="1"><span class="kw"><a href="../../tools/cloudml/reference/job_list.html">job_list</a></span>()</a></code></pre></div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1"></a><span class="kw"><a href="../../tools/cloudml/reference/job_list.html">job_list</a></span>()</span></code></pre></div>
 <pre><code>                        JOB_ID    STATUS             CREATED
 1 cloudml_2017_12_18_203510175 SUCCEEDED 2017-12-18 15:35:21
 2 cloudml_2017_12_18_202228264    FAILED 2017-12-18 15:22:39
@@ -126,62 +126,62 @@ https://console.cloud.google.com/logs?resource=ml.googleapis.com%2Fjob_id%2Fclou
 5 cloudml_2017_12_15_182614794 SUCCEEDED 2017-12-15 13:26:29
 6 cloudml_2017_12_14_183247626 SUCCEEDED 2017-12-14 13:33:04</code></pre>
 <p>You can use the <code>JOB_ID</code> field to interact with any of these jobs:</p>
-<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb11-1" data-line-number="1"><span class="kw"><a href="../../tools/cloudml/reference/job_status.html">job_status</a></span>(<span class="st">"cloudml_2017_12_18_203510175"</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1"></a><span class="kw"><a href="../../tools/cloudml/reference/job_status.html">job_status</a></span>(<span class="st">"cloudml_2017_12_18_203510175"</span>)</span></code></pre></div>
 <p>The <code><a href="../../tools/cloudml/reference/job_stream_logs.html">job_stream_logs()</a></code> function can be used to view the live log of a running job:</p>
-<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb12-1" data-line-number="1"><span class="kw"><a href="../../tools/cloudml/reference/job_stream_logs.html">job_stream_logs</a></span>(<span class="st">"cloudml_2017_12_18_203510175"</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1"></a><span class="kw"><a href="../../tools/cloudml/reference/job_stream_logs.html">job_stream_logs</a></span>(<span class="st">"cloudml_2017_12_18_203510175"</span>)</span></code></pre></div>
 <p>The <code><a href="../../tools/cloudml/reference/job_cancel.html">job_cancel()</a></code> function can be used to cancel a running job:</p>
-<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb13-1" data-line-number="1"><span class="kw"><a href="../../tools/cloudml/reference/job_cancel.html">job_cancel</a></span>(<span class="st">"cloudml_2017_12_18_203510175"</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1"></a><span class="kw"><a href="../../tools/cloudml/reference/job_cancel.html">job_cancel</a></span>(<span class="st">"cloudml_2017_12_18_203510175"</span>)</span></code></pre></div>
 </div>
 <div id="tuning-your-application" class="section level2">
 <h2>Tuning Your Application</h2>
 <p>Tuning your application typically requires choosing and then optimizing a set of hyperparameters that influence your model’s performance. This could include the number and type of layers, units within layers, drop rates, regularization, etc.</p>
 <p>You can experiment with hyperparameters on an ad-hoc basis, but in general it’s better to explore them more systematnically. The key to doing this with CloudML is by defining <a href="https://tensorflow.rstudio.com/tools/training_flags.html">training flags</a> within your script and the parameterizing runs using those flags.</p>
 <p>For example, you might define the following training flags:</p>
-<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb14-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(keras)</a>
-<a class="sourceLine" id="cb14-2" data-line-number="2"></a>
-<a class="sourceLine" id="cb14-3" data-line-number="3">FLAGS &lt;-<span class="st"> </span><span class="kw"><a href="../../keras/reference/reexports.html">flags</a></span>(</a>
-<a class="sourceLine" id="cb14-4" data-line-number="4">  <span class="kw"><a href="../../keras/reference/reexports.html">flag_integer</a></span>(<span class="st">"dense_units1"</span>, <span class="dv">128</span>),</a>
-<a class="sourceLine" id="cb14-5" data-line-number="5">  <span class="kw"><a href="../../keras/reference/reexports.html">flag_numeric</a></span>(<span class="st">"dropout1"</span>, <span class="fl">0.4</span>),</a>
-<a class="sourceLine" id="cb14-6" data-line-number="6">  <span class="kw"><a href="../../keras/reference/reexports.html">flag_integer</a></span>(<span class="st">"dense_units2"</span>, <span class="dv">128</span>),</a>
-<a class="sourceLine" id="cb14-7" data-line-number="7">  <span class="kw"><a href="../../keras/reference/reexports.html">flag_numeric</a></span>(<span class="st">"dropout2"</span>, <span class="fl">0.3</span>),</a>
-<a class="sourceLine" id="cb14-8" data-line-number="8">)</a></code></pre></div>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1"></a><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(keras)</span>
+<span id="cb14-2"><a href="#cb14-2"></a></span>
+<span id="cb14-3"><a href="#cb14-3"></a>FLAGS &lt;-<span class="st"> </span><span class="kw"><a href="../../keras/reference/reexports.html">flags</a></span>(</span>
+<span id="cb14-4"><a href="#cb14-4"></a>  <span class="kw"><a href="../../keras/reference/reexports.html">flag_integer</a></span>(<span class="st">"dense_units1"</span>, <span class="dv">128</span>),</span>
+<span id="cb14-5"><a href="#cb14-5"></a>  <span class="kw"><a href="../../keras/reference/reexports.html">flag_numeric</a></span>(<span class="st">"dropout1"</span>, <span class="fl">0.4</span>),</span>
+<span id="cb14-6"><a href="#cb14-6"></a>  <span class="kw"><a href="../../keras/reference/reexports.html">flag_integer</a></span>(<span class="st">"dense_units2"</span>, <span class="dv">128</span>),</span>
+<span id="cb14-7"><a href="#cb14-7"></a>  <span class="kw"><a href="../../keras/reference/reexports.html">flag_numeric</a></span>(<span class="st">"dropout2"</span>, <span class="fl">0.3</span>),</span>
+<span id="cb14-8"><a href="#cb14-8"></a>)</span></code></pre></div>
 <p>Then use the flags in a script as follows:</p>
-<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb15-1" data-line-number="1">input &lt;-<span class="st"> </span><span class="kw"><a href="../../keras/reference/layer_input.html">layer_input</a></span>(<span class="dt">shape =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="dv">784</span>))</a>
-<a class="sourceLine" id="cb15-2" data-line-number="2">predictions &lt;-<span class="st"> </span>input <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb15-3" data-line-number="3"><span class="st">  </span><span class="kw"><a href="../../keras/reference/layer_dense.html">layer_dense</a></span>(<span class="dt">units =</span> FLAGS<span class="op">$</span>dense_units1, <span class="dt">activation =</span> <span class="st">'relu'</span>) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb15-4" data-line-number="4"><span class="st">  </span><span class="kw"><a href="../../keras/reference/layer_dropout.html">layer_dropout</a></span>(<span class="dt">rate =</span> FLAGS<span class="op">$</span>dropout1) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb15-5" data-line-number="5"><span class="st">  </span><span class="kw"><a href="../../keras/reference/layer_dense.html">layer_dense</a></span>(<span class="dt">units =</span> FLAGS<span class="op">$</span>dense_units2, <span class="dt">activation =</span> <span class="st">'relu'</span>) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb15-6" data-line-number="6"><span class="st">  </span><span class="kw"><a href="../../keras/reference/layer_dropout.html">layer_dropout</a></span>(<span class="dt">rate =</span> FLAGS<span class="op">$</span>dropout2) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb15-7" data-line-number="7"><span class="st">  </span><span class="kw"><a href="../../keras/reference/layer_dense.html">layer_dense</a></span>(<span class="dt">units =</span> <span class="dv">10</span>, <span class="dt">activation =</span> <span class="st">'softmax'</span>)</a>
-<a class="sourceLine" id="cb15-8" data-line-number="8"></a>
-<a class="sourceLine" id="cb15-9" data-line-number="9">model &lt;-<span class="st"> </span><span class="kw"><a href="../../keras/reference/keras_model.html">keras_model</a></span>(input, predictions) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../../keras/reference/reexports.html">compile</a></span>(</a>
-<a class="sourceLine" id="cb15-10" data-line-number="10">  <span class="dt">loss =</span> <span class="st">'categorical_crossentropy'</span>,</a>
-<a class="sourceLine" id="cb15-11" data-line-number="11">  <span class="dt">optimizer =</span> <span class="kw"><a href="../../keras/reference/optimizer_rmsprop.html">optimizer_rmsprop</a></span>(<span class="dt">lr =</span> <span class="fl">0.001</span>),</a>
-<a class="sourceLine" id="cb15-12" data-line-number="12">  <span class="dt">metrics =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">'accuracy'</span>)</a>
-<a class="sourceLine" id="cb15-13" data-line-number="13">)</a>
-<a class="sourceLine" id="cb15-14" data-line-number="14"></a>
-<a class="sourceLine" id="cb15-15" data-line-number="15">history &lt;-<span class="st"> </span>model <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../../keras/reference/reexports.html">fit</a></span>(</a>
-<a class="sourceLine" id="cb15-16" data-line-number="16">  x_train, y_train,</a>
-<a class="sourceLine" id="cb15-17" data-line-number="17">  <span class="dt">batch_size =</span> <span class="dv">128</span>,</a>
-<a class="sourceLine" id="cb15-18" data-line-number="18">  <span class="dt">epochs =</span> <span class="dv">30</span>,</a>
-<a class="sourceLine" id="cb15-19" data-line-number="19">  <span class="dt">verbose =</span> <span class="dv">1</span>,</a>
-<a class="sourceLine" id="cb15-20" data-line-number="20">  <span class="dt">validation_split =</span> <span class="fl">0.2</span></a>
-<a class="sourceLine" id="cb15-21" data-line-number="21">)</a></code></pre></div>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1"></a>input &lt;-<span class="st"> </span><span class="kw"><a href="../../keras/reference/layer_input.html">layer_input</a></span>(<span class="dt">shape =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="dv">784</span>))</span>
+<span id="cb15-2"><a href="#cb15-2"></a>predictions &lt;-<span class="st"> </span>input <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb15-3"><a href="#cb15-3"></a><span class="st">  </span><span class="kw"><a href="../../keras/reference/layer_dense.html">layer_dense</a></span>(<span class="dt">units =</span> FLAGS<span class="op">$</span>dense_units1, <span class="dt">activation =</span> <span class="st">'relu'</span>) <span class="op">%&gt;%</span></span>
+<span id="cb15-4"><a href="#cb15-4"></a><span class="st">  </span><span class="kw"><a href="../../keras/reference/layer_dropout.html">layer_dropout</a></span>(<span class="dt">rate =</span> FLAGS<span class="op">$</span>dropout1) <span class="op">%&gt;%</span></span>
+<span id="cb15-5"><a href="#cb15-5"></a><span class="st">  </span><span class="kw"><a href="../../keras/reference/layer_dense.html">layer_dense</a></span>(<span class="dt">units =</span> FLAGS<span class="op">$</span>dense_units2, <span class="dt">activation =</span> <span class="st">'relu'</span>) <span class="op">%&gt;%</span></span>
+<span id="cb15-6"><a href="#cb15-6"></a><span class="st">  </span><span class="kw"><a href="../../keras/reference/layer_dropout.html">layer_dropout</a></span>(<span class="dt">rate =</span> FLAGS<span class="op">$</span>dropout2) <span class="op">%&gt;%</span></span>
+<span id="cb15-7"><a href="#cb15-7"></a><span class="st">  </span><span class="kw"><a href="../../keras/reference/layer_dense.html">layer_dense</a></span>(<span class="dt">units =</span> <span class="dv">10</span>, <span class="dt">activation =</span> <span class="st">'softmax'</span>)</span>
+<span id="cb15-8"><a href="#cb15-8"></a></span>
+<span id="cb15-9"><a href="#cb15-9"></a>model &lt;-<span class="st"> </span><span class="kw"><a href="../../keras/reference/keras_model.html">keras_model</a></span>(input, predictions) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../../keras/reference/reexports.html">compile</a></span>(</span>
+<span id="cb15-10"><a href="#cb15-10"></a>  <span class="dt">loss =</span> <span class="st">'categorical_crossentropy'</span>,</span>
+<span id="cb15-11"><a href="#cb15-11"></a>  <span class="dt">optimizer =</span> <span class="kw"><a href="../../keras/reference/optimizer_rmsprop.html">optimizer_rmsprop</a></span>(<span class="dt">lr =</span> <span class="fl">0.001</span>),</span>
+<span id="cb15-12"><a href="#cb15-12"></a>  <span class="dt">metrics =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">'accuracy'</span>)</span>
+<span id="cb15-13"><a href="#cb15-13"></a>)</span>
+<span id="cb15-14"><a href="#cb15-14"></a></span>
+<span id="cb15-15"><a href="#cb15-15"></a>history &lt;-<span class="st"> </span>model <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../../keras/reference/reexports.html">fit</a></span>(</span>
+<span id="cb15-16"><a href="#cb15-16"></a>  x_train, y_train,</span>
+<span id="cb15-17"><a href="#cb15-17"></a>  <span class="dt">batch_size =</span> <span class="dv">128</span>,</span>
+<span id="cb15-18"><a href="#cb15-18"></a>  <span class="dt">epochs =</span> <span class="dv">30</span>,</span>
+<span id="cb15-19"><a href="#cb15-19"></a>  <span class="dt">verbose =</span> <span class="dv">1</span>,</span>
+<span id="cb15-20"><a href="#cb15-20"></a>  <span class="dt">validation_split =</span> <span class="fl">0.2</span></span>
+<span id="cb15-21"><a href="#cb15-21"></a>)</span></code></pre></div>
 <p>Note that instead of literal values for the various hyperparameters we want to vary we now reference members of the FLAGS list returned from the <code><a href="../../keras/reference/reexports.html">flags()</a></code> function.</p>
 <p>You can try out different flags by passing a named list of <code>flags</code> to the <code><a href="../../tools/cloudml/reference/cloudml_train.html">cloudml_train()</a></code> function. For example:</p>
-<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb16-1" data-line-number="1"><span class="kw"><a href="../../tools/cloudml/reference/cloudml_train.html">cloudml_train</a></span>(<span class="st">"minst_mlp.R"</span>, <span class="dt">flags =</span> <span class="kw"><a href="https://rdrr.io/r/base/list.html">list</a></span>(<span class="dt">dropout1 =</span> <span class="fl">0.3</span>, <span class="dt">dropout2 =</span> <span class="fl">0.2</span>))</a></code></pre></div>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1"></a><span class="kw"><a href="../../tools/cloudml/reference/cloudml_train.html">cloudml_train</a></span>(<span class="st">"minst_mlp.R"</span>, <span class="dt">flags =</span> <span class="kw"><a href="https://rdrr.io/r/base/list.html">list</a></span>(<span class="dt">dropout1 =</span> <span class="fl">0.3</span>, <span class="dt">dropout2 =</span> <span class="fl">0.2</span>))</span></code></pre></div>
 <p>These flags are passed to your script and are also retained as part of the results recorded for the training run.</p>
-<p>You can also more systematically try combinations of flags using CloudML <a href="tuning.html">hyperparameter tuning</a>.</p>
+<p>You can also more systematically try combinations of flags using CloudML <a href="../tuning/">hyperparameter tuning</a>.</p>
 </div>
 <div id="training-with-a-gpu" class="section level2">
 <h2>Training with a GPU</h2>
 <p>By default, CloudML utilizes “standard” CPU-based instances suitable for training simple models with small to moderate datasets. You can request the use of other machine types, including ones with GPUs, using the <code>master_type</code> parameter of <code><a href="../../tools/cloudml/reference/cloudml_train.html">cloudml_train()</a></code>.</p>
 <p>For example, the following would train the same model as above but with a <a href="http://www.nvidia.com/object/tesla-k80.html">Tesla K80 GPU</a>:</p>
-<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb17-1" data-line-number="1"><span class="kw"><a href="../../tools/cloudml/reference/cloudml_train.html">cloudml_train</a></span>(<span class="st">"train.R"</span>, <span class="dt">master_type =</span> <span class="st">"standard_gpu"</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1"></a><span class="kw"><a href="../../tools/cloudml/reference/cloudml_train.html">cloudml_train</a></span>(<span class="st">"train.R"</span>, <span class="dt">master_type =</span> <span class="st">"standard_gpu"</span>)</span></code></pre></div>
 <p>To train using a <a href="http://www.nvidia.com/object/tesla-p100.html">Tesla P100 GPU</a> you would specify <code>"standard_p100"</code>:</p>
-<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb18-1" data-line-number="1"><span class="kw"><a href="../../tools/cloudml/reference/cloudml_train.html">cloudml_train</a></span>(<span class="st">"train.R"</span>, <span class="dt">master_type =</span> <span class="st">"standard_p100"</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1"></a><span class="kw"><a href="../../tools/cloudml/reference/cloudml_train.html">cloudml_train</a></span>(<span class="st">"train.R"</span>, <span class="dt">master_type =</span> <span class="st">"standard_p100"</span>)</span></code></pre></div>
 <p>To train on a machine with 4 Tesla P100 GPU’s you would specify <code>"complex_model_m_p100"</code>:</p>
-<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb19-1" data-line-number="1"><span class="kw"><a href="../../tools/cloudml/reference/cloudml_train.html">cloudml_train</a></span>(<span class="st">"train.R"</span>, <span class="dt">master_type =</span> <span class="st">"complex_model_m_p100"</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1"></a><span class="kw"><a href="../../tools/cloudml/reference/cloudml_train.html">cloudml_train</a></span>(<span class="st">"train.R"</span>, <span class="dt">master_type =</span> <span class="st">"complex_model_m_p100"</span>)</span></code></pre></div>
 <p>See the CloudML website for documentation on <a href="https://cloud.google.com/ml-engine/docs/training-overview#machine_type_table">available machine types</a>. Also note that GPU instances can be considerably more expensive that CPU ones! See the documentation on <a href="https://cloud.google.com/ml-engine/pricing">CloudML Pricing</a> for details.</p>
 </div>
 <div id="training-configuration" class="section level2">
@@ -189,20 +189,20 @@ https://console.cloud.google.com/logs?resource=ml.googleapis.com%2Fjob_id%2Fclou
 <p>You can provide custom configuration for training by creating a <code>cloudml.yml</code> file within the working directory from which you submit your training job. This file can be used to customize various aspects of training behavior including the virtual machines used as well as the runtime version of CloudML used in the job.</p>
 <p>For example, the following config file specifies a custom scale tier with a master type of “large_model”. It also specifies that the CloudML runtime version should be 1.2.</p>
 <p><strong>cloudml.yml</strong></p>
-<div class="sourceCode" id="cb20"><pre class="sourceCode yaml"><code class="sourceCode yaml"><a class="sourceLine" id="cb20-1" data-line-number="1"><span class="fu">trainingInput:</span></a>
-<a class="sourceLine" id="cb20-2" data-line-number="2">  <span class="fu">scaleTier:</span><span class="at"> CUSTOM</span></a>
-<a class="sourceLine" id="cb20-3" data-line-number="3">  <span class="fu">masterType:</span><span class="at"> large_model</span></a>
-<a class="sourceLine" id="cb20-4" data-line-number="4">  <span class="fu">runtimeVersion:</span><span class="at"> 1.4</span></a></code></pre></div>
+<div class="sourceCode" id="cb20"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb20-1"><a href="#cb20-1"></a><span class="fu">trainingInput</span><span class="kw"><a href="https://rdrr.io/r/base/Colon.html">:</a></span></span>
+<span id="cb20-2"><a href="#cb20-2"></a><span class="at">  </span><span class="fu">scaleTier</span><span class="kw"><a href="https://rdrr.io/r/base/Colon.html">:</a></span><span class="at"> CUSTOM</span></span>
+<span id="cb20-3"><a href="#cb20-3"></a><span class="at">  </span><span class="fu">masterType</span><span class="kw"><a href="https://rdrr.io/r/base/Colon.html">:</a></span><span class="at"> large_model</span></span>
+<span id="cb20-4"><a href="#cb20-4"></a><span class="at">  </span><span class="fu">runtimeVersion</span><span class="kw"><a href="https://rdrr.io/r/base/Colon.html">:</a></span><span class="at"> </span><span class="fl">1.4</span></span></code></pre></div>
 <p>You can also pass a named configuration file (i.e. one for a hyperparameter tuning job) via the <code>config</code> parmater of <code><a href="../../tools/cloudml/reference/cloudml_train.html">cloudml_train()</a></code>. For example:</p>
-<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb21-1" data-line-number="1"><span class="kw"><a href="../../tools/cloudml/reference/cloudml_train.html">cloudml_train</a></span>(<span class="st">"mnist_mlp.R"</span>, <span class="dt">config =</span> <span class="st">"tuning.yml"</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1"></a><span class="kw"><a href="../../tools/cloudml/reference/cloudml_train.html">cloudml_train</a></span>(<span class="st">"mnist_mlp.R"</span>, <span class="dt">config =</span> <span class="st">"tuning.yml"</span>)</span></code></pre></div>
 <p>Note that <code>trainingInput</code> is used as the top level key in the config file (this is required). Additional documentation on available fields in the configuration file is available here <a href="https://cloud.google.com/ml-engine/reference/rest/v1/projects.jobs#TrainingInput" class="uri">https://cloud.google.com/ml-engine/reference/rest/v1/projects.jobs#TrainingInput</a>.</p>
 </div>
 <div id="learning-more" class="section level2">
 <h2>Learning More</h2>
 <p>The following articles provide additional documentation on training and deploying models with CloudML:</p>
 <ul>
-<li><p><a href="tuning.html">Hyperparameter Tuning</a> explores how you can improve the performance of your models by running many trials with distinct hyperparameters (e.g. number and size of layers) to determine their optimal values.</p></li>
-<li><p><a href="storage.html">Google Cloud Storage</a> provides information on copying data between your local machine and Google Storage and also describes how to use data within Google Storage during training.</p></li>
-<li><p><a href="deployment.html">Deploying Models</a> describes how to deploy trained models and generate predictions from them.</p></li>
+<li><p><a href="../tuning/">Hyperparameter Tuning</a> explores how you can improve the performance of your models by running many trials with distinct hyperparameters (e.g. number and size of layers) to determine their optimal values.</p></li>
+<li><p><a href="../storage/">Google Cloud Storage</a> provides information on copying data between your local machine and Google Storage and also describes how to use data within Google Storage during training.</p></li>
+<li><p><a href="../deployment/">Deploying Models</a> describes how to deploy trained models and generate predictions from them.</p></li>
 </ul>
 </div>

@@ -1,0 +1,48 @@
+---
+title: Create Session Run Arguments
+type: docs
+repo: https://github.com/rstudio/tfestimators
+menu:
+  main:
+    name: Create Session Run Arguments - tfestimators
+    parent: tfestimators-reference
+aliases:
+- /reference/tfestimators/session_run_args.html
+- /tfestimators/reference/session_run_args.html
+- /guide/tfestimators/reference/session_run_args.html
+- /tools/tools/tfestimators/reference/session_run_args.html
+- /installation/tfestimators/reference/session_run_args.html
+- /tutorials/tfestimators/reference/session_run_args.html
+- /guide/tools/tfestimators/reference/session_run_args.html
+- /deploy/tfestimators/reference/session_run_args.html
+- /tools/tfestimators/reference/session_run_args.html
+- /tutorials/tools/tfestimators/reference/session_run_args.html
+---
+    
+    <p>Create a set of session run arguments. These are used as the return values in
+the <code>before_run(context)</code> callback of a <code><a href='../session_run_hook.html'>session_run_hook()</a></code>, for requesting
+the values of specific tensor in the <code>after_run(context, values)</code> callback.</p>
+
+    <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>session_run_args</span>(<span class='no'>...</span>)</code></pre></div>
+
+    <h2 id="arguments">Arguments</h2>
+    <table class="ref-arguments">
+    
+    <colgroup>
+      <col class="name" />
+      <col class="desc" />
+    </colgroup>  
+      
+    <tr>
+      <td>...</td>
+      <td><p>A set of tensors or operations.</p></td>
+    </tr>
+    </table>
+
+    <h2 id="see-also">See also</h2>
+
+    <div class='dont-index'><p><code><a href='../session_run_hook.html'>session_run_hook()</a></code></p></div>
+
+
+
+

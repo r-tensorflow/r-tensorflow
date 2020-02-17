@@ -227,7 +227,7 @@ In a multi-user server environment you may want to install a system-wide version
 
 <https://www.tensorflow.org/install/install_linux#InstallingNativePip>
 
-There are some components of TensorFlow (e.g. the [Keras](https://github.com/tensorflow/tensorflow/tree/master/tensorflow/contrib/keras) library) which have dependencies on additional Python packages.
+There are some components of TensorFlow (e.g. the [Keras](https://github.com/tensorflow/tensorflow/tree/master/tensorflow/python/keras) library) which have dependencies on additional Python packages.
 
 You can install Keras and it's optional dependencies with the following command (ensuring you have the correct privilege to write to system library locations as required via sudo, etc.):
 

@@ -69,7 +69,7 @@ use_virtualenv("my_env", required = TRUE)
 
 ### Additional Dependencies
 
-There are some components of TensorFlow (e.g. the [Keras](https://github.com/tensorflow/tensorflow/tree/master/tensorflow/contrib/keras) library) which have dependencies on additional Python packages. The `install_tensorflow()` function installs these dependencies automatically, however if you do a custom installation you should be sure to install them manually. 
+There are some components of TensorFlow (e.g. the [Keras](https://github.com/tensorflow/tensorflow/tree/master/tensorflow/python/keras) library) which have dependencies on additional Python packages. The `install_tensorflow()` function installs these dependencies automatically, however if you do a custom installation you should be sure to install them manually. 
 
 You can install the additional dependencies with the following command:
 

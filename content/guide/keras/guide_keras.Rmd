@@ -230,7 +230,7 @@ model %>% predict(test_dataset, steps = 30)
 
 The `sequential` model is a simple stack of layers that cannot
 represent arbitrary models. Use the [Keras functional
-API](functional_api.html)
+API](../functional_api/)
 to build complex model topologies such as:
 
   - multi-input models,
