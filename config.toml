@@ -218,6 +218,35 @@ disqusShortname = "r-tensorflow"
 	identifier = "saving-savedmodel-top"
 	weight = 62
 	url = "/guide/saving/saved_model"
+	
+[[menu.main]]
+	name   = "Estimators"
+	parent = "guide-top"
+	weight = 70
+	url = ""
+	
+[[menu.main]]
+	name   = "Basics"
+	parent = "guide-top"
+	identifier = "tfestimators-using-tfestimators"
+	weight = 71
+	url = "/tfestimators"
+	
+[[menu.main]]
+	name   = "Basics"
+	parent = "guide-top"
+	identifier = "tfestimators-advanced"
+	weight = 72
+	url = "/guide/tfestimators/creating_estimators/"
+
+[[menu.main]]
+	name   = "Examples"
+	parent = "guide-top"
+	identifier = "tfestimators-examples"
+	weight = 73
+	url = "/guide/tfestimators/examples"
+
+
 
 # Deploy
 

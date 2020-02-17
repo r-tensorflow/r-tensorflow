@@ -1,0 +1,55 @@
+---
+title: Establish a Feature Columns Selection Scope
+type: docs
+repo: https://github.com/rstudio/tfestimators
+menu:
+  main:
+    name: Establish a Feature Columns Selection Scope - tfestimators
+    parent: tfestimators-reference
+aliases:
+- /reference/tfestimators/column-scope.html
+- /tfestimators/reference/column-scope.html
+- /guide/tfestimators/reference/column-scope.html
+- /tools/tools/tfestimators/reference/column-scope.html
+- /installation/tfestimators/reference/column-scope.html
+- /tutorials/tfestimators/reference/column-scope.html
+- /guide/tools/tfestimators/reference/column-scope.html
+- /deploy/tfestimators/reference/column-scope.html
+- /tools/tfestimators/reference/column-scope.html
+- /tutorials/tools/tfestimators/reference/column-scope.html
+---
+    
+    <p>This helper function provides a set of names to be
+used by <code>tidyselect</code> helpers in e.g. <code><a href='../feature_columns.html'>feature_columns()</a></code>.</p>
+
+    <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>set_columns</span>(<span class='no'>columns</span>)
+
+<span class='fu'>with_columns</span>(<span class='no'>columns</span>, <span class='no'>expr</span>)
+
+<span class='fu'>scoped_columns</span>(<span class='no'>columns</span>)</code></pre></div>
+
+    <h2 id="arguments">Arguments</h2>
+    <table class="ref-arguments">
+    
+    <colgroup>
+      <col class="name" />
+      <col class="desc" />
+    </colgroup>  
+      
+    <tr>
+      <td>columns</td>
+      <td><p>Either a named <span style="R">R</span> object (whose names will be
+used to provide a selection context), or a character vector
+of such names.</p></td>
+    </tr>
+    <tr>
+      <td>expr</td>
+      <td><p>An <span style="R">R</span> expression, to be evaluated with the selection
+context active.</p></td>
+    </tr>
+    </table>
+
+
+
+
+

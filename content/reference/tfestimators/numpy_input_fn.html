@@ -1,0 +1,87 @@
+---
+title: Construct Input Function Containing Python Dictionaries of Numpy Arrays
+type: docs
+repo: https://github.com/rstudio/tfestimators
+menu:
+  main:
+    name: Construct Input Function Containing Python Dictionaries of Numpy Arrays
+      - tfestimators
+    parent: tfestimators-reference
+aliases:
+- /reference/tfestimators/numpy_input_fn.html
+- /tfestimators/reference/numpy_input_fn.html
+- /guide/tfestimators/reference/numpy_input_fn.html
+- /tools/tools/tfestimators/reference/numpy_input_fn.html
+- /installation/tfestimators/reference/numpy_input_fn.html
+- /tutorials/tfestimators/reference/numpy_input_fn.html
+- /guide/tools/tfestimators/reference/numpy_input_fn.html
+- /deploy/tfestimators/reference/numpy_input_fn.html
+- /tools/tfestimators/reference/numpy_input_fn.html
+- /tutorials/tools/tfestimators/reference/numpy_input_fn.html
+---
+    
+    <p>This returns a function outputting <code>features</code> and <code>target</code> based on the dict
+of numpy arrays. The dict <code>features</code> has the same keys as the <code>x</code>.</p>
+
+    <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>numpy_input_fn</span>(<span class='no'>x</span>, <span class='kw'>y</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>batch_size</span> <span class='kw'>=</span> <span class='fl'>128</span>, <span class='kw'>num_epochs</span> <span class='kw'>=</span> <span class='fl'>1</span>,
+  <span class='kw'>shuffle</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>queue_capacity</span> <span class='kw'>=</span> <span class='fl'>1000</span>, <span class='kw'>num_threads</span> <span class='kw'>=</span> <span class='fl'>1</span>)</code></pre></div>
+
+    <h2 id="arguments">Arguments</h2>
+    <table class="ref-arguments">
+    
+    <colgroup>
+      <col class="name" />
+      <col class="desc" />
+    </colgroup>  
+      
+    <tr>
+      <td>x</td>
+      <td><p>dict of numpy array object.</p></td>
+    </tr>
+    <tr>
+      <td>y</td>
+      <td><p>numpy array object. <code>NULL</code> if absent.</p></td>
+    </tr>
+    <tr>
+      <td>batch_size</td>
+      <td><p>Integer, size of batches to return.</p></td>
+    </tr>
+    <tr>
+      <td>num_epochs</td>
+      <td><p>Integer, number of epochs to iterate over data. If <code>NULL</code>
+will run forever.</p></td>
+    </tr>
+    <tr>
+      <td>shuffle</td>
+      <td><p>Boolean, if <code>TRUE</code> shuffles the queue. Avoid shuffle at
+prediction time.</p></td>
+    </tr>
+    <tr>
+      <td>queue_capacity</td>
+      <td><p>Integer, size of queue to accumulate.</p></td>
+    </tr>
+    <tr>
+      <td>num_threads</td>
+      <td><p>Integer, number of threads used for reading and
+enqueueing. In order to have predicted and repeatable order of reading and
+enqueueing, such as in prediction and evaluation mode, <code>num_threads</code> should
+be 1. #'</p></td>
+    </tr>
+    </table>
+
+    <h2 id="details">Details</h2>
+
+    <p>Note that this function is still experimental and should only be used if
+necessary, e.g. feed in data that's dictionary of numpy arrays.</p>
+    <h2 id="raises">Raises</h2>
+
+    <p>ValueError: if the shape of <code>y</code> mismatches the shape of
+values in <code>x</code> (i.e., values in <code>x</code> have same shape). TypeError: <code>x</code> is not
+a dict or <code>shuffle</code> is not bool.</p>
+    <h2 id="see-also">See also</h2>
+
+    <div class='dont-index'><p>Other input functions: <code><a href='../input_fn.html'>input_fn</a></code></p></div>
+
+
+
+

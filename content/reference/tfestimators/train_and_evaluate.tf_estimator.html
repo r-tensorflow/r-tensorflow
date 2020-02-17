@@ -1,0 +1,94 @@
+---
+title: Train and evaluate the estimator.
+type: docs
+repo: https://github.com/rstudio/tfestimators
+menu:
+  main:
+    name: Train and evaluate the estimator. - tfestimators
+    parent: tfestimators-reference
+aliases:
+- /reference/tfestimators/train_and_evaluate.tf_estimator.html
+- /tfestimators/reference/train_and_evaluate.tf_estimator.html
+- /guide/tfestimators/reference/train_and_evaluate.tf_estimator.html
+- /tools/tools/tfestimators/reference/train_and_evaluate.tf_estimator.html
+- /installation/tfestimators/reference/train_and_evaluate.tf_estimator.html
+- /tutorials/tfestimators/reference/train_and_evaluate.tf_estimator.html
+- /guide/tools/tfestimators/reference/train_and_evaluate.tf_estimator.html
+- /deploy/tfestimators/reference/train_and_evaluate.tf_estimator.html
+- /tools/tfestimators/reference/train_and_evaluate.tf_estimator.html
+- /tutorials/tools/tfestimators/reference/train_and_evaluate.tf_estimator.html
+---
+    
+    <p>(Available since TensorFlow v1.4)</p>
+
+    <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class='co'># S3 method for tf_estimator</span>
+<span class='fu'><a href='https://rdrr.io/pkg/tensorflow/man/train_and_evaluate.html'>train_and_evaluate</a></span>(<span class='no'>object</span>, <span class='no'>train_spec</span>, <span class='no'>eval_spec</span>,
+  <span class='no'>...</span>)</code></pre></div>
+
+    <h2 id="arguments">Arguments</h2>
+    <table class="ref-arguments">
+    
+    <colgroup>
+      <col class="name" />
+      <col class="desc" />
+    </colgroup>  
+      
+    <tr>
+      <td>object</td>
+      <td><p>An estimator object to train and evaluate.</p></td>
+    </tr>
+    <tr>
+      <td>train_spec</td>
+      <td><p>A <code>TrainSpec</code> instance to specify the training specification.</p></td>
+    </tr>
+    <tr>
+      <td>eval_spec</td>
+      <td><p>A <code>EvalSpec</code> instance to specify the evaluation and export specification.</p></td>
+    </tr>
+    <tr>
+      <td>...</td>
+      <td><p>Not used.</p></td>
+    </tr>
+    </table>
+
+    <h2 id="details">Details</h2>
+
+    <p>This utility function trains, evaluates, and (optionally) exports the model by
+using the given <code>estimator</code>. All training related specification is held in
+<code>train_spec</code>, including training <code>input_fn</code> and training max steps, etc. All
+evaluation and export related specification is held in <code>eval_spec</code>, including
+evaluation <code>input_fn</code>, steps, etc.</p>
+<p>This utility function provides consistent behavior for both local
+(non-distributed) and distributed configurations. Currently, the only
+supported distributed training configuration is between-graph replication.</p>
+<p>Overfitting: In order to avoid overfitting, it is recommended to set up the
+training <code>input_fn</code> to shuffle the training data properly. It is also
+recommended to train the model a little longer, say multiple epochs, before
+performing evaluation, as the input pipeline starts from scratch for each
+training. It is particularly important for local training and evaluation.</p>
+<p>Stop condition: In order to support both distributed and non-distributed
+configuration reliably, the only supported stop condition for model
+training is <code>train_spec.max_steps</code>. If <code>train_spec.max_steps</code> is <code>NULL</code>, the
+model is trained forever. <em>Use with care</em> if model stop condition is
+different. For example, assume that the model is expected to be trained with
+one epoch of training data, and the training <code>input_fn</code> is configured to throw
+<code>OutOfRangeError</code> after going through one epoch, which stops the
+<code>Estimator.train</code>. For a three-training-worker distributed configuration, each
+training worker is likely to go through the whole epoch independently. So, the
+model will be trained with three epochs of training data instead of one epoch.</p>
+    <h2 id="raises">Raises</h2>
+
+    
+
+<ul>
+<li><p>ValueError: if environment variable <code>TF_CONFIG</code> is incorrectly set.</p></li>
+</ul>
+
+    <h2 id="see-also">See also</h2>
+
+    <div class='dont-index'><p>Other training methods: <code><a href='../eval_spec.html'>eval_spec</a></code>,
+  <code><a href='../train_spec.html'>train_spec</a></code></p></div>
+
+
+
+

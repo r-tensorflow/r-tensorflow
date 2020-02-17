@@ -1,0 +1,55 @@
+---
+title: A Custom Run Hook for Saving Metrics History
+type: docs
+repo: https://github.com/rstudio/tfestimators
+menu:
+  main:
+    name: A Custom Run Hook for Saving Metrics History - tfestimators
+    parent: tfestimators-reference
+aliases:
+- /reference/tfestimators/hook_history_saver.html
+- /tfestimators/reference/hook_history_saver.html
+- /guide/tfestimators/reference/hook_history_saver.html
+- /tools/tools/tfestimators/reference/hook_history_saver.html
+- /installation/tfestimators/reference/hook_history_saver.html
+- /tutorials/tfestimators/reference/hook_history_saver.html
+- /guide/tools/tfestimators/reference/hook_history_saver.html
+- /deploy/tfestimators/reference/hook_history_saver.html
+- /tools/tfestimators/reference/hook_history_saver.html
+- /tutorials/tools/tfestimators/reference/hook_history_saver.html
+---
+    
+    <p>This hook allows users to save the metrics history produced during training or evaluation in
+a specified frequency.</p>
+
+    <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>hook_history_saver</span>(<span class='kw'>every_n_step</span> <span class='kw'>=</span> <span class='fl'>10</span>)</code></pre></div>
+
+    <h2 id="arguments">Arguments</h2>
+    <table class="ref-arguments">
+    
+    <colgroup>
+      <col class="name" />
+      <col class="desc" />
+    </colgroup>  
+      
+    <tr>
+      <td>every_n_step</td>
+      <td><p>Save the metrics every N steps</p></td>
+    </tr>
+    </table>
+
+    <h2 id="see-also">See also</h2>
+
+    <div class='dont-index'><p>Other session_run_hook wrappers: <code><a href='../hook_checkpoint_saver.html'>hook_checkpoint_saver</a></code>,
+  <code><a href='../hook_global_step_waiter.html'>hook_global_step_waiter</a></code>,
+  <code><a href='../hook_logging_tensor.html'>hook_logging_tensor</a></code>,
+  <code><a href='../hook_nan_tensor.html'>hook_nan_tensor</a></code>,
+  <code><a href='../hook_progress_bar.html'>hook_progress_bar</a></code>,
+  <code><a href='../hook_step_counter.html'>hook_step_counter</a></code>,
+  <code><a href='../hook_stop_at_step.html'>hook_stop_at_step</a></code>,
+  <code><a href='../hook_summary_saver.html'>hook_summary_saver</a></code>,
+  <code><a href='../session_run_hook.html'>session_run_hook</a></code></p></div>
+
+
+
+

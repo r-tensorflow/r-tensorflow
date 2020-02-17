@@ -1,0 +1,98 @@
+---
+title: Define an Estimator Specification
+type: docs
+repo: https://github.com/rstudio/tfestimators
+menu:
+  main:
+    name: Define an Estimator Specification - tfestimators
+    parent: tfestimators-reference
+aliases:
+- /reference/tfestimators/estimator_spec.html
+- /tfestimators/reference/estimator_spec.html
+- /guide/tfestimators/reference/estimator_spec.html
+- /tools/tools/tfestimators/reference/estimator_spec.html
+- /installation/tfestimators/reference/estimator_spec.html
+- /tutorials/tfestimators/reference/estimator_spec.html
+- /guide/tools/tfestimators/reference/estimator_spec.html
+- /deploy/tfestimators/reference/estimator_spec.html
+- /tools/tfestimators/reference/estimator_spec.html
+- /tutorials/tools/tfestimators/reference/estimator_spec.html
+---
+    
+    <p>Define the estimator specification, used as part of the <code>model_fn</code> defined with
+custom estimators created by <code><a href='../estimator.html'>estimator()</a></code>. See <code><a href='../estimator.html'>estimator()</a></code> for more details.</p>
+
+    <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>estimator_spec</span>(<span class='no'>mode</span>, <span class='kw'>predictions</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>loss</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>train_op</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>eval_metric_ops</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>training_hooks</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>evaluation_hooks</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>prediction_hooks</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>training_chief_hooks</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='no'>...</span>)</code></pre></div>
+
+    <h2 id="arguments">Arguments</h2>
+    <table class="ref-arguments">
+    
+    <colgroup>
+      <col class="name" />
+      <col class="desc" />
+    </colgroup>  
+      
+    <tr>
+      <td>mode</td>
+      <td><p>A key that specifies whether we are performing
+training (<code>"train"</code>), evaluation (<code>"eval"</code>), or prediction (<code>"infer"</code>).
+These values can also be accessed through the <code><a href='../mode_keys.html'>mode_keys()</a></code> object.</p></td>
+    </tr>
+    <tr>
+      <td>predictions</td>
+      <td><p>The prediction tensor(s).</p></td>
+    </tr>
+    <tr>
+      <td>loss</td>
+      <td><p>The training loss tensor. Must be either scalar, or with shape <code><a href='https://rdrr.io/r/base/c.html'>c(1)</a></code>.</p></td>
+    </tr>
+    <tr>
+      <td>train_op</td>
+      <td><p>The training operation -- typically, a call to <code>optimizer$minimize(...)</code>,
+depending on the type of optimizer used during training.</p></td>
+    </tr>
+    <tr>
+      <td>eval_metric_ops</td>
+      <td><p>A list of metrics to be computed as part of evaluation.
+This should be a named list, mapping metric names (e.g. <code>"rmse"</code>) to the operation
+that computes the associated metric (e.g. <code>tf$metrics$root_mean_squared_error(...)</code>).
+These metric operations should be evaluated without any impact on state (typically
+is a pure computation results based on variables). For example, it should not
+trigger the update ops or requires any input fetching.</p></td>
+    </tr>
+    <tr>
+      <td>training_hooks</td>
+      <td><p>(Available since TensorFlow v1.4) A list of session run hooks to run on all workers during training.</p></td>
+    </tr>
+    <tr>
+      <td>evaluation_hooks</td>
+      <td><p>(Available since TensorFlow v1.4) A list of session run hooks to run during evaluation.</p></td>
+    </tr>
+    <tr>
+      <td>prediction_hooks</td>
+      <td><p>(Available since TensorFlow v1.7) A list of session run hooks to run during prediciton.</p></td>
+    </tr>
+    <tr>
+      <td>training_chief_hooks</td>
+      <td><p>(Available since TensorFlow v1.4) A list of session run hooks to run on chief worker during training.</p></td>
+    </tr>
+    <tr>
+      <td>...</td>
+      <td><p>Other optional (named) arguments, to be passed to the <code>EstimatorSpec</code> constructor.</p></td>
+    </tr>
+    </table>
+
+    <h2 id="see-also">See also</h2>
+
+    <div class='dont-index'><p>Other custom estimator methods: <code><a href='../estimator.html'>estimator</a></code>,
+  <code><a href='../evaluate.tf_estimator.html'>evaluate.tf_estimator</a></code>,
+  <code><a href='../export_savedmodel.tf_estimator.html'>export_savedmodel.tf_estimator</a></code>,
+  <code><a href='../predict.tf_estimator.html'>predict.tf_estimator</a></code>,
+  <code><a href='../train.tf_estimator.html'>train.tf_estimator</a></code></p></div>
+
+
+
+
