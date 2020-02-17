@@ -23,6 +23,10 @@ aliases:
 knitr::opts_chunk$set(echo = TRUE, eval = FALSE)
 ```
 
+## Warning!
+
+> TensorFlow Estimators has not received updates by the TensorFlow team in a long time, and it's no longer recommended. You may find bugs when using `tfestimators` with recent versions of TensorFlow (>= 1.10).
+
 ## Overview
 
 The basic components of the TensorFlow Estimators API include:

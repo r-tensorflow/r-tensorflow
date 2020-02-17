@@ -233,7 +233,7 @@ disqusShortname = "r-tensorflow"
 	url = "/tfestimators"
 	
 [[menu.main]]
-	name   = "Basics"
+	name   = "Advanced"
 	parent = "guide-top"
 	identifier = "tfestimators-advanced"
 	weight = 72
