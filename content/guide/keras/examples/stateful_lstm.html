@@ -11,69 +11,69 @@ repo: https://github.com/rstudio/keras
 </div>
 <p>Example script showing how to use stateful RNNs to model long sequences
 efficiently.</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(keras)</a>
-<a class="sourceLine" id="cb1-2" data-line-number="2"></a>
-<a class="sourceLine" id="cb1-3" data-line-number="3"><span class="co"># since we are using stateful rnn tsteps can be set to 1</span></a>
-<a class="sourceLine" id="cb1-4" data-line-number="4">tsteps &lt;-<span class="st"> </span><span class="dv">1</span></a>
-<a class="sourceLine" id="cb1-5" data-line-number="5">batch_size &lt;-<span class="st"> </span><span class="dv">25</span></a>
-<a class="sourceLine" id="cb1-6" data-line-number="6">epochs &lt;-<span class="st"> </span><span class="dv">25</span></a>
-<a class="sourceLine" id="cb1-7" data-line-number="7"><span class="co"># number of elements ahead that are used to make the prediction</span></a>
-<a class="sourceLine" id="cb1-8" data-line-number="8">lahead &lt;-<span class="st"> </span><span class="dv">1</span></a>
-<a class="sourceLine" id="cb1-9" data-line-number="9"></a>
-<a class="sourceLine" id="cb1-10" data-line-number="10"><span class="co"># Generates an absolute cosine time series with the amplitude exponentially decreasing</span></a>
-<a class="sourceLine" id="cb1-11" data-line-number="11"><span class="co"># Arguments:</span></a>
-<a class="sourceLine" id="cb1-12" data-line-number="12"><span class="co">#   amp: amplitude of the cosine function</span></a>
-<a class="sourceLine" id="cb1-13" data-line-number="13"><span class="co">#   period: period of the cosine function</span></a>
-<a class="sourceLine" id="cb1-14" data-line-number="14"><span class="co">#   x0: initial x of the time series</span></a>
-<a class="sourceLine" id="cb1-15" data-line-number="15"><span class="co">#   xn: final x of the time series</span></a>
-<a class="sourceLine" id="cb1-16" data-line-number="16"><span class="co">#   step: step of the time series discretization</span></a>
-<a class="sourceLine" id="cb1-17" data-line-number="17"><span class="co">#   k: exponential rate</span></a>
-<a class="sourceLine" id="cb1-18" data-line-number="18">gen_cosine_amp &lt;-<span class="st"> </span><span class="cf">function</span>(<span class="dt">amp =</span> <span class="dv">100</span>, <span class="dt">period =</span> <span class="dv">1000</span>, <span class="dt">x0 =</span> <span class="dv">0</span>, <span class="dt">xn =</span> <span class="dv">50000</span>, <span class="dt">step =</span> <span class="dv">1</span>, <span class="dt">k =</span> <span class="fl">0.0001</span>) {</a>
-<a class="sourceLine" id="cb1-19" data-line-number="19">  n &lt;-<span class="st"> </span>(xn<span class="op">-</span>x0) <span class="op">*</span><span class="st"> </span>step</a>
-<a class="sourceLine" id="cb1-20" data-line-number="20">  cos &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/array.html">array</a></span>(<span class="dt">data =</span> <span class="kw"><a href="https://rdrr.io/r/base/numeric.html">numeric</a></span>(n), <span class="dt">dim =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(n, <span class="dv">1</span>, <span class="dv">1</span>))</a>
-<a class="sourceLine" id="cb1-21" data-line-number="21">  <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span><span class="kw"><a href="https://rdrr.io/r/base/length.html">length</a></span>(cos)) {</a>
-<a class="sourceLine" id="cb1-22" data-line-number="22">    idx &lt;-<span class="st"> </span>x0 <span class="op">+</span><span class="st"> </span>i <span class="op">*</span><span class="st"> </span>step</a>
-<a class="sourceLine" id="cb1-23" data-line-number="23">    cos[[i, <span class="dv">1</span>, <span class="dv">1</span>]] &lt;-<span class="st"> </span>amp <span class="op">*</span><span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/Trig.html">cos</a></span>(<span class="dv">2</span> <span class="op">*</span><span class="st"> </span>pi <span class="op">*</span><span class="st"> </span>idx <span class="op">/</span><span class="st"> </span>period)</a>
-<a class="sourceLine" id="cb1-24" data-line-number="24">    cos[[i, <span class="dv">1</span>, <span class="dv">1</span>]] &lt;-<span class="st"> </span>cos[[i, <span class="dv">1</span>, <span class="dv">1</span>]] <span class="op">*</span><span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/Log.html">exp</a></span>(<span class="op">-</span>k <span class="op">*</span><span class="st"> </span>idx)</a>
-<a class="sourceLine" id="cb1-25" data-line-number="25">  }</a>
-<a class="sourceLine" id="cb1-26" data-line-number="26">  cos</a>
-<a class="sourceLine" id="cb1-27" data-line-number="27">}</a>
-<a class="sourceLine" id="cb1-28" data-line-number="28"></a>
-<a class="sourceLine" id="cb1-29" data-line-number="29"><span class="kw"><a href="https://rdrr.io/r/base/cat.html">cat</a></span>(<span class="st">'Generating Data...</span><span class="ch">\n</span><span class="st">'</span>)</a>
-<a class="sourceLine" id="cb1-30" data-line-number="30">cos &lt;-<span class="st"> </span><span class="kw">gen_cosine_amp</span>()</a>
-<a class="sourceLine" id="cb1-31" data-line-number="31"><span class="kw"><a href="https://rdrr.io/r/base/cat.html">cat</a></span>(<span class="st">'Input shape:'</span>, <span class="kw"><a href="https://rdrr.io/r/base/dim.html">dim</a></span>(cos), <span class="st">'</span><span class="ch">\n</span><span class="st">'</span>)</a>
-<a class="sourceLine" id="cb1-32" data-line-number="32"></a>
-<a class="sourceLine" id="cb1-33" data-line-number="33">expected_output &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/array.html">array</a></span>(<span class="dt">data =</span> <span class="kw"><a href="https://rdrr.io/r/base/numeric.html">numeric</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/length.html">length</a></span>(cos)), <span class="dt">dim =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/length.html">length</a></span>(cos), <span class="dv">1</span>))</a>
-<a class="sourceLine" id="cb1-34" data-line-number="34"><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span>(<span class="kw"><a href="https://rdrr.io/r/base/length.html">length</a></span>(cos) <span class="op">-</span><span class="st"> </span>lahead)) {</a>
-<a class="sourceLine" id="cb1-35" data-line-number="35">  expected_output[[i, <span class="dv">1</span>]] &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/mean.html">mean</a></span>(cos[(i <span class="op">+</span><span class="st"> </span><span class="dv">1</span>)<span class="op">:</span>(i <span class="op">+</span><span class="st"> </span>lahead)])</a>
-<a class="sourceLine" id="cb1-36" data-line-number="36">}</a>
-<a class="sourceLine" id="cb1-37" data-line-number="37"></a>
-<a class="sourceLine" id="cb1-38" data-line-number="38"><span class="kw"><a href="https://rdrr.io/r/base/cat.html">cat</a></span>(<span class="st">'Output shape:'</span>, <span class="kw"><a href="https://rdrr.io/r/base/dim.html">dim</a></span>(expected_output), <span class="st">'</span><span class="ch">\n</span><span class="st">'</span>)</a>
-<a class="sourceLine" id="cb1-39" data-line-number="39"></a>
-<a class="sourceLine" id="cb1-40" data-line-number="40"><span class="kw"><a href="https://rdrr.io/r/base/cat.html">cat</a></span>(<span class="st">'Creating model:</span><span class="ch">\n</span><span class="st">'</span>)</a>
-<a class="sourceLine" id="cb1-41" data-line-number="41">model &lt;-<span class="st"> </span><span class="kw"><a href="../../../keras/reference/keras_model_sequential.html">keras_model_sequential</a></span>()</a>
-<a class="sourceLine" id="cb1-42" data-line-number="42">model <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb1-43" data-line-number="43"><span class="st">  </span><span class="kw"><a href="../../../keras/reference/layer_lstm.html">layer_lstm</a></span>(<span class="dt">units =</span> <span class="dv">50</span>, <span class="dt">input_shape =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(tsteps, <span class="dv">1</span>), <span class="dt">batch_size =</span> batch_size,</a>
-<a class="sourceLine" id="cb1-44" data-line-number="44">             <span class="dt">return_sequences =</span> <span class="ot">TRUE</span>, <span class="dt">stateful =</span> <span class="ot">TRUE</span>) <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb1-45" data-line-number="45"><span class="st">  </span><span class="kw"><a href="../../../keras/reference/layer_lstm.html">layer_lstm</a></span>(<span class="dt">units =</span> <span class="dv">50</span>, <span class="dt">return_sequences =</span> <span class="ot">FALSE</span>, <span class="dt">stateful =</span> <span class="ot">TRUE</span>) <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb1-46" data-line-number="46"><span class="st">  </span><span class="kw"><a href="../../../keras/reference/layer_dense.html">layer_dense</a></span>(<span class="dt">units =</span> <span class="dv">1</span>)</a>
-<a class="sourceLine" id="cb1-47" data-line-number="47">model <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../../../keras/reference/reexports.html">compile</a></span>(<span class="dt">loss =</span> <span class="st">'mse'</span>, <span class="dt">optimizer =</span> <span class="st">'rmsprop'</span>)</a>
-<a class="sourceLine" id="cb1-48" data-line-number="48"></a>
-<a class="sourceLine" id="cb1-49" data-line-number="49"><span class="kw"><a href="https://rdrr.io/r/base/cat.html">cat</a></span>(<span class="st">'Training</span><span class="ch">\n</span><span class="st">'</span>)</a>
-<a class="sourceLine" id="cb1-50" data-line-number="50"><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span>epochs) {</a>
-<a class="sourceLine" id="cb1-51" data-line-number="51">  model <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../../../keras/reference/reexports.html">fit</a></span>(cos, expected_output, <span class="dt">batch_size =</span> batch_size,</a>
-<a class="sourceLine" id="cb1-52" data-line-number="52">                <span class="dt">epochs =</span> <span class="dv">1</span>, <span class="dt">verbose =</span> <span class="dv">1</span>, <span class="dt">shuffle =</span> <span class="ot">FALSE</span>)</a>
-<a class="sourceLine" id="cb1-53" data-line-number="53">            </a>
-<a class="sourceLine" id="cb1-54" data-line-number="54">  model <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../../../keras/reference/reset_states.html">reset_states</a></span>()</a>
-<a class="sourceLine" id="cb1-55" data-line-number="55">}</a>
-<a class="sourceLine" id="cb1-56" data-line-number="56"></a>
-<a class="sourceLine" id="cb1-57" data-line-number="57"><span class="kw"><a href="https://rdrr.io/r/base/cat.html">cat</a></span>(<span class="st">'Predicting</span><span class="ch">\n</span><span class="st">'</span>)</a>
-<a class="sourceLine" id="cb1-58" data-line-number="58">predicted_output &lt;-<span class="st"> </span>model <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/stats/predict.html">predict</a></span>(cos, <span class="dt">batch_size =</span> batch_size)</a>
-<a class="sourceLine" id="cb1-59" data-line-number="59"></a>
-<a class="sourceLine" id="cb1-60" data-line-number="60"><span class="kw"><a href="https://rdrr.io/r/base/cat.html">cat</a></span>(<span class="st">'Plotting Results</span><span class="ch">\n</span><span class="st">'</span>)</a>
-<a class="sourceLine" id="cb1-61" data-line-number="61">op &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/graphics/par.html">par</a></span>(<span class="dt">mfrow=</span><span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="dv">2</span>,<span class="dv">1</span>))</a>
-<a class="sourceLine" id="cb1-62" data-line-number="62"><span class="kw"><a href="https://rdrr.io/r/graphics/plot.html">plot</a></span>(expected_output, <span class="dt">xlab =</span> <span class="st">''</span>)</a>
-<a class="sourceLine" id="cb1-63" data-line-number="63"><span class="kw"><a href="https://rdrr.io/r/graphics/title.html">title</a></span>(<span class="st">"Expected"</span>)</a>
-<a class="sourceLine" id="cb1-64" data-line-number="64"><span class="kw"><a href="https://rdrr.io/r/graphics/plot.html">plot</a></span>(predicted_output, <span class="dt">xlab =</span> <span class="st">''</span>)</a>
-<a class="sourceLine" id="cb1-65" data-line-number="65"><span class="kw"><a href="https://rdrr.io/r/graphics/title.html">title</a></span>(<span class="st">"Predicted"</span>)</a>
-<a class="sourceLine" id="cb1-66" data-line-number="66"><span class="kw"><a href="https://rdrr.io/r/graphics/par.html">par</a></span>(op)</a></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(keras)</span>
+<span id="cb1-2"><a href="#cb1-2"></a></span>
+<span id="cb1-3"><a href="#cb1-3"></a><span class="co"># since we are using stateful rnn tsteps can be set to 1</span></span>
+<span id="cb1-4"><a href="#cb1-4"></a>tsteps &lt;-<span class="st"> </span><span class="dv">1</span></span>
+<span id="cb1-5"><a href="#cb1-5"></a>batch_size &lt;-<span class="st"> </span><span class="dv">25</span></span>
+<span id="cb1-6"><a href="#cb1-6"></a>epochs &lt;-<span class="st"> </span><span class="dv">25</span></span>
+<span id="cb1-7"><a href="#cb1-7"></a><span class="co"># number of elements ahead that are used to make the prediction</span></span>
+<span id="cb1-8"><a href="#cb1-8"></a>lahead &lt;-<span class="st"> </span><span class="dv">1</span></span>
+<span id="cb1-9"><a href="#cb1-9"></a></span>
+<span id="cb1-10"><a href="#cb1-10"></a><span class="co"># Generates an absolute cosine time series with the amplitude exponentially decreasing</span></span>
+<span id="cb1-11"><a href="#cb1-11"></a><span class="co"># Arguments:</span></span>
+<span id="cb1-12"><a href="#cb1-12"></a><span class="co">#   amp: amplitude of the cosine function</span></span>
+<span id="cb1-13"><a href="#cb1-13"></a><span class="co">#   period: period of the cosine function</span></span>
+<span id="cb1-14"><a href="#cb1-14"></a><span class="co">#   x0: initial x of the time series</span></span>
+<span id="cb1-15"><a href="#cb1-15"></a><span class="co">#   xn: final x of the time series</span></span>
+<span id="cb1-16"><a href="#cb1-16"></a><span class="co">#   step: step of the time series discretization</span></span>
+<span id="cb1-17"><a href="#cb1-17"></a><span class="co">#   k: exponential rate</span></span>
+<span id="cb1-18"><a href="#cb1-18"></a>gen_cosine_amp &lt;-<span class="st"> </span><span class="cf">function</span>(<span class="dt">amp =</span> <span class="dv">100</span>, <span class="dt">period =</span> <span class="dv">1000</span>, <span class="dt">x0 =</span> <span class="dv">0</span>, <span class="dt">xn =</span> <span class="dv">50000</span>, <span class="dt">step =</span> <span class="dv">1</span>, <span class="dt">k =</span> <span class="fl">0.0001</span>) {</span>
+<span id="cb1-19"><a href="#cb1-19"></a>  n &lt;-<span class="st"> </span>(xn<span class="op">-</span>x0) <span class="op">*</span><span class="st"> </span>step</span>
+<span id="cb1-20"><a href="#cb1-20"></a>  cos &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/array.html">array</a></span>(<span class="dt">data =</span> <span class="kw"><a href="https://rdrr.io/r/base/numeric.html">numeric</a></span>(n), <span class="dt">dim =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(n, <span class="dv">1</span>, <span class="dv">1</span>))</span>
+<span id="cb1-21"><a href="#cb1-21"></a>  <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span><span class="kw"><a href="https://rdrr.io/r/base/length.html">length</a></span>(cos)) {</span>
+<span id="cb1-22"><a href="#cb1-22"></a>    idx &lt;-<span class="st"> </span>x0 <span class="op">+</span><span class="st"> </span>i <span class="op">*</span><span class="st"> </span>step</span>
+<span id="cb1-23"><a href="#cb1-23"></a>    cos[[i, <span class="dv">1</span>, <span class="dv">1</span>]] &lt;-<span class="st"> </span>amp <span class="op">*</span><span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/Trig.html">cos</a></span>(<span class="dv">2</span> <span class="op">*</span><span class="st"> </span>pi <span class="op">*</span><span class="st"> </span>idx <span class="op">/</span><span class="st"> </span>period)</span>
+<span id="cb1-24"><a href="#cb1-24"></a>    cos[[i, <span class="dv">1</span>, <span class="dv">1</span>]] &lt;-<span class="st"> </span>cos[[i, <span class="dv">1</span>, <span class="dv">1</span>]] <span class="op">*</span><span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/Log.html">exp</a></span>(<span class="op">-</span>k <span class="op">*</span><span class="st"> </span>idx)</span>
+<span id="cb1-25"><a href="#cb1-25"></a>  }</span>
+<span id="cb1-26"><a href="#cb1-26"></a>  cos</span>
+<span id="cb1-27"><a href="#cb1-27"></a>}</span>
+<span id="cb1-28"><a href="#cb1-28"></a></span>
+<span id="cb1-29"><a href="#cb1-29"></a><span class="kw"><a href="https://rdrr.io/r/base/cat.html">cat</a></span>(<span class="st">'Generating Data...</span><span class="ch">\n</span><span class="st">'</span>)</span>
+<span id="cb1-30"><a href="#cb1-30"></a>cos &lt;-<span class="st"> </span><span class="kw">gen_cosine_amp</span>()</span>
+<span id="cb1-31"><a href="#cb1-31"></a><span class="kw"><a href="https://rdrr.io/r/base/cat.html">cat</a></span>(<span class="st">'Input shape:'</span>, <span class="kw"><a href="https://rdrr.io/r/base/dim.html">dim</a></span>(cos), <span class="st">'</span><span class="ch">\n</span><span class="st">'</span>)</span>
+<span id="cb1-32"><a href="#cb1-32"></a></span>
+<span id="cb1-33"><a href="#cb1-33"></a>expected_output &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/array.html">array</a></span>(<span class="dt">data =</span> <span class="kw"><a href="https://rdrr.io/r/base/numeric.html">numeric</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/length.html">length</a></span>(cos)), <span class="dt">dim =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/length.html">length</a></span>(cos), <span class="dv">1</span>))</span>
+<span id="cb1-34"><a href="#cb1-34"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span>(<span class="kw"><a href="https://rdrr.io/r/base/length.html">length</a></span>(cos) <span class="op">-</span><span class="st"> </span>lahead)) {</span>
+<span id="cb1-35"><a href="#cb1-35"></a>  expected_output[[i, <span class="dv">1</span>]] &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/mean.html">mean</a></span>(cos[(i <span class="op">+</span><span class="st"> </span><span class="dv">1</span>)<span class="op">:</span>(i <span class="op">+</span><span class="st"> </span>lahead)])</span>
+<span id="cb1-36"><a href="#cb1-36"></a>}</span>
+<span id="cb1-37"><a href="#cb1-37"></a></span>
+<span id="cb1-38"><a href="#cb1-38"></a><span class="kw"><a href="https://rdrr.io/r/base/cat.html">cat</a></span>(<span class="st">'Output shape:'</span>, <span class="kw"><a href="https://rdrr.io/r/base/dim.html">dim</a></span>(expected_output), <span class="st">'</span><span class="ch">\n</span><span class="st">'</span>)</span>
+<span id="cb1-39"><a href="#cb1-39"></a></span>
+<span id="cb1-40"><a href="#cb1-40"></a><span class="kw"><a href="https://rdrr.io/r/base/cat.html">cat</a></span>(<span class="st">'Creating model:</span><span class="ch">\n</span><span class="st">'</span>)</span>
+<span id="cb1-41"><a href="#cb1-41"></a>model &lt;-<span class="st"> </span><span class="kw"><a href="../../../keras/reference/keras_model_sequential.html">keras_model_sequential</a></span>()</span>
+<span id="cb1-42"><a href="#cb1-42"></a>model <span class="op">%&gt;%</span></span>
+<span id="cb1-43"><a href="#cb1-43"></a><span class="st">  </span><span class="kw"><a href="../../../keras/reference/layer_lstm.html">layer_lstm</a></span>(<span class="dt">units =</span> <span class="dv">50</span>, <span class="dt">input_shape =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(tsteps, <span class="dv">1</span>), <span class="dt">batch_size =</span> batch_size,</span>
+<span id="cb1-44"><a href="#cb1-44"></a>             <span class="dt">return_sequences =</span> <span class="ot">TRUE</span>, <span class="dt">stateful =</span> <span class="ot">TRUE</span>) <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb1-45"><a href="#cb1-45"></a><span class="st">  </span><span class="kw"><a href="../../../keras/reference/layer_lstm.html">layer_lstm</a></span>(<span class="dt">units =</span> <span class="dv">50</span>, <span class="dt">return_sequences =</span> <span class="ot">FALSE</span>, <span class="dt">stateful =</span> <span class="ot">TRUE</span>) <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb1-46"><a href="#cb1-46"></a><span class="st">  </span><span class="kw"><a href="../../../keras/reference/layer_dense.html">layer_dense</a></span>(<span class="dt">units =</span> <span class="dv">1</span>)</span>
+<span id="cb1-47"><a href="#cb1-47"></a>model <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../../../keras/reference/reexports.html">compile</a></span>(<span class="dt">loss =</span> <span class="st">'mse'</span>, <span class="dt">optimizer =</span> <span class="st">'rmsprop'</span>)</span>
+<span id="cb1-48"><a href="#cb1-48"></a></span>
+<span id="cb1-49"><a href="#cb1-49"></a><span class="kw"><a href="https://rdrr.io/r/base/cat.html">cat</a></span>(<span class="st">'Training</span><span class="ch">\n</span><span class="st">'</span>)</span>
+<span id="cb1-50"><a href="#cb1-50"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span>epochs) {</span>
+<span id="cb1-51"><a href="#cb1-51"></a>  model <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../../../keras/reference/reexports.html">fit</a></span>(cos, expected_output, <span class="dt">batch_size =</span> batch_size,</span>
+<span id="cb1-52"><a href="#cb1-52"></a>                <span class="dt">epochs =</span> <span class="dv">1</span>, <span class="dt">verbose =</span> <span class="dv">1</span>, <span class="dt">shuffle =</span> <span class="ot">FALSE</span>)</span>
+<span id="cb1-53"><a href="#cb1-53"></a>            </span>
+<span id="cb1-54"><a href="#cb1-54"></a>  model <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../../../keras/reference/reset_states.html">reset_states</a></span>()</span>
+<span id="cb1-55"><a href="#cb1-55"></a>}</span>
+<span id="cb1-56"><a href="#cb1-56"></a></span>
+<span id="cb1-57"><a href="#cb1-57"></a><span class="kw"><a href="https://rdrr.io/r/base/cat.html">cat</a></span>(<span class="st">'Predicting</span><span class="ch">\n</span><span class="st">'</span>)</span>
+<span id="cb1-58"><a href="#cb1-58"></a>predicted_output &lt;-<span class="st"> </span>model <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/stats/predict.html">predict</a></span>(cos, <span class="dt">batch_size =</span> batch_size)</span>
+<span id="cb1-59"><a href="#cb1-59"></a></span>
+<span id="cb1-60"><a href="#cb1-60"></a><span class="kw"><a href="https://rdrr.io/r/base/cat.html">cat</a></span>(<span class="st">'Plotting Results</span><span class="ch">\n</span><span class="st">'</span>)</span>
+<span id="cb1-61"><a href="#cb1-61"></a>op &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/graphics/par.html">par</a></span>(<span class="dt">mfrow=</span><span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="dv">2</span>,<span class="dv">1</span>))</span>
+<span id="cb1-62"><a href="#cb1-62"></a><span class="kw"><a href="https://rdrr.io/r/graphics/plot.html">plot</a></span>(expected_output, <span class="dt">xlab =</span> <span class="st">''</span>)</span>
+<span id="cb1-63"><a href="#cb1-63"></a><span class="kw"><a href="https://rdrr.io/r/graphics/title.html">title</a></span>(<span class="st">"Expected"</span>)</span>
+<span id="cb1-64"><a href="#cb1-64"></a><span class="kw"><a href="https://rdrr.io/r/graphics/plot.html">plot</a></span>(predicted_output, <span class="dt">xlab =</span> <span class="st">''</span>)</span>
+<span id="cb1-65"><a href="#cb1-65"></a><span class="kw"><a href="https://rdrr.io/r/graphics/title.html">title</a></span>(<span class="st">"Predicted"</span>)</span>
+<span id="cb1-66"><a href="#cb1-66"></a><span class="kw"><a href="https://rdrr.io/r/graphics/par.html">par</a></span>(op)</span></code></pre></div>

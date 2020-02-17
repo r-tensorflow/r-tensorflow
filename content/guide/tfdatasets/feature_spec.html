@@ -29,8 +29,8 @@ in <code>tfdatasets</code>.</p>
 It allows us to specify column transformations and representations when working with
 structured data.</p>
 <p>We will use the <code>hearts</code> dataset and it can be loaded with <code><a href="https://rdrr.io/r/utils/data.html">data(hearts)</a></code>.</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(tfdatasets)</a>
-<a class="sourceLine" id="cb1-2" data-line-number="2"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(dplyr)</a></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(tfdatasets)</span>
+<span id="cb1-2"><a href="#cb1-2"></a><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(dplyr)</span></code></pre></div>
 <pre><code>## 
 ## Attaching package: 'dplyr'</code></pre>
 <pre><code>## The following objects are masked from 'package:stats':
@@ -39,35 +39,35 @@ structured data.</p>
 <pre><code>## The following objects are masked from 'package:base':
 ## 
 ##     intersect, setdiff, setequal, union</code></pre>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/utils/data.html">data</a></span>(hearts)</a></code></pre></div>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/utils/head.html">head</a></span>(hearts)</a></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1"></a><span class="kw"><a href="https://rdrr.io/r/utils/data.html">data</a></span>(hearts)</span></code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1"></a><span class="kw"><a href="https://rdrr.io/r/utils/head.html">head</a></span>(hearts)</span></code></pre></div>
 <pre><code>## # A tibble: 6 x 14
-##     age   sex    cp trestbps  chol   fbs restecg thalach exang oldpeak
-##   &lt;int&gt; &lt;int&gt; &lt;int&gt;    &lt;int&gt; &lt;int&gt; &lt;int&gt;   &lt;int&gt;   &lt;int&gt; &lt;int&gt;   &lt;dbl&gt;
-## 1    63     1     1      145   233     1       2     150     0     2.3
-## 2    67     1     4      160   286     0       2     108     1     1.5
-## 3    67     1     4      120   229     0       2     129     1     2.6
-## 4    37     1     3      130   250     0       0     187     0     3.5
-## 5    41     0     2      130   204     0       2     172     0     1.4
-## 6    56     1     2      120   236     0       0     178     0     0.8
-## # … with 4 more variables: slope &lt;int&gt;, ca &lt;int&gt;, thal &lt;chr&gt;, target &lt;int&gt;</code></pre>
+##     age   sex    cp trestbps  chol   fbs restecg thalach exang oldpeak slope
+##   &lt;int&gt; &lt;int&gt; &lt;int&gt;    &lt;int&gt; &lt;int&gt; &lt;int&gt;   &lt;int&gt;   &lt;int&gt; &lt;int&gt;   &lt;dbl&gt; &lt;int&gt;
+## 1    63     1     1      145   233     1       2     150     0     2.3     3
+## 2    67     1     4      160   286     0       2     108     1     1.5     2
+## 3    67     1     4      120   229     0       2     129     1     2.6     2
+## 4    37     1     3      130   250     0       0     187     0     3.5     3
+## 5    41     0     2      130   204     0       2     172     0     1.4     1
+## 6    56     1     2      120   236     0       0     178     0     0.8     1
+## # … with 3 more variables: ca &lt;int&gt;, thal &lt;chr&gt;, target &lt;int&gt;</code></pre>
 <p>We want to train a model to predict the <code>target</code> variable using Keras but, before
 that we need to prepare the data. We need to transform the categorical variables
 into some form of dense variable, we usually want to normalize all numeric columns too.</p>
 <p>The feature spec interface works with <code>data.frame</code>s or TensorFlow datasets objects.</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" data-line-number="1">ids_train &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/sample.html">sample.int</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span>(hearts), <span class="dt">size =</span> <span class="fl">0.75</span><span class="op">*</span><span class="kw"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span>(hearts))</a>
-<a class="sourceLine" id="cb8-2" data-line-number="2">hearts_train &lt;-<span class="st"> </span>hearts[ids_train,]</a>
-<a class="sourceLine" id="cb8-3" data-line-number="3">hearts_test &lt;-<span class="st"> </span>hearts[<span class="op">-</span>ids_train,]</a></code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1"></a>ids_train &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/sample.html">sample.int</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span>(hearts), <span class="dt">size =</span> <span class="fl">0.75</span><span class="op">*</span><span class="kw"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span>(hearts))</span>
+<span id="cb8-2"><a href="#cb8-2"></a>hearts_train &lt;-<span class="st"> </span>hearts[ids_train,]</span>
+<span id="cb8-3"><a href="#cb8-3"></a>hearts_test &lt;-<span class="st"> </span>hearts[<span class="op">-</span>ids_train,]</span></code></pre></div>
 <p>Now let’s start creating our feature specification:</p>
-<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" data-line-number="1">spec &lt;-<span class="st"> </span><span class="kw"><a href="../../tools/tfdatasets/reference/feature_spec.html">feature_spec</a></span>(hearts_train, target <span class="op">~</span><span class="st"> </span>.)</a></code></pre></div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1"></a>spec &lt;-<span class="st"> </span><span class="kw"><a href="../../tools/tfdatasets/reference/feature_spec.html">feature_spec</a></span>(hearts_train, target <span class="op">~</span><span class="st"> </span>.)</span></code></pre></div>
 <p>The first thing we need to do after creating the feature_spec is decide on the variables’ types.</p>
 <p>We can do this by adding steps to the <code>spec</code> object.</p>
-<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" data-line-number="1">spec &lt;-<span class="st"> </span>spec <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb10-2" data-line-number="2"><span class="st">  </span><span class="kw"><a href="../../tools/tfdatasets/reference/step_numeric_column.html">step_numeric_column</a></span>(</a>
-<a class="sourceLine" id="cb10-3" data-line-number="3">    <span class="kw"><a href="../../tools/tfdatasets/reference/all_numeric.html">all_numeric</a></span>(), <span class="op">-</span>cp, <span class="op">-</span>restecg, <span class="op">-</span>exang, <span class="op">-</span>sex, <span class="op">-</span>fbs,</a>
-<a class="sourceLine" id="cb10-4" data-line-number="4">    <span class="dt">normalizer_fn =</span> <span class="kw"><a href="../../tools/tfdatasets/reference/scaler_standard.html">scaler_standard</a></span>()</a>
-<a class="sourceLine" id="cb10-5" data-line-number="5">  ) <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb10-6" data-line-number="6"><span class="st">  </span><span class="kw"><a href="../../tools/tfdatasets/reference/step_categorical_column_with_vocabulary_list.html">step_categorical_column_with_vocabulary_list</a></span>(thal)</a></code></pre></div>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1"></a>spec &lt;-<span class="st"> </span>spec <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb10-2"><a href="#cb10-2"></a><span class="st">  </span><span class="kw"><a href="../../tools/tfdatasets/reference/step_numeric_column.html">step_numeric_column</a></span>(</span>
+<span id="cb10-3"><a href="#cb10-3"></a>    <span class="kw"><a href="../../tools/tfdatasets/reference/all_numeric.html">all_numeric</a></span>(), <span class="op">-</span>cp, <span class="op">-</span>restecg, <span class="op">-</span>exang, <span class="op">-</span>sex, <span class="op">-</span>fbs,</span>
+<span id="cb10-4"><a href="#cb10-4"></a>    <span class="dt">normalizer_fn =</span> <span class="kw"><a href="../../tools/tfdatasets/reference/scaler_standard.html">scaler_standard</a></span>()</span>
+<span id="cb10-5"><a href="#cb10-5"></a>  ) <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb10-6"><a href="#cb10-6"></a><span class="st">  </span><span class="kw"><a href="../../tools/tfdatasets/reference/step_categorical_column_with_vocabulary_list.html">step_categorical_column_with_vocabulary_list</a></span>(thal)</span></code></pre></div>
 <p>The following steps can be used to define the variable type:</p>
 <ul>
 <li>
@@ -100,160 +100,160 @@ compute the normalizing function during the recipe preparation.</p>
 <code><a href="../../tools/tfdatasets/reference/has_type.html">has_type("float32")</a></code> to select based on TensorFlow variable type.</li>
 </ul>
 <p>Now we can print the recipe:</p>
-<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb11-1" data-line-number="1">spec</a></code></pre></div>
-<pre><code>## ── Feature Spec ────────────────────────────────────────────────────────────────────────────────── 
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1"></a>spec</span></code></pre></div>
+<pre><code>## ── Feature Spec ────────────────────────────────────────────────────────────────────────────── 
 ## A feature_spec with 8 steps.
 ## Fitted: FALSE 
-## ── Steps ───────────────────────────────────────────────────────────────────────────────────────── 
+## ── Steps ───────────────────────────────────────────────────────────────────────────────────── 
 ## StepCategoricalColumnWithVocabularyList: thal 
 ## StepNumericColumn: age, trestbps, chol, thalach, oldpeak, slope, ca 
-## ── Dense features ──────────────────────────────────────────────────────────────────────────────── 
+## ── Dense features ──────────────────────────────────────────────────────────────────────────── 
 ## Feature spec must be fitted before we can detect the dense features.</code></pre>
 <p>After specifying the types of the columns you can add transformation steps.
 For example you may want to bucketize a numeric column:</p>
-<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb13-1" data-line-number="1">spec &lt;-<span class="st"> </span>spec <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb13-2" data-line-number="2"><span class="st">  </span><span class="kw"><a href="../../tools/tfdatasets/reference/step_bucketized_column.html">step_bucketized_column</a></span>(age, <span class="dt">boundaries =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="dv">18</span>, <span class="dv">25</span>, <span class="dv">30</span>, <span class="dv">35</span>, <span class="dv">40</span>, <span class="dv">45</span>, <span class="dv">50</span>, <span class="dv">55</span>, <span class="dv">60</span>, <span class="dv">65</span>))</a></code></pre></div>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1"></a>spec &lt;-<span class="st"> </span>spec <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb13-2"><a href="#cb13-2"></a><span class="st">  </span><span class="kw"><a href="../../tools/tfdatasets/reference/step_bucketized_column.html">step_bucketized_column</a></span>(age, <span class="dt">boundaries =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="dv">18</span>, <span class="dv">25</span>, <span class="dv">30</span>, <span class="dv">35</span>, <span class="dv">40</span>, <span class="dv">45</span>, <span class="dv">50</span>, <span class="dv">55</span>, <span class="dv">60</span>, <span class="dv">65</span>))</span></code></pre></div>
 <p>You can also specify the kind of numeric representation that you want to use for
 your categorical variables.</p>
-<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb14-1" data-line-number="1">spec &lt;-<span class="st"> </span>spec <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb14-2" data-line-number="2"><span class="st">  </span><span class="kw"><a href="../../tools/tfdatasets/reference/step_indicator_column.html">step_indicator_column</a></span>(thal) <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb14-3" data-line-number="3"><span class="st">  </span><span class="kw"><a href="../../tools/tfdatasets/reference/step_embedding_column.html">step_embedding_column</a></span>(thal, <span class="dt">dimension =</span> <span class="dv">2</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1"></a>spec &lt;-<span class="st"> </span>spec <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb14-2"><a href="#cb14-2"></a><span class="st">  </span><span class="kw"><a href="../../tools/tfdatasets/reference/step_indicator_column.html">step_indicator_column</a></span>(thal) <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb14-3"><a href="#cb14-3"></a><span class="st">  </span><span class="kw"><a href="../../tools/tfdatasets/reference/step_embedding_column.html">step_embedding_column</a></span>(thal, <span class="dt">dimension =</span> <span class="dv">2</span>)</span></code></pre></div>
 <p>Another common transformation is to add interactions between variables using crossed
 columns.</p>
-<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb15-1" data-line-number="1">spec &lt;-<span class="st"> </span>spec <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb15-2" data-line-number="2"><span class="st">  </span><span class="kw"><a href="../../tools/tfdatasets/reference/step_crossed_column.html">step_crossed_column</a></span>(<span class="dt">thal_and_age =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(thal, bucketized_age), <span class="dt">hash_bucket_size =</span> <span class="dv">1000</span>) <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb15-3" data-line-number="3"><span class="st">  </span><span class="kw"><a href="../../tools/tfdatasets/reference/step_indicator_column.html">step_indicator_column</a></span>(thal_and_age)</a></code></pre></div>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1"></a>spec &lt;-<span class="st"> </span>spec <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb15-2"><a href="#cb15-2"></a><span class="st">  </span><span class="kw"><a href="../../tools/tfdatasets/reference/step_crossed_column.html">step_crossed_column</a></span>(<span class="dt">thal_and_age =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(thal, bucketized_age), <span class="dt">hash_bucket_size =</span> <span class="dv">1000</span>) <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb15-3"><a href="#cb15-3"></a><span class="st">  </span><span class="kw"><a href="../../tools/tfdatasets/reference/step_indicator_column.html">step_indicator_column</a></span>(thal_and_age)</span></code></pre></div>
 <p>Note that the <code>crossed_column</code> is a categorical column, so we need to also specify what
 kind of numeric tranformation we want to use. Also note that we can name the transformed
 variables - each step uses a default naming for columns, eg. <code>bucketized_age</code> is the
 default name when you use <code>step_bucketized_column</code> with column called <code>age</code>.</p>
 <p>With the above code we have created our recipe. Note we can also define the
 recipe by chaining a sequence of methods:</p>
-<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb16-1" data-line-number="1">spec &lt;-<span class="st"> </span><span class="kw"><a href="../../tools/tfdatasets/reference/feature_spec.html">feature_spec</a></span>(hearts_train, target <span class="op">~</span><span class="st"> </span>.) <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb16-2" data-line-number="2"><span class="st">  </span><span class="kw"><a href="../../tools/tfdatasets/reference/step_numeric_column.html">step_numeric_column</a></span>(</a>
-<a class="sourceLine" id="cb16-3" data-line-number="3">    <span class="kw"><a href="../../tools/tfdatasets/reference/all_numeric.html">all_numeric</a></span>(), <span class="op">-</span>cp, <span class="op">-</span>restecg, <span class="op">-</span>exang, <span class="op">-</span>sex, <span class="op">-</span>fbs,</a>
-<a class="sourceLine" id="cb16-4" data-line-number="4">    <span class="dt">normalizer_fn =</span> <span class="kw"><a href="../../tools/tfdatasets/reference/scaler_standard.html">scaler_standard</a></span>()</a>
-<a class="sourceLine" id="cb16-5" data-line-number="5">  ) <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb16-6" data-line-number="6"><span class="st">  </span><span class="kw"><a href="../../tools/tfdatasets/reference/step_categorical_column_with_vocabulary_list.html">step_categorical_column_with_vocabulary_list</a></span>(thal) <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb16-7" data-line-number="7"><span class="st">  </span><span class="kw"><a href="../../tools/tfdatasets/reference/step_bucketized_column.html">step_bucketized_column</a></span>(age, <span class="dt">boundaries =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="dv">18</span>, <span class="dv">25</span>, <span class="dv">30</span>, <span class="dv">35</span>, <span class="dv">40</span>, <span class="dv">45</span>, <span class="dv">50</span>, <span class="dv">55</span>, <span class="dv">60</span>, <span class="dv">65</span>)) <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb16-8" data-line-number="8"><span class="st">  </span><span class="kw"><a href="../../tools/tfdatasets/reference/step_indicator_column.html">step_indicator_column</a></span>(thal) <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb16-9" data-line-number="9"><span class="st">  </span><span class="kw"><a href="../../tools/tfdatasets/reference/step_embedding_column.html">step_embedding_column</a></span>(thal, <span class="dt">dimension =</span> <span class="dv">2</span>) <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb16-10" data-line-number="10"><span class="st">  </span><span class="kw"><a href="../../tools/tfdatasets/reference/step_crossed_column.html">step_crossed_column</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(thal, bucketized_age), <span class="dt">hash_bucket_size =</span> <span class="dv">10</span>) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb16-11" data-line-number="11"><span class="st">  </span><span class="kw"><a href="../../tools/tfdatasets/reference/step_indicator_column.html">step_indicator_column</a></span>(crossed_thal_bucketized_age)</a></code></pre></div>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1"></a>spec &lt;-<span class="st"> </span><span class="kw"><a href="../../tools/tfdatasets/reference/feature_spec.html">feature_spec</a></span>(hearts_train, target <span class="op">~</span><span class="st"> </span>.) <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb16-2"><a href="#cb16-2"></a><span class="st">  </span><span class="kw"><a href="../../tools/tfdatasets/reference/step_numeric_column.html">step_numeric_column</a></span>(</span>
+<span id="cb16-3"><a href="#cb16-3"></a>    <span class="kw"><a href="../../tools/tfdatasets/reference/all_numeric.html">all_numeric</a></span>(), <span class="op">-</span>cp, <span class="op">-</span>restecg, <span class="op">-</span>exang, <span class="op">-</span>sex, <span class="op">-</span>fbs,</span>
+<span id="cb16-4"><a href="#cb16-4"></a>    <span class="dt">normalizer_fn =</span> <span class="kw"><a href="../../tools/tfdatasets/reference/scaler_standard.html">scaler_standard</a></span>()</span>
+<span id="cb16-5"><a href="#cb16-5"></a>  ) <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb16-6"><a href="#cb16-6"></a><span class="st">  </span><span class="kw"><a href="../../tools/tfdatasets/reference/step_categorical_column_with_vocabulary_list.html">step_categorical_column_with_vocabulary_list</a></span>(thal) <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb16-7"><a href="#cb16-7"></a><span class="st">  </span><span class="kw"><a href="../../tools/tfdatasets/reference/step_bucketized_column.html">step_bucketized_column</a></span>(age, <span class="dt">boundaries =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="dv">18</span>, <span class="dv">25</span>, <span class="dv">30</span>, <span class="dv">35</span>, <span class="dv">40</span>, <span class="dv">45</span>, <span class="dv">50</span>, <span class="dv">55</span>, <span class="dv">60</span>, <span class="dv">65</span>)) <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb16-8"><a href="#cb16-8"></a><span class="st">  </span><span class="kw"><a href="../../tools/tfdatasets/reference/step_indicator_column.html">step_indicator_column</a></span>(thal) <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb16-9"><a href="#cb16-9"></a><span class="st">  </span><span class="kw"><a href="../../tools/tfdatasets/reference/step_embedding_column.html">step_embedding_column</a></span>(thal, <span class="dt">dimension =</span> <span class="dv">2</span>) <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb16-10"><a href="#cb16-10"></a><span class="st">  </span><span class="kw"><a href="../../tools/tfdatasets/reference/step_crossed_column.html">step_crossed_column</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(thal, bucketized_age), <span class="dt">hash_bucket_size =</span> <span class="dv">10</span>) <span class="op">%&gt;%</span></span>
+<span id="cb16-11"><a href="#cb16-11"></a><span class="st">  </span><span class="kw"><a href="../../tools/tfdatasets/reference/step_indicator_column.html">step_indicator_column</a></span>(crossed_thal_bucketized_age)</span></code></pre></div>
 <p>After defining the recipe we need to <code>fit</code> it. It’s when fitting that we compute the vocabulary
 list for categorical variables or find the mean and standard deviation for the normalizing functions.
 Fitting involves evaluating the full dataset, so if you have provided the vocabulary list and
 your columns are already normalized you can skip the fitting step (TODO).</p>
 <p>In our case, we will fit the feature spec, since we didn’t specify the vocabulary list
 for the categorical variables.</p>
-<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb17-1" data-line-number="1">spec_prep &lt;-<span class="st"> </span><span class="kw"><a href="../../tools/tfdatasets/reference/reexports.html">fit</a></span>(spec)</a></code></pre></div>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1"></a>spec_prep &lt;-<span class="st"> </span><span class="kw"><a href="../../tools/tfdatasets/reference/reexports.html">fit</a></span>(spec)</span></code></pre></div>
 <p>After preparing we can see the list of dense features that were defined:</p>
-<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb18-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/utils/str.html">str</a></span>(spec_prep<span class="op">$</span><span class="kw"><a href="../../tools/tfdatasets/reference/dense_features.html">dense_features</a></span>())</a></code></pre></div>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1"></a><span class="kw"><a href="https://rdrr.io/r/utils/str.html">str</a></span>(spec_prep<span class="op">$</span><span class="kw"><a href="../../tools/tfdatasets/reference/dense_features.html">dense_features</a></span>())</span></code></pre></div>
 <pre><code>## List of 11
-##  $ age                                  :NumericColumn(key='age', shape=(1,), default_value=None, dtype=tf.float32, normalizer_fn=&lt;function make_python_function.&lt;locals&gt;.python_function at 0x1401b5d08&gt;)
-##  $ trestbps                             :NumericColumn(key='trestbps', shape=(1,), default_value=None, dtype=tf.float32, normalizer_fn=&lt;function make_python_function.&lt;locals&gt;.python_function at 0x1401b58c8&gt;)
-##  $ chol                                 :NumericColumn(key='chol', shape=(1,), default_value=None, dtype=tf.float32, normalizer_fn=&lt;function make_python_function.&lt;locals&gt;.python_function at 0x1401b5158&gt;)
-##  $ thalach                              :NumericColumn(key='thalach', shape=(1,), default_value=None, dtype=tf.float32, normalizer_fn=&lt;function make_python_function.&lt;locals&gt;.python_function at 0x1401b5048&gt;)
-##  $ oldpeak                              :NumericColumn(key='oldpeak', shape=(1,), default_value=None, dtype=tf.float32, normalizer_fn=&lt;function make_python_function.&lt;locals&gt;.python_function at 0x1401b5c80&gt;)
-##  $ slope                                :NumericColumn(key='slope', shape=(1,), default_value=None, dtype=tf.float32, normalizer_fn=&lt;function make_python_function.&lt;locals&gt;.python_function at 0x1401b5840&gt;)
-##  $ ca                                   :NumericColumn(key='ca', shape=(1,), default_value=None, dtype=tf.float32, normalizer_fn=&lt;function make_python_function.&lt;locals&gt;.python_function at 0x1401b51e0&gt;)
-##  $ bucketized_age                       :BucketizedColumn(source_column=NumericColumn(key='age', shape=(1,), default_value=None, dtype=tf.float32, normalizer_fn=&lt;function make_python_function.&lt;locals&gt;.python_function at 0x1401b5d08&gt;), boundaries=(18.0, 25.0, 30.0, 35.0, 40.0, 45.0, 50.0, 55.0, 60.0, 65.0))
+##  $ age                                  :NumericColumn(key='age', shape=(1,), default_value=None, dtype=tf.float32, normalizer_fn=&lt;function make_python_function.&lt;locals&gt;.python_function at 0x1335af6a8&gt;)
+##  $ trestbps                             :NumericColumn(key='trestbps', shape=(1,), default_value=None, dtype=tf.float32, normalizer_fn=&lt;function make_python_function.&lt;locals&gt;.python_function at 0x1335af7b8&gt;)
+##  $ chol                                 :NumericColumn(key='chol', shape=(1,), default_value=None, dtype=tf.float32, normalizer_fn=&lt;function make_python_function.&lt;locals&gt;.python_function at 0x1335af8c8&gt;)
+##  $ thalach                              :NumericColumn(key='thalach', shape=(1,), default_value=None, dtype=tf.float32, normalizer_fn=&lt;function make_python_function.&lt;locals&gt;.python_function at 0x1335afea0&gt;)
+##  $ oldpeak                              :NumericColumn(key='oldpeak', shape=(1,), default_value=None, dtype=tf.float32, normalizer_fn=&lt;function make_python_function.&lt;locals&gt;.python_function at 0x1335aff28&gt;)
+##  $ slope                                :NumericColumn(key='slope', shape=(1,), default_value=None, dtype=tf.float32, normalizer_fn=&lt;function make_python_function.&lt;locals&gt;.python_function at 0x1335af158&gt;)
+##  $ ca                                   :NumericColumn(key='ca', shape=(1,), default_value=None, dtype=tf.float32, normalizer_fn=&lt;function make_python_function.&lt;locals&gt;.python_function at 0x1335af598&gt;)
+##  $ bucketized_age                       :BucketizedColumn(source_column=NumericColumn(key='age', shape=(1,), default_value=None, dtype=tf.float32, normalizer_fn=&lt;function make_python_function.&lt;locals&gt;.python_function at 0x1335af6a8&gt;), boundaries=(18.0, 25.0, 30.0, 35.0, 40.0, 45.0, 50.0, 55.0, 60.0, 65.0))
 ##  $ indicator_thal                       :IndicatorColumn(categorical_column=VocabularyListCategoricalColumn(key='thal', vocabulary_list=('1', '2', 'fixed', 'normal', 'reversible'), dtype=tf.string, default_value=-1, num_oov_buckets=0))
 ##  $ embedding_thal                       :EmbeddingColumn(categorical_column=VocabularyListCategoricalColumn(key='thal', vocabulary_list=('1', '2', 'fixed', 'normal', 'reversible'), dtype=tf.string, default_value=-1, num_oov_buckets=0), dimension=2, combiner='mean', initializer=&lt;tensorflow.python.ops.init_ops.TruncatedNormal&gt;, ckpt_to_load_from=None, tensor_name_in_ckpt=None, max_norm=None, trainable=True)
-##  $ indicator_crossed_thal_bucketized_age:IndicatorColumn(categorical_column=CrossedColumn(keys=(VocabularyListCategoricalColumn(key='thal', vocabulary_list=('1', '2', 'fixed', 'normal', 'reversible'), dtype=tf.string, default_value=-1, num_oov_buckets=0), BucketizedColumn(source_column=NumericColumn(key='age', shape=(1,), default_value=None, dtype=tf.float32, normalizer_fn=&lt;function make_python_function.&lt;locals&gt;.python_function at 0x1401b5d08&gt;), boundaries=(18.0, 25.0, 30.0, 35.0, 40.0, 45.0, 50.0, 55.0, 60.0, 65.0))), hash_bucket_size=10.0, hash_key=None))</code></pre>
+##  $ indicator_crossed_thal_bucketized_age:IndicatorColumn(categorical_column=CrossedColumn(keys=(VocabularyListCategoricalColumn(key='thal', vocabulary_list=('1', '2', 'fixed', 'normal', 'reversible'), dtype=tf.string, default_value=-1, num_oov_buckets=0), BucketizedColumn(source_column=NumericColumn(key='age', shape=(1,), default_value=None, dtype=tf.float32, normalizer_fn=&lt;function make_python_function.&lt;locals&gt;.python_function at 0x1335af6a8&gt;), boundaries=(18.0, 25.0, 30.0, 35.0, 40.0, 45.0, 50.0, 55.0, 60.0, 65.0))), hash_bucket_size=10.0, hash_key=None))</code></pre>
 <p>Now we are ready to define our model in Keras. We will use a specialized <code>layer_dense_features</code> that
 knows what to do with the feature columns specification.</p>
 <p>We also use a new <code>layer_input_from_dataset</code> that is useful to create a Keras input object copying the structure from a <code>data.frame</code> or TensorFlow dataset.</p>
-<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb20-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(keras)</a>
-<a class="sourceLine" id="cb20-2" data-line-number="2"></a>
-<a class="sourceLine" id="cb20-3" data-line-number="3">input &lt;-<span class="st"> </span><span class="kw"><a href="../../tools/tfdatasets/reference/layer_input_from_dataset.html">layer_input_from_dataset</a></span>(hearts_train <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span>(<span class="op">-</span>target))</a>
-<a class="sourceLine" id="cb20-4" data-line-number="4"></a>
-<a class="sourceLine" id="cb20-5" data-line-number="5">output &lt;-<span class="st"> </span>input <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb20-6" data-line-number="6"><span class="st">  </span><span class="kw"><a href="../../keras/reference/layer_dense_features.html">layer_dense_features</a></span>(<span class="kw"><a href="../../tools/tfdatasets/reference/dense_features.html">dense_features</a></span>(spec_prep)) <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb20-7" data-line-number="7"><span class="st">  </span><span class="kw"><a href="../../keras/reference/layer_dense.html">layer_dense</a></span>(<span class="dt">units =</span> <span class="dv">32</span>, <span class="dt">activation =</span> <span class="st">"relu"</span>) <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb20-8" data-line-number="8"><span class="st">  </span><span class="kw"><a href="../../keras/reference/layer_dense.html">layer_dense</a></span>(<span class="dt">units =</span> <span class="dv">1</span>, <span class="dt">activation =</span> <span class="st">"sigmoid"</span>)</a>
-<a class="sourceLine" id="cb20-9" data-line-number="9"></a>
-<a class="sourceLine" id="cb20-10" data-line-number="10">model &lt;-<span class="st"> </span><span class="kw"><a href="../../keras/reference/keras_model.html">keras_model</a></span>(input, output)</a>
-<a class="sourceLine" id="cb20-11" data-line-number="11"></a>
-<a class="sourceLine" id="cb20-12" data-line-number="12">model <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../../keras/reference/reexports.html">compile</a></span>(</a>
-<a class="sourceLine" id="cb20-13" data-line-number="13">  <span class="dt">loss =</span> loss_binary_crossentropy, </a>
-<a class="sourceLine" id="cb20-14" data-line-number="14">  <span class="dt">optimizer =</span> <span class="st">"adam"</span>, </a>
-<a class="sourceLine" id="cb20-15" data-line-number="15">  <span class="dt">metrics =</span> <span class="st">"binary_accuracy"</span></a>
-<a class="sourceLine" id="cb20-16" data-line-number="16">)</a></code></pre></div>
+<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1"></a><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(keras)</span>
+<span id="cb20-2"><a href="#cb20-2"></a></span>
+<span id="cb20-3"><a href="#cb20-3"></a>input &lt;-<span class="st"> </span><span class="kw"><a href="../../tools/tfdatasets/reference/layer_input_from_dataset.html">layer_input_from_dataset</a></span>(hearts_train <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span>(<span class="op">-</span>target))</span>
+<span id="cb20-4"><a href="#cb20-4"></a></span>
+<span id="cb20-5"><a href="#cb20-5"></a>output &lt;-<span class="st"> </span>input <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb20-6"><a href="#cb20-6"></a><span class="st">  </span><span class="kw"><a href="../../keras/reference/layer_dense_features.html">layer_dense_features</a></span>(<span class="kw"><a href="../../tools/tfdatasets/reference/dense_features.html">dense_features</a></span>(spec_prep)) <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb20-7"><a href="#cb20-7"></a><span class="st">  </span><span class="kw"><a href="../../keras/reference/layer_dense.html">layer_dense</a></span>(<span class="dt">units =</span> <span class="dv">32</span>, <span class="dt">activation =</span> <span class="st">"relu"</span>) <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb20-8"><a href="#cb20-8"></a><span class="st">  </span><span class="kw"><a href="../../keras/reference/layer_dense.html">layer_dense</a></span>(<span class="dt">units =</span> <span class="dv">1</span>, <span class="dt">activation =</span> <span class="st">"sigmoid"</span>)</span>
+<span id="cb20-9"><a href="#cb20-9"></a></span>
+<span id="cb20-10"><a href="#cb20-10"></a>model &lt;-<span class="st"> </span><span class="kw"><a href="../../keras/reference/keras_model.html">keras_model</a></span>(input, output)</span>
+<span id="cb20-11"><a href="#cb20-11"></a></span>
+<span id="cb20-12"><a href="#cb20-12"></a>model <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../../keras/reference/reexports.html">compile</a></span>(</span>
+<span id="cb20-13"><a href="#cb20-13"></a>  <span class="dt">loss =</span> loss_binary_crossentropy, </span>
+<span id="cb20-14"><a href="#cb20-14"></a>  <span class="dt">optimizer =</span> <span class="st">"adam"</span>, </span>
+<span id="cb20-15"><a href="#cb20-15"></a>  <span class="dt">metrics =</span> <span class="st">"binary_accuracy"</span></span>
+<span id="cb20-16"><a href="#cb20-16"></a>)</span></code></pre></div>
 <p>We can finally train the model on the dataset:</p>
-<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb21-1" data-line-number="1">history &lt;-<span class="st"> </span>model <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb21-2" data-line-number="2"><span class="st">  </span><span class="kw"><a href="../../keras/reference/reexports.html">fit</a></span>(</a>
-<a class="sourceLine" id="cb21-3" data-line-number="3">    <span class="dt">x =</span> hearts_train <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span>(<span class="op">-</span>target),</a>
-<a class="sourceLine" id="cb21-4" data-line-number="4">    <span class="dt">y =</span> hearts_train<span class="op">$</span>target, </a>
-<a class="sourceLine" id="cb21-5" data-line-number="5">    <span class="dt">epochs =</span> <span class="dv">15</span>, </a>
-<a class="sourceLine" id="cb21-6" data-line-number="6">    <span class="dt">validation_split =</span> <span class="fl">0.2</span></a>
-<a class="sourceLine" id="cb21-7" data-line-number="7">  )</a></code></pre></div>
+<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1"></a>history &lt;-<span class="st"> </span>model <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb21-2"><a href="#cb21-2"></a><span class="st">  </span><span class="kw"><a href="../../keras/reference/reexports.html">fit</a></span>(</span>
+<span id="cb21-3"><a href="#cb21-3"></a>    <span class="dt">x =</span> hearts_train <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span>(<span class="op">-</span>target),</span>
+<span id="cb21-4"><a href="#cb21-4"></a>    <span class="dt">y =</span> hearts_train<span class="op">$</span>target, </span>
+<span id="cb21-5"><a href="#cb21-5"></a>    <span class="dt">epochs =</span> <span class="dv">15</span>, </span>
+<span id="cb21-6"><a href="#cb21-6"></a>    <span class="dt">validation_split =</span> <span class="fl">0.2</span></span>
+<span id="cb21-7"><a href="#cb21-7"></a>  )</span></code></pre></div>
 <pre><code>## Train on 181 samples, validate on 46 samples
 ## Epoch 1/15
 ## 
- 32/181 [====&gt;.........................] - ETA: 4s - loss: 0.7176 - binary_accuracy: 0.5625
-181/181 [==============================] - 1s 7ms/sample - loss: 0.6377 - binary_accuracy: 0.6409 - val_loss: 0.5857 - val_binary_accuracy: 0.6522
+ 32/181 [====&gt;.........................] - ETA: 3s - loss: 0.5888 - binary_accuracy: 0.7188
+181/181 [==============================] - 1s 6ms/sample - loss: 0.5800 - binary_accuracy: 0.7569 - val_loss: 0.5503 - val_binary_accuracy: 0.8043
 ## Epoch 2/15
 ## 
- 32/181 [====&gt;.........................] - ETA: 0s - loss: 0.5682 - binary_accuracy: 0.7812
-181/181 [==============================] - 0s 232us/sample - loss: 0.5983 - binary_accuracy: 0.6740 - val_loss: 0.5427 - val_binary_accuracy: 0.7609
+ 32/181 [====&gt;.........................] - ETA: 0s - loss: 0.5467 - binary_accuracy: 0.7812
+181/181 [==============================] - 0s 195us/sample - loss: 0.5454 - binary_accuracy: 0.7790 - val_loss: 0.5166 - val_binary_accuracy: 0.8478
 ## Epoch 3/15
 ## 
- 32/181 [====&gt;.........................] - ETA: 0s - loss: 0.5879 - binary_accuracy: 0.6250
-181/181 [==============================] - 0s 152us/sample - loss: 0.5638 - binary_accuracy: 0.7072 - val_loss: 0.5065 - val_binary_accuracy: 0.7826
+ 32/181 [====&gt;.........................] - ETA: 0s - loss: 0.5495 - binary_accuracy: 0.7500
+181/181 [==============================] - 0s 141us/sample - loss: 0.5141 - binary_accuracy: 0.8122 - val_loss: 0.4894 - val_binary_accuracy: 0.8478
 ## Epoch 4/15
 ## 
- 32/181 [====&gt;.........................] - ETA: 0s - loss: 0.5125 - binary_accuracy: 0.7500
-181/181 [==============================] - 0s 145us/sample - loss: 0.5362 - binary_accuracy: 0.7403 - val_loss: 0.4763 - val_binary_accuracy: 0.7826
+ 32/181 [====&gt;.........................] - ETA: 0s - loss: 0.4654 - binary_accuracy: 0.9062
+181/181 [==============================] - 0s 154us/sample - loss: 0.4892 - binary_accuracy: 0.8232 - val_loss: 0.4668 - val_binary_accuracy: 0.8478
 ## Epoch 5/15
 ## 
- 32/181 [====&gt;.........................] - ETA: 0s - loss: 0.5094 - binary_accuracy: 0.8438
-181/181 [==============================] - 0s 152us/sample - loss: 0.5101 - binary_accuracy: 0.7624 - val_loss: 0.4507 - val_binary_accuracy: 0.8261
+ 32/181 [====&gt;.........................] - ETA: 0s - loss: 0.5353 - binary_accuracy: 0.8750
+181/181 [==============================] - 0s 142us/sample - loss: 0.4673 - binary_accuracy: 0.8287 - val_loss: 0.4496 - val_binary_accuracy: 0.8478
 ## Epoch 6/15
 ## 
- 32/181 [====&gt;.........................] - ETA: 0s - loss: 0.4378 - binary_accuracy: 0.8125
-181/181 [==============================] - 0s 154us/sample - loss: 0.4894 - binary_accuracy: 0.7680 - val_loss: 0.4278 - val_binary_accuracy: 0.8478
+ 32/181 [====&gt;.........................] - ETA: 0s - loss: 0.4931 - binary_accuracy: 0.8125
+181/181 [==============================] - 0s 142us/sample - loss: 0.4507 - binary_accuracy: 0.8177 - val_loss: 0.4347 - val_binary_accuracy: 0.8478
 ## Epoch 7/15
 ## 
- 32/181 [====&gt;.........................] - ETA: 0s - loss: 0.4460 - binary_accuracy: 0.8438
-181/181 [==============================] - 0s 145us/sample - loss: 0.4692 - binary_accuracy: 0.7790 - val_loss: 0.4084 - val_binary_accuracy: 0.8478
+ 32/181 [====&gt;.........................] - ETA: 0s - loss: 0.5265 - binary_accuracy: 0.7812
+181/181 [==============================] - 0s 151us/sample - loss: 0.4352 - binary_accuracy: 0.8232 - val_loss: 0.4237 - val_binary_accuracy: 0.8478
 ## Epoch 8/15
 ## 
- 32/181 [====&gt;.........................] - ETA: 0s - loss: 0.4509 - binary_accuracy: 0.7812
-181/181 [==============================] - 0s 153us/sample - loss: 0.4530 - binary_accuracy: 0.7956 - val_loss: 0.3925 - val_binary_accuracy: 0.8913
+ 32/181 [====&gt;.........................] - ETA: 0s - loss: 0.3913 - binary_accuracy: 0.8750
+181/181 [==============================] - 0s 150us/sample - loss: 0.4237 - binary_accuracy: 0.8177 - val_loss: 0.4146 - val_binary_accuracy: 0.8696
 ## Epoch 9/15
 ## 
- 32/181 [====&gt;.........................] - ETA: 0s - loss: 0.5109 - binary_accuracy: 0.7188
-181/181 [==============================] - 0s 147us/sample - loss: 0.4377 - binary_accuracy: 0.8066 - val_loss: 0.3788 - val_binary_accuracy: 0.8696
+ 32/181 [====&gt;.........................] - ETA: 0s - loss: 0.3618 - binary_accuracy: 0.9375
+181/181 [==============================] - 0s 150us/sample - loss: 0.4130 - binary_accuracy: 0.8232 - val_loss: 0.4079 - val_binary_accuracy: 0.8696
 ## Epoch 10/15
 ## 
- 32/181 [====&gt;.........................] - ETA: 0s - loss: 0.4331 - binary_accuracy: 0.7812
-181/181 [==============================] - 0s 153us/sample - loss: 0.4238 - binary_accuracy: 0.8232 - val_loss: 0.3672 - val_binary_accuracy: 0.8696
+ 32/181 [====&gt;.........................] - ETA: 0s - loss: 0.4295 - binary_accuracy: 0.7812
+181/181 [==============================] - 0s 146us/sample - loss: 0.4033 - binary_accuracy: 0.8232 - val_loss: 0.4034 - val_binary_accuracy: 0.8696
 ## Epoch 11/15
 ## 
- 32/181 [====&gt;.........................] - ETA: 0s - loss: 0.3164 - binary_accuracy: 0.9688
-181/181 [==============================] - 0s 148us/sample - loss: 0.4123 - binary_accuracy: 0.8232 - val_loss: 0.3571 - val_binary_accuracy: 0.8696
+ 32/181 [====&gt;.........................] - ETA: 0s - loss: 0.3490 - binary_accuracy: 0.8750
+181/181 [==============================] - 0s 144us/sample - loss: 0.3953 - binary_accuracy: 0.8232 - val_loss: 0.4001 - val_binary_accuracy: 0.8696
 ## Epoch 12/15
 ## 
- 32/181 [====&gt;.........................] - ETA: 0s - loss: 0.4100 - binary_accuracy: 0.8750
-181/181 [==============================] - 0s 150us/sample - loss: 0.4012 - binary_accuracy: 0.8287 - val_loss: 0.3488 - val_binary_accuracy: 0.8696
+ 32/181 [====&gt;.........................] - ETA: 0s - loss: 0.4143 - binary_accuracy: 0.7500
+181/181 [==============================] - 0s 145us/sample - loss: 0.3879 - binary_accuracy: 0.8122 - val_loss: 0.3971 - val_binary_accuracy: 0.8696
 ## Epoch 13/15
 ## 
- 32/181 [====&gt;.........................] - ETA: 0s - loss: 0.4312 - binary_accuracy: 0.8125
-181/181 [==============================] - 0s 147us/sample - loss: 0.3913 - binary_accuracy: 0.8232 - val_loss: 0.3417 - val_binary_accuracy: 0.8696
+ 32/181 [====&gt;.........................] - ETA: 0s - loss: 0.2370 - binary_accuracy: 0.9688
+181/181 [==============================] - 0s 150us/sample - loss: 0.3820 - binary_accuracy: 0.8177 - val_loss: 0.3950 - val_binary_accuracy: 0.8696
 ## Epoch 14/15
 ## 
- 32/181 [====&gt;.........................] - ETA: 0s - loss: 0.2914 - binary_accuracy: 0.9375
-181/181 [==============================] - 0s 147us/sample - loss: 0.3831 - binary_accuracy: 0.8343 - val_loss: 0.3366 - val_binary_accuracy: 0.8696
+ 32/181 [====&gt;.........................] - ETA: 0s - loss: 0.4100 - binary_accuracy: 0.7812
+181/181 [==============================] - 0s 154us/sample - loss: 0.3762 - binary_accuracy: 0.8232 - val_loss: 0.3939 - val_binary_accuracy: 0.8696
 ## Epoch 15/15
 ## 
- 32/181 [====&gt;.........................] - ETA: 0s - loss: 0.3627 - binary_accuracy: 0.8750
-181/181 [==============================] - 0s 144us/sample - loss: 0.3745 - binary_accuracy: 0.8398 - val_loss: 0.3322 - val_binary_accuracy: 0.8696</code></pre>
-<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb23-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/graphics/plot.html">plot</a></span>(history)</a></code></pre></div>
+ 32/181 [====&gt;.........................] - ETA: 0s - loss: 0.3385 - binary_accuracy: 0.8750
+181/181 [==============================] - 0s 142us/sample - loss: 0.3710 - binary_accuracy: 0.8177 - val_loss: 0.3934 - val_binary_accuracy: 0.8696</code></pre>
+<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1"></a><span class="kw"><a href="https://rdrr.io/r/graphics/plot.html">plot</a></span>(history)</span></code></pre></div>
 <p><img src="/guide/tfdatasets/feature_spec_files/figure-html/unnamed-chunk-14-1.png" width="672"></p>
 <p>Finally we can make predictions in the test set and calculate performance
 metrics like the AUC of the ROC curve:</p>
-<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb24-1" data-line-number="1">hearts_test<span class="op">$</span>pred &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/stats/predict.html">predict</a></span>(model, hearts_test)</a>
-<a class="sourceLine" id="cb24-2" data-line-number="2">Metrics<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/Metrics/man/auc.html">auc</a></span>(hearts_test<span class="op">$</span>target, hearts_test<span class="op">$</span>pred)</a></code></pre></div>
-<pre><code>## [1] 0.9220673</code></pre>
+<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1"></a>hearts_test<span class="op">$</span>pred &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/stats/predict.html">predict</a></span>(model, hearts_test)</span>
+<span id="cb24-2"><a href="#cb24-2"></a>Metrics<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/Metrics/man/auc.html">auc</a></span>(hearts_test<span class="op">$</span>target, hearts_test<span class="op">$</span>pred)</span></code></pre></div>
+<pre><code>## [1] 0.9232303</code></pre>
 </div>

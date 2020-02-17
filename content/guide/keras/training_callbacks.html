@@ -23,32 +23,32 @@ aliases:
 <h2>Overview</h2>
 <p>A callback is a set of functions to be applied at given stages of the training procedure. You can use callbacks to get a view on internal states and statistics of the model during training. You can pass a list of callbacks (as the keyword argument <code>callbacks</code>) to the <code><a href="../../keras/reference/reexports.html">fit()</a></code> function. The relevant methods of the callbacks will then be called at each stage of the training.</p>
 <p>For example:</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(keras)</a>
-<a class="sourceLine" id="cb1-2" data-line-number="2"></a>
-<a class="sourceLine" id="cb1-3" data-line-number="3"><span class="co"># generate dummy training data</span></a>
-<a class="sourceLine" id="cb1-4" data-line-number="4">data &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/matrix.html">matrix</a></span>(<span class="kw"><a href="https://rdrr.io/r/stats/Exponential.html">rexp</a></span>(<span class="dv">1000</span><span class="op">*</span><span class="dv">784</span>), <span class="dt">nrow =</span> <span class="dv">1000</span>, <span class="dt">ncol =</span> <span class="dv">784</span>)</a>
-<a class="sourceLine" id="cb1-5" data-line-number="5">labels &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/matrix.html">matrix</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/Round.html">round</a></span>(<span class="kw"><a href="https://rdrr.io/r/stats/Uniform.html">runif</a></span>(<span class="dv">1000</span><span class="op">*</span><span class="dv">10</span>, <span class="dt">min =</span> <span class="dv">0</span>, <span class="dt">max =</span> <span class="dv">9</span>)), <span class="dt">nrow =</span> <span class="dv">1000</span>, <span class="dt">ncol =</span> <span class="dv">10</span>)</a>
-<a class="sourceLine" id="cb1-6" data-line-number="6"></a>
-<a class="sourceLine" id="cb1-7" data-line-number="7"><span class="co"># create model</span></a>
-<a class="sourceLine" id="cb1-8" data-line-number="8">model &lt;-<span class="st"> </span><span class="kw"><a href="../../keras/reference/keras_model_sequential.html">keras_model_sequential</a></span>() </a>
-<a class="sourceLine" id="cb1-9" data-line-number="9"></a>
-<a class="sourceLine" id="cb1-10" data-line-number="10"><span class="co"># add layers and compile</span></a>
-<a class="sourceLine" id="cb1-11" data-line-number="11">model <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb1-12" data-line-number="12"><span class="st">  </span><span class="kw"><a href="../../keras/reference/layer_dense.html">layer_dense</a></span>(<span class="dv">32</span>, <span class="dt">input_shape =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="dv">784</span>)) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb1-13" data-line-number="13"><span class="st">  </span><span class="kw"><a href="../../keras/reference/layer_activation.html">layer_activation</a></span>(<span class="st">'relu'</span>) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb1-14" data-line-number="14"><span class="st">  </span><span class="kw"><a href="../../keras/reference/layer_dense.html">layer_dense</a></span>(<span class="dv">10</span>) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb1-15" data-line-number="15"><span class="st">  </span><span class="kw"><a href="../../keras/reference/layer_activation.html">layer_activation</a></span>(<span class="st">'softmax'</span>) <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb1-16" data-line-number="16"><span class="st">  </span><span class="kw"><a href="../../keras/reference/reexports.html">compile</a></span>(</a>
-<a class="sourceLine" id="cb1-17" data-line-number="17">    <span class="dt">loss=</span><span class="st">'binary_crossentropy'</span>,</a>
-<a class="sourceLine" id="cb1-18" data-line-number="18">    <span class="dt">optimizer =</span> <span class="kw"><a href="../../keras/reference/optimizer_sgd.html">optimizer_sgd</a></span>(),</a>
-<a class="sourceLine" id="cb1-19" data-line-number="19">    <span class="dt">metrics=</span><span class="st">'accuracy'</span></a>
-<a class="sourceLine" id="cb1-20" data-line-number="20">  )</a>
-<a class="sourceLine" id="cb1-21" data-line-number="21">  </a>
-<a class="sourceLine" id="cb1-22" data-line-number="22"><span class="co"># fit with callbacks</span></a>
-<a class="sourceLine" id="cb1-23" data-line-number="23">model <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../../keras/reference/reexports.html">fit</a></span>(data, labels, <span class="dt">callbacks =</span> <span class="kw"><a href="https://rdrr.io/r/base/list.html">list</a></span>(</a>
-<a class="sourceLine" id="cb1-24" data-line-number="24">  <span class="kw"><a href="../../keras/reference/callback_model_checkpoint.html">callback_model_checkpoint</a></span>(<span class="st">"checkpoints.h5"</span>),</a>
-<a class="sourceLine" id="cb1-25" data-line-number="25">  <span class="kw"><a href="../../keras/reference/callback_reduce_lr_on_plateau.html">callback_reduce_lr_on_plateau</a></span>(<span class="dt">monitor =</span> <span class="st">"val_loss"</span>, <span class="dt">factor =</span> <span class="fl">0.1</span>)</a>
-<a class="sourceLine" id="cb1-26" data-line-number="26">))</a></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(keras)</span>
+<span id="cb1-2"><a href="#cb1-2"></a></span>
+<span id="cb1-3"><a href="#cb1-3"></a><span class="co"># generate dummy training data</span></span>
+<span id="cb1-4"><a href="#cb1-4"></a>data &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/matrix.html">matrix</a></span>(<span class="kw"><a href="https://rdrr.io/r/stats/Exponential.html">rexp</a></span>(<span class="dv">1000</span><span class="op">*</span><span class="dv">784</span>), <span class="dt">nrow =</span> <span class="dv">1000</span>, <span class="dt">ncol =</span> <span class="dv">784</span>)</span>
+<span id="cb1-5"><a href="#cb1-5"></a>labels &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/matrix.html">matrix</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/Round.html">round</a></span>(<span class="kw"><a href="https://rdrr.io/r/stats/Uniform.html">runif</a></span>(<span class="dv">1000</span><span class="op">*</span><span class="dv">10</span>, <span class="dt">min =</span> <span class="dv">0</span>, <span class="dt">max =</span> <span class="dv">9</span>)), <span class="dt">nrow =</span> <span class="dv">1000</span>, <span class="dt">ncol =</span> <span class="dv">10</span>)</span>
+<span id="cb1-6"><a href="#cb1-6"></a></span>
+<span id="cb1-7"><a href="#cb1-7"></a><span class="co"># create model</span></span>
+<span id="cb1-8"><a href="#cb1-8"></a>model &lt;-<span class="st"> </span><span class="kw"><a href="../../keras/reference/keras_model_sequential.html">keras_model_sequential</a></span>() </span>
+<span id="cb1-9"><a href="#cb1-9"></a></span>
+<span id="cb1-10"><a href="#cb1-10"></a><span class="co"># add layers and compile</span></span>
+<span id="cb1-11"><a href="#cb1-11"></a>model <span class="op">%&gt;%</span></span>
+<span id="cb1-12"><a href="#cb1-12"></a><span class="st">  </span><span class="kw"><a href="../../keras/reference/layer_dense.html">layer_dense</a></span>(<span class="dv">32</span>, <span class="dt">input_shape =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="dv">784</span>)) <span class="op">%&gt;%</span></span>
+<span id="cb1-13"><a href="#cb1-13"></a><span class="st">  </span><span class="kw"><a href="../../keras/reference/layer_activation.html">layer_activation</a></span>(<span class="st">'relu'</span>) <span class="op">%&gt;%</span></span>
+<span id="cb1-14"><a href="#cb1-14"></a><span class="st">  </span><span class="kw"><a href="../../keras/reference/layer_dense.html">layer_dense</a></span>(<span class="dv">10</span>) <span class="op">%&gt;%</span></span>
+<span id="cb1-15"><a href="#cb1-15"></a><span class="st">  </span><span class="kw"><a href="../../keras/reference/layer_activation.html">layer_activation</a></span>(<span class="st">'softmax'</span>) <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb1-16"><a href="#cb1-16"></a><span class="st">  </span><span class="kw"><a href="../../keras/reference/reexports.html">compile</a></span>(</span>
+<span id="cb1-17"><a href="#cb1-17"></a>    <span class="dt">loss=</span><span class="st">'binary_crossentropy'</span>,</span>
+<span id="cb1-18"><a href="#cb1-18"></a>    <span class="dt">optimizer =</span> <span class="kw"><a href="../../keras/reference/optimizer_sgd.html">optimizer_sgd</a></span>(),</span>
+<span id="cb1-19"><a href="#cb1-19"></a>    <span class="dt">metrics=</span><span class="st">'accuracy'</span></span>
+<span id="cb1-20"><a href="#cb1-20"></a>  )</span>
+<span id="cb1-21"><a href="#cb1-21"></a>  </span>
+<span id="cb1-22"><a href="#cb1-22"></a><span class="co"># fit with callbacks</span></span>
+<span id="cb1-23"><a href="#cb1-23"></a>model <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../../keras/reference/reexports.html">fit</a></span>(data, labels, <span class="dt">callbacks =</span> <span class="kw"><a href="https://rdrr.io/r/base/list.html">list</a></span>(</span>
+<span id="cb1-24"><a href="#cb1-24"></a>  <span class="kw"><a href="../../keras/reference/callback_model_checkpoint.html">callback_model_checkpoint</a></span>(<span class="st">"checkpoints.h5"</span>),</span>
+<span id="cb1-25"><a href="#cb1-25"></a>  <span class="kw"><a href="../../keras/reference/callback_reduce_lr_on_plateau.html">callback_reduce_lr_on_plateau</a></span>(<span class="dt">monitor =</span> <span class="st">"val_loss"</span>, <span class="dt">factor =</span> <span class="fl">0.1</span>)</span>
+<span id="cb1-26"><a href="#cb1-26"></a>))</span></code></pre></div>
 </div>
 <div id="built-in-callbacks" class="section level2">
 <h2>Built in Callbacks</h2>
@@ -150,43 +150,43 @@ Create a custom callback
 <h2>Custom Callbacks</h2>
 <p>You can create a custom callback by creating a new <a href="https://CRAN.R-project.org/package=R6">R6 class</a> that inherits from the <code>KerasCallback</code> class.</p>
 <p>Here’s a simple example saving a list of losses over each batch during training:</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(keras)</a>
-<a class="sourceLine" id="cb2-2" data-line-number="2"></a>
-<a class="sourceLine" id="cb2-3" data-line-number="3"><span class="co"># define custom callback class</span></a>
-<a class="sourceLine" id="cb2-4" data-line-number="4">LossHistory &lt;-<span class="st"> </span>R6<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/R6/man/R6Class.html">R6Class</a></span>(<span class="st">"LossHistory"</span>,</a>
-<a class="sourceLine" id="cb2-5" data-line-number="5">  <span class="dt">inherit =</span> KerasCallback,</a>
-<a class="sourceLine" id="cb2-6" data-line-number="6">  </a>
-<a class="sourceLine" id="cb2-7" data-line-number="7">  <span class="dt">public =</span> <span class="kw"><a href="https://rdrr.io/r/base/list.html">list</a></span>(</a>
-<a class="sourceLine" id="cb2-8" data-line-number="8">    </a>
-<a class="sourceLine" id="cb2-9" data-line-number="9">    <span class="dt">losses =</span> <span class="ot">NULL</span>,</a>
-<a class="sourceLine" id="cb2-10" data-line-number="10">     </a>
-<a class="sourceLine" id="cb2-11" data-line-number="11">    <span class="dt">on_batch_end =</span> <span class="cf">function</span>(batch, <span class="dt">logs =</span> <span class="kw"><a href="https://rdrr.io/r/base/list.html">list</a></span>()) {</a>
-<a class="sourceLine" id="cb2-12" data-line-number="12">      self<span class="op">$</span>losses &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(self<span class="op">$</span>losses, logs[[<span class="st">"loss"</span>]])</a>
-<a class="sourceLine" id="cb2-13" data-line-number="13">    }</a>
-<a class="sourceLine" id="cb2-14" data-line-number="14">))</a>
-<a class="sourceLine" id="cb2-15" data-line-number="15"></a>
-<a class="sourceLine" id="cb2-16" data-line-number="16"><span class="co"># define model</span></a>
-<a class="sourceLine" id="cb2-17" data-line-number="17">model &lt;-<span class="st"> </span><span class="kw"><a href="../../keras/reference/keras_model_sequential.html">keras_model_sequential</a></span>() </a>
-<a class="sourceLine" id="cb2-18" data-line-number="18"></a>
-<a class="sourceLine" id="cb2-19" data-line-number="19"><span class="co"># add layers and compile</span></a>
-<a class="sourceLine" id="cb2-20" data-line-number="20">model <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb2-21" data-line-number="21"><span class="st">  </span><span class="kw"><a href="../../keras/reference/layer_dense.html">layer_dense</a></span>(<span class="dt">units =</span> <span class="dv">10</span>, <span class="dt">input_shape =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="dv">784</span>)) <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb2-22" data-line-number="22"><span class="st">  </span><span class="kw"><a href="../../keras/reference/layer_activation.html">layer_activation</a></span>(<span class="dt">activation =</span> <span class="st">'softmax'</span>) <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb2-23" data-line-number="23"><span class="st">  </span><span class="kw"><a href="../../keras/reference/reexports.html">compile</a></span>(</a>
-<a class="sourceLine" id="cb2-24" data-line-number="24">    <span class="dt">loss =</span> <span class="st">'categorical_crossentropy'</span>, </a>
-<a class="sourceLine" id="cb2-25" data-line-number="25">    <span class="dt">optimizer =</span> <span class="st">'rmsprop'</span></a>
-<a class="sourceLine" id="cb2-26" data-line-number="26">  )</a>
-<a class="sourceLine" id="cb2-27" data-line-number="27"></a>
-<a class="sourceLine" id="cb2-28" data-line-number="28"><span class="co"># create history callback object and use it during training</span></a>
-<a class="sourceLine" id="cb2-29" data-line-number="29">history &lt;-<span class="st"> </span>LossHistory<span class="op">$</span><span class="kw">new</span>()</a>
-<a class="sourceLine" id="cb2-30" data-line-number="30">model <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../../keras/reference/reexports.html">fit</a></span>(</a>
-<a class="sourceLine" id="cb2-31" data-line-number="31">  X_train, Y_train,</a>
-<a class="sourceLine" id="cb2-32" data-line-number="32">  <span class="dt">batch_size=</span><span class="dv">128</span>, <span class="dt">epochs=</span><span class="dv">20</span>, <span class="dt">verbose=</span><span class="dv">0</span>,</a>
-<a class="sourceLine" id="cb2-33" data-line-number="33">  <span class="dt">callbacks=</span> <span class="kw"><a href="https://rdrr.io/r/base/list.html">list</a></span>(history)</a>
-<a class="sourceLine" id="cb2-34" data-line-number="34">)</a>
-<a class="sourceLine" id="cb2-35" data-line-number="35"></a>
-<a class="sourceLine" id="cb2-36" data-line-number="36"><span class="co"># print the accumulated losses</span></a>
-<a class="sourceLine" id="cb2-37" data-line-number="37">history<span class="op">$</span>losses</a></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1"></a><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(keras)</span>
+<span id="cb2-2"><a href="#cb2-2"></a></span>
+<span id="cb2-3"><a href="#cb2-3"></a><span class="co"># define custom callback class</span></span>
+<span id="cb2-4"><a href="#cb2-4"></a>LossHistory &lt;-<span class="st"> </span>R6<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/R6/man/R6Class.html">R6Class</a></span>(<span class="st">"LossHistory"</span>,</span>
+<span id="cb2-5"><a href="#cb2-5"></a>  <span class="dt">inherit =</span> KerasCallback,</span>
+<span id="cb2-6"><a href="#cb2-6"></a>  </span>
+<span id="cb2-7"><a href="#cb2-7"></a>  <span class="dt">public =</span> <span class="kw"><a href="https://rdrr.io/r/base/list.html">list</a></span>(</span>
+<span id="cb2-8"><a href="#cb2-8"></a>    </span>
+<span id="cb2-9"><a href="#cb2-9"></a>    <span class="dt">losses =</span> <span class="ot">NULL</span>,</span>
+<span id="cb2-10"><a href="#cb2-10"></a>     </span>
+<span id="cb2-11"><a href="#cb2-11"></a>    <span class="dt">on_batch_end =</span> <span class="cf">function</span>(batch, <span class="dt">logs =</span> <span class="kw"><a href="https://rdrr.io/r/base/list.html">list</a></span>()) {</span>
+<span id="cb2-12"><a href="#cb2-12"></a>      self<span class="op">$</span>losses &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(self<span class="op">$</span>losses, logs[[<span class="st">"loss"</span>]])</span>
+<span id="cb2-13"><a href="#cb2-13"></a>    }</span>
+<span id="cb2-14"><a href="#cb2-14"></a>))</span>
+<span id="cb2-15"><a href="#cb2-15"></a></span>
+<span id="cb2-16"><a href="#cb2-16"></a><span class="co"># define model</span></span>
+<span id="cb2-17"><a href="#cb2-17"></a>model &lt;-<span class="st"> </span><span class="kw"><a href="../../keras/reference/keras_model_sequential.html">keras_model_sequential</a></span>() </span>
+<span id="cb2-18"><a href="#cb2-18"></a></span>
+<span id="cb2-19"><a href="#cb2-19"></a><span class="co"># add layers and compile</span></span>
+<span id="cb2-20"><a href="#cb2-20"></a>model <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb2-21"><a href="#cb2-21"></a><span class="st">  </span><span class="kw"><a href="../../keras/reference/layer_dense.html">layer_dense</a></span>(<span class="dt">units =</span> <span class="dv">10</span>, <span class="dt">input_shape =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="dv">784</span>)) <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb2-22"><a href="#cb2-22"></a><span class="st">  </span><span class="kw"><a href="../../keras/reference/layer_activation.html">layer_activation</a></span>(<span class="dt">activation =</span> <span class="st">'softmax'</span>) <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb2-23"><a href="#cb2-23"></a><span class="st">  </span><span class="kw"><a href="../../keras/reference/reexports.html">compile</a></span>(</span>
+<span id="cb2-24"><a href="#cb2-24"></a>    <span class="dt">loss =</span> <span class="st">'categorical_crossentropy'</span>, </span>
+<span id="cb2-25"><a href="#cb2-25"></a>    <span class="dt">optimizer =</span> <span class="st">'rmsprop'</span></span>
+<span id="cb2-26"><a href="#cb2-26"></a>  )</span>
+<span id="cb2-27"><a href="#cb2-27"></a></span>
+<span id="cb2-28"><a href="#cb2-28"></a><span class="co"># create history callback object and use it during training</span></span>
+<span id="cb2-29"><a href="#cb2-29"></a>history &lt;-<span class="st"> </span>LossHistory<span class="op">$</span><span class="kw">new</span>()</span>
+<span id="cb2-30"><a href="#cb2-30"></a>model <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../../keras/reference/reexports.html">fit</a></span>(</span>
+<span id="cb2-31"><a href="#cb2-31"></a>  X_train, Y_train,</span>
+<span id="cb2-32"><a href="#cb2-32"></a>  <span class="dt">batch_size=</span><span class="dv">128</span>, <span class="dt">epochs=</span><span class="dv">20</span>, <span class="dt">verbose=</span><span class="dv">0</span>,</span>
+<span id="cb2-33"><a href="#cb2-33"></a>  <span class="dt">callbacks=</span> <span class="kw"><a href="https://rdrr.io/r/base/list.html">list</a></span>(history)</span>
+<span id="cb2-34"><a href="#cb2-34"></a>)</span>
+<span id="cb2-35"><a href="#cb2-35"></a></span>
+<span id="cb2-36"><a href="#cb2-36"></a><span class="co"># print the accumulated losses</span></span>
+<span id="cb2-37"><a href="#cb2-37"></a>history<span class="op">$</span>losses</span></code></pre></div>
 <pre><code>[1] 0.6604760 0.3547246 0.2595316 0.2590170 ...</code></pre>
 <div id="fields" class="section level3">
 <h3>Fields</h3>
