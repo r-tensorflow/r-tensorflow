@@ -56,6 +56,17 @@
   <link href="/blog/index.xml" rel="feed" type="application/rss+xml" title="{{ $.Site.Title }}" />
   {{ end }}
   
+  
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=GA_MEASUREMENT_ID"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+  
+    gtag('config', '{{ $.Site.GoogleAnalytics}}');
+  </script>
+  
   <script type="text/javascript" async
     src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-MML-AM_CHTML">
   </script>
