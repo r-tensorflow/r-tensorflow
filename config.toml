@@ -5,6 +5,7 @@ theme = "rstudio-docs-theme"
 metadataformat = "yaml"
 ignoreFiles = ["\\.Rmd$", "_files$", "_cache$"]
 preserveTaxonomyNames = true
+googleAnalytics = "UA-20375833-3"
 
 disqusShortname = "r-tensorflow"
 
