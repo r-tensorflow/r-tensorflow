@@ -251,17 +251,3 @@ with (strategy$scope(), {
 })
 ```
 
-## Examples and Tutorials
-
-Here are some examples for using distribution strategy with keras fit/compile: 
-
-1. [Transformer example trained using tf.distribute.MirroredStrategy](tbd)
-2. [NCF example trained using tf.distribute.MirroredStrategy](tbd)
-
-
-
-
-
-
-
-Call evaluate as before using appropriate datasets.
