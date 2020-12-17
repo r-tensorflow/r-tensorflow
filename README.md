@@ -13,7 +13,7 @@ It relies on Hugo v0.58.3.
 The API reference can be built with:
 
 ```
-Rscript /scripts/api.R
+scripts/api.R
 ```
 
 ## Updating the guides
@@ -21,5 +21,5 @@ Rscript /scripts/api.R
 You can update the Guide section with:
 
 ```
-Rscript /scripts/guide.R
+scripts/guide.R
 ```

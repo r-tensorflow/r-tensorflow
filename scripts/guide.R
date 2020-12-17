@@ -1,7 +1,7 @@
 library(magrittr)
 
 packages <- list(
-  keras = "dfalbel/keras@newdocs",
+  keras = "rstudio/keras",
   tfdatasets = "rstudio/tfdatasets",
   tfhub = "rstudio/tfhub",
   cloudml = "rstudio/cloudml"
