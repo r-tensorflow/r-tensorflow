@@ -75,7 +75,7 @@ for a number of iterations given by <code>epochs</code>, but merely until the ep
 of index <code>epochs</code> is reached.</p></td></tr><tr><td>verbose</td><td><p>Verbosity mode (0 = silent, 1 = progress bar, 2 = one line per
 epoch).</p></td></tr><tr><td>callbacks</td><td><p>List of callbacks to apply during training.</p></td></tr><tr><td>view_metrics</td><td><p>View realtime plot of training metrics (by epoch). The
 default (<code>"auto"</code>) will display the plot when running within RStudio,
-<code>metrics</code> were specified during model <code><a href=https://rdrr.io/pkg/generics/man/compile.html>compile()</a></code>, <code>epochs &gt; 1</code> and
+<code>metrics</code> were specified during model <code><a href=https://generics.r-lib.org/reference/compile.html>compile()</a></code>, <code>epochs &gt; 1</code> and
 <code>verbose &gt; 0</code>. Use the global <code>keras.view_metrics</code> option to establish a
 different default.</p></td></tr><tr><td>validation_data</td><td><p>this can be either:</p><ul><li><p>a generator for the validation data</p></li><li><p>a list (inputs, targets)</p></li><li><p>a list (inputs, targets, sample_weights).
 on which to evaluate

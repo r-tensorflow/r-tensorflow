@@ -63,7 +63,7 @@ weights to apply to the model's loss for each sample. In the case of
 temporal data, you can pass a 2D array with shape (samples,
 sequence_length), to apply a different weight to every timestep of every
 sample. In this case you should make sure to specify
-<code>sample_weight_mode="temporal"</code> in <code><a href=https://rdrr.io/pkg/generics/man/compile.html>compile()</a></code>.</p></td></tr><tr><td>steps</td><td><p>Total number of steps (batches of samples) before declaring the
+<code>sample_weight_mode="temporal"</code> in <code><a href=https://generics.r-lib.org/reference/compile.html>compile()</a></code>.</p></td></tr><tr><td>steps</td><td><p>Total number of steps (batches of samples) before declaring the
 evaluation round finished. Ignored with the default value of <code>NULL</code>.</p></td></tr><tr><td>callbacks</td><td><p>List of callbacks to apply during evaluation.</p></td></tr><tr><td>...</td><td><p>Unused</p></td></tr></table><h2 id=value>Value</h2><p>Named list of model test loss (or losses for models with multiple
 outputs) and model metrics.</p><h2 id=see-also>See also</h2><div class=dont-index><p>Other model functions:
 <code><a href=../compile.keras.engine.training.Model.html>compile.keras.engine.training.Model</a>()</code>,

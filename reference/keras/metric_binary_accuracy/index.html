@@ -91,7 +91,7 @@ See below for an example.</p><h2 id=examples>Examples</h2><div class=sourceCode>
   <span class=fu><a href=../k_mean.html>k_mean</a></span>(<span class=no>y_pred</span>)
 })
 
-<span class=no>model</span> <span class=kw>%&gt;%</span> <span class=fu><a href=https://rdrr.io/pkg/generics/man/compile.html>compile</a></span>(
+<span class=no>model</span> <span class=kw>%&gt;%</span> <span class=fu><a href=https://generics.r-lib.org/reference/compile.html>compile</a></span>(
   <span class=kw>optimizer</span> <span class=kw>=</span> <span class=fu><a href=../optimizer_rmsprop.html>optimizer_rmsprop</a></span>(),
   <span class=kw>loss</span> <span class=kw>=</span> <span class=no>loss_binary_crossentropy</span>,
   <span class=kw>metrics</span> <span class=kw>=</span> <span class=fu><a href=https://rdrr.io/r/base/c.html>c</a></span>(<span class=st>'accuracy'</span>, <span class=no>metric_mean_pred</span>)
@@ -103,7 +103,7 @@ See below for an example.</p><h2 id=examples>Examples</h2><div class=sourceCode>
     <span class=fu>metric_top_k_categorical_accuracy</span>(<span class=no>y_true</span>, <span class=no>y_pred</span>, <span class=kw>k</span> <span class=kw>=</span> <span class=fl>3</span>)
   })
 
-<span class=no>model</span> <span class=kw>%&gt;%</span> <span class=fu><a href=https://rdrr.io/pkg/generics/man/compile.html>compile</a></span>(
+<span class=no>model</span> <span class=kw>%&gt;%</span> <span class=fu><a href=https://generics.r-lib.org/reference/compile.html>compile</a></span>(
   <span class=kw>loss</span> <span class=kw>=</span> <span class=st>'categorical_crossentropy'</span>,
   <span class=kw>optimizer</span> <span class=kw>=</span> <span class=fu><a href=../optimizer_rmsprop.html>optimizer_rmsprop</a></span>(),
   <span class=kw>metrics</span> <span class=kw>=</span> <span class=no>metric_top_3_categorical_accuracy</span>

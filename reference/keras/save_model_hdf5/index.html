@@ -43,7 +43,8 @@ gtag('js',new Date());gtag('config','UA-20375833-3');</script><script type=text/
 
 <span class=fu>load_model_hdf5</span>(<span class=no>filepath</span>, <span class=kw>custom_objects</span> <span class=kw>=</span> <span class=kw>NULL</span>, <span class=kw>compile</span> <span class=kw>=</span> <span class=fl>TRUE</span>)</code></pre></div><h2 id=arguments>Arguments</h2><table class=ref-arguments><col class=name><col class=desc><tr><td>object</td><td><p>Model object to save</p></td></tr><tr><td>filepath</td><td><p>File path</p></td></tr><tr><td>overwrite</td><td><p>Overwrite existing file if necessary</p></td></tr><tr><td>include_optimizer</td><td><p>If <code>TRUE</code>, save optimizer's state.</p></td></tr><tr><td>custom_objects</td><td><p>Mapping class names (or function names) of custom
 (non-Keras) objects to class/functions (for example, custom metrics
-or custom loss functions).</p></td></tr><tr><td>compile</td><td><p>Whether to compile the model after loading.</p></td></tr></table><h2 id=details>Details</h2><p>The following components of the model are saved:</p><ul><li><p>The model architecture, allowing to re-instantiate the model.</p></li><li><p>The model weights.</p></li><li><p>The state of the optimizer, allowing to resume training exactly where you
+or custom loss functions). This mapping can be done with the dict()
+function of reticulate.</p></td></tr><tr><td>compile</td><td><p>Whether to compile the model after loading.</p></td></tr></table><h2 id=details>Details</h2><p>The following components of the model are saved:</p><ul><li><p>The model architecture, allowing to re-instantiate the model.</p></li><li><p>The model weights.</p></li><li><p>The state of the optimizer, allowing to resume training exactly where you
 left off.
 This allows you to save the entirety of the state of a model
 in a single file.</p></li></ul><p>Saved models can be reinstantiated via <code>load_model_hdf5()</code>. The model returned by

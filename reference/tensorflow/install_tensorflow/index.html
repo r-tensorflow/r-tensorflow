@@ -46,15 +46,15 @@ gtag('js',new Date());gtag('config','UA-20375833-3');</script><script type=text/
   <span class=kw>envname</span> <span class=kw>=</span> <span class=kw>NULL</span>,
   <span class=kw>extra_packages</span> <span class=kw>=</span> <span class=kw>NULL</span>,
   <span class=kw>restart_session</span> <span class=kw>=</span> <span class=fl>TRUE</span>,
-  <span class=kw>conda_python_version</span> <span class=kw>=</span> <span class=st>"3.6"</span>,
+  <span class=kw>conda_python_version</span> <span class=kw>=</span> <span class=st>"3.7"</span>,
   <span class=no>...</span>
 )</code></pre></div><h2 id=arguments>Arguments</h2><table class=ref-arguments><col class=name><col class=desc><tr><td>method</td><td><p>Installation method. By default, "auto" automatically finds a
 method that will work in the local environment. Change the default to force
 a specific installation method. Note that the "virtualenv" method is not
 available on Windows (as this isn't supported by TensorFlow). Note also
 that since this command runs without privilege the "system" method is
-available only on Windows.</p></td></tr><tr><td>conda</td><td><p>Path to conda executable (or "auto" to find conda using the
-PATH and other conventional install locations).</p></td></tr><tr><td>version</td><td><p>TensorFlow version to install. Up to and including TensorFlow 2.0,
+available only on Windows.</p></td></tr><tr><td>conda</td><td><p>The path to a <code>conda</code> executable. Use <code>"auto"</code> to allow <code>reticulate</code> to
+automatically find an appropriate <code>conda</code> binary. See <strong>Finding Conda</strong> for more details.</p></td></tr><tr><td>version</td><td><p>TensorFlow version to install. Up to and including TensorFlow 2.0,
 specify "default" to install the CPU version of the latest release;
 specify "gpu" to install the GPU version of the latest release.
 Starting from TensorFlow 2.1, by default a version is installed that works

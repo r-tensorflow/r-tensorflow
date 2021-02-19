@@ -48,7 +48,8 @@ already present in the cache.</p><div class=sourceCode><pre class="sourceCode r"
   <span class=kw>hash_algorithm</span> <span class=kw>=</span> <span class=st>"auto"</span>,
   <span class=kw>extract</span> <span class=kw>=</span> <span class=fl>FALSE</span>,
   <span class=kw>archive_format</span> <span class=kw>=</span> <span class=st>"auto"</span>,
-  <span class=kw>cache_dir</span> <span class=kw>=</span> <span class=kw>NULL</span>
+  <span class=kw>cache_dir</span> <span class=kw>=</span> <span class=kw>NULL</span>,
+  <span class=kw>untar</span> <span class=kw>=</span> <span class=fl>FALSE</span>
 )</code></pre></div><h2 id=arguments>Arguments</h2><table class=ref-arguments><col class=name><col class=desc><tr><td>fname</td><td><p>Name of the file. If an absolute path <code>/path/to/file.txt</code> is
 specified the file will be saved at that location.</p></td></tr><tr><td>origin</td><td><p>Original URL of the file.</p></td></tr><tr><td>file_hash</td><td><p>The expected hash string of the file after download. The
 sha256 and md5 hash algorithms are both supported.</p></td></tr><tr><td>cache_subdir</td><td><p>Subdirectory under the Keras cache dir where the file is
@@ -59,5 +60,6 @@ algorithm in use.</p></td></tr><tr><td>extract</td><td><p>True tries extracting 
 are 'auto', 'tar', 'zip', and None. 'tar' includes tar, tar.gz, and tar.bz
 files. The default 'auto' is ('tar', 'zip'). None or an empty list will
 return no matches found.</p></td></tr><tr><td>cache_dir</td><td><p>Location to store cached files, when <code>NULL</code> it defaults to
-the Keras configuration directory.</p></td></tr></table><h2 id=value>Value</h2><p>Path to the downloaded file</p></div></div></div><footer>Copyright © 2015-2020 The TensorFlow Authors and RStudio, PBC.
+the Keras configuration directory.</p></td></tr><tr><td>untar</td><td><p>Deprecated in favor of 'extract'. boolean, whether the file should
+be decompressed</p></td></tr></table><h2 id=value>Value</h2><p>Path to the downloaded file</p></div></div></div><footer>Copyright © 2015-2020 The TensorFlow Authors and RStudio, PBC.
 <script type=text/javascript>(function(w,d,t,u,n,s,e){w['SwiftypeObject']=n;w[n]=w[n]||function(){(w[n].q=w[n].q||[]).push(arguments);};s=d.createElement(t);e=d.getElementsByTagName(t)[0];s.async=1;s.src=u;e.parentNode.insertBefore(s,e);})(window,document,'script','//s.swiftypecdn.com/install/v2/st.js','_st');_st('install','Ne8tbLfE121Pkj3xMr_G','2.0.0');</script></footer></div></div></body></html>

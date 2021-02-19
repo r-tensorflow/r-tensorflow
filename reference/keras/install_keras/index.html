@@ -48,8 +48,8 @@ supported by TensorFlow).</p><div class=sourceCode><pre class="sourceCode r"><co
   <span class=kw>tensorflow</span> <span class=kw>=</span> <span class=st>"default"</span>,
   <span class=kw>extra_packages</span> <span class=kw>=</span> <span class=fu><a href=https://rdrr.io/r/base/c.html>c</a></span>(<span class=st>"tensorflow-hub"</span>),
   <span class=no>...</span>
-)</code></pre></div><h2 id=arguments>Arguments</h2><table class=ref-arguments><col class=name><col class=desc><tr><td>method</td><td><p>Installation method ("virtualenv" or "conda")</p></td></tr><tr><td>conda</td><td><p>Path to conda executable (or "auto" to find conda using the
-PATH and other conventional install locations).</p></td></tr><tr><td>version</td><td><p>Version of Keras to install. Specify "default" to install
+)</code></pre></div><h2 id=arguments>Arguments</h2><table class=ref-arguments><col class=name><col class=desc><tr><td>method</td><td><p>Installation method ("virtualenv" or "conda")</p></td></tr><tr><td>conda</td><td><p>The path to a <code>conda</code> executable. Use <code>"auto"</code> to allow <code>reticulate</code> to
+automatically find an appropriate <code>conda</code> binary. See <strong>Finding Conda</strong> for more details.</p></td></tr><tr><td>version</td><td><p>Version of Keras to install. Specify "default" to install
 the latest release. Otherwise specify an alternate version (e.g. "2.2.2").</p></td></tr><tr><td>tensorflow</td><td><p>TensorFlow version to install. Specify "default" to install
 the CPU version of the latest release. Specify "gpu" to install the GPU
 version of the latest release.</p><p>You can also provide a full major.minor.patch specification (e.g. "1.1.0"),
@@ -70,7 +70,7 @@ of the CUDA and cuDNN libraries as described in <a href=https://tensorflow.rstud
 should install Anaconda 3.x for Windows prior to installing Keras.</p><h2 id=custom-installation>Custom Installation</h2><p>Installing Keras and TensorFlow using <code>install_keras()</code> isn't required
 to use the Keras R package. You can do a custom installation of Keras (and
 desired backend) as described on the <a href=https://keras.io/#installation>Keras website</a>
-and the Keras R package will find and use that version.</p><p>See the documentation on <a href=https://tensorflow.rstudio.com/installation.html#custom-installation>custom installations</a>
+and the Keras R package will find and use that version.</p><p>See the documentation on <a href=https://tensorflow.rstudio.com/installation/custom/>custom installations</a>
 for additional information on how version of Keras and TensorFlow are located
 by the Keras package.</p><h2 id=additional-packages>Additional Packages</h2><p>If you wish to add additional PyPI packages to your Keras / TensorFlow environment you
 can either specify the packages in the <code>extra_packages</code> argument of <code>install_keras()</code>,

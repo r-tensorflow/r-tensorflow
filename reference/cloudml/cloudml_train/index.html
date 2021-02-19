@@ -50,11 +50,11 @@ to YAML file containing flag values.</p></td></tr><tr><td>region</td><td><p>The 
 <a href=https://cloud.google.com/ml-engine/reference/rest/v1/projects.jobs>https://cloud.google.com/ml-engine/reference/rest/v1/projects.jobs</a>.</p></td></tr><tr><td>collect</td><td><p>Logical. If TRUE, collect job when training is completed
 (blocks waiting for the job to complete). The default (<code>"ask"</code>) will
 interactively prompt the user whether to collect the results or not.</p></td></tr><tr><td>dry_run</td><td><p>Triggers a local dry run over the deployment phase to
-validate packages and packing work as expected.</p></td></tr></table><h2 id=see-also>See also</h2><div class=dont-index><p><code><a href=../job_status.html>job_status()</a></code>, <code><a href=../job_collect.html>job_collect()</a></code>, <code><a href=../job_cancel.html>job_cancel()</a></code></p><p>Other CloudML functions: <code><a href=../cloudml_deploy.html>cloudml_deploy</a></code>,
-<code><a href=../cloudml_predict.html>cloudml_predict</a></code></p></div><h2 id=examples>Examples</h2><div class=sourceCode><pre class="sourceCode r"><code class="sourceCode r"><div class=input><span class=kw>if</span> (<span class=fl>FALSE</span>) {
+validate packages and packing work as expected.</p></td></tr></table><h2 id=see-also>See also</h2><div class=dont-index><p><code><a href=https://rdrr.io/pkg/cloudml/man/job_status.html>job_status()</a></code>, <code><a href=https://rdrr.io/pkg/cloudml/man/job_collect.html>job_collect()</a></code>, <code><a href=https://rdrr.io/pkg/cloudml/man/job_cancel.html>job_cancel()</a></code></p><p>Other CloudML functions: <code><a href=https://rdrr.io/pkg/cloudml/man/cloudml_deploy.html>cloudml_deploy</a></code>,
+<code><a href=https://rdrr.io/pkg/cloudml/man/cloudml_predict.html>cloudml_predict</a></code></p></div><h2 id=examples>Examples</h2><div class=sourceCode><pre class="sourceCode r"><code class="sourceCode r"><div class=input><span class=kw>if</span> (<span class=fl>FALSE</span>) {
 <span class=fu><a href=https://rdrr.io/r/base/library.html>library</a></span>(<span class=no>cloudml</span>)
 
-<span class=fu><a href=../gcloud_install.html>gcloud_install</a></span>()
-<span class=no>job</span> <span class=kw>&lt;-</span> <span class=fu>cloudml_train</span>(<span class=st>"train.R"</span>)
+<span class=fu><a href=https://rdrr.io/pkg/cloudml/man/gcloud_install.html>gcloud_install</a></span>()
+<span class=no>job</span> <span class=kw>&lt;-</span> <span class=fu><a href=https://rdrr.io/pkg/cloudml/man/cloudml_train.html>cloudml_train</a></span>(<span class=st>"train.R"</span>)
 }</div></code></pre></div></div></div></div><footer>Copyright © 2015-2020 The TensorFlow Authors and RStudio, PBC.
 <script type=text/javascript>(function(w,d,t,u,n,s,e){w['SwiftypeObject']=n;w[n]=w[n]||function(){(w[n].q=w[n].q||[]).push(arguments);};s=d.createElement(t);e=d.getElementsByTagName(t)[0];s.async=1;s.src=u;e.parentNode.insertBefore(s,e);})(window,document,'script','//s.swiftypecdn.com/install/v2/st.js','_st');_st('install','Ne8tbLfE121Pkj3xMr_G','2.0.0');</script></footer></div></div></body></html>

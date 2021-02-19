@@ -49,10 +49,11 @@ to <code>TRUE</code>)</p><div class=sourceCode><pre class="sourceCode r"><code c
   <span class=no>vocab</span>,
   <span class=kw>df_data</span> <span class=kw>=</span> <span class=kw>NULL</span>,
   <span class=kw>oov_df_value</span> <span class=kw>=</span> <span class=fl>FALSE</span>,
-  <span class=kw>append</span> <span class=kw>=</span> <span class=fl>FALSE</span>
+  <span class=kw>append</span> <span class=kw>=</span> <span class=kw>NULL</span>
 )</code></pre></div><h2 id=arguments>Arguments</h2><table class=ref-arguments><col class=name><col class=desc><tr><td>object</td><td><p>a text vectorization layer</p></td></tr><tr><td>vocab</td><td><p>An array of string tokens.</p></td></tr><tr><td>df_data</td><td><p>An array of document frequency data. Only necessary if the layer
 output_mode is "tfidf".</p></td></tr><tr><td>oov_df_value</td><td><p>The document frequency of the OOV token. Only necessary if
 output_mode is "tfidf". OOV data is optional when appending additional
 data in "tfidf" mode; if an OOV value is supplied it will overwrite the
-existing OOV value.</p></td></tr><tr><td>append</td><td><p>Whether to overwrite or append any existing vocabulary data.</p></td></tr></table><h2 id=see-also>See also</h2><div class=dont-index><p><code><a href=../get_vocabulary.html>get_vocabulary()</a></code></p></div></div></div></div><footer>Copyright © 2015-2020 The TensorFlow Authors and RStudio, PBC.
+existing OOV value.</p></td></tr><tr><td>append</td><td><p>Whether to overwrite or append any existing vocabulary data.
+(deprecated since TensorFlow &gt;= 2.3)</p></td></tr></table><h2 id=see-also>See also</h2><div class=dont-index><p><code><a href=../get_vocabulary.html>get_vocabulary()</a></code></p></div></div></div></div><footer>Copyright © 2015-2020 The TensorFlow Authors and RStudio, PBC.
 <script type=text/javascript>(function(w,d,t,u,n,s,e){w['SwiftypeObject']=n;w[n]=w[n]||function(){(w[n].q=w[n].q||[]).push(arguments);};s=d.createElement(t);e=d.getElementsByTagName(t)[0];s.async=1;s.src=u;e.parentNode.insertBefore(s,e);})(window,document,'script','//s.swiftypecdn.com/install/v2/st.js','_st');_st('install','Ne8tbLfE121Pkj3xMr_G','2.0.0');</script></footer></div></div></body></html>
