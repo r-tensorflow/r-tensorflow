@@ -30,7 +30,8 @@ already present in the cache.</p>
   <span class='kw'>hash_algorithm</span> <span class='kw'>=</span> <span class='st'>"auto"</span>,
   <span class='kw'>extract</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
   <span class='kw'>archive_format</span> <span class='kw'>=</span> <span class='st'>"auto"</span>,
-  <span class='kw'>cache_dir</span> <span class='kw'>=</span> <span class='kw'>NULL</span>
+  <span class='kw'>cache_dir</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>untar</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>
 )</code></pre></div>
 
     <h2 id="arguments">Arguments</h2>
@@ -82,6 +83,11 @@ return no matches found.</p></td>
       <td>cache_dir</td>
       <td><p>Location to store cached files, when <code>NULL</code> it defaults to
 the Keras configuration directory.</p></td>
+    </tr>
+    <tr>
+      <td>untar</td>
+      <td><p>Deprecated in favor of 'extract'. boolean, whether the file should
+be decompressed</p></td>
     </tr>
     </table>
 

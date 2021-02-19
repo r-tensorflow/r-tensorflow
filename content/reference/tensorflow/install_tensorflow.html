@@ -28,7 +28,7 @@ aliases:
   <span class='kw'>envname</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
   <span class='kw'>extra_packages</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
   <span class='kw'>restart_session</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='kw'>conda_python_version</span> <span class='kw'>=</span> <span class='st'>"3.6"</span>,
+  <span class='kw'>conda_python_version</span> <span class='kw'>=</span> <span class='st'>"3.7"</span>,
   <span class='no'>...</span>
 )</code></pre></div>
 
@@ -51,8 +51,8 @@ available only on Windows.</p></td>
     </tr>
     <tr>
       <td>conda</td>
-      <td><p>Path to conda executable (or "auto" to find conda using the
-PATH and other conventional install locations).</p></td>
+      <td><p>The path to a <code>conda</code> executable. Use <code>"auto"</code> to allow <code>reticulate</code> to
+automatically find an appropriate <code>conda</code> binary. See <strong>Finding Conda</strong> for more details.</p></td>
     </tr>
     <tr>
       <td>version</td>

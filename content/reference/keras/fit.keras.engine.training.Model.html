@@ -22,7 +22,7 @@ aliases:
     <p>Trains the model for a fixed number of epochs (iterations on a dataset).</p>
 
     <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class='co'># S3 method for keras.engine.training.Model</span>
-<span class='fu'><a href='https://rdrr.io/pkg/generics/man/fit.html'>fit</a></span>(
+<span class='fu'><a href='https://generics.r-lib.org/reference/fit.html'>fit</a></span>(
   <span class='no'>object</span>,
   <span class='kw'>x</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
   <span class='kw'>y</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
@@ -94,7 +94,7 @@ epoch).</p></td>
       <td>view_metrics</td>
       <td><p>View realtime plot of training metrics (by epoch). The
 default (<code>"auto"</code>) will display the plot when running within RStudio,
-<code>metrics</code> were specified during model <code><a href='https://rdrr.io/pkg/generics/man/compile.html'>compile()</a></code>, <code>epochs &gt; 1</code> and
+<code>metrics</code> were specified during model <code><a href='https://generics.r-lib.org/reference/compile.html'>compile()</a></code>, <code>epochs &gt; 1</code> and
 <code>verbose &gt; 0</code>. Use the global <code>keras.view_metrics</code> option to establish a
 different default.</p></td>
     </tr>
@@ -135,7 +135,7 @@ weights to apply to the model's loss for each sample. In the case of
 temporal data, you can pass a 2D array with shape (samples,
 sequence_length), to apply a different weight to every timestep of every
 sample. In this case you should make sure to specify
-<code>sample_weight_mode="temporal"</code> in <code><a href='https://rdrr.io/pkg/generics/man/compile.html'>compile()</a></code>.</p></td>
+<code>sample_weight_mode="temporal"</code> in <code><a href='https://generics.r-lib.org/reference/compile.html'>compile()</a></code>.</p></td>
     </tr>
     <tr>
       <td>initial_epoch</td>

@@ -67,7 +67,7 @@ or arrays with <code><a href='https://rdrr.io/r/base/matrix.html'>as.matrix()</a
 <span class='fu'>tfe_enable_eager_execution</span>()
 
 <span class='co'># create a random 10x10 matrix</span>
-<span class='no'>x</span> <span class='kw'>&lt;-</span> <span class='no'>tf</span>$<span class='fu'>random_normal</span>(<span class='fu'><a href='../shape.html'>shape</a></span>(<span class='fl'>10</span>, <span class='fl'>10</span>))
+<span class='no'>x</span> <span class='kw'>&lt;-</span> <span class='no'>tf</span>$<span class='no'>random</span>$<span class='fu'>normal</span>(<span class='fu'><a href='../shape.html'>shape</a></span>(<span class='fl'>10</span>, <span class='fl'>10</span>))
 
 <span class='co'># use it in R via as.matrix()</span>
 <span class='fu'><a href='https://rdrr.io/r/stats/heatmap.html'>heatmap</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>as.matrix</a></span>(<span class='no'>x</span>))

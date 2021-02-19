@@ -133,7 +133,7 @@ training. The inference is the same for either value of this parameter.</p></td>
       <td><p>A named list or dictionary that may map keys <code>rmax</code>,
 <code>rmin</code>, <code>dmax</code> to scalar Tensors used to clip the renorm correction. The
 correction <code>(r, d)</code> is used as <code>corrected_value = normalized_value * r + d</code>,
-with <code>r</code> clipped to rmin, rmax, and <code>d</code> to -dmax, dmax. Missing <code>rmax</code>,
+with <code>r</code> clipped to <code>[rmin, rmax]</code>, and <code>d</code> to <code>[-dmax, dmax]</code>. Missing <code>rmax</code>,
 <code>rmin</code>, <code>dmax</code> are set to <code>Inf</code>, <code>0</code>, <code>Inf</code>, <code>respectively</code>.</p></td>
     </tr>
     <tr>

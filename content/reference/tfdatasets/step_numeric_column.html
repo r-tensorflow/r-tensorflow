@@ -110,7 +110,7 @@ this case a function will be created after <a href='../fit.FeatureSpec.html'>fit
 <span class='no'>spec</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='../feature_spec.html'>feature_spec</a></span>(<span class='no'>hearts</span>, <span class='no'>target</span> ~ <span class='no'>age</span>) <span class='kw'>%&gt;%</span>
   <span class='fu'>step_numeric_column</span>(<span class='no'>age</span>, <span class='kw'>normalizer_fn</span> <span class='kw'>=</span> <span class='fu'>standard_scaler</span>())
 
-<span class='no'>spec_fit</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/generics/man/fit.html'>fit</a></span>(<span class='no'>spec</span>)
+<span class='no'>spec_fit</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://generics.r-lib.org/reference/fit.html'>fit</a></span>(<span class='no'>spec</span>)
 <span class='no'>final_dataset</span> <span class='kw'>&lt;-</span> <span class='no'>hearts</span> <span class='kw'>%&gt;%</span> <span class='fu'><a href='../dataset_use_spec.html'>dataset_use_spec</a></span>(<span class='no'>spec_fit</span>)
 }</div></code></pre></div>
 

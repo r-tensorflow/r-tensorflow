@@ -21,7 +21,7 @@ aliases:
     
     <p>A model is a directed acyclic graph of layers.</p>
 
-    <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>keras_model</span>(<span class='no'>inputs</span>, <span class='kw'>outputs</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>keras_model</span>(<span class='no'>inputs</span>, <span class='kw'>outputs</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='no'>...</span>)</code></pre></div>
 
     <h2 id="arguments">Arguments</h2>
     <table class="ref-arguments">
@@ -38,6 +38,10 @@ aliases:
     <tr>
       <td>outputs</td>
       <td><p>Output layer</p></td>
+    </tr>
+    <tr>
+      <td>...</td>
+      <td><p>Any additional arguments</p></td>
     </tr>
     </table>
 
@@ -76,7 +80,7 @@ aliases:
 
 <span class='co'># create and compile model</span>
 <span class='no'>model</span> <span class='kw'>&lt;-</span> <span class='fu'>keras_model</span>(<span class='kw'>inputs</span> <span class='kw'>=</span> <span class='no'>inputs</span>, <span class='kw'>outputs</span> <span class='kw'>=</span> <span class='no'>predictions</span>)
-<span class='no'>model</span> <span class='kw'>%&gt;%</span> <span class='fu'><a href='https://rdrr.io/pkg/generics/man/compile.html'>compile</a></span>(
+<span class='no'>model</span> <span class='kw'>%&gt;%</span> <span class='fu'><a href='https://generics.r-lib.org/reference/compile.html'>compile</a></span>(
   <span class='kw'>optimizer</span> <span class='kw'>=</span> <span class='st'>'rmsprop'</span>,
   <span class='kw'>loss</span> <span class='kw'>=</span> <span class='st'>'categorical_crossentropy'</span>,
   <span class='kw'>metrics</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>'accuracy'</span>)

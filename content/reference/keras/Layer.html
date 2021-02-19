@@ -1,0 +1,125 @@
+---
+title: Create a custom Layer
+type: docs
+repo: https://github.com/rstudio/keras
+menu:
+  main:
+    name: Create a custom Layer - keras
+    parent: keras-reference
+aliases:
+- /reference/keras/Layer.html
+- /keras/reference/Layer.html
+- /guide/keras/reference/Layer.html
+- /tools/tools/keras/reference/Layer.html
+- /installation/keras/reference/Layer.html
+- /tutorials/keras/reference/Layer.html
+- /guide/tools/keras/reference/Layer.html
+- /deploy/keras/reference/Layer.html
+- /tools/keras/reference/Layer.html
+- /tutorials/tools/keras/reference/Layer.html
+---
+    
+    <p>Create a custom Layer</p>
+
+    <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>Layer</span>(
+  <span class='no'>classname</span>,
+  <span class='no'>initialize</span>,
+  <span class='kw'>build</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>call</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>compute_output_shape</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='no'>...</span>,
+  <span class='kw'>inherit</span> <span class='kw'>=</span> <span class='kw pkg'>tensorflow</span><span class='kw ns'>::</span><span class='no'><a href='https://rdrr.io/pkg/tensorflow/man/tf.html'>tf</a></span>$<span class='no'>keras</span>$<span class='no'>layers</span>$<span class='no'>Layer</span>
+)</code></pre></div>
+
+    <h2 id="arguments">Arguments</h2>
+    <table class="ref-arguments">
+    
+    <colgroup>
+      <col class="name" />
+      <col class="desc" />
+    </colgroup>  
+      
+    <tr>
+      <td>classname</td>
+      <td><p>the name of the custom Layer.</p></td>
+    </tr>
+    <tr>
+      <td>initialize</td>
+      <td><p>a function. This is where you define the arguments used to further
+build your layer. For example, a dense layer would take the <code>units</code> argument.
+You should always call <code>super()$`__init__()`</code> to initialize the base
+inherited layer.</p></td>
+    </tr>
+    <tr>
+      <td>build</td>
+      <td><p>a function that takes <code>input_shape</code> as argument. This is where you will
+define your weights. Note that if your layer doesn’t define trainable weights then
+you need not implement this method.</p></td>
+    </tr>
+    <tr>
+      <td>call</td>
+      <td><p>This is where the layer’s logic lives. Unless you want your layer to
+support masking, you only have to care about the first argument passed to <code>call</code>
+(the input tensor).</p></td>
+    </tr>
+    <tr>
+      <td>compute_output_shape</td>
+      <td><p>a function that takes <code>input_shape</code> as an argument. In
+case your layer modifies the shape of its input, you should specify here the
+shape transformation logic. This allows Keras to do automatic shape inference.
+If you don’t modify the shape of the input then you need not implement this
+method.</p></td>
+    </tr>
+    <tr>
+      <td>...</td>
+      <td><p>Any other methods and/or attributes can be specified using named
+arguments. They will be added to the layer class.</p></td>
+    </tr>
+    <tr>
+      <td>inherit</td>
+      <td><p>the Keras layer to inherit from</p></td>
+    </tr>
+    </table>
+
+    <h2 id="value">Value</h2>
+
+    <p>A function that wraps <code>create_layer</code>, similar to <code><a href='../layer_dense.html'>keras::layer_dense</a></code>.</p>
+
+    <h2 id="examples">Examples</h2>
+    <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><div class='input'><span class='kw'>if</span> (<span class='fl'>FALSE</span>) {
+
+<span class='no'>layer_dense2</span> <span class='kw'>&lt;-</span> <span class='fu'>Layer</span>(
+  <span class='st'>"Dense2"</span>,
+
+  <span class='kw'>initialize</span> <span class='kw'>=</span> <span class='kw'>function</span>(<span class='no'>units</span>) {
+    <span class='fu'>super</span>()$<span class='fu'>`__init__`</span>()
+    <span class='no'>self</span>$<span class='no'>units</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/integer.html'>as.integer</a></span>(<span class='no'>units</span>)
+  },
+
+  <span class='kw'>build</span> <span class='kw'>=</span> <span class='kw'>function</span>(<span class='no'>input_shape</span>) {
+    <span class='fu'><a href='https://rdrr.io/r/base/print.html'>print</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/class.html'>class</a></span>(<span class='no'>input_shape</span>))
+    <span class='no'>self</span>$<span class='no'>kernel</span> <span class='kw'>&lt;-</span> <span class='no'>self</span>$<span class='fu'>add_weight</span>(
+      <span class='kw'>name</span> <span class='kw'>=</span> <span class='st'>"kernel"</span>,
+      <span class='kw'>shape</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='no'>input_shape</span><span class='kw'>[[</span><span class='fl'>2</span>]], <span class='no'>self</span>$<span class='no'>units</span>),
+      <span class='kw'>initializer</span> <span class='kw'>=</span> <span class='st'>"uniform"</span>,
+      <span class='kw'>trainable</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>
+    )
+  },
+
+  <span class='kw'>call</span> <span class='kw'>=</span> <span class='kw'>function</span>(<span class='no'>x</span>) {
+    <span class='kw pkg'>tensorflow</span><span class='kw ns'>::</span><span class='no'><a href='https://rdrr.io/pkg/tensorflow/man/tf.html'>tf</a></span>$<span class='fu'>matmul</span>(<span class='no'>x</span>, <span class='no'>self</span>$<span class='no'>kernel</span>)
+  },
+
+  <span class='kw'>compute_output_shape</span> <span class='kw'>=</span> <span class='kw'>function</span>(<span class='no'>input_shape</span>) {
+    <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='no'>input_shape</span><span class='kw'>[[</span><span class='fl'>1</span>]], <span class='no'>self</span>$<span class='no'>units</span>)
+  }
+
+)
+
+<span class='no'>l</span> <span class='kw'>&lt;-</span> <span class='fu'>layer_dense2</span>(<span class='kw'>units</span> <span class='kw'>=</span> <span class='fl'>10</span>)
+<span class='fu'>l</span>(<span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>matrix</a></span>(<span class='fu'><a href='https://rdrr.io/r/stats/Uniform.html'>runif</a></span>(<span class='fl'>10</span>), <span class='kw'>ncol</span> <span class='kw'>=</span> <span class='fl'>1</span>))
+
+}</div></code></pre></div>
+
+
+

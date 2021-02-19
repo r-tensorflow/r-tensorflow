@@ -1,0 +1,64 @@
+---
+title: Computes the binary crossentropy loss.
+type: docs
+repo: https://github.com/rstudio/keras
+menu:
+  main:
+    name: Computes the binary crossentropy loss. - keras
+    parent: keras-reference
+aliases:
+- /reference/keras/loss_binary_crossentropy.html
+- /keras/reference/loss_binary_crossentropy.html
+- /guide/keras/reference/loss_binary_crossentropy.html
+- /tools/tools/keras/reference/loss_binary_crossentropy.html
+- /installation/keras/reference/loss_binary_crossentropy.html
+- /tutorials/keras/reference/loss_binary_crossentropy.html
+- /guide/tools/keras/reference/loss_binary_crossentropy.html
+- /deploy/keras/reference/loss_binary_crossentropy.html
+- /tools/keras/reference/loss_binary_crossentropy.html
+- /tutorials/tools/keras/reference/loss_binary_crossentropy.html
+---
+    
+    <p>Computes the binary crossentropy loss.</p>
+
+    <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>loss_binary_crossentropy</span>(
+  <span class='no'>y_true</span>,
+  <span class='no'>y_pred</span>,
+  <span class='kw'>from_logits</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
+  <span class='kw'>label_smoothing</span> <span class='kw'>=</span> <span class='fl'>0</span>
+)</code></pre></div>
+
+    <h2 id="arguments">Arguments</h2>
+    <table class="ref-arguments">
+    
+    <colgroup>
+      <col class="name" />
+      <col class="desc" />
+    </colgroup>  
+      
+    <tr>
+      <td>y_true</td>
+      <td><p>True labels (Tensor)</p></td>
+    </tr>
+    <tr>
+      <td>y_pred</td>
+      <td><p>Predictions (Tensor of the same shape as <code>y_true</code>)</p></td>
+    </tr>
+    <tr>
+      <td>from_logits</td>
+      <td><p>Whether <code>y_pred</code> is expected to be a logits tensor. By default,
+we assume that y_pred encodes a probability distribution.</p></td>
+    </tr>
+    <tr>
+      <td>label_smoothing</td>
+      <td><p>numeric between 0 and 1. If &gt; 0 then smooth the labels.</p></td>
+    </tr>
+    </table>
+
+    <h2 id="see-also">See also</h2>
+
+    <div class='dont-index'><p><code><a href='../loss_mean_squared_error.html'>loss_mean_squared_error()</a></code></p></div>
+
+
+
+

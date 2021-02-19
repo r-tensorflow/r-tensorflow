@@ -23,11 +23,12 @@ aliases:
     <p>One-hot encode a text into a list of word indexes in a vocabulary of size n.</p>
 
     <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>text_one_hot</span>(
-  <span class='no'>text</span>,
+  <span class='no'>input_text</span>,
   <span class='no'>n</span>,
   <span class='kw'>filters</span> <span class='kw'>=</span> <span class='st'>"!\"#$%&amp;()*+,-./:;&lt;=&gt;?@[\\]^_`{|}~\t\n"</span>,
   <span class='kw'>lower</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='kw'>split</span> <span class='kw'>=</span> <span class='st'>" "</span>
+  <span class='kw'>split</span> <span class='kw'>=</span> <span class='st'>" "</span>,
+  <span class='kw'>text</span> <span class='kw'>=</span> <span class='kw'>NULL</span>
 )</code></pre></div>
 
     <h2 id="arguments">Arguments</h2>
@@ -39,7 +40,7 @@ aliases:
     </colgroup>  
       
     <tr>
-      <td>text</td>
+      <td>input_text</td>
       <td><p>Input text (string).</p></td>
     </tr>
     <tr>
@@ -58,6 +59,10 @@ punctuation. Default includes basic punctuation, tabs, and newlines.</p></td>
     <tr>
       <td>split</td>
       <td><p>Sentence split marker (string).</p></td>
+    </tr>
+    <tr>
+      <td>text</td>
+      <td><p>for compatibility purpose. use <code>input_text</code> instead.</p></td>
     </tr>
     </table>
 

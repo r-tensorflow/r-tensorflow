@@ -25,7 +25,7 @@ for example, the levels of categorical features, normalization
 constants, etc.</p>
 
     <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class='co'># S3 method for FeatureSpec</span>
-<span class='fu'><a href='https://rdrr.io/pkg/generics/man/fit.html'>fit</a></span>(<span class='no'>object</span>, <span class='kw'>dataset</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='no'>...</span>)</code></pre></div>
+<span class='fu'><a href='https://generics.r-lib.org/reference/fit.html'>fit</a></span>(<span class='no'>object</span>, <span class='kw'>dataset</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='no'>...</span>)</code></pre></div>
 
     <h2 id="arguments">Arguments</h2>
     <table class="ref-arguments">
@@ -88,7 +88,7 @@ the dataset provided when initilializing the <code>feature_spec</code>.</p></td>
 <span class='no'>spec</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='../feature_spec.html'>feature_spec</a></span>(<span class='no'>hearts</span>, <span class='no'>target</span> ~ <span class='no'>age</span>) <span class='kw'>%&gt;%</span>
   <span class='fu'><a href='../step_numeric_column.html'>step_numeric_column</a></span>(<span class='no'>age</span>)
 
-<span class='no'>spec_fit</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/generics/man/fit.html'>fit</a></span>(<span class='no'>spec</span>)
+<span class='no'>spec_fit</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://generics.r-lib.org/reference/fit.html'>fit</a></span>(<span class='no'>spec</span>)
 <span class='no'>spec_fit</span>
 }</div></code></pre></div>
 
