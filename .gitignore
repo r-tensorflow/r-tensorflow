@@ -38,7 +38,6 @@ ehthumbs.db
 Thumbs.db
 .Rproj.user
 .Rhistory
-pkgdown
 public
 r-tensorflow.Rproj
 cnn-mnist

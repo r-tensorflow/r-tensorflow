@@ -1,0 +1,41 @@
+---
+title: "{{{title}}}"
+type: docs
+{{#package}}
+repo: https://github.com/rstudio/{{name}}
+menu:
+  main:
+    name: "{{name}}"
+    identifier: "{{name}}-reference"
+    parent: "reference-top"
+    weight: 100
+{{/package}}
+---
+
+    <h1 class = "content-header">Function Reference</h1>
+
+    <table class="ref-index">
+
+    <colgroup>
+      <col class="alias" />
+      <col class="title" />
+    </colgroup>
+
+    {{#sections}}<tbody>
+      <tr>
+        <th colspan="2">
+          <h2 id="{{slug}}" class="hasAnchor"><a href="#{{slug}}" class="anchor"></a>{{title}}</h2>
+          <p class="section-desc">{{{desc}}}</p>
+        </th>
+      </tr>
+      {{#contents}}<tr>
+        <!-- {{#icon}}<img src="icons/{{{.}}}" width="40" height="40" class="icon" />{{/icon}} -->
+        <td>
+          <p>{{#aliases}}<code><a href="{{path}}">{{{.}}}</a></code> {{/aliases}}</p>
+        </td>
+        <td><p>{{{title}}}</p></td>
+      </tr>{{/contents}}
+    </tbody>{{/sections}}
+    </table>
+
+
